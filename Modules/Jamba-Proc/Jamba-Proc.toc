@@ -1,0 +1,14 @@
+## Interface: 50400
+## Title: Jamba-Proc
+## Notes: Jamba-Proc
+## Author: Jafula
+## Version: 5.4.7
+## X-Category: Interface Enhancements
+## X-Child-Of: Jamba
+## Dependencies: Jamba
+## SavedVariables: JambaProcProfileDBv2
+## LoadOnDemand: 1
+Locales\Locales.xml
+JambaProc.lua
+
+

@@ -1,0 +1,14 @@
+## Interface: 50400
+## Title: Jamba-QuestWatcher
+## Notes: Jamba-QuestWatcher
+## Author: Jafula
+## Version: 5.4.7
+## X-Category: Interface Enhancements
+## X-Child-Of: Jamba
+## Dependencies: Jamba
+## SavedVariables: JambaQuestWatcherProfileDB
+## LoadOnDemand: 1
+Locales\Locales.xml
+JambaQuestWatcher.lua
+
+

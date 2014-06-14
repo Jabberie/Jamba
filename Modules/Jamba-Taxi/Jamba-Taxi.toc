@@ -1,0 +1,14 @@
+## Interface: 50400
+## Title: Jamba-Taxi
+## Notes: Jamba-Taxi
+## Author: Jafula
+## Version: 5.4.7
+## X-Category: Interface Enhancements
+## X-Child-Of: Jamba
+## Dependencies: Jamba
+## SavedVariables: JambaTaxiProfileDB
+## LoadOnDemand: 1
+Locales\Locales.xml
+JambaTaxi.lua
+
+

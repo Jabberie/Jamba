@@ -1,0 +1,12 @@
+## Interface: 50400
+## Title: Jamba-FTL
+## Notes: Jamba-FTL
+## Author: olipcs (although most of the code is originaly from Jafula)
+## Version: 5.4.7
+## X-Category: Interface Enhancements
+## X-Child-Of: Jamba
+## Dependencies: Jamba
+## SavedVariables: JambaFTLProfileDB
+## LoadOnDemand: 1
+Locales\Locales.xml
+JambaFTL.lua

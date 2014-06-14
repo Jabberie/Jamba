@@ -1,0 +1,34 @@
+﻿<Bindings>
+	
+  <Binding name="JAMBATARGETMARK" header="JAMBA_TARGET" runOnUp="true">
+    JambaTargetMarkTargetKeyPress( keystate )
+  </Binding>
+  <Binding name="JAMBACLEARTARGET">
+    --[[dummy]]
+  </Binding>
+  <Binding name="JAMBATARGET1">
+    --[[dummy]]
+  </Binding>
+  <Binding name="JAMBATARGET2">
+    --[[dummy]]
+  </Binding>
+  <Binding name="JAMBATARGET3">
+    --[[dummy]]
+  </Binding>
+  <Binding name="JAMBATARGET4">
+    --[[dummy]]
+  </Binding>
+  <Binding name="JAMBATARGET5">
+    --[[dummy]]
+  </Binding>
+  <Binding name="JAMBATARGET6">
+    --[[dummy]]
+  </Binding>
+  <Binding name="JAMBATARGET7">
+    --[[dummy]]
+  </Binding>
+  <Binding name="JAMBATARGET8">
+    --[[dummy]]
+  </Binding>
+  
+</Bindings>

@@ -1,0 +1,14 @@
+## Interface: 50400
+## Title: Jamba-Purchase
+## Notes: Jamba-Purchase
+## Author: Jafula
+## Version: 5.4.7
+## X-Category: Interface Enhancements
+## X-Child-Of: Jamba
+## Dependencies: Jamba
+## SavedVariables: JambaPurchaseProfileDB
+## LoadOnDemand: 1
+Locales\Locales.xml
+JambaPurchase.lua
+
+

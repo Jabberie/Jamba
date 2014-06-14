@@ -1,0 +1,19 @@
+------------------------------------------------------------------------
+r151 | nevcairiel | 2012-08-07 16:23:23 +0000 (Tue, 07 Aug 2012) | 1 line
+Changed paths:
+   A /tags/4.3-release32 (from /trunk:150)
+
+Weekly Tag - #32
+------------------------------------------------------------------------
+r150 | nevcairiel | 2012-08-07 16:22:13 +0000 (Tue, 07 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/LibBabble-Inventory-3.0.lua
+
+Automated LibBabble re-generation from the localization system
+------------------------------------------------------------------------
+r148 | nevcairiel | 2012-07-08 05:16:25 +0000 (Sun, 08 Jul 2012) | 1 line
+Changed paths:
+   M /trunk/LibBabble-Inventory-3.0.lua
+
+Automated LibBabble re-generation from the localization system
+------------------------------------------------------------------------

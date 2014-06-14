@@ -1,0 +1,69 @@
+<!--
+Jamba - Jafula's Awesome Multi-Boxer Assistant
+Copyright 2008 - 2014 Michael "Jafula" Miller
+License: All Rights Reserved
+http://jafula.com/jamba/
+-->
+
+<Bindings>
+	<Binding name="JAMBAITEMUSE1" header="JAMBAITEMUSE">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE2">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE3">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE4">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE5">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE6">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE7">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE8">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE9">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE10">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE11">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE12">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE13">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE14">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE15">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE16">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE17">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE18">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE19">
+		--[[dummy]]
+	</Binding>
+	<Binding name="JAMBAITEMUSE20">
+		--[[dummy]]
+	</Binding>		
+</Bindings>
