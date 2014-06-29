@@ -1,3 +1,20 @@
+Jamba Version: 5.4.8
+WoW Game Version: 5.4.8
+Release Date: 29th June 2014
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Jamba-Talk:
+* Added new option called "Do Not Forward RealID Whispers". This option is on by default. Now Jamba will not forward RealID whispers unless you deselect this setting.
+
+Jamba-Team:
+* Loot options should now update on party formation.
+
+Jamba-Toon: 
+* Requests - When declining a guild invite, the guild invite window is hidden.
+
+All
+* Removed all non English localization files as they were not being used.
+
 Jamba Version: 5.4.7
 WoW Game Version: 5.4.7
 Release Date: 19th February 2014
