@@ -1336,7 +1336,7 @@ end
 function AJM:GUILD_INVITE_REQUEST( event, inviter, guild, ... )
 	if AJM.db.autoDenyGuildInvites == true then
 		DeclineGuild()
-		StaticPopup_Hide( "GUILD_INVITE" )
+		GuildInviteFrame:Hide()
 		AJM:JambaSendMessageToTeam( AJM.db.requestArea, L["I refused a guild invite to: X from: Y"]( guild, inviter ), false )
 	end
 end

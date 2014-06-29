@@ -863,7 +863,7 @@ end
 
 local function SetPartyLoot( desiredLootOption )
 	-- Is this character in a party and the party leader?
-	if GetNumSubgroupMembers() > 0 and UnitIsGroupLeader( "player" ) == true then
+	if IsInGroup( "player" ) and UnitIsGroupLeader( "player" ) == true then
 		-- What is the current loot method?
 		local lootMethod, partyMaster, raidMaster = GetLootMethod()
 		-- Can the loot method be changed?
@@ -988,8 +988,8 @@ end
 function AJM:PARTY_INVITE_REQUEST( event, inviter, ... )
 	-- Accept this invite, initially no.
 	local acceptInvite = false
-	-- How many party members does this character have already?  If 0 then not in a group.
-	if GetNumSubgroupMembers() == 0 then	
+	-- Is character not in a group?
+	if not IsInGroup( "player" ) then	
 		-- Accept an invite from members?
 		if AJM.db.inviteAcceptTeam == true then
 			-- If inviter found in team list, allow the invite to be accepted.
@@ -1050,7 +1050,7 @@ function AJM:DisbandTeamFromParty()
 end
 
 local function LeaveTheParty()
-	if GetNumSubgroupMembers() > 0 then
+	if IsInGroup( "player" ) then
 		LeaveParty()
 	end
 end
@@ -1058,7 +1058,7 @@ end
 function AJM:OnMasterChange( message, characterName )
 	local playerName = UnitName( "player" )
 	if AJM.db.masterChangePromoteLeader == true then
-		if GetNumSubgroupMembers() > 0 and UnitIsGroupLeader( "player" ) == true and GetMasterName() ~= playerName then
+		if IsInGroup( "player" ) and UnitIsGroupLeader( "player" ) == true and GetMasterName() ~= playerName then
 			PromoteToLeader( GetMasterName() )
 		end
 	end

@@ -30,6 +30,7 @@ AJM.moduleDisplayName = L["Talk"]
 AJM.settings = {
 	profile = {
 		forwardWhispers = true,
+		doNotForwardRealIdWhispers = true,
 		forwardViaWhisper = false,
 		fakeWhisper = true,
 		fakeInjectSenderToReplyQueue = true,
@@ -99,6 +100,7 @@ end
 function AJM:SettingsRefresh()
 	-- Set values.
 	AJM.settingsControl.checkBoxForwardWhispers:SetValue( AJM.db.forwardWhispers )
+	AJM.settingsControl.checkBoxDoNotForwardRealIdWhispers:SetValue( AJM.db.doNotForwardRealIdWhispers )
 	AJM.settingsControl.checkBoxForwardViaWhisper:SetValue( AJM.db.forwardViaWhisper )
 	AJM.settingsControl.checkBoxFakeWhispers:SetValue( AJM.db.fakeWhisper )
 	AJM.settingsControl.checkBoxFakeInjectSenderToReplyQueue:SetValue( AJM.db.fakeInjectSenderToReplyQueue )
@@ -123,6 +125,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
 		AJM.db.forwardWhispers = settings.forwardWhispers
+		AJM.db.doNotForwardRealIdWhispers = settings.doNotForwardRealIdWhispers
 		AJM.db.fakeWhisper = settings.fakeWhisper
 		AJM.db.enableChatSnippets = settings.enableChatSnippets
 		AJM.db.whisperMessageArea = settings.whisperMessageArea
@@ -167,6 +170,15 @@ local function SettingsCreateOptions( top )
 		movingTop, 
 		L["Forward Whispers To Master And Relay Back"],
 		AJM.SettingsToggleForwardWhispers
+	)	
+	movingTop = movingTop - checkBoxHeight	
+	AJM.settingsControl.checkBoxDoNotForwardRealIdWhispers = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Do Not Forward RealID Whispers"],
+		AJM.SettingsToggleDoNotForwardRealIdWhispers
 	)	
 	movingTop = movingTop - checkBoxHeight	
 	AJM.settingsControl.checkBoxForwardViaWhisper = JambaHelperSettings:CreateCheckBox( 
@@ -368,6 +380,11 @@ end
 
 function AJM:SettingsToggleForwardWhispers( event, checked )
 	AJM.db.forwardWhispers = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleDoNotForwardRealIdWhispers( event, checked )
+	AJM.db.doNotForwardRealIdWhispers = checked
 	AJM:SettingsRefresh()
 end
 
@@ -585,7 +602,7 @@ end
 
 function AJM:CHAT_MSG_BN_WHISPER( event, message, sender, a, b, c, d, e, f, g, h, i, j, realFriendID, ... )
 	-- Does this character forward whispers?
-	if AJM.db.forwardWhispers == true then
+	if AJM.db.forwardWhispers == true and AJM.db.doNotForwardRealIdWhispers == false then
 		-- Is this character NOT the master?
 		if JambaApi.IsCharacterTheMaster( self.characterName ) == false then
 			-- Yes, not the master, relay the message to the master.

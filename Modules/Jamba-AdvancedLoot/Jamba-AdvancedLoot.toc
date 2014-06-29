@@ -2,7 +2,7 @@
 ## Title: Jamba-AdvancedLoot
 ## Notes: Jamba-AdvancedLoot
 ## Author: Max Schilling
-## Version: 5.4.7
+## Version: 5.4.8
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

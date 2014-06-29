@@ -2,7 +2,7 @@
 ## Title: Jamba-Trade
 ## Notes: Jamba-Trade
 ## Author: Jafula
-## Version: 5.4.7
+## Version: 5.4.8
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
