@@ -26,6 +26,16 @@ L["GOTTA LOOT A FROM B."] = function( itemLink, characterName )
 	return string.format( "JAMBA ADVANCED LOOT: %s FOUND. LOOT THIS FROM %s.", itemLink, characterName )
 end
 
+L["Epic Quality Target"] = true
+L["Rare Quality Target"] = true
+L["Uncommon Quality Target"] = true
+L["Bind on Pickup"] = true
+L["Bind on Equip"] = true
+L["Loot all cloth with"] = true
+L["Cloth Target"] = true
+L["Cloth"] = true
+L["Trade Goods"] = true
+
 L["Advanced Loot Items"] = true
 L["Character Name"] = true
 L["Remove"] = true

@@ -39,6 +39,13 @@ AJM.settings = {
 		manageAutoLoot = false,
 		autoCloseLootWindowOnSlaves = false,
 		messageArea = JambaApi.DefaultWarningArea(),
+		lootBindPickupEpic = "",
+		lootBindEquipEpic = "",
+		lootBindPickupRare = "",
+		lootBindEquipRare = "",
+		lootBindPickupUncommon = "",
+		lootBindEquipUncommon = "",
+		lootCloth = "",
 		advancedLootItems = {}
 	},
 }
@@ -96,21 +103,33 @@ function AJM:OnJambaProfileChanged()
 end
 
 function AJM:SettingsRefresh()
-
 	if AJM.advancedLootItemCharacterName == nil then
 		AJM.advancedLootItemCharacterName = AJM.characterName
 	end
-
 	AJM.settingsControl.checkBoxAdvancedLoot:SetValue( AJM.db.advancedLoot )
 	AJM.settingsControl.checkBoxManageAutoLoot:SetValue( AJM.db.manageAutoLoot )
 	AJM.settingsControl.checkBoxAutoCloseLootWindowOnSlaves:SetValue( AJM.db.autoCloseLootWindowOnSlaves )	
 	AJM.settingsControl.dropdownCharacterName:SetValue( AJM.advancedLootItemCharacterName )
 	AJM.settingsControl.dropdownMessageArea:SetValue( AJM.db.messageArea )	
+	AJM.settingsControl.lootBindPickupEpic:SetValue( AJM.db.lootBindPickupEpic )
+	AJM.settingsControl.lootBindEquipEpic:SetValue( AJM.db.lootBindEquipEpic )
+	AJM.settingsControl.lootBindPickupRare:SetValue( AJM.db.lootBindPickupRare )
+	AJM.settingsControl.lootBindPickupRare:SetValue( AJM.db.lootBindPickupRare )
+	AJM.settingsControl.lootBindPickupUncommon:SetValue( AJM.db.lootBindPickupUncommon )
+	AJM.settingsControl.lootBindEquipUncommon:SetValue( AJM.db.lootBindEquipUncommon )
+	AJM.settingsControl.lootCloth:SetValue( AJM.db.lootCloth )
 	AJM.settingsControl.checkBoxManageAutoLoot:SetDisabled( not AJM.db.advancedLoot )
 	AJM.settingsControl.editBoxItem:SetDisabled( not AJM.db.advancedLoot )
 	AJM.settingsControl.dropdownCharacterName:SetDisabled( not AJM.db.advancedLoot )
 	AJM.settingsControl.buttonRemove:SetDisabled( not AJM.db.advancedLoot )
 	AJM.settingsControl.buttonAdd:SetDisabled( not AJM.db.advancedLoot )
+	AJM.settingsControl.lootBindPickupEpic:SetDisabled( not AJM.db.advancedLoot )
+	AJM.settingsControl.lootBindEquipEpic:SetDisabled( not AJM.db.advancedLoot )
+	AJM.settingsControl.lootBindPickupRare:SetDisabled( not AJM.db.advancedLoot )
+	AJM.settingsControl.lootBindPickupRare:SetDisabled( not AJM.db.advancedLoot )
+	AJM.settingsControl.lootBindPickupUncommon:SetDisabled( not AJM.db.advancedLoot )
+	AJM.settingsControl.lootBindEquipUncommon:SetDisabled( not AJM.db.advancedLoot )
+	AJM.settingsControl.lootCloth:SetDisabled( not AJM.db.advancedLoot )
 	AJM:SettingsScrollRefresh()
 end
 
@@ -123,9 +142,14 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.messageArea = settings.messageArea
 		AJM.db.autoCloseLootWindowOnSlaves = settings.autoCloseLootWindowOnSlaves
 		AJM.db.advancedLootItems = JambaUtilities:CopyTable( settings.advancedLootItems )
-		
+		AJM.db.lootBindPickupEpic = settings.lootBindPickupEpic
+		AJM.db.lootBindEquipEpic = settings.lootBindEquipEpic
+		AJM.db.lootBindPickupRare = settings.lootBindPickupRare
+		AJM.db.lootBindPickupRare = settings.lootBindPickupRare
+		AJM.db.lootBindPickupUncommon = settings.lootBindPickupUncommon
+		AJM.db.lootBindEquipUncommon = settings.lootBindEquipUncommon
+		AJM.db.lootCloth = settings.lootCloth
 		AJM:SetAutoLoot()
-		
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
 		-- Tell the player.
@@ -146,13 +170,13 @@ local function SettingsCreateOptions( top )
 	local dropdownHeight = JambaHelperSettings:GetDropdownHeight()
 	local left = JambaHelperSettings:LeftOfSettings()
 	local headingHeight = JambaHelperSettings:HeadingHeight()
-	local headingWidth = JambaHelperSettings:HeadingWidth( false )
+	local headingWidth = JambaHelperSettings:HeadingWidth( true )
 	local horizontalSpacing = JambaHelperSettings:GetHorizontalSpacing()
 	local verticalSpacing = JambaHelperSettings:GetVerticalSpacing()
 	local halfWidth = (headingWidth - horizontalSpacing) / 2
 	local left2 = left + halfWidth + horizontalSpacing
 	local movingTop = top
-	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Advanced Loot Items"], movingTop, false )
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Advanced Loot Items"], movingTop, true )
 	movingTop = movingTop - headingHeight
 	AJM.settingsControl.checkBoxAdvancedLoot = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
@@ -212,7 +236,7 @@ local function SettingsCreateOptions( top )
 		AJM.SettingsRemoveClick
 	)
 	movingTop = movingTop -	buttonHeight - verticalSpacing
-	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Add Item"], movingTop, false )
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Add Item"], movingTop, true )
 	movingTop = movingTop - headingHeight
 	AJM.settingsControl.editBoxItem = JambaHelperSettings:CreateEditBox( 
 		AJM.settingsControl,
@@ -242,7 +266,82 @@ local function SettingsCreateOptions( top )
 		AJM.SettingsAddClick
 	)
 	movingTop = movingTop -	buttonHeight	
-	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Advanced Loot Messages"], movingTop, false )
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Epic Quality Target"], movingTop, true )
+	movingTop = movingTop - headingHeight
+	AJM.settingsControl.lootBindPickupEpic = JambaHelperSettings:CreateDropdown( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left, 
+		movingTop, 
+		L["Bind on Pickup"] 
+	)
+	AJM.settingsControl.lootBindPickupEpic:SetList( AJM:GetTeamList() )
+	AJM.settingsControl.lootBindPickupEpic:SetCallback( "OnValueChanged", AJM.SettingslootBindPickupEpic )
+	AJM.settingsControl.lootBindEquipEpic = JambaHelperSettings:CreateDropdown( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left2, 
+		movingTop, 
+		L["Bind on Equip"] 
+	)
+	AJM.settingsControl.lootBindEquipEpic:SetList( AJM:GetTeamList() )
+	AJM.settingsControl.lootBindEquipEpic:SetCallback( "OnValueChanged", AJM.SettingslootBindEquipEpic )
+	movingTop = movingTop - dropdownHeight - verticalSpacing	
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Rare Quality Target"], movingTop, true )
+	movingTop = movingTop - headingHeight
+	AJM.settingsControl.lootBindPickupRare = JambaHelperSettings:CreateDropdown( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left, 
+		movingTop, 
+		L["Bind on Pickup"] 
+	)
+	AJM.settingsControl.lootBindPickupRare:SetList( AJM:GetTeamList() )
+	AJM.settingsControl.lootBindPickupRare:SetCallback( "OnValueChanged", AJM.SettingslootBindPickupRare )
+	AJM.settingsControl.lootBindPickupRare = JambaHelperSettings:CreateDropdown( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left2, 
+		movingTop, 
+		L["Bind on Equip"] 
+	)
+	AJM.settingsControl.lootBindPickupRare:SetList( AJM:GetTeamList() )
+	AJM.settingsControl.lootBindPickupRare:SetCallback( "OnValueChanged", AJM.SettingslootBindPickupRare )
+	movingTop = movingTop - dropdownHeight - verticalSpacing	
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Uncommon Quality Target"], movingTop, true )
+	movingTop = movingTop - headingHeight
+	AJM.settingsControl.lootBindPickupUncommon = JambaHelperSettings:CreateDropdown( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left, 
+		movingTop, 
+		L["Bind on Pickup"] 
+	)
+	AJM.settingsControl.lootBindPickupUncommon:SetList( AJM:GetTeamList() )
+	AJM.settingsControl.lootBindPickupUncommon:SetCallback( "OnValueChanged", AJM.SettingslootBindPickupUncommon )
+	AJM.settingsControl.lootBindEquipUncommon = JambaHelperSettings:CreateDropdown( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left2, 
+		movingTop, 
+		L["Bind on Equip"] 
+	)
+	AJM.settingsControl.lootBindEquipUncommon:SetList( AJM:GetTeamList() )
+	AJM.settingsControl.lootBindEquipUncommon:SetCallback( "OnValueChanged", AJM.SettingslootBindEquipUncommon )
+	movingTop = movingTop - dropdownHeight - verticalSpacing	
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Cloth Target"], movingTop, true )
+	movingTop = movingTop - headingHeight
+	AJM.settingsControl.lootCloth = JambaHelperSettings:CreateDropdown( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left, 
+		movingTop, 
+		L["Loot all cloth with"] 
+	)
+	AJM.settingsControl.lootCloth:SetList( AJM:GetTeamList() )
+	AJM.settingsControl.lootCloth:SetCallback( "OnValueChanged", AJM.SettingsCloth )
+	movingTop = movingTop - dropdownHeight - verticalSpacing	
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Advanced Loot Messages"], movingTop, true )
 	movingTop = movingTop - headingHeight	
 	AJM.settingsControl.dropdownMessageArea = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControl, 
@@ -327,25 +426,55 @@ function AJM:SettingsSetCharacterName( event, value )
 	AJM:SettingsRefresh()
 end
 
+function AJM:SettingslootBindPickupEpic( event, value )
+	AJM.db.lootBindPickupEpic = value
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingslootBindEquipEpic( event, value )
+	AJM.db.lootBindEquipEpic = value
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingslootBindPickupRare( event, value )
+	AJM.db.lootBindPickupRare = value
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingslootBindPickupRare( event, value )
+	AJM.db.lootBindPickupRare = value
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingslootBindPickupUncommon( event, value )
+	AJM.db.lootBindPickupUncommon = value
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingslootBindEquipUncommon( event, value )
+	AJM.db.lootBindEquipUncommon = value
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsCloth( event, value )
+	AJM.db.lootCloth = value
+	AJM:SettingsRefresh()
+end
+
 function AJM:SettingsToggleAdvancedLootItems( event, checked )
 	AJM.db.advancedLoot = checked
-	
 	AJM:SetAutoLoot()
-	
 	AJM:SettingsRefresh()
 end
 
 function AJM:SettingsToggleAdvancedLootManageAutoLoot( event, checked )
 	AJM.db.manageAutoLoot = checked
-	
 	AJM:SetAutoLoot()
-	
 	AJM:SettingsRefresh()
 end
 
 function AJM:SettingsToggleAutoCloseLootWindowOnSlaves( event, checked )
 	AJM.db.autoCloseLootWindowOnSlaves = checked
-	
 	AJM:SettingsRefresh()
 end
 
@@ -360,7 +489,7 @@ end
 
 function AJM:SettingsAddClick( event )
 	if AJM.advancedLootItemLink ~= nil and AJM.advancedLootItemCharacterName ~= nil then
-		if AJM:GetAdvancedLootCharacterName(AJM.advancedLootItemLink) == nil then
+		if AJM:GetAdvancedLootCharacterName( AJM.advancedLootItemLink ) == nil then
 			AJM:AddItem( AJM.advancedLootItemLink, AJM.advancedLootItemCharacterName )
 			AJM.advancedLootItemLink = nil
 			AJM.settingsControl.editBoxItem:SetText( "" )
@@ -394,7 +523,8 @@ end
 
 -- Initialise the module.
 function AJM:OnInitialize()
-	--AJM.advancedLootItemCharacter = JambaApi.AllTag()
+	AJM.itemsAlertedCount = 1
+	AJM.itemsAlerted = {}
 	AJM.advancedLootItemLink = nil
 	-- Create the settings control.
 	SettingsCreate()
@@ -415,6 +545,13 @@ function AJM:OnInitialize()
 	AJM.standaloneWindow:SetWidth( 410 )
 	AJM.standaloneWindow.frame:SetFrameStrata( "HIGH" )
 	]]--
+	
+	CreateFrame( "GameTooltip", "JambaAdvancedLootScanningTooltip" ); -- Tooltip name cannot be nil
+	JambaAdvancedLootScanningTooltip:SetOwner( WorldFrame, "ANCHOR_NONE" );
+	-- Allow tooltip SetX() methods to dynamically add new lines based on these
+	JambaAdvancedLootScanningTooltip:AddFontStrings(
+    JambaAdvancedLootScanningTooltip:CreateFontString( "$parentTextLeft1", nil, "GameTooltipText" ),
+    JambaAdvancedLootScanningTooltip:CreateFontString( "$parentTextRight1", nil, "GameTooltipText" ) );	
 end
 
 -- Called when the addon is enabled.
@@ -443,6 +580,7 @@ function AJM:GetTeamList()
 	for characterName, characterPosition in JambaApi.TeamList() do
 		AJM.simpleTeamList[characterName] = characterName
 	end
+	AJM.simpleTeamList[""] = ""
 	table.sort( AJM.simpleTeamList )
 	return AJM.simpleTeamList
 end
@@ -471,7 +609,7 @@ function AJM:AddItem( itemLink, characterName )
 		table.insert( AJM.db.advancedLootItems, itemInformation )
 		AJM:SettingsRefresh()			
 		AJM:SettingsRowClick( 1, 1 )
-	end	
+	end
 end
 
 function AJM:RemoveItem()
@@ -510,7 +648,9 @@ end
 
 function AJM:LOOT_OPENED()
 	if AJM.db.advancedLoot == true then
-		AJM:DoAdvancedLoot()
+		if IsInGroup() then
+			AJM:DoAdvancedLoot()
+		end
 	end
 end
 
@@ -519,110 +659,192 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 end
 
 function AJM:GetAdvancedLootCharacterName(iteminfo)
-
 	local returnCharacterName = nil
-
 	local itemNameToFind = GetItemInfo( iteminfo )
-	
 	for position, itemInfoTable in pairs( AJM.db.advancedLootItems ) do	
 		local characterName = itemInfoTable.characterName
 		local advancedLootItemLink = itemInfoTable.link
-		
 		local itemNameAdvancedLoot = GetItemInfo( advancedLootItemLink )
-			if itemNameAdvancedLoot == itemNameToFind then
-				returnCharacterName = characterName;
-				break
-			end
+		if itemNameAdvancedLoot == itemNameToFind then
+			returnCharacterName = characterName;
+			break
+		end
 	end
-	
 	return returnCharacterName;
 end
 
-function AJM:DoAdvancedLoot()
-
-	if IsInGroup() then
-
-		local numloot = GetNumLootItems()
-		if numloot == 0 then 
-		pcall(CloseLoot)
-			return nil 
+function AJM:IsBOP(slot)
+	JambaAdvancedLootScanningTooltip:ClearLines()
+	JambaAdvancedLootScanningTooltip:SetLootItem(slot)
+	for _, region in ipairs({JambaAdvancedLootScanningTooltip:GetRegions()}) do
+		if region and region:GetObjectType() == "FontString" then
+			local text = region:GetText()
+			if text ~= nil and text ~= "" and strfind(text, ITEM_BIND_ON_PICKUP) then
+				return true
+			end
 		end
+	end
+	return false
+end
 
-		local itemsAlerted = {}
-		local itemsAlertedCount = 1
+function AJM:IsBOE(slot)
+	JambaAdvancedLootScanningTooltip:ClearLines()
+	JambaAdvancedLootScanningTooltip:SetLootItem(slot)
+	for _, region in ipairs({JambaAdvancedLootScanningTooltip:GetRegions()}) do
+		if region and region:GetObjectType() == "FontString" then
+			local text = region:GetText()
+			if text ~= nil and text ~= "" and strfind(text, ITEM_BIND_ON_EQUIP) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+function AJM:AlertAboutLoot(itemName, advancedLootCharacterName)
+	local alreadyAlerted = false					
+	for i = 1, AJM.itemsAlertedCount do
+		if AJM.itemsAlerted[i] == itemName then
+			alreadyAlerted = true
+		end
+	end
+	if alreadyAlerted == false then
+		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["GOTTA LOOT A FROM B."]( itemName, advancedLootCharacterName ), false )
+		AJM.itemsAlerted[AJM.itemsAlertedCount] = itemName
+		AJM.itemsAlertedCount = AJM.itemsAlertedCount + 1
+	end
+end
+
+function AJM:DoAdvancedLoot()
+	
+	local numloot = GetNumLootItems()
+	if numloot == 0 then 
+		pcall(CloseLoot)
+		return nil 
+	end
+
+	AJM.itemsAlerted = {}
+	AJM.itemsAlertedCount = 1
+	local safeToLoot = true
+	local lootThisSlot = false
+	local tries = 0
+
+	-- seems to get itself stuck when it only runs once... this is intended to allow a few times
+	-- through while the others are looting just in case.
+	while tries < 20 and numloot > 0 do
+	  
+		for slot = 1, numloot do
+
+			safeToLoot = true
+			lootThisSlot = false
+
+			local _, icon, name, quantity, quality, locked, isQuestItem, questId, isActive = pcall(GetLootSlotInfo, slot)
 		
-		local tries = 0
-
-		-- seems to get itself stuck when it only runs once... this is intended to allow a few times
-		-- through while the others are looting just in case.
-		while tries < 20 and numloot > 0 do
-		  
-			for slot = 1, numloot do
+			if icon then
 			
-				lootme = false
-
-				local _, icon, name, quantity, quality, locked, isQuestItem, questId, isActive = pcall(GetLootSlotInfo, slot)
-			
-				if icon then
-
-					if GetLootSlotType(slot) == LOOT_SLOT_MONEY then
-						lootme = true
-					end
-							
-					if not lootme and isQuestItem then
-						lootme = true;
-					end
+				local is_item, link2 = (GetLootSlotType(slot) == LOOT_SLOT_ITEM)
+				if is_item then
+						
+					link = GetLootSlotLink(slot)
 				
-					local is_item, link2 = (GetLootSlotType(slot) == LOOT_SLOT_ITEM)
-					if not lootme and is_item then
-							
-						link = GetLootSlotLink(slot)
+					local itemName, sLink, iRarity, iLevel, iMinLevel, sType, sSubType, iStackCount = GetItemInfo(link);						
 					
-						local advancedLootCharacterName = AJM:GetAdvancedLootCharacterName(link);
-						
-						if advancedLootCharacterName ~= nil then
-							if advancedLootCharacterName == AJM.characterName then
-								lootme = true
-							else
-							
-								local sName, sLink, iRarity, iLevel, iMinLevel, sType, sSubType, iStackCount = GetItemInfo(link);
-								local alreadyAlerted = false;
-							
-								for i = 1, itemsAlertedCount do
-									if itemsAlerted[i] == sName then
-										alreadyAlerted = true
-									end
-								end
-								
-								if (not alreadyAlerted) then
-								
-									AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["GOTTA LOOT A FROM B."]( sName, advancedLootCharacterName ), false )
-									
-									itemsAlerted[itemsAlertedCount] = sName
-									itemsAlertedCount = itemsAlertedCount + 1
-								end
-							end								
+					-- Check for items specified in config
+					local advancedLootCharacterName = AJM:GetAdvancedLootCharacterName(link);
+					if advancedLootCharacterName ~= nil then
+						if advancedLootCharacterName == AJM.characterName then
+							lootThisSlot = true
 						else
-							lootme = true
-						end					
+							AJM:AlertAboutLoot(itemName, advancedLootCharacterName)
+							safeToLoot = false
+						end								
 					end
-						
-					if lootme then
-						LootSlot(slot)
+					
+					-- Check for BOP matches
+					if AJM:IsBOP(slot) then
+						if iRarity == 4 and AJM.db.lootBindPickupEpic ~= nil and AJM.db.lootBindPickupEpic ~= "" then
+							if AJM.db.lootBindPickupEpic == AJM.characterName then
+								lootThisSlot = true
+							else
+								AJM:AlertAboutLoot(itemName, AJM.db.lootBindPickupEpic)
+								safeToLoot = false
+							end										
+						end
+						if iRarity == 3 and AJM.db.lootBindPickupRare ~= nil and AJM.db.lootBindPickupRare ~= "" then
+							if AJM.db.lootBindPickupRare == AJM.characterName then
+								lootThisSlot = true
+							else
+								AJM:AlertAboutLoot(itemName, AJM.db.lootBindPickupRare)
+								safeToLoot = false
+							end										
+						end
+						if iRarity == 2 and AJM.db.lootBindPickupUncommon ~= nil and AJM.db.lootBindPickupUncommon ~= "" then
+							if AJM.db.lootBindPickupUncommon == AJM.characterName then
+								lootThisSlot = true
+							else
+								AJM:AlertAboutLoot(itemName, AJM.db.lootBindPickupUncommon)
+								safeToLoot = false
+							end										
+						end
+					end
+					
+					-- Check for BOE Matches
+					if AJM:IsBOE(slot) then
+						if iRarity == 4 and AJM.db.lootBindEquipEpic ~= nil and AJM.db.lootBindEquipEpic ~= "" then
+							if AJM.db.lootBindEquipEpic == AJM.characterName then
+								lootThisSlot = true
+							else
+								AJM:AlertAboutLoot(itemName, AJM.db.lootBindEquipEpic)
+								safeToLoot = false
+							end										
+						end
+						if iRarity == 3 and AJM.db.lootBindPickupRare ~= nil and AJM.db.lootBindPickupRare ~= "" then
+							if AJM.db.lootBindPickupRare == AJM.characterName then
+								lootThisSlot = true
+							else
+								AJM:AlertAboutLoot(itemName, AJM.db.lootBindPickupRare)
+								safeToLoot = false
+							end										
+						end
+						if iRarity == 2 and AJM.db.lootBindEquipUncommon ~= nil and AJM.db.lootBindEquipUncommon ~= "" then
+							if AJM.db.lootBindEquipUncommon == AJM.characterName then
+								lootThisSlot = true
+							else
+								AJM:AlertAboutLoot(itemName, AJM.db.lootBindEquipUncommon)
+								safeToLoot = false
+							end										
+						end
+					end
+					
+					-- Check for Cloth Matches
+					if sType == L["Trade Goods"] and sSubType == L["Cloth"] and AJM.db.lootCloth ~= nil and AJM.db.lootCloth ~= "" then
+						if AJM.db.lootCloth == AJM.characterName then
+							lootThisSlot = true
+						else
+							AJM:AlertAboutLoot(itemName, AJM.db.lootCloth)
+							safeToLoot = false
+						end										
 					end
 				end
-			end
-			numloot = GetNumLootItems()
-			tries = tries + 1
-		end
-
-		if AJM.db.autoCloseLootWindowOnSlaves == true then
-			if JambaApi.IsCharacterTheMaster( AJM.characterName ) ~= true then
-				pcall(CloseLoot)
-			end
-		end
 		
+				-- If this character is set to loot the item in this slot or the item in the slot
+				-- is not on a watch list, then loot the slot.
+				if lootThisSlot == true or safeToLoot == true then
+					LootSlot(slot)
+				end
+			end
+		end
+				
+		numloot = GetNumLootItems()
+		tries = tries + 1
 	end
+
+	if AJM.db.autoCloseLootWindowOnSlaves == true then
+		if JambaApi.IsCharacterTheMaster( AJM.characterName ) ~= true then
+			pcall(CloseLoot)
+		end
+	end
+		
 end
 
 

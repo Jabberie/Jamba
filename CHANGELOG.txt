@@ -1,3 +1,17 @@
+Jamba Version: 5.4.8.2
+WoW Game Version: 5.4.8
+Release Date: 22nd September 2014
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Jamba-AdvancedLoot
+* Added new options from Tehtsuo[1] for marking epic, rare, uncommon or cloth items to be looted by a particular character.
+* Modified so characters will automatically loot items not of interest.
+
+Core
+* Removed multiboxing.com website from description (the website no longer exists).
+
+[1] http://www.dual-boxing.com/threads/50361-Addon-Jamba-An-assistant-for-multiboxers-Version-5-4-0-release-thread?p=392410&viewfull=1#post392410
+
 Jamba Version: 5.4.8
 WoW Game Version: 5.4.8
 Release Date: 29th June 2014

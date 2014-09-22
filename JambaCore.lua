@@ -555,7 +555,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Copyright 2008-2010 Michael 'Jafula' Miller"] 
+		L["Copyright 2008-2014 Michael 'Jafula' Miller"] 
 	)	
 	movingTop = movingTop - labelContinueHeight
 	
@@ -640,15 +640,6 @@ function AJM:CoreSettingsCreateInfo( top )
 	)	
 	movingTop = movingTop - labelContinueHeight
 
-	AJM.settingsControl.labelInformation11 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["http://multiboxing.com/"]
-	)	
-	movingTop = movingTop - labelContinueHeight
-
 	AJM.settingsControl.labelInformation12 = JambaHelperSettings:CreateContinueLabel( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -672,7 +663,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Advanced Loot module written by schilm (Max Schilling)."]
+		L["Advanced Loot by schilm (Max Schilling) - modified by Tehtsuo and Jafula."]
 	)	
 	movingTop = movingTop - labelContinueHeight
 	
