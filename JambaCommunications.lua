@@ -459,8 +459,10 @@ function AJM:OnInitialize()
 	AJM:SettingsCreate()
 	AJM.settingsFrame = AJM.settingsControl.widgetSettings.frame
 	AJM:SettingsRefresh()	
-	-- Hook the ChatFrame_MessageEventHandler to hide any messages that are for the team online channel.
-	AJM:RawHook( "ChatFrame_MessageEventHandler", true )
+	if AJM.db.assumeTeamAlwaysOnline == false then
+		-- Hook the ChatFrame_MessageEventHandler to hide any messages that are for the team online channel.
+		AJM:RawHook( "ChatFrame_MessageEventHandler", true )
+	end
 	AJM.characterName = UnitName( "player" )
 	AJM.characterGUID = UnitGUID( "player" )
 	AJM:RegisterChatCommand( AJM.chatCommand, "JambaChatCommand" )
@@ -472,9 +474,11 @@ function AJM:OnInitialize()
 end
 
 function AJM:OnEnable()
-	-- Wait for some seconds before initialising the team online channel.
-	-- This lets the defaults channels get the usual channel numbers (i.e. Trade is /2).
-	AJM:ScheduleTimer( "InitialiseTeamOnlineChannel", 10 )
+	if AJM.db.assumeTeamAlwaysOnline == false then
+		-- Wait for some seconds before initialising the team online channel.
+		-- This lets the defaults channels get the usual channel numbers (i.e. Trade is /2).
+		AJM:ScheduleTimer( "InitialiseTeamOnlineChannel", 10 )
+	end
 	if AJM.db.boostCommunication == true then
 		AJM:BoostCommunication()
 		-- Repeat every 5 minutes.
@@ -573,10 +577,18 @@ function AJM:SettingsCreateOptions( top )
 		headingWidth, 
 		column1Left, 
 		movingTop, 
-		L["Assume All Team Members Always Online"],
+		L["Assume All Team Members Always Online*"],
 		AJM.CheckBoxAssumeAlwaysOnline
 	)
-	movingTop = movingTop - checkBoxHeight		
+	movingTop = movingTop - checkBoxHeight	
+	AJM.settingsControl.labelInformationAlwaysOnline = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["*reload UI to take effect"]
+	)	
+	movingTop = movingTop - labelContinueHeight	
 	AJM.settingsControl.checkBoxBoostCommunication = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 

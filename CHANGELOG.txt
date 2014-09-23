@@ -1,3 +1,15 @@
+Jamba Version: 5.4.8.3
+WoW Game Version: 5.4.8
+Release Date: 23rd September 2014
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Jamba-AdvancedLoot
+* Added two pass loot system from Tehtsuo back into AdvancedLoot so that lootable corpses will still sparkle for all toons if an item of interest is available to be looted.
+
+Core: Communications
+* If Assume All Team Members Online is checked then Jamba will not open a private channel. This change means that when Assume All Team Members Online is checked, there will be no chat channel spam when the ElvUI addon is loaded as well as Jamba. It does mean that you will have to specifically add/remove characters from the Jamba team list as you are playing them or you will get Player XXX Not Found messages.
+* Assume All Team Members Online now requires a game /reload after it changes in order for the change to take effect.
+
 Jamba Version: 5.4.8.2
 WoW Game Version: 5.4.8
 Release Date: 22nd September 2014

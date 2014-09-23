@@ -57,7 +57,8 @@ L["Settings"] = true
 L["Options"] = true
 L["Help"] = true
 L["Team Online Check"] = true
-L["Assume All Team Members Always Online"] = true
+L["Assume All Team Members Always Online*"] = true
 L["Boost Jamba to Jamba Communications**"] = true
 L["**reload UI to take effect, may cause disconnections"] = true
+L["*reload UI to take effect"] = true
 

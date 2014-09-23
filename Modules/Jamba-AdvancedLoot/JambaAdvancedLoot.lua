@@ -733,9 +733,11 @@ function AJM:DoAdvancedLoot()
 	-- through while the others are looting just in case.
 	while tries < 20 and numloot > 0 do
 	  
+		safeToLoot = true
+		
+		-- Pass one: Find out if there are any items with advanced loot targets
 		for slot = 1, numloot do
-
-			safeToLoot = true
+		
 			lootThisSlot = false
 
 			local _, icon, name, quantity, quality, locked, isQuestItem, questId, isActive = pcall(GetLootSlotInfo, slot)
@@ -827,14 +829,21 @@ function AJM:DoAdvancedLoot()
 					end
 				end
 		
-				-- If this character is set to loot the item in this slot or the item in the slot
-				-- is not on a watch list, then loot the slot.
-				if lootThisSlot == true or safeToLoot == true then
+				-- If this character is set to loot the item in this slot, then loot the slot.
+				if lootThisSlot == true then
 					LootSlot(slot)
 				end
 			end
 		end
-				
+
+		-- Pass two: Pick up everything else
+		numloot = GetNumLootItems()
+		if safeToLoot then
+			for slot = 1, numloot do
+				LootSlot(slot)
+			end
+		end
+			
 		numloot = GetNumLootItems()
 		tries = tries + 1
 	end
