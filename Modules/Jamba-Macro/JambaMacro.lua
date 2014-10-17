@@ -1451,7 +1451,7 @@ function AJM:UpdateInternalMacros( macroSet, variableSet, silent )
 	end
 	AJM.db.currentVariableSetName = variableSet.name
 	AJM.db.currentMacroSetName = macroSet.name
-	if InCombatLockdown() == 1 then
+	if InCombatLockdown() then
 		AJM:Print( L["In combat, waiting until after combat to update the macros."] )
 		AJM.pendingMacroUpdate = true
 		return

@@ -719,7 +719,7 @@ end
 
 -- The ContainerFrameItemButton_OnModifiedClick hook.
 function AJM:ContainerFrameItemButton_OnModifiedClick( self, event, ... )
-	if AJM.db.sellItemOnAllWithAltKey == true and IsAltKeyDown() == 1 and MerchantFrame:IsVisible() == 1 then
+	if AJM.db.sellItemOnAllWithAltKey == true and IsAltKeyDown() and MerchantFrame:IsVisible() then
 		local bag, slot = self:GetParent():GetID(), self:GetID()
 		local texture, count, locked, quality, readable, lootable, link = GetContainerItemInfo( bag, slot )
 		AJM:JambaSendCommandToTeam( AJM.COMMAND_SELL_ITEM, link )

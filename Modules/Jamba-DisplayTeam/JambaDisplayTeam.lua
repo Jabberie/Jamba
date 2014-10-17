@@ -283,19 +283,19 @@ local function CreateJambaTeamListFrame()
 	frame:SetFrameStrata( "LOW" )
 	frame:SetToplevel( true )
 	frame:SetClampedToScreen( true )
-	frame:EnableMouse()
+	frame:EnableMouse( true )
 	frame:SetMovable( true )	
 	frame:RegisterForDrag( "LeftButton" )
 	frame:SetScript( "OnDragStart", 
 		function( this ) 
-			if IsAltKeyDown() == 1 then
+			if IsAltKeyDown() then
 				this:StartMoving() 
 			end
 		end )
 	frame:SetScript( "OnDragStop", 
 		function( this ) 
 			this:StopMovingOrSizing() 
-			point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
+			local point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
 			AJM.db.framePoint = point
 			AJM.db.frameRelativePoint = relativePoint
 			AJM.db.frameXOffset = xOffset
@@ -372,7 +372,7 @@ function AJM:SetTeamListVisibility()
 end
 
 function AJM:RefreshTeamListControlsHide()
-	if InCombatLockdown() == 1 then
+	if InCombatLockdown() then
 		AJM.refreshHideTeamListControlsPending = true
 		return
 	end
@@ -384,7 +384,7 @@ function AJM:RefreshTeamListControlsHide()
 end
 
 function AJM:RefreshTeamListControlsShow()
-	if InCombatLockdown() == 1 then
+	if InCombatLockdown() then
 		AJM.refreshShowTeamListControlsPending = true
 		return
 	end
@@ -455,7 +455,9 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	--portraitButton.Texture:SetAllPoints()
 	portraitButton:ClearModel()
 	portraitButton:SetUnit( characterName )
-	portraitButton:SetCamera( 0 )
+	portraitButton:SetPortraitZoom( 1 )
+    portraitButton:SetCamDistanceScale( 1 )
+    portraitButton:SetPosition( 0, 0, 0 )
 	local portraitButtonClick = CreateFrame( "CheckButton", portraitName.."Click", parentFrame, "SecureActionButtonTemplate" )
 	portraitButtonClick:SetAttribute( "type", "macro" )
 	portraitButtonClick:SetAttribute( "macrotext", "/targetexact "..characterName )
@@ -651,8 +653,10 @@ function AJM:UpdateJambaTeamStatusBar( characterName, characterPosition )
 	if AJM.db.showCharacterPortrait == true then
 		portraitButton:ClearModel()
 		portraitButton:SetUnit( characterName )
-		portraitButton:SetCamera( 0 )		
-		portraitButton:SetWidth( AJM.db.characterPortraitWidth )
+		portraitButton:SetPortraitZoom( 1 )
+        portraitButton:SetCamDistanceScale( 1 )
+        portraitButton:SetPosition( 0, 0, 0 )
+        portraitButton:SetWidth( AJM.db.characterPortraitWidth )
 		portraitButton:SetHeight( AJM.db.characterPortraitWidth )
 		portraitButton:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", positionLeft, positionTop )
 		portraitButtonClick:SetWidth( AJM.db.characterPortraitWidth )
@@ -1326,7 +1330,7 @@ function AJM:SettingsRefresh()
 	-- State.
 	-- Trying to change state in combat lockdown causes taint. Let's not do that. Eventually it would be nice to have a "proper state driven team display",
 	-- but this workaround is enough for now.
-	if InCombatLockdown() == nil then
+	if not InCombatLockdown() then
 		AJM.settingsControl.displayOptionsCheckBoxShowTeamListOnlyOnMaster:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxHideTeamListInCombat:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxStackVertically:SetDisabled( not AJM.db.showTeamList )
@@ -1737,10 +1741,10 @@ end
 
 function AJM:SendBagInformationUpdateCommand()
 	if AJM.db.showTeamList == true and AJM.db.showBagInformation == true then
-		if UnitIsGhost( "player" ) == 1 then
+		if UnitIsGhost( "player" ) then
 			return
 		end
-		if UnitIsDead( "player" ) == 1 then
+		if UnitIsDead( "player" ) then
 			return
 		end		
 		local slotsFree, totalSlots = LibBagUtils:CountSlots( "BAGS", 0 )
@@ -2036,7 +2040,7 @@ function AJM:UpdateReputationStatus( characterName, reputationName, reputationSt
 	end
 	if reputationBarValue == nil then
 		reputationBarValue = reputationBarText.reputationBarValue
-	end	
+	end
 	reputationBarText.reputationName = reputationName
 	reputationBarText.reputationStandingID = reputationStandingID
 	reputationBarText.reputationBarMin = reputationBarMin
@@ -2044,9 +2048,19 @@ function AJM:UpdateReputationStatus( characterName, reputationName, reputationSt
 	reputationBarText.reputationBarValue = reputationBarValue
 	reputationBar:SetMinMaxValues( tonumber( reputationBarMin ), tonumber( reputationBarMax ) )
 	reputationBar:SetValue( tonumber( reputationBarValue ) )
+    if reputationName == 0 then
+        reputationBarMin = 0
+        reputationBarMax = 100
+        reputationBarValue = 100
+        reputationStandingID = 1
+    end
 	local text = ""
 	if AJM.db.showReputationName == true then
-		text = text..reputationName.." "
+        if reputationName == 0 then
+		    text = text..L["No Faction Selected"].." "
+        else
+            text = text..reputationName.." "
+        end
 	end
 	-- TODO: do we need to hook SetWatchedFactionIndex for when a watched faction changes?
 	if AJM.db.reputationStatusShowValues == true then
@@ -2261,6 +2275,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "ITEM_PUSH" )
 	AJM:RegisterEvent( "CHAT_MSG_COMBAT_FACTION_CHANGE" )
 	AJM:RegisterEvent( "UI_ERROR_MESSAGE", "ITEM_PUSH" )
+    --AJM:RegisterEvent( "UNIT_PORTRAIT_UPDATE" )
 	AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_Registered" )
     AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_SetGlobal" )	
 	AJM:RegisterMessage( JambaApi.MESSAGE_TEAM_CHARACTER_ADDED, "OnCharactersChanged" )

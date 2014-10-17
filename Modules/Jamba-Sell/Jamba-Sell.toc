@@ -1,8 +1,8 @@
-## Interface: 50400
+## Interface: 60000
 ## Title: Jamba-Sell
 ## Notes: Jamba-Sell
 ## Author: Jafula
-## Version: 5.4.8.3
+## Version: 6.0.2.1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

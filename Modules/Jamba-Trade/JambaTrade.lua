@@ -349,15 +349,13 @@ function AJM:CreateInventoryFrame()
 	frame:SetMovable( true )	
 	frame:RegisterForDrag( "LeftButton" )
 	frame:SetScript( "OnDragStart", 
-		function( this ) 
-			--if IsAltKeyDown() == 1 then
-				this:StartMoving() 
-			--end
+		function( this )
+            this:StartMoving()
 		end )
 	frame:SetScript( "OnDragStop", 
 		function( this ) 
 			this:StopMovingOrSizing() 
-			point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
+			local point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
 			AJM.db.framePoint = point
 			AJM.db.frameRelativePoint = relativePoint
 			AJM.db.frameXOffset = xOffset
@@ -556,7 +554,7 @@ function AJM:JambaTradeSubClassDropDownChanged( event, value )
 end
 
 function AJM:JambaTradeIgnoreSoulBoundCheckboxChanged()
-	if JambaTradeInventoryFrame.checkBoxIgnoreSoulBound:GetChecked() == 1 then
+	if JambaTradeInventoryFrame.checkBoxIgnoreSoulBound:GetChecked() then
 		AJM.db.ignoreSoulBound = true
 	else
 		AJM.db.ignoreSoulBound = false
@@ -673,7 +671,7 @@ function AJM:GUILDBANKFRAME_OPENED()
 	if AJM.db.adjustMoneyWithGuildBank == false then
 		return
 	end
-	if CanWithdrawGuildBankMoney() == nil then
+	if not CanWithdrawGuildBankMoney() then
 		return
 	end
 	local moneyToKeepOnToon = tonumber( AJM.db.goldAmountToKeepOnToon ) * 10000
@@ -708,7 +706,7 @@ end
 
 function AJM:LoadItemIntoTrade( bag, slot, ignoreSoulBound )
 	ClearCursor()
-	LibGratuity:SetBagItem( bag,slot )
+	LibGratuity:SetBagItem( bag, slot )
 	if LibGratuity:Find( ITEM_SOULBOUND, 1, 3 ) then
 		-- SOULBOUND
 		if ignoreSoulBound == true then
@@ -772,7 +770,7 @@ function AJM:SplitStackItemByNameLimitAmount( name, amount )
 		-- Attempt to split the item to the request amount.
 		SplitContainerItem( bag, slot, amount )
 		-- If successful, cursor will have item, stick it into an empty spot in the bags.
-		if CursorHasItem() == 1 then
+		if CursorHasItem() then
 			LibBagUtils:PutItem( "BAGS" )
 			foundAndSplit = true
 		end
@@ -836,28 +834,28 @@ function AJM:AddToClassAndSubClassLists( class, subClass )
 end
 
 function AJM:GetQualityName( quality )
-	if quality == 0 then
+	if quality == LE_ITEM_QUALITY_POOR then
 		return L["0. Poor (gray)"]
 	end
-	if quality == 1 then
+	if quality == LE_ITEM_QUALITY_COMMON then
 		return L["1. Common (white)"]
 	end
-	if quality == 2 then
+	if quality == LE_ITEM_QUALITY_UNCOMMON then
 		return L["2. Uncommon (green)"]
 	end
-	if quality == 3 then
+	if quality == LE_ITEM_QUALITY_RARE then
 		return L["3. Rare / Superior (blue)"]
 	end
-	if quality == 4 then
+	if quality == LE_ITEM_QUALITY_EPIC then
 		return L["4. Epic (purple)"]
 	end
-	if quality == 5 then
+	if quality == LE_ITEM_QUALITY_LEGENDARY then
 		return L["5. Legendary (orange)"]
 	end
 	if quality == 6 then
 		return L["6. Artifact (golden yellow)"]
 	end
-	if quality == 7 then
+	if quality == LE_ITEM_QUALITY_HEIRLOOM then
 		return L["7. Heirloom (light yellow)"]
 	end
 	return L["Unknown"]		

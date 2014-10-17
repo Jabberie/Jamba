@@ -115,6 +115,12 @@ local function GetConfiguration()
 	return configuration
 end
 
+
+-- Debug message.
+function AJM:DebugMessage( ... )
+    --AJM:Print( ... )
+end
+
 -------------------------------------------------------------------------------------------------------------
 -- Character online management.
 -------------------------------------------------------------------------------------------------------------
@@ -226,6 +232,8 @@ function AJM:CHAT_MSG_CHANNEL_LEAVE( event, ... )
 	end
 end
 
+-- TODO: Investigate ChatFrame_AddMessageEventFilter (hooks may be the wrong thing to do here)
+-- TODO: See http://www.wowwiki.com/API_ChatFrame_AddMessageEventFilter
 -- The ChatFrame_MessageEventHandler hook.
 function AJM:ChatFrame_MessageEventHandler( self, event, ... )
 	if AJM.db.showOnlineChannel == true then
@@ -268,10 +276,12 @@ end
 
 -- Send a command to all members of the current team.
 local function CommandAll( moduleName, commandName, ... )
+    AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	-- Send command to all in group/raid.
-	if UnitInBattleground( "player" ) == nil then
+	if not UnitInBattleground( "player" ) then
+        AJM:DebugMessage( "Sending command to group." )
 		AJM:SendCommMessage( 
 			AJM.COMMAND_PREFIX,
 			message,
@@ -282,6 +292,7 @@ local function CommandAll( moduleName, commandName, ... )
 	end
 	-- If player not in a party or raid, then send to player.
 	if GetNumSubgroupMembers() == 0 and GetNumGroupMembers() == 0 then
+        AJM:DebugMessage( "Sending command just to single player." )
 		AJM:SendCommMessage( 
 			AJM.COMMAND_PREFIX,
 			message,
@@ -295,21 +306,22 @@ local function CommandAll( moduleName, commandName, ... )
 		if IsCharacterOnline( characterName ) == true then
 			local canSend = false
 			-- Team member not in party then send command.
-			if UnitInParty( characterName ) == nil then
+			if not UnitInParty( characterName ) then
 				canSend = true
 			end
 			-- In raid and team member not in raid then send command.
-			if GetNumGroupMembers() > 0 and IsInRaid() == nil then
+			if GetNumGroupMembers() > 0 and not IsInRaid() then
 				canSend = true
 			end
 			-- If in a battleground then send a whisper as the party/raid would have not been sent.
 			if UnitInBattleground( "player" ) then
 				canSend = true
 			end
-			if UnitInBattleground( characterName ) ~= nil then
+			if UnitInBattleground( characterName ) then
 				canSend = true
 			end
-			if canSend == true then			
+			if canSend == true then
+                AJM:DebugMessage( "Sending command to others not in party/raid." )
 				AJM:SendCommMessage( 
 					AJM.COMMAND_PREFIX,
 					message,
@@ -324,6 +336,7 @@ end
 
 -- Send a command to the master.
 local function CommandMaster( moduleName, commandName, ... )
+    AJM:DebugMessage( "Command Master: ", moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	-- Send the message to the master.
@@ -376,11 +389,14 @@ end
 
 -- Receive a command from another character.
 function AJM:CommandReceived( prefix, message, distribution, sender )
+    AJM:DebugMessage( "Command received: ", prefix, message, distribution, sender )
 	-- Check if the command is for Jamba Communications.
 	if prefix == AJM.COMMAND_PREFIX then
 		-- Check if the sender is trusted.
         sender = Ambiguate(sender, "none")
+        AJM:DebugMessage( "Sender after ambiguate: ", sender )
 		if JambaPrivate.Team.IsCharacterInTeam( sender ) == true then
+            AJM:DebugMessage( "Sender is in team list." )
 			-- Split the command into its components.
 			local moduleName, commandName, argumentsStringSerialized = strsplit( AJM.COMMAND_SEPERATOR, message )
 			local argumentsTable  = {}
@@ -405,6 +421,7 @@ function AJM:CommandReceived( prefix, message, distribution, sender )
 				JambaPrivate.Core.OnSettingsReceived( sender, moduleName, unpack( argumentsTable ) )
 			else
 				-- Any other command can go directly to the module that sent it.
+                AJM:DebugMessage( "Sending command on to module: ", sender, moduleName, commandName, unpack( argumentsTable ) )
 				JambaPrivate.Core.OnCommandReceived( sender, moduleName, commandName, unpack( argumentsTable ) )
 			end			
 		end

@@ -931,14 +931,14 @@ function AJM:CreateProcFrame()
     AJM.procFrame:ClearAllPoints()
 	AJM.procFrame:SetScript( "OnDragStart", 
 		function( this ) 
-			if IsAltKeyDown() == 1 then
+			if IsAltKeyDown() then
 				this:StartMoving() 
 			end
 		end )
 	AJM.procFrame:SetScript( "OnDragStop", 
 		function( this ) 
 			this:StopMovingOrSizing() 
-			point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
+			local point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
 			AJM.db.framePoint = point
 			AJM.db.frameRelativePoint = relativePoint
 			AJM.db.frameXOffset = xOffset

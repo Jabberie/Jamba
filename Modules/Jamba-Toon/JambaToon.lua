@@ -39,8 +39,8 @@ AJM.CIllustriousJewelcraftersToken = 361
 AJM.CConquestPoints = 390
 AJM.CTolBaradCommendation = 391
 AJM.CHonorPoints = 392
-AJM.CJusticePoints = 395
-AJM.CValorPoints = 396
+--AJM.CJusticePoints = 395
+--AJM.CValorPoints = 396
 AJM.CIronpawToken = 402
 AJM.CLesserCharmOfGoodFortune = 738
 AJM.CElderCharmOfGoodFortune = 697
@@ -79,8 +79,8 @@ AJM.settings = {
 		afkMessage = L["I am inactive!"],
 		currGold = true,
 		currGoldInGuildBank = false,
-		currJusticePoints = true,
-		currValorPoints = true,
+--		currJusticePoints = true,
+--		currValorPoints = true,
 		currHonorPoints = true,
 		currConquestPoints = true,
 		currTolBaradCommendation = true,
@@ -331,24 +331,24 @@ local function SettingsCreateCurrency( top )
 		AJM.SettingsToggleCurrencyGoldInGuildBank
 	)	
 	movingTop = movingTop - checkBoxHeight		
-	AJM.settingsControlCurrency.checkBoxCurrencyJusticePoints = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControlCurrency, 
-		headingWidth, 
-		left, 
-		movingTop, 
-		L["Justice Points"]..L[" ("]..L["JP"]..L[")"],
-		AJM.SettingsToggleCurrencyJusticePoints
-	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControlCurrency.checkBoxCurrencyValorPoints = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControlCurrency, 
-		headingWidth, 
-		left, 
-		movingTop, 
-		L["Valor Points"]..L[" ("]..L["VP"]..L[")"],
-		AJM.SettingsToggleCurrencyValorPoints
-	)	
-	movingTop = movingTop - checkBoxHeight
+--	AJM.settingsControlCurrency.checkBoxCurrencyJusticePoints = JambaHelperSettings:CreateCheckBox(
+--		AJM.settingsControlCurrency,
+--		headingWidth,
+--		left,
+--		movingTop,
+--		L["Justice Points"]..L[" ("]..L["JP"]..L[")"],
+--		AJM.SettingsToggleCurrencyJusticePoints
+--	)
+--	movingTop = movingTop - checkBoxHeight
+--	AJM.settingsControlCurrency.checkBoxCurrencyValorPoints = JambaHelperSettings:CreateCheckBox(
+--		AJM.settingsControlCurrency,
+--		headingWidth,
+--		left,
+--		movingTop,
+--		L["Valor Points"]..L[" ("]..L["VP"]..L[")"],
+--		AJM.SettingsToggleCurrencyValorPoints
+--	)
+--	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlCurrency.checkBoxCurrencyHonorPoints = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControlCurrency, 
 		headingWidth, 
@@ -868,8 +868,8 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCurrency.checkBoxCurrencyGold:SetValue( AJM.db.currGold )
 	AJM.settingsControlCurrency.checkBoxCurrencyGoldInGuildBank:SetValue( AJM.db.currGoldInGuildBank )
 	AJM.settingsControlCurrency.checkBoxCurrencyGoldInGuildBank:SetDisabled( not AJM.db.currGold )
-	AJM.settingsControlCurrency.checkBoxCurrencyJusticePoints:SetValue( AJM.db.currJusticePoints )
-	AJM.settingsControlCurrency.checkBoxCurrencyValorPoints:SetValue( AJM.db.currValorPoints )
+--	AJM.settingsControlCurrency.checkBoxCurrencyJusticePoints:SetValue( AJM.db.currJusticePoints )
+--	AJM.settingsControlCurrency.checkBoxCurrencyValorPoints:SetValue( AJM.db.currValorPoints )
 	AJM.settingsControlCurrency.checkBoxCurrencyHonorPoints:SetValue( AJM.db.currHonorPoints )
 	AJM.settingsControlCurrency.checkBoxCurrencyConquestPoints:SetValue( AJM.db.currConquestPoints )
 	AJM.settingsControlCurrency.checkBoxCurrencyTolBaradCommendation:SetValue( AJM.db.currTolBaradCommendation )
@@ -1043,15 +1043,15 @@ function AJM:SettingsToggleCurrencyGoldInGuildBank( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyJusticePoints( event, checked )
-	AJM.db.currJusticePoints = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyValorPoints( event, checked )
-	AJM.db.currValorPoints = checked
-	AJM:SettingsRefresh()
-end
+--function AJM:SettingsToggleCurrencyJusticePoints( event, checked )
+--	AJM.db.currJusticePoints = checked
+--	AJM:SettingsRefresh()
+--end
+--
+--function AJM:SettingsToggleCurrencyValorPoints( event, checked )
+--	AJM.db.currValorPoints = checked
+--	AJM:SettingsRefresh()
+--end
 
 function AJM:SettingsToggleCurrencyHonorPoints( event, checked )
 	AJM.db.currHonorPoints = checked
@@ -1275,8 +1275,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.merchantArea = settings.merchantArea
 		AJM.db.currGold = settings.currGold
 		AJM.db.currGoldInGuildBank = settings.currGoldInGuildBank
-		AJM.db.currJusticePoints = settings.currJusticePoints
-		AJM.db.currValorPoints = settings.currValorPoints
+--		AJM.db.currJusticePoints = settings.currJusticePoints
+--		AJM.db.currValorPoints = settings.currValorPoints
 		AJM.db.currHonorPoints = settings.currHonorPoints
 		AJM.db.currConquestPoints = settings.currConquestPoints
 		AJM.db.currTolBaradCommendation = settings.currTolBaradCommendation
@@ -1367,7 +1367,7 @@ function AJM:MERCHANT_SHOW( event, ... )
 		return
 	end	
 	-- Can this merchant repair?
-	if CanMerchantRepair() == nil then 
+	if not CanMerchantRepair() then
 		return
 	end		
 	-- How much to repair?
@@ -1379,7 +1379,7 @@ function AJM:MERCHANT_SHOW( event, ... )
 	if repairCost > 0 then
 		-- If allowed to use guild funds, then attempt to repair using guild funds.
 		if AJM.db.autoRepairUseGuildFunds == true then
-			if IsInGuild() == 1 and CanGuildBankRepair() == 1 then
+			if IsInGuild() and CanGuildBankRepair() then
 				RepairAllItems( 1 )
 			end
 		end
@@ -1474,10 +1474,10 @@ end
 
 function AJM:ITEM_PUSH( event, ... )
     if AJM.db.warnBagsFull == true then
-		if UnitIsGhost( "player" ) == 1 then
+		if UnitIsGhost( "player" ) then
 			return
 		end
-		if UnitIsDead( "player" ) == 1 then
+		if UnitIsDead( "player" ) then
 			return
 		end
 		local numberFreeSlots, numberTotalSlots = LibBagUtils:CountSlots( "BAGS", 0 )
@@ -1510,14 +1510,14 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	frame:RegisterForDrag( "LeftButton" )
 	frame:SetScript( "OnDragStart", 
 		function( this ) 
-			if IsAltKeyDown() == 1 then
+			if IsAltKeyDown() then
 				this:StartMoving() 
 			end
 		end )
 	frame:SetScript( "OnDragStop", 
 		function( this ) 
 			this:StopMovingOrSizing() 
-			point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
+			local point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
 			AJM.db.currencyFramePoint = point
 			AJM.db.currencyFrameRelativePoint = relativePoint
 			AJM.db.currencyFrameXOffset = xOffset
@@ -1574,26 +1574,26 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	frameGoldText:SetJustifyH( "CENTER" )
 	frame.GoldText = frameGoldText
 	left = left + spacing	
-	-- Set the JusticePoints font string.
-	local frameJusticePoints = AJM.globalCurrencyFramePrefix.."TitleJusticePoints"
-	local frameJusticePointsText = parentFrame:CreateFontString( frameJusticePoints.."Text", "OVERLAY", "GameFontNormal" )
-	frameJusticePointsText:SetText( L["JP"] )
-	frameJusticePointsText:SetTextColor( r, g, b, a )
-	frameJusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameJusticePointsText:SetWidth( width )
-	frameJusticePointsText:SetJustifyH( "CENTER" )
-	frame.JusticePointsText = frameJusticePointsText
-	left = left + spacing
-	-- Set the ValorPoints font string.
-	local frameValorPoints = AJM.globalCurrencyFramePrefix.."TitleValorPoints"
-	local frameValorPointsText = parentFrame:CreateFontString( frameValorPoints.."Text", "OVERLAY", "GameFontNormal" )
-	frameValorPointsText:SetText( L["VP"] )
-	frameValorPointsText:SetTextColor( r, g, b, a )
-	frameValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameValorPointsText:SetWidth( width )
-	frameValorPointsText:SetJustifyH( "CENTER" )
-	frame.ValorPointsText = frameValorPointsText
-	left = left + spacing
+--	-- Set the JusticePoints font string.
+--	local frameJusticePoints = AJM.globalCurrencyFramePrefix.."TitleJusticePoints"
+--	local frameJusticePointsText = parentFrame:CreateFontString( frameJusticePoints.."Text", "OVERLAY", "GameFontNormal" )
+--	frameJusticePointsText:SetText( L["JP"] )
+--	frameJusticePointsText:SetTextColor( r, g, b, a )
+--	frameJusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+--	frameJusticePointsText:SetWidth( width )
+--	frameJusticePointsText:SetJustifyH( "CENTER" )
+--	frame.JusticePointsText = frameJusticePointsText
+--	left = left + spacing
+--	-- Set the ValorPoints font string.
+--	local frameValorPoints = AJM.globalCurrencyFramePrefix.."TitleValorPoints"
+--	local frameValorPointsText = parentFrame:CreateFontString( frameValorPoints.."Text", "OVERLAY", "GameFontNormal" )
+--	frameValorPointsText:SetText( L["VP"] )
+--	frameValorPointsText:SetTextColor( r, g, b, a )
+--	frameValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+--	frameValorPointsText:SetWidth( width )
+--	frameValorPointsText:SetJustifyH( "CENTER" )
+--	frame.ValorPointsText = frameValorPointsText
+--	left = left + spacing
 	-- Set the HonorPoints font string.
 	local frameHonorPoints = AJM.globalCurrencyFramePrefix.."TitleHonorPoints"
 	local frameHonorPointsText = parentFrame:CreateFontString( frameHonorPoints.."Text", "OVERLAY", "GameFontNormal" )
@@ -1872,24 +1872,24 @@ function AJM:CurrencyListSetColumnWidth()
 		parentFrame.GoldText:Hide()
 		haveGold = 0
 	end
-	if AJM.db.currJusticePoints == true then
-		parentFrame.JusticePointsText:SetWidth( pointsWidth )
-		parentFrame.JusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.JusticePointsText:Show()
-	else
-		parentFrame.JusticePointsText:Hide()
-	end
-	if AJM.db.currValorPoints == true then
-		parentFrame.ValorPointsText:SetWidth( pointsWidth )
-		parentFrame.ValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.ValorPointsText:Show()
-	else
-		parentFrame.ValorPointsText:Hide()
-	end
+--	if AJM.db.currJusticePoints == true then
+--		parentFrame.JusticePointsText:SetWidth( pointsWidth )
+--		parentFrame.JusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+--		left = left + pointsWidth + spacingWidth
+--		numberOfPointsColumns = numberOfPointsColumns + 1
+--		parentFrame.JusticePointsText:Show()
+--	else
+--		parentFrame.JusticePointsText:Hide()
+--	end
+--	if AJM.db.currValorPoints == true then
+--		parentFrame.ValorPointsText:SetWidth( pointsWidth )
+--		parentFrame.ValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+--		left = left + pointsWidth + spacingWidth
+--		numberOfPointsColumns = numberOfPointsColumns + 1
+--		parentFrame.ValorPointsText:Show()
+--	else
+--		parentFrame.ValorPointsText:Hide()
+--	end
 	if AJM.db.currHonorPoints == true then
 		parentFrame.HonorPointsText:SetWidth( pointsWidth )
 		parentFrame.HonorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
@@ -2031,22 +2031,22 @@ function AJM:CurrencyListSetColumnWidth()
 		else
 			currencyFrameCharacterInfo.GoldText:Hide()
 		end
-		if AJM.db.currJusticePoints == true then
-			currencyFrameCharacterInfo.JusticePointsText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.JusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.JusticePointsText:Show()
-		else
-			currencyFrameCharacterInfo.JusticePointsText:Hide()
-		end
-		if AJM.db.currValorPoints == true then
-			currencyFrameCharacterInfo.ValorPointsText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.ValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.ValorPointsText:Show()
-		else
-			currencyFrameCharacterInfo.ValorPointsText:Hide()
-		end
+--		if AJM.db.currJusticePoints == true then
+--			currencyFrameCharacterInfo.JusticePointsText:SetWidth( pointsWidth )
+--			currencyFrameCharacterInfo.JusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+--			left = left + pointsWidth + spacingWidth
+--			currencyFrameCharacterInfo.JusticePointsText:Show()
+--		else
+--			currencyFrameCharacterInfo.JusticePointsText:Hide()
+--		end
+--		if AJM.db.currValorPoints == true then
+--			currencyFrameCharacterInfo.ValorPointsText:SetWidth( pointsWidth )
+--			currencyFrameCharacterInfo.ValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+--			left = left + pointsWidth + spacingWidth
+--			currencyFrameCharacterInfo.ValorPointsText:Show()
+--		else
+--			currencyFrameCharacterInfo.ValorPointsText:Hide()
+--		end
 		if AJM.db.currHonorPoints == true then
 			currencyFrameCharacterInfo.HonorPointsText:SetWidth( pointsWidth )
 			currencyFrameCharacterInfo.HonorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
@@ -2251,26 +2251,26 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	frameGoldText:SetJustifyH( "RIGHT" )
 	currencyFrameCharacterInfo.GoldText = frameGoldText
 	left = left + spacing	
-	-- Set the JusticePoints font string.
-	local frameJusticePoints = AJM.globalCurrencyFramePrefix.."JusticePoints"
-	local frameJusticePointsText = parentFrame:CreateFontString( frameJusticePoints.."Text", "OVERLAY", "GameFontNormal" )
-	frameJusticePointsText:SetText( "0" )
-	frameJusticePointsText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameJusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameJusticePointsText:SetWidth( width )
-	frameJusticePointsText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.JusticePointsText = frameJusticePointsText
-	left = left + spacing
-	-- Set the ValorPoints font string.
-	local frameValorPoints = AJM.globalCurrencyFramePrefix.."ValorPoints"
-	local frameValorPointsText = parentFrame:CreateFontString( frameValorPoints.."Text", "OVERLAY", "GameFontNormal" )
-	frameValorPointsText:SetText( "0" )
-	frameValorPointsText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameValorPointsText:SetWidth( width )
-	frameValorPointsText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.ValorPointsText = frameValorPointsText
-	left = left + spacing
+--	-- Set the JusticePoints font string.
+--	local frameJusticePoints = AJM.globalCurrencyFramePrefix.."JusticePoints"
+--	local frameJusticePointsText = parentFrame:CreateFontString( frameJusticePoints.."Text", "OVERLAY", "GameFontNormal" )
+--	frameJusticePointsText:SetText( "0" )
+--	frameJusticePointsText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+--	frameJusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+--	frameJusticePointsText:SetWidth( width )
+--	frameJusticePointsText:SetJustifyH( "CENTER" )
+--	currencyFrameCharacterInfo.JusticePointsText = frameJusticePointsText
+--	left = left + spacing
+--	-- Set the ValorPoints font string.
+--	local frameValorPoints = AJM.globalCurrencyFramePrefix.."ValorPoints"
+--	local frameValorPointsText = parentFrame:CreateFontString( frameValorPoints.."Text", "OVERLAY", "GameFontNormal" )
+--	frameValorPointsText:SetText( "0" )
+--	frameValorPointsText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+--	frameValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+--	frameValorPointsText:SetWidth( width )
+--	frameValorPointsText:SetJustifyH( "CENTER" )
+--	currencyFrameCharacterInfo.ValorPointsText = frameValorPointsText
+--	left = left + spacing
 	-- Set the HonorPoints font string.
 	local frameHonorPoints = AJM.globalCurrencyFramePrefix.."HonorPoints"
 	local frameHonorPointsText = parentFrame:CreateFontString( frameHonorPoints.."Text", "OVERLAY", "GameFontNormal" )
@@ -2426,8 +2426,8 @@ function AJM:JambaToonRequestCurrency()
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
 		currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.JusticePointsText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.ValorPointsText:SetTextColor( r, g, b, a )
+--		currencyFrameCharacterInfo.JusticePointsText:SetTextColor( r, g, b, a )
+--		currencyFrameCharacterInfo.ValorPointsText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.HonorPointsText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.ConquestPointsText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.TolBaradCommendationText:SetTextColor( r, g, b, a )
@@ -2445,7 +2445,7 @@ function AJM:JambaToonRequestCurrency()
 	end
 	AJM.currencyTotalGold = 0
 	if AJM.db.currGoldInGuildBank == true then
-		if IsInGuild() == 1 then
+		if IsInGuild() then
 			AJM.currencyTotalGold = GetGuildBankMoney()
 		end
 	end
@@ -2455,8 +2455,8 @@ end
 function AJM:DoSendCurrency( characterName, dummyValue )
 	table.wipe( AJM.currentCurrencyValues )
 	AJM.currentCurrencyValues.currGold = GetMoney()
-	AJM.currentCurrencyValues.currJusticePoints = select( 2, GetCurrencyInfo( AJM.CJusticePoints ) )
-	AJM.currentCurrencyValues.currValorPoints = select( 2, GetCurrencyInfo( AJM.CValorPoints ) )
+--	AJM.currentCurrencyValues.currJusticePoints = select( 2, GetCurrencyInfo( AJM.CJusticePoints ) )
+--	AJM.currentCurrencyValues.currValorPoints = select( 2, GetCurrencyInfo( AJM.CValorPoints ) )
 	AJM.currentCurrencyValues.currHonorPoints = select( 2, GetCurrencyInfo( AJM.CHonorPoints ) )
 	AJM.currentCurrencyValues.currConquestPoints = select( 2, GetCurrencyInfo( AJM.CConquestPoints ) )
 	AJM.currentCurrencyValues.currTolBaradCommendation = select( 2, GetCurrencyInfo( AJM.CTolBaradCommendation ) )
@@ -2489,8 +2489,8 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	local a = 1.0
 	currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.JusticePointsText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.ValorPointsText:SetTextColor( r, g, b, a )
+--	currencyFrameCharacterInfo.JusticePointsText:SetTextColor( r, g, b, a )
+--	currencyFrameCharacterInfo.ValorPointsText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.HonorPointsText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.ConquestPointsText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.TolBaradCommendationText:SetTextColor( r, g, b, a )
@@ -2507,8 +2507,8 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
     currencyFrameCharacterInfo.TimelessCoinText:SetTextColor( r, g, b, a )
 	-- Information.
 	currencyFrameCharacterInfo.GoldText:SetText( JambaUtilities:FormatMoneyString( currencyValues.currGold ) )
-	currencyFrameCharacterInfo.JusticePointsText:SetText( currencyValues.currJusticePoints )
-	currencyFrameCharacterInfo.ValorPointsText:SetText( currencyValues.currValorPoints )
+--	currencyFrameCharacterInfo.JusticePointsText:SetText( currencyValues.currJusticePoints )
+--	currencyFrameCharacterInfo.ValorPointsText:SetText( currencyValues.currValorPoints )
 	currencyFrameCharacterInfo.HonorPointsText:SetText( currencyValues.currHonorPoints )
 	currencyFrameCharacterInfo.ConquestPointsText:SetText( currencyValues.currConquestPoints )
 	currencyFrameCharacterInfo.TolBaradCommendationText:SetText( currencyValues.currTolBaradCommendation )
@@ -2526,7 +2526,7 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	-- Total gold.
 	AJM.currencyTotalGold = AJM.currencyTotalGold + currencyValues.currGold
 	parentFrame.TotalGoldText:SetText( JambaUtilities:FormatMoneyString( AJM.currencyTotalGold ) )
-	if IsInGuild() == 1 then
+	if IsInGuild() then
 		parentFrame.TotalGoldGuildText:SetText( JambaUtilities:FormatMoneyString( GetGuildBankMoney() ) )
 	end
 	-- Update width of currency list.

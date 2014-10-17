@@ -153,7 +153,7 @@ function AJM:GetConfiguration()
 end
 
 local function DebugMessage( ... )
-	AJM:Print( ... )
+	--AJM:Print( ... )
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -682,7 +682,7 @@ function AJM:AreTeamMembersInCombat()
 		-- Is the team member online?
 		if JambaApi.GetCharacterOnlineStatus( characterName ) == true then
 			-- Yes, is the character in combat?
-			if UnitAffectingCombat( characterName ) == 1 then
+			if UnitAffectingCombat( characterName ) then
 				inCombat = true
 				break
 			end
@@ -795,7 +795,7 @@ function AJM:AUTOFOLLOW_END( event, ... )
 	end
 	-- Check to see if range warning is in effect.
 	if AJM.db.onlyWarnIfOutOfFollowRange == true then
-		if CheckInteractDistance( AJM.currentFollowTarget, 4 ) == 1 then
+		if CheckInteractDistance( AJM.currentFollowTarget, 4 ) then
 			canWarn = false
 		end
 	end	

@@ -58,3 +58,4 @@ L["Bag Information"] = true
 L["Only Show Free Bag Slots"] = true
 L["Reputation Bar"] = true
 L["Show Faction Name"] = true
+L["No Faction Selected"] = true

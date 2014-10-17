@@ -132,7 +132,7 @@ AJM.COMMAND_ACCEPT_QUEST_FAKE = "AcceptQuestFake"
 -- Addon initialization, enabling and disabling.
 -------------------------------------------------------------------------------------------------------------
 
-local function DebugMessage( ... )
+function AJM:DebugMessage( ... )
 	--AJM:Print( ... )
 end
 
@@ -146,7 +146,6 @@ function AJM:OnInitialize()
 	AJM:SettingsRefresh()	
 	-- Create the Jamba Quest Log frame.
 	AJM.currentlySelectedQuest =  L["(No Quest Selected)"]
-	AJM.jambaQuestLogFrame = nil
 	AJM:CreateJambaQuestLogFrame()
 	-- An empty table to hold the available and active quests at an npc.
 	AJM.gossipQuests = {}
@@ -176,7 +175,7 @@ function AJM:OnEnable()
     AJM:SecureHook( "DeclineQuest" )
 	AJM:SecureHook( "GetQuestReward" )
 	AJM:SecureHook( "ToggleFrame" )
-	AJM:SecureHook( QuestLogFrame, "Hide", "QuestLogFrameHide" )
+	AJM:SecureHook( WorldMapFrame, "Hide", "QuestLogFrameHide" )
 	AJM:SecureHook( "SelectQuestLogEntry" )
 	AJM:SecureHook( "ShowQuestComplete" )
 	QuestFrameAcceptButton:HookScript( "OnClick", function() AJM:MagicAutoAcceptQuestGrrrr() end )
@@ -1015,7 +1014,7 @@ function AJM:SettingsToggleHasChoiceOverrideUseSlaveRewardSelected( event, check
 end
 
 function AJM:SettingsSetMessageArea( event, messageAreaValue )
-	DebugMessage( event, messageAreaValue )
+	AJM:DebugMessage( event, messageAreaValue )
 	AJM.db.messageArea = messageAreaValue
 	AJM:SettingsRefresh()
 end
@@ -1030,6 +1029,7 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:ChurnNpcGossip()
+    AJM:DebugMessage( "ChurnNpcGossip" )
 	-- GetGossipAvailableQuests and GetGossipActiveQuests are returning nil in some cases, so do this as well.
 	-- GetGossipAvailableQuests() now returns 6 elements per quest and GetGossipActiveQuests() returns 4. title, level, isTrivial, isDaily, ...
 	-- Patch 5.0.4 added isLegendary.
@@ -1038,6 +1038,10 @@ function AJM:ChurnNpcGossip()
 	local numberAvailableQuestInfo = 6
 	local numberActiveQuestInfo = 5
     local index
+    AJM:DebugMessage( "GetNumAvailableQuests", GetNumAvailableQuests() )
+    AJM:DebugMessage( "GetNumActiveQuests", GetNumActiveQuests() )
+    AJM:DebugMessage( "GetGossipAvailableQuests", GetGossipAvailableQuests() )
+    AJM:DebugMessage( "GetGossipActiveQuests", GetGossipActiveQuests() )
     for index = 0, GetNumAvailableQuests() do
 		SelectAvailableQuest( index )
 	end
@@ -1078,7 +1082,7 @@ function AJM:ChurnNpcGossip()
 		-- If this is an active quest...
 		if questInformation.type == "active" then
 			-- If this quest has been completed...
-			if questInformation.isComplete == 1 then
+			if questInformation.isComplete then
 				-- Complete it.
 				SelectGossipActiveQuest( questInformation.index )
 			end
@@ -1121,7 +1125,7 @@ end
 function AJM:SelectGossipOption( gossipIndex )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		if AJM.isInternalCommand == false then
-			DebugMessage( "SelectGossipOption" )
+            AJM:DebugMessage( "SelectGossipOption" )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_SELECT_GOSSIP_OPTION, gossipIndex )
 		end
 	end		
@@ -1130,7 +1134,7 @@ end
 function AJM:DoSelectGossipOption( sender, gossipIndex )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		AJM.isInternalCommand = true
-		DebugMessage( "DoSelectGossipOption" )
+        AJM:DebugMessage( "DoSelectGossipOption" )
 		SelectGossipOption( gossipIndex )
 		AJM.isInternalCommand = false
 	end		
@@ -1139,7 +1143,7 @@ end
 function AJM:SelectGossipActiveQuest( gossipIndex )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		if AJM.isInternalCommand == false then
-			DebugMessage( "SelectGossipActiveQuest" )
+            AJM:DebugMessage( "SelectGossipActiveQuest" )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_SELECT_GOSSIP_ACTIVE_QUEST, gossipIndex )		
 		end
 	end		
@@ -1148,7 +1152,7 @@ end
 function AJM:DoSelectGossipActiveQuest( sender, gossipIndex )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		AJM.isInternalCommand = true
-		DebugMessage( "DoSelectGossipActiveQuest" )
+        AJM:DebugMessage( "DoSelectGossipActiveQuest" )
 		SelectGossipActiveQuest( gossipIndex )
 		AJM.isInternalCommand = false
 	end
@@ -1157,7 +1161,7 @@ end
 function AJM:SelectGossipAvailableQuest( gossipIndex )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		if AJM.isInternalCommand == false then
-			DebugMessage( "SelectGossipAvailableQuest" )
+            AJM:DebugMessage( "SelectGossipAvailableQuest" )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_SELECT_GOSSIP_AVAILABLE_QUEST, gossipIndex )
 		end
 	end
@@ -1166,7 +1170,7 @@ end
 function AJM:DoSelectGossipAvailableQuest( sender, gossipIndex )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		AJM.isInternalCommand = true
-		DebugMessage( "DoSelectGossipAvailableQuest" )
+        AJM:DebugMessage( "DoSelectGossipAvailableQuest" )
 		SelectGossipAvailableQuest( gossipIndex )
 		AJM.isInternalCommand = false
 	end
@@ -1175,7 +1179,7 @@ end
 function AJM:SelectActiveQuest( questIndex )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		if AJM.isInternalCommand == false then
-			DebugMessage( "SelectActiveQuest" )
+            AJM:DebugMessage( "SelectActiveQuest" )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_SELECT_ACTIVE_QUEST, questIndex )
 		end
 	end		
@@ -1184,7 +1188,7 @@ end
 function AJM:DoSelectActiveQuest( sender, questIndex )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		AJM.isInternalCommand = true
-		DebugMessage( "DoSelectActiveQuest" )
+        AJM:DebugMessage( "DoSelectActiveQuest" )
 		SelectActiveQuest( questIndex )
 		AJM.isInternalCommand = false
 	end
@@ -1193,7 +1197,7 @@ end
 function AJM:SelectAvailableQuest( questIndex )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then	
 		if AJM.isInternalCommand == false then
-			DebugMessage( "SelectAvailableQuest" )
+            AJM:DebugMessage( "SelectAvailableQuest" )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_SELECT_AVAILABLE_QUEST, questIndex )
 		end
 	end		
@@ -1202,7 +1206,7 @@ end
 function AJM:DoSelectAvailableQuest( sender, questIndex )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		AJM.isInternalCommand = true
-		DebugMessage( "DoSelectAvailableQuest" )
+        AJM:DebugMessage( "DoSelectAvailableQuest" )
 		SelectAvailableQuest( questIndex )
 		AJM.isInternalCommand = false
 	end
@@ -1211,7 +1215,7 @@ end
 function AJM:DeclineQuest()
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		if AJM.isInternalCommand == false then
-			DebugMessage( "DeclineQuest" )
+            AJM:DebugMessage( "DeclineQuest" )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_DECLINE_QUEST )
 		end
 	end		
@@ -1220,7 +1224,7 @@ end
 function AJM:DoDeclineQuest( sender )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		AJM.isInternalCommand = true
-		DebugMessage( "DoDeclineQuest" )
+        AJM:DebugMessage( "DoDeclineQuest" )
 		DeclineQuest()
 		AJM.isInternalCommand = false
 	end
@@ -1233,7 +1237,7 @@ end
 function AJM:CompleteQuest()  
 	if AJM.db.enableAutoQuestCompletion == true then
 		if AJM.isInternalCommand == false then
-			DebugMessage( "CompleteQuest" )
+            AJM:DebugMessage( "CompleteQuest" )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_COMPLETE_QUEST )
 		end
 	end
@@ -1242,14 +1246,14 @@ end
 function AJM:DoCompleteQuest( sender )
 	if AJM.db.enableAutoQuestCompletion == true then
 		AJM.isInternalCommand = true
-		DebugMessage( "DoCompleteQuest" )	
+        AJM:DebugMessage( "DoCompleteQuest" )
 		CompleteQuest()
 		AJM.isInternalCommand = false
 	end	
 end
 
 function AJM:QUEST_COMPLETE()
-	DebugMessage( "QUEST_COMPLETE" )
+    AJM:DebugMessage( "QUEST_COMPLETE" )
 	if AJM.db.enableAutoQuestCompletion == true then
 		if (AJM.db.hasChoiceAquireBestQuestRewardForCharacter == true) and (GetNumQuestChoices() > 1) then
 			local bestQuestItemIndex = AJM:GetBestRewardIndexForCharacter()			
@@ -1273,7 +1277,7 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:ShowQuestComplete( questIndex )
-	DebugMessage( "ShowQuestComplete" )
+    AJM:DebugMessage( "ShowQuestComplete" )
 	if AJM.db.enableAutoQuestCompletion == false then
 		return
 	end
@@ -1285,7 +1289,7 @@ function AJM:ShowQuestComplete( questIndex )
 end
 
 function AJM:DoShowQuestComplete( sender, questName )
-	DebugMessage( "DoShowQuestComplete" )
+    AJM:DebugMessage( "DoShowQuestComplete" )
 	if AJM.db.enableAutoQuestCompletion == false then
 		return
 	end
@@ -1325,13 +1329,13 @@ end
 
 function AJM:AreCorrectConditionalKeysPressed()	
 	local failTest = false
-	if AJM.db.hasChoiceCtrlKeyModifier == true and IsControlKeyDown() == nil then
+	if AJM.db.hasChoiceCtrlKeyModifier == true and not IsControlKeyDown() then
 		failTest = true
 	end
-	if AJM.db.hasChoiceShiftKeyModifier == true and IsShiftKeyDown() == nil then
+	if AJM.db.hasChoiceShiftKeyModifier == true and not IsShiftKeyDown() then
 		failTest = true
 	end
-	if AJM.db.hasChoiceAltKeyModifier == true and IsAltKeyDown() == nil then
+	if AJM.db.hasChoiceAltKeyModifier == true and not IsAltKeyDown() then
 		failTest = true
 	end
 	return not failTest
@@ -1341,7 +1345,7 @@ function AJM:GetQuestReward( questIndex )
 	if AJM.db.enableAutoQuestCompletion == true then
 		if (AJM.db.noChoiceSlaveCompleteQuestWithMaster == true) or (AJM.db.hasChoiceSlaveCompleteQuestWithMaster == true) or (AJM.db.hasChoiceAquireBestQuestRewardForCharacter == true) then
 			if AJM.isInternalCommand == false then
-				DebugMessage( "GetQuestReward" )
+                AJM:DebugMessage( "GetQuestReward" )
 				AJM:JambaSendCommandToTeam( AJM.COMMAND_CHOOSE_QUEST_REWARD, questIndex, AJM:AreCorrectConditionalKeysPressed(), AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
 			end
 		end
@@ -1353,8 +1357,8 @@ function AJM:DoChooseQuestReward( sender, questIndex, modifierKeysPressed, rewar
 	if AJM.db.enableAutoQuestCompletion == true then
 		if (AJM.db.noChoiceSlaveCompleteQuestWithMaster == true) or (AJM.db.hasChoiceSlaveCompleteQuestWithMaster == true) or (AJM.db.hasChoiceAquireBestQuestRewardForCharacter == true) then
 			AJM.isInternalCommand = true
-			DebugMessage( "DoChooseQuestReward" )
-			DebugMessage( "Quest has ", numberOfQuestRewards, " reward choices." )
+            AJM:DebugMessage( "DoChooseQuestReward" )
+            AJM:DebugMessage( "Quest has ", numberOfQuestRewards, " reward choices." )
 			-- How many reward choices does this quest have?
 			if numberOfQuestRewards <= 1 then
 				-- One or less.
@@ -1609,7 +1613,7 @@ function AJM:QUEST_ACCEPTED( ... )
 					AJM:JambaSendMessageToTeam( AJM.db.messageArea, "Attempting to auto share newly accepted quest.", false )
 					SelectQuestLogEntry( questIndex )
 					if AJM:IsCurrentlySelectedQuestValid() == true then
-						if GetQuestLogPushable() == 1 and GetNumSubgroupMembers() > 0 then
+						if GetQuestLogPushable() and GetNumSubgroupMembers() > 0 then
 							AJM:JambaSendMessageToTeam( AJM.db.messageArea, "Pushing newly accepted quest.", false )
 							QuestLogPushQuest()
 						end
@@ -1624,7 +1628,7 @@ function AJM:AcceptQuest()
 	if AJM.db.acceptQuests == true then
 		if AJM.db.slaveMirrorMasterAccept == true then	
 			if AJM.isInternalCommand == false then
-				DebugMessage( "AcceptQuest" )
+                AJM:DebugMessage( "AcceptQuest" )
 				AJM:JambaSendCommandToTeam( AJM.COMMAND_ACCEPT_QUEST )
 			end		
 		end
@@ -1634,7 +1638,7 @@ end
 function AJM:DoAcceptQuest( sender )
 	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true then
 		AJM.isInternalCommand = true
-		DebugMessage( "DoAcceptQuest" )
+        AJM:DebugMessage( "DoAcceptQuest" )
 		AcceptQuest()
 		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
 		AJM.isInternalCommand = false	
@@ -1645,8 +1649,8 @@ function AJM:MagicAutoAcceptQuestGrrrr()
 	if AJM.db.acceptQuests == true then
 		if AJM.db.slaveMirrorMasterAccept == true then	
 			if AJM.isInternalCommand == false then
-				DebugMessage( "MagicAutoAcceptQuestGrrrr" )		
-				if QuestGetAutoAccept() == 1 then
+                AJM:DebugMessage( "MagicAutoAcceptQuestGrrrr", QuestGetAutoAccept() )
+				if QuestGetAutoAccept() then
 					AJM:JambaSendCommandToTeam( AJM.COMMAND_ACCEPT_QUEST_FAKE )
 				end
 			end		
@@ -1655,11 +1659,12 @@ function AJM:MagicAutoAcceptQuestGrrrr()
 end
 
 function AJM:DoMagicAutoAcceptQuestGrrrr( sender )
+    AJM:DebugMessage( "Start of DoMagicAutoAcceptQuestGrrrr" )
 	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true then
 		AJM.isInternalCommand = true
-		DebugMessage( "DoMagicAutoAcceptQuestGrrrr" )
+        AJM:DebugMessage( "DoMagicAutoAcceptQuestGrrrr", QuestGetAutoAccept() )
 		if QuestFrame:IsVisible() then
-			if QuestGetAutoAccept() == 1 then
+			if QuestGetAutoAccept() then
 				HideUIPanel( QuestFrame )
 				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
 			end
@@ -1693,17 +1698,17 @@ function AJM:CanAutoAcceptSharedQuestFromPlayer()
 			end	
 		end
 		if AJM.db.acceptFromParty == true then	
-			if UnitInParty( "npc" ) == 1 then
+			if UnitInParty( "npc" ) then
 				canAccept = true
 			end
 		end
 		if AJM.db.acceptFromRaid == true then	
-			if UnitInRaid( "npc" ) ~= nil then
+			if UnitInRaid( "npc" ) then
 				canAccept = true
 			end
 		end
 		if AJM.db.acceptFromGuild == true then
-			if UnitIsInMyGuild( "npc" ) == 1 then
+			if UnitIsInMyGuild( "npc" ) then
 				canAccept = true
 			end
 		end			
@@ -1712,11 +1717,10 @@ function AJM:CanAutoAcceptSharedQuestFromPlayer()
 end
 
 function AJM:QUEST_DETAIL()
-	DebugMessage( "QUEST_DETAIL" )
+    AJM:DebugMessage( "QUEST_DETAIL" )
 	if AJM.db.acceptQuests == true then
 		-- Who is this quest from.
-		local questSourceName, questSourceRealm = UnitName( "npc" )
-		if UnitIsPlayer( "npc" ) == 1 then
+		if UnitIsPlayer( "npc" ) then
 			-- Quest is shared from a player.
 			if AJM:CanAutoAcceptSharedQuestFromPlayer() == true then		
 				AJM.isInternalCommand = true
@@ -1729,6 +1733,7 @@ function AJM:QUEST_DETAIL()
 			if (AJM.db.allAcceptAnyQuest == true) or ((AJM.db.onlyAcceptQuestsFrom == true) and (AJM.db.acceptFromNpc == true)) then		
 				AJM.isInternalCommand = true
 				AcceptQuest()
+                AJM:DebugMessage( "QUEST_DETAIL - auto accept is: ", QuestGetAutoAccept() )
 				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
 				AJM.isInternalCommand = false
 			end
@@ -1741,7 +1746,7 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:QUEST_ACCEPT_CONFIRM( event, senderName, questName )
-	DebugMessage( "QUEST_ACCEPT_CONFIRM" )
+    AJM:DebugMessage( "QUEST_ACCEPT_CONFIRM" )
 	if AJM.db.acceptQuests == true then
 		if AJM.db.slaveAutoAcceptEscortQuest == true then
 			AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Escort Quest: A"]( questName ), false )
@@ -1767,7 +1772,7 @@ end
 
 function AJM.JambaQuestShareButtonClicked()
 	if AJM:IsCurrentlySelectedQuestValid() == true then
-		if GetQuestLogPushable() == 1 and GetNumSubgroupMembers() > 0 then
+		if GetQuestLogPushable() and GetNumSubgroupMembers() > 0 then
 			QuestLogPushQuest()
 		end
 	else
@@ -1783,7 +1788,7 @@ function AJM.JambaQuestTrackAllButtonClicked()
 end
 
 function AJM.TrackAllNextQuest()
-	local title, level, tag, suggestedGroup, isHeader, isCollapsed, isComplete, isDaily = GetQuestLogTitle( AJM.iterateQuests )
+    local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( AJM.iterateQuests )
 	if isHeader == nil then
 		if title ~= nil then
 			SelectQuestLogEntry( AJM.iterateQuests )	
@@ -1812,7 +1817,7 @@ function AJM.JambaQuestTrackNoneButtonClicked()
 end
 
 function AJM.TrackNoneNextQuest()
-	local title, level, tag, suggestedGroup, isHeader, isCollapsed, isComplete, isDaily = GetQuestLogTitle( AJM.iterateQuests )
+    local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( AJM.iterateQuests )
 	if isHeader == nil then
 		if title ~= nil then
 			SelectQuestLogEntry( AJM.iterateQuests )	
@@ -1838,7 +1843,7 @@ function AJM.JambaQuestTrackToggleButtonClicked()
 		local watch = 0
 		local questIndex = AJM:GetQuestLogIndexByName( AJM.currentlySelectedQuest )
 		if questIndex ~= 0 then
-			if IsQuestWatched( questIndex ) == 1 then
+			if IsQuestWatched( questIndex ) then
 				RemoveQuestWatch( questIndex )
 				watch = 0
 			else
@@ -1860,7 +1865,7 @@ function AJM.JambaQuestTrackToggleAllButtonClicked()
 end
 
 function AJM.TrackToggleNextQuest()
-	local title, level, tag, suggestedGroup, isHeader, isCollapsed, isComplete, isDaily = GetQuestLogTitle( AJM.iterateQuests )
+    local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( AJM.iterateQuests )
 	if isHeader == nil then
 		if title ~= nil then
 			SelectQuestLogEntry( AJM.iterateQuests )	
@@ -1868,7 +1873,7 @@ function AJM.TrackToggleNextQuest()
 				local watch = 0
 				local questIndex = AJM:GetQuestLogIndexByName( AJM.currentlySelectedQuest )
 				if questIndex ~= 0 then
-					if IsQuestWatched( questIndex ) == 1 then
+					if IsQuestWatched( questIndex ) then
 						RemoveQuestWatch( questIndex )
 						watch = 0
 					else
@@ -1907,7 +1912,7 @@ function AJM:JambaQuestAbandonAllQuests()
 end
 
 function AJM.AbandonNextQuest()
-	local title, level, tag, suggestedGroup, isHeader, isCollapsed, isComplete, isDaily = GetQuestLogTitle( AJM.iterateQuests )
+    local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( AJM.iterateQuests )
 	if isHeader == nil then
 		if title ~= nil then
 			SelectQuestLogEntry( AJM.iterateQuests )
@@ -1936,11 +1941,11 @@ function AJM.JambaQuestShareAllButtonClicked()
 end
 
 function AJM.PushNextQuest()
-	local title, level, tag, suggestedGroup, isHeader, isCollapsed, isComplete, isDaily = GetQuestLogTitle( AJM.iterateQuests )
+    local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( AJM.iterateQuests )
 	if isHeader == nil then
 		if title ~= nil then
 			SelectQuestLogEntry( AJM.iterateQuests )
-			if GetQuestLogPushable() == 1 and GetNumSubgroupMembers() > 0 then
+			if GetQuestLogPushable() and GetNumSubgroupMembers() > 0 then
 				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Sharing Quest: A"]( title ), false )
 				QuestLogPushQuest()
 			end			
@@ -1953,7 +1958,7 @@ function AJM.PushNextQuest()
 end
 
 function AJM.JambaQuestCloseButtonClicked()
-	AJM.jambaQuestLogFrame:Hide()
+	JambaQuestLogWindowFrame:Hide()
 end
 
 function AJM.JambaQuestTagDropDownOnClick( event, value )
@@ -1962,27 +1967,28 @@ end
 
 function AJM:CreateJambaQuestLogFrame()
 	local frameName = "JambaQuestLogWindowFrame"
-	local frame = CreateFrame( "Frame", "JambaQuestLogWindowFrame", UIParent )
+    JambaQuestLogWindowFrame = CreateFrame( "Frame", "JambaQuestLogWindowFrame", UIParent )
+    local frame = JambaQuestLogWindowFrame
 	frame:SetWidth( 670 )
 	frame:SetHeight( 61 )
 	frame:SetFrameStrata( "HIGH" )
 	frame:SetToplevel( true )
 	frame:SetClampedToScreen( true )
-	frame:EnableMouse()
+	frame:EnableMouse( true )
 	frame:SetMovable( true )	
 	frame:ClearAllPoints()
 	frame:SetPoint( AJM.db.framePoint, UIParent, AJM.db.frameRelativePoint, AJM.db.frameXOffset, AJM.db.frameYOffset )
 	frame:RegisterForDrag( "LeftButton" )
 	frame:SetScript( "OnDragStart", 
 		function( this ) 
-			if IsAltKeyDown() == 1 then
+			if IsAltKeyDown() then
 				this:StartMoving() 
 			end
 		end )
 	frame:SetScript( "OnDragStop", 
 		function( this ) 
 			this:StopMovingOrSizing() 
-			point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
+			local point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
 			AJM.db.framePoint = point
 			AJM.db.frameRelativePoint = relativePoint
 			AJM.db.frameXOffset = xOffset
@@ -2082,8 +2088,7 @@ function AJM:CreateJambaQuestLogFrame()
 	-- Close.
 	local closeButton = CreateFrame( "Button", frameName.."ButtonClose", frame, "UIPanelCloseButton" )
 	closeButton:SetScript( "OnClick", AJM.JambaQuestCloseButtonClicked )
-	closeButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", -1, -2 )	
-	AJM.jambaQuestLogFrame = frame
+	closeButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", -1, -2 )
 	table.insert( UISpecialFrames, "JambaQuestLogWindowFrame" )
 	-- Popups.
 	StaticPopupDialogs["JAMBAQUEST_CONFIRM_ABANDON_QUEST"] = {
@@ -2111,9 +2116,11 @@ function AJM:CreateJambaQuestLogFrame()
 end
 
 function AJM:ToggleFrame( frame )
-	if frame == QuestLogFrame then
+    --AJM:Print( "in toggle frame", frame )
+	if frame == WorldMapFrame then
 		if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
-			if QuestLogFrame:IsVisible() then
+            --AJM:Print("check qmfiv:", WorldMapFrame:IsVisible() )
+			if WorldMapFrame:IsVisible() then
 				AJM:ToggleShowQuestCommandWindow( true )		
 			else
 				AJM:ToggleShowQuestCommandWindow( false )
@@ -2129,20 +2136,20 @@ function AJM:QuestLogFrameHide()
 end
 
 function AJM:ToggleShowQuestCommandWindow( show )
-    if show == true then	
-		AJM.jambaQuestLogFrame:Show()
+    if show == true then
+		JambaQuestLogWindowFrame:Show()
     else
-		AJM.jambaQuestLogFrame:Hide()
+		JambaQuestLogWindowFrame:Hide()
     end
 end
 
 function AJM:UpdateQuestLog( questIndex )		
-	if QuestLogFrame:IsVisible() or QuestLogDetailScrollFrame:IsVisible() then
+	if WorldMapFrame:IsVisible() or QuestLogDetailScrollFrame:IsVisible() then
 		if questIndex then
 			QuestLog_SetSelection( questIndex )
 		end
 	end
-	if QuestLogFrame:IsVisible() then		
+	if WorldMapFrame1:IsVisible() then
 		QuestLog_Update()
 	end
 	if QuestLogDetailScrollFrame:IsVisible() then		
@@ -2155,8 +2162,8 @@ end
 
 function AJM:GetQuestLogIndexByName( questName )
 	for iterateQuests = 1, GetNumQuestLogEntries() do
-		local title, level, tag, suggestedGroup, isHeader, isCollapsed, isComplete, isDaily = GetQuestLogTitle( iterateQuests )
-		if isHeader == nil then
+        local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( iterateQuests )
+		if not isHeader then
 			if title == questName then
 				return iterateQuests
 			end
@@ -2168,12 +2175,12 @@ end
 function AJM:SelectQuestLogEntry( questIndex )
 	AJM.currentlySelectedQuest =  L["(No Quest Selected)"]
 	if questIndex ~= nil then
-		local title, level, tag, suggestedGroup, isHeader, isCollapsed, isComplete, isDaily = GetQuestLogTitle( questIndex )
-		if isHeader == nil then
-			if title ~= nil then
+        local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questIndex )
+		if not isHeader then
+			if title then
 				AJM.currentlySelectedQuest = title
-				if AJM.jambaQuestLogFrame:IsVisible() then
-					if GetQuestLogPushable() == 1 and GetNumSubgroupMembers() > 0 then
+				if JambaQuestLogWindowFrame:IsVisible() then
+					if GetQuestLogPushable() and GetNumSubgroupMembers() > 0 then
 						AJM.jambaQuestLogFrameShareButton:Enable()
 					else
 						AJM.jambaQuestLogFrameShareButton:Disable()
@@ -2207,7 +2214,7 @@ function AJM:DoQuestTrack( sender, questName, watch, tag )
 	if JambaApi.DoesCharacterHaveTag( AJM.characterName, tag ) == true then
 		local questIndex = AJM:GetQuestLogIndexByName( questName )
 		if questIndex ~= 0 then
-			if watch == 1 then
+			if watch then
 				AddQuestWatch( questIndex )
 			else
 				RemoveQuestWatch( questIndex )
@@ -2282,6 +2289,7 @@ end
 
 -- A Jamba command has been recieved.
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )
+    AJM:DebugMessage( 'got a command', characterName, commandName, ... )
 	if commandName == AJM.COMMAND_TOGGLE_AUTO_SELECT then
 		AJM:DoAutoSelectToggle( characterName, ... )
 	end

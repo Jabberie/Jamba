@@ -146,20 +146,20 @@ function AJM:CreateJambaTargetListFrame()
 	frame:SetFrameStrata( "MEDIUM" )
 	frame:SetToplevel( true )
 	frame:SetClampedToScreen( true )
-	frame:EnableMouse()
+	frame:EnableMouse( true )
 	frame:SetMovable( true )	
 	frame:SetUserPlaced( true )
 	frame:RegisterForDrag( "LeftButton" )
 	frame:SetScript( "OnDragStart", 
 		function( this ) 
-			if IsAltKeyDown() == 1 then
+			if IsAltKeyDown() then
 				this:StartMoving() 
 			end
 		end )
 	frame:SetScript( "OnDragStop", 
 		function( this ) 
 			this:StopMovingOrSizing() 
-			point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
+			local point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
 			AJM.db.framePoint = point
 			AJM.db.frameRelativePoint = relativePoint
 			AJM.db.frameXOffset = xOffset
@@ -269,7 +269,7 @@ function AJM:CreateJambaTargetMarkFrame()
 	frame:SetFrameStrata( "DIALOG" )
 	frame:SetToplevel( true )
 	frame:SetClampedToScreen( true )
-	frame:EnableMouse()
+	frame:EnableMouse( true )
 	frame:ClearAllPoints()
 	frame:SetPoint( "CENTER", UIParent )
 	JambaTargetMarkFrame = frame
@@ -1088,7 +1088,7 @@ function AJM:SettingsRefresh()
 end
 
 function AJM:UPDATE_BINDINGS()
-	if InCombatLockdown() == 1 then
+	if InCombatLockdown() then
 		AJM.refreshUpdateBindingsPending = true
 		return
 	end

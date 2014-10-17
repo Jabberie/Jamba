@@ -75,7 +75,7 @@ local function JambaSettingsTreeSort( a, b )
 end
 
 local function JambaTreeGroupTreeGetParent( parentName )
-	local parent = nil
+	local parent
 	for index, tableInfo in ipairs( JambaPrivate.SettingsFrame.Tree.Data ) do
 		if tableInfo.value == parentName then
 			parent = tableInfo			
@@ -490,7 +490,9 @@ function AJM:OnInitialize()
 	-- Register the chat command.
 	AJM:RegisterChatCommand( AJM.chatCommand, "JambaChatCommand" )
 	-- Attempt to load modules, if they are disabled, they won't be loaded.
-	AJM:LoadJambaModule( "Jamba-AdvancedLoot" )
+	-- TODO: This kinda defeats the purpose of the module system if we have to update core each time a module is added
+    -- TODO: Also, did the load on demand stuff actually work?
+    AJM:LoadJambaModule( "Jamba-AdvancedLoot" )
 	AJM:LoadJambaModule( "Jamba-DisplayTeam" )
 	AJM:LoadJambaModule( "Jamba-Follow" )
 	AJM:LoadJambaModule( "Jamba-FTL" )
@@ -712,6 +714,7 @@ end
 function AJM:JambaOnSettingsReceived( characterName, settings )
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
+        -- TODO: What is this minimap icon?
 		AJM.db.showMinimapIcon = settings.showMinimapIcon
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
@@ -752,5 +755,6 @@ JambaPrivate.Core.OnSettingsReceived = OnSettingsReceived
 JambaPrivate.Core.SendCommandToTeam = SendCommandToTeam
 JambaPrivate.Core.SendCommandToMaster = SendCommandToMaster
 JambaPrivate.Core.SendCommandToToon = SendCommandToToon
+-- TODO: Remove send command to slaves?
 --JambaPrivate.Core.SendCommandToSlaves = SendCommandToSlaves
 JambaPrivate.Core.OnCommandReceived = OnCommandReceived

@@ -970,16 +970,16 @@ function AJM:CheckSlavesOptOutOfLoot()
 	if AJM.db.lootSlavesOptOutOfLoot == true then
 		-- Only if not the master.
 		if IsCharacterTheMaster( AJM.characterName ) == false then
-			if GetOptOutOfLoot() == nil then
+			if not GetOptOutOfLoot() then
 				SetOptOutOfLoot( true )
 			end
 		else
-			if GetOptOutOfLoot() == 1 then
+			if GetOptOutOfLoot() then
 				SetOptOutOfLoot( false )
 			end
 		end
 	else
-		if GetOptOutOfLoot() == 1 then
+		if GetOptOutOfLoot() then
 			SetOptOutOfLoot( false )
 		end	
 	end

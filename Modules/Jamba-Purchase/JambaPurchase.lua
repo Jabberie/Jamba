@@ -16,6 +16,7 @@ local AJM = LibStub( "AceAddon-3.0" ):NewAddon(
 -- Load libraries.
 local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
+local LibBagUtils = LibStub:GetLibrary( "LibBagUtils-1.0" )
 local AceGUI = LibStub:GetLibrary( "AceGUI-3.0" )
 
 --  Constants and Locale for this module.
@@ -481,7 +482,7 @@ function AJM:DoMerchantAutoBuy()
 		-- Does this character have the item tag?  No, don't buy.
 		if JambaApi.DoesCharacterHaveTag( AJM.characterName, itemTag ) then
 			-- Does the merchant have the item in stock?
-			itemIndexMerchant = AJM:DoesMerchantHaveItemInStock( itemLink )
+			local itemIndexMerchant = AJM:DoesMerchantHaveItemInStock( itemLink )
 			if itemIndexMerchant ~= nil then
 				-- Yes, item is in stock, how many does the character need?
 				local amountNeeded = AJM:GetAmountNeededForItemTopUp( itemLink, maxItemAmount )
@@ -603,14 +604,17 @@ function AJM:BuyItemFromMerchant( itemIndexMerchant, amountToBuy )
 		end
 		-- Is there enough free space for this item in the characters bags?				
 		--TODO - need to find items family type and compare to each container.
-		--freeSlots, itemFamily = GetContainerNumFreeSlots(bagIndex)
+		local numFreeSlots, numTotalSlots = LibBagUtils:CountSlots("BAGS", 0)
+        if numFreeSlots == 0 then
+            noFreeBagSpace = true
+        end
 		-- Buy from the merchant, if there is a valid amount to buy and the character has enough money.
 		if (actualAmountToBuy > 0) and (not notEnoughMoney) then
 			BuyMerchantItem( itemIndexMerchant, actualAmountToBuy )
-		end				
+		end
 		-- How much left to buy?
 		amountLeftToBuy = amountLeftToBuy - buyThisAmount
-	until amountLeftToBuy == 0
+	until (amountLeftToBuy == 0 or noFreeBagSpace == true)
 	-- TODO
 	-- Return the success flags.
 	return noFreeBagSpace, notEnoughMoney, notEnoughOtherCurrency

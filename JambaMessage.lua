@@ -838,7 +838,7 @@ end
 local function DisplayMessageChat( sender, message, chatDestination, suppressSender )
 	local canSend = false
 	if (chatDestination == "GUILD" or chatDestination == "OFFICER") then
-		if IsInGuild() == 1 then	
+		if IsInGuild() then
 			canSend = true
 		else
 			AJM:Print( L["ERROR: Not in a Guild"] )

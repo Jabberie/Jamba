@@ -160,24 +160,24 @@ local function SettingsCreateTagList( top )
 	AJM.settingsControl.tagList = list
 	JambaHelperSettings:CreateScrollList( AJM.settingsControl.tagList )
 	-- Position and size constants (once list height is known).
-	local bottomOfList = topOfList - list.listHeight - verticalSpacing	
-	AJM.settingsControl.tagListButtonAdd = JambaHelperSettings:CreateButton(	
-		AJM.settingsControl, 
-		tagListButtonControlWidth, 
-		left, 
-		bottomOfList, 
+	local bottomOfList = topOfList - list.listHeight - verticalSpacing
+	AJM.settingsControl.tagListButtonAdd = JambaHelperSettings:CreateButton(
+		AJM.settingsControl,
+		tagListButtonControlWidth,
+		left,
+		bottomOfList,
 		L["Add"],
 		AJM.SettingsAddClick
 	)
 	AJM.settingsControl.teamListButtonRemove = JambaHelperSettings:CreateButton(
-		AJM.settingsControl, 
-		tagListButtonControlWidth, 
-		left + tagListButtonControlWidth + horizontalSpacing, 
-		bottomOfList, 
+		AJM.settingsControl,
+		tagListButtonControlWidth,
+		left + tagListButtonControlWidth + horizontalSpacing,
+		bottomOfList,
 		L["Remove"],
 		AJM.SettingsRemoveClick
-	)		
-	local bottomOfSection = -bottomOfList -  buttonHeight - verticalSpacing		
+	)
+	local bottomOfSection = bottomOfList -  buttonHeight - verticalSpacing
 	return bottomOfSection
 end
 
@@ -193,7 +193,7 @@ local function SettingsCreate()
 	-- Create the team list controls.
 	local bottomOfTeamList = SettingsCreateTeamList()
 	-- Create the tag list controls.
-	local bottomOfTagList = SettingsCreateTagList( bottomOfTeamList )	
+	local bottomOfTagList = SettingsCreateTagList( bottomOfTeamList )
 	AJM.settingsControl.widgetSettings.content:SetHeight( -bottomOfTagList )
 	-- Help
 	local helpTable = {}
@@ -552,7 +552,7 @@ local function CheckSystemTagsAreCorrect()
 		if DoesTagListHaveTag( characterTagList, JustMeTag() ) == false then
 			AddTag( characterTagList, JustMeTag() )
 		end
-		localizedName, token = UnitClass( characterName )
+		local localizedName, token = UnitClass( characterName )
 		if localizedName ~= nil then
 			InternalAddTagToCharacter( characterName, JambaUtilities:Lowercase( localizedName ))
 		end	
@@ -724,7 +724,7 @@ function AJM:OnEnable()
 	AJM:SettingsTeamListScrollRefresh()
 	AJM:SettingsTagListScrollRefresh()
 	-- Click the first row in the team list table to populate the tag list table.
-	AJM:SettingsTeamListRowClick( 1, 1 )	
+	AJM:SettingsTeamListRowClick( 1, 1 )
 end
 
 -- Called when the addon is disabled.

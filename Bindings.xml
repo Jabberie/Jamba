@@ -6,10 +6,10 @@ http://jafula.com/jamba/
 -->
 
 <Bindings>
-	<Binding name="JAMBATEAMINVITE" header="JAMBATEAM">
+	<Binding name="JAMBATEAMINVITE" header="JAMBATEAM" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBATEAMDISBAND">
+	<Binding name="JAMBATEAMDISBAND" category="ADDONS">
 		--[[dummy]]
 	</Binding>
 </Bindings>

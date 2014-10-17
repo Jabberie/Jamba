@@ -185,7 +185,7 @@ do
 		frame:SetWidth(760)
 		frame:SetHeight(660)
 		frame:SetPoint("CENTER",UIParent,"CENTER",0,0)
-		frame:EnableMouse()
+		frame:EnableMouse(true)
 		frame:SetMovable(true)
 		frame:SetResizable(true)
 		frame:SetFrameStrata("LOW")

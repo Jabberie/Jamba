@@ -6,64 +6,64 @@ http://jafula.com/jamba/
 -->
 
 <Bindings>
-	<Binding name="JAMBAITEMUSE1" header="JAMBAITEMUSE">
+	<Binding name="JAMBAITEMUSE1" header="JAMBAITEMUSE" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE2">
+	<Binding name="JAMBAITEMUSE2" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE3">
+	<Binding name="JAMBAITEMUSE3" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE4">
+	<Binding name="JAMBAITEMUSE4" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE5">
+	<Binding name="JAMBAITEMUSE5" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE6">
+	<Binding name="JAMBAITEMUSE6" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE7">
+	<Binding name="JAMBAITEMUSE7" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE8">
+	<Binding name="JAMBAITEMUSE8" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE9">
+	<Binding name="JAMBAITEMUSE9" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE10">
+	<Binding name="JAMBAITEMUSE10" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE11">
+	<Binding name="JAMBAITEMUSE11" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE12">
+	<Binding name="JAMBAITEMUSE12" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE13">
+	<Binding name="JAMBAITEMUSE13" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE14">
+	<Binding name="JAMBAITEMUSE14" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE15">
+	<Binding name="JAMBAITEMUSE15" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE16">
+	<Binding name="JAMBAITEMUSE16" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE17">
+	<Binding name="JAMBAITEMUSE17" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE18">
+	<Binding name="JAMBAITEMUSE18" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE19">
+	<Binding name="JAMBAITEMUSE19" category="ADDONS">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBAITEMUSE20">
+	<Binding name="JAMBAITEMUSE20" category="ADDONS">
 		--[[dummy]]
 	</Binding>		
 </Bindings>

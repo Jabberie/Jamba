@@ -744,10 +744,10 @@ function AJM:DoAdvancedLoot()
 		
 			if icon then
 			
-				local is_item, link2 = (GetLootSlotType(slot) == LOOT_SLOT_ITEM)
+				local is_item = (GetLootSlotType(slot) == LOOT_SLOT_ITEM)
 				if is_item then
 						
-					link = GetLootSlotLink(slot)
+					local link = GetLootSlotLink(slot)
 				
 					local itemName, sLink, iRarity, iLevel, iMinLevel, sType, sSubType, iStackCount = GetItemInfo(link);						
 					

@@ -19,7 +19,7 @@ local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
 local LibBagUtils = LibStub:GetLibrary( "LibBagUtils-1.0" )
 local LibGratuity = LibStub( "LibGratuity-3.0" )
-local LibActionButton = LibStub( "LibActionButtonJamba-1.0" )
+local LibActionButton = LibStub( "LibActionButton-1.0" )
 AJM.SharedMedia = LibStub( "LibSharedMedia-3.0" )
 
 --  Constants and Locale for this module.
@@ -158,43 +158,6 @@ AJM.maximumNumberOfItems = 20
 AJM.maximumNumberOfRows = 20
 
 -------------------------------------------------------------------------------------------------------------
--- Companion functions.
--------------------------------------------------------------------------------------------------------------
-
-local function GetCompanionType(input)
-	--DEFAULT_CHAT_FRAME:AddMessage("lib-dct:"..input)
-	return input:match("^type:(%w+)index:%d+$")	 
-end
-
-local function GetCompanionIndex(input)
-	return input:match("^type:%w+index:(%d+)$")
-end
-
-local function GetCompanionTypeIndex(input)
-	return GetCompanionType(input),  GetCompanionIndex(input)
-end
-
-local function GetCompanionSpellName(input)
-	--DEFAULT_CHAT_FRAME:AddMessage("gcsn:"..input)
-	local spellId = select(3, GetCompanionInfo(GetCompanionTypeIndex(input)))
-	--DEFAULT_CHAT_FRAME:AddMessage("gcsn-spellid:"..spellId)
-	return select(1, GetSpellInfo(spellId))
-end
-
-local function FindCompanionTypeAndIndexByName(compSpellName, action)
-	local index
-	local companionType = GetCompanionType(action)
-	for index = 1, GetNumCompanions(companionType), 1 do
-		local spellId = select(3, GetCompanionInfo(companionType, index))
-		local creatureSpellName = select(1, GetSpellInfo(spellId))
-		if compSpellName == creatureSpellName then
-			return "type:"..companionType.."index:"..index
-		end
-	end
-	return action
-end
-
--------------------------------------------------------------------------------------------------------------
 -- Item Bar.
 -------------------------------------------------------------------------------------------------------------
 
@@ -224,19 +187,19 @@ local function CreateJambaItemUseFrame()
 	frame:SetFrameStrata( "LOW" )
 	frame:SetToplevel( true )
 	frame:SetClampedToScreen( true )
-	frame:EnableMouse()
+	frame:EnableMouse( true )
 	frame:SetMovable( true )	
 	frame:RegisterForDrag( "LeftButton" )
 	frame:SetScript( "OnDragStart", 
 		function( this ) 
-			if IsAltKeyDown() == 1 then
+			if IsAltKeyDown() then
 				this:StartMoving() 
 			end
 		end )
 	frame:SetScript( "OnDragStop", 
 		function( this ) 
 			this:StopMovingOrSizing() 
-			point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
+			local point, relativeTo, relativePoint, xOffset, yOffset = this:GetPoint()
 			AJM.db.framePoint = point
 			AJM.db.frameRelativePoint = relativePoint
 			AJM.db.frameXOffset = xOffset
@@ -250,12 +213,6 @@ local function CreateJambaItemUseFrame()
 		tile = true, tileSize = 10, edgeSize = 10, 
 		insets = { left = 3, right = 3, top = 3, bottom = 3 }
 	} )
-	-- Create the title for the item bar frame.
-	--local titleName = frame:CreateFontString( "JambaItemUseWindowFrameTitleText", "OVERLAY", "GameFontNormal" )
-	--titleName:SetPoint( "TOP", frame, "TOP", 0, -5 )
-	--titleName:SetTextColor( 1.00, 1.00, 1.00 )
-	--titleName:SetText( L["Items"] )
-	--frame.titleName = titleName
 	-- Set transparency of the the frame (and all its children).
 	frame:SetAlpha(AJM.db.frameAlpha)
 	-- Set the global frame reference for this frame.
@@ -309,6 +266,7 @@ end
 
 function AJM:UpdateItemsInBar()
 	local state = "0"
+    local parentFrame = JambaItemUseFrame
 	for iterateItems = 1, AJM.maximumNumberOfItems, 1 do
 		local itemContainer = AJM.itemContainer[iterateItems]
 		if itemContainer == nil then
@@ -319,45 +277,45 @@ function AJM:UpdateItemsInBar()
 		local itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
 		local kind = itemInfo.kind
 		local action = itemInfo.action
-		local compSpellName = itemInfo.compSpellName
 		if kind == "item" and not tonumber( action ) then
 			action = action:sub(6)
 		end
-		if kind == "companion" then
-			action = FindCompanionTypeAndIndexByName(compSpellName, action)
-		end		
-		containerButton:SetState(state, kind, action)
-		containerButton:UpdateCount()
+        --AJM:Print(state, kind, action)
+        if kind == "mount" or kind == "battlepet" then
+            containerButton:ClearStates()
+        else
+		    containerButton:SetState(state, kind, action)
+        end
 	end
 end
 
 function AJM:AddItemToItemDatabase( itemNumber, kind, action )
+    if kind == "mount" or kind == "battlepet" then
+        return
+    end
 	if AJM.db.itemsAdvanced[itemNumber] == nil then
 		AJM.db.itemsAdvanced[itemNumber] = {}
 	end
 	AJM.db.itemsAdvanced[itemNumber].kind = kind
 	AJM.db.itemsAdvanced[itemNumber].action = action
-	if kind == "companion" then
-		AJM.db.itemsAdvanced[itemNumber].compSpellName = GetCompanionSpellName(action)
-	else
-		AJM.db.itemsAdvanced[itemNumber].compSpellName = nil
-	end
 end
 
 function AJM:GetItemFromItemDatabase( itemNumber )
 	if AJM.db.itemsAdvanced[itemNumber] == nil then
 		AJM.db.itemsAdvanced[itemNumber] = {}
 		AJM.db.itemsAdvanced[itemNumber].kind = "empty"
-		AJM.db.itemsAdvanced[itemNumber].action = nil
-		AJM.db.itemsAdvanced[itemNumber].compSpellName = nil
+		AJM.db.itemsAdvanced[itemNumber].action = "empty"
 	end
 	return AJM.db.itemsAdvanced[itemNumber]
 end
 
 function AJM:OnButtonContentsChanged( event, button, state, type, value, ... )
-	AJM:AddItemToItemDatabase( button.itemNumber, type, value )
-	AJM:JambaSendSettings()
-	AJM:SettingsRefresh()
+    if type == "mount" or type == "battlepet" then
+        return
+    end
+    AJM:AddItemToItemDatabase( button.itemNumber, type, value )
+    AJM:JambaSendSettings()
+    AJM:SettingsRefresh()
 end
 
 function AJM:OnButtonUpdate( event, button, ... )
@@ -376,7 +334,24 @@ function AJM:CreateJambaItemUseItemContainer( itemNumber, parentFrame )
 	AJM.itemContainer[itemNumber] = {}
 	local itemContainer = AJM.itemContainer[itemNumber]
 	local containerButtonName = AJM.globalFramePrefix.."ContainerButton"..itemNumber
-	local containerButton = LibActionButton:CreateButton( itemNumber, containerButtonName, JambaItemUseWindowFrame )
+    local buttonConfig = {
+        outOfRangeColoring = "button",
+        tooltip = "enabled",
+        showGrid = true,
+        colors = {
+            range = { 0.8, 0.1, 0.1 },
+            mana = { 0.5, 0.5, 1.0 }
+        },
+        hideElements = {
+            macro = false,
+            hotkey = false,
+            equipped = false,
+        },
+        keyBoundTarget = false,
+        clickOnDown = false,
+        flyoutDirection = "UP",
+    }
+	local containerButton = LibActionButton:CreateButton( itemNumber, containerButtonName, JambaItemUseWindowFrame, buttonConfig )
 	containerButton:SetState( "0", "empty", nil)
 	containerButton.itemNumber = itemNumber
 	itemContainer["container"] = containerButton	
@@ -448,7 +423,7 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest )
 end
 
 function AJM:RefreshItemUseControls()
-	if InCombatLockdown() == 1 then
+	if InCombatLockdown() then
 		AJM.refreshItemUseControlsPending = true
 		return
 	end
@@ -498,6 +473,7 @@ end
 
 local function SettingsCreateOptions( top )
 	-- Get positions.
+    local buttonHeight = JambaHelperSettings:GetButtonHeight()
 	local checkBoxHeight = JambaHelperSettings:GetCheckBoxHeight()
 	local editBoxHeight = JambaHelperSettings:GetEditBoxHeight()
 	local dropdownHeight = JambaHelperSettings:GetDropdownHeight()
@@ -642,8 +618,19 @@ local function SettingsCreateOptions( top )
 	)
 	AJM.settingsControl.dropdownMessageArea:SetList( JambaApi.MessageAreaList() )
 	AJM.settingsControl.dropdownMessageArea:SetCallback( "OnValueChanged", AJM.SettingsSetMessageArea )
-	movingTop = movingTop - dropdownHeight - verticalSpacing				
-	return movingTop	
+	movingTop = movingTop - dropdownHeight - verticalSpacing
+    JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Clear Item Bar"], movingTop, false )
+    movingTop = movingTop - headingHeight
+    AJM.settingsControl.buttonClearItemBar = JambaHelperSettings:CreateButton(
+        AJM.settingsControl,
+        headingWidth,
+        left,
+        movingTop,
+        L["Clear Item Bar"],
+        AJM.ClearItemUseCommand
+    )
+    movingTop = movingTop - buttonHeight - verticalSpacing
+	return movingTop
 end
 
 function AJM:OnMessageAreasChanged( message )
@@ -694,7 +681,7 @@ function AJM:SettingsRefresh()
 	-- State.
 	-- Trying to change state in combat lockdown causes taint. Let's not do that. Eventually it would be nice to have a "proper state driven item list",
 	-- but this workaround is enough for now.
-	if InCombatLockdown() == nil then
+	if not InCombatLockdown() then
 		AJM.settingsControl.displayOptionsCheckBoxShowItemUseOnlyOnMaster:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsCheckBoxHideItemUseInCombat:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsItemUseNumberOfItems:SetDisabled( not AJM.db.showItemUse )
@@ -909,7 +896,7 @@ function AJM:PLAYER_REGEN_DISABLED()
 end
 
 function AJM:BAG_UPDATE()
-	if InCombatLockdown() == nil then
+	if not InCombatLockdown() then
 		AJM:UpdateItemsInBar()
 	end
 end
@@ -921,7 +908,7 @@ function AJM:ITEM_PUSH()
 end
 
 function AJM:UPDATE_BINDINGS()
-	if InCombatLockdown() == 1 then
+	if not InCombatLockdown() then
 		AJM.refreshUpdateBindingsPending = true
 		return
 	end
