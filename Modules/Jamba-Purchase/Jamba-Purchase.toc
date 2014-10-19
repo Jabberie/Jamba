@@ -2,7 +2,7 @@
 ## Title: Jamba-Purchase
 ## Notes: Jamba-Purchase
 ## Author: Jafula
-## Version: 6.0.2.1
+## Version: 6.0.2.2
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

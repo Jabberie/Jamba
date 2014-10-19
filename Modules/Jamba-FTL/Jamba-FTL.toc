@@ -2,7 +2,7 @@
 ## Title: Jamba-FTL
 ## Notes: Jamba-FTL
 ## Author: olipcs (although most of the code is originaly from Jafula)
-## Version: 6.0.2.1
+## Version: 6.0.2.2
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

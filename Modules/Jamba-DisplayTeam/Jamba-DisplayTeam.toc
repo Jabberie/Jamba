@@ -2,7 +2,7 @@
 ## Title: Jamba-DisplayTeam
 ## Notes: Jamba-DisplayTeam
 ## Author: Jafula
-## Version: 6.0.2.1
+## Version: 6.0.2.2
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
@@ -10,5 +10,3 @@
 ## LoadOnDemand: 1
 Locales\Locales.xml
 JambaDisplayTeam.lua
-
-

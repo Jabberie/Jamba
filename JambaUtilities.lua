@@ -46,12 +46,12 @@ end
 
 -- Capitalise the name.	
 function JambaUtilities:Capitalise( name )
-	return name:utf8sub(1,1):utf8upper()..name:utf8sub(2):utf8lower()
+    return string.utf8upper( string.utf8sub( name, 1, 1 ) )..string.utf8lower( string.utf8sub( name, 2 ) )
 end
 
 -- Capitalise the name.	
 function JambaUtilities:Lowercase( name )
-	return name:utf8lower()
+	return string.utf8lower( name )
 end
 
 JambaUtilities.GUID_REPRESENTS_PLAYER = 0

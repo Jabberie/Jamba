@@ -163,12 +163,12 @@ local function IsChannelTeamOnlineChannel( channelName )
 	local isTeamOnlineChannel = false
 	if channelName ~= nil then
 		if AJM.db.showOnlineChannel == true then
-			AJM:Print( "Team Channel: match? this:", channelName:utf8lower(), "team:", AJM.lastChannel:utf8lower(), "or:", AJM.channelJustMovedFrom:utf8lower() )
+			AJM:Print( "Team Channel: match? this:", string.utf8lower( channelName ), "team:", string.utf8lower( AJM.lastChannel ), "or:", string.utf8lower( AJM.channelJustMovedFrom ) )
 		end
-		if channelName:utf8lower() == AJM.lastChannel:utf8lower() then
+		if string.utf8lower( channelName ) == string.utf8lower( AJM.lastChannel ) then
 			isTeamOnlineChannel = true
 		end
-		if channelName:utf8lower() == AJM.channelJustMovedFrom:utf8lower() then
+		if string.utf8lower( channelName) == string.utf8lower( AJM.channelJustMovedFrom ) then
 			isTeamOnlineChannel = true
 		end		
 	end
@@ -777,7 +777,7 @@ local function SendChatMessage( text, chatDestination, characterOrChannelName, p
 		ChatThrottleLib:SendChatMessage( priority, AJM.MESSAGE_PREFIX, text, chatDestination, nil, characterOrChannelName, nil )
 	else
 		-- No, message is too big, split into smaller messages, taking UTF8 characters into account.	
-		local bytesAvailable = text:utf8len()
+		local bytesAvailable = string.utf8len(text1)
 		local currentPosition = 1
 		local countBytes = 1
 		local startPosition = currentPosition

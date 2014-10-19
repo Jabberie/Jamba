@@ -1,10 +1,28 @@
+Jamba Version: 6.0.2.2
+WoW Game Version: 6.0.2
+Release Date: 19th October 2014
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Fixes
+
+Jamba-Follow
+* Fixed a Lua error when using delay follow after combat or using follow strobing. Thanks to Iru for diagnosing the problem and coming up with a fix. [1]
+
+[1] http://www.dual-boxing.com/threads/51594-Addon-Jamba-An-assistant-for-Multiboxers-Release-for-WoW-6?p=393256&viewfull=1#post393256
+
+Known Issues
+
+* Popup quests in the quest watcher have a Lua error.
+* Also see known issues in 6.0.2.1
+
+=====================================================================================================================================================
+
 Jamba Version: 6.0.2.1
 WoW Game Version: 6.0.2
 Release Date: 17th October 2014
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
 Known Issues
-------------
 
 Item-Bar
 
@@ -22,7 +40,6 @@ get a fresh list.
 Because of the WoW changes to the quest log, I'm going to spend some time trying a few things to see if I can come up with an updated solution to some of the quest functionality.
 
 Fixes
------
 
 DisplayTeam
 * Character portraits in team list should now stay zoomed in on the head rather than reverting to full body shots.
