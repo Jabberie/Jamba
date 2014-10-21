@@ -908,15 +908,15 @@ function AJM:ITEM_PUSH()
 end
 
 function AJM:UPDATE_BINDINGS()
-	if not InCombatLockdown() then
+	if InCombatLockdown() then
 		AJM.refreshUpdateBindingsPending = true
 		return
-	end
+    end
 	ClearOverrideBindings( AJM.keyBindingFrame )
 	for iterateItems = 1, AJM.maximumNumberOfItems, 1 do
 		local containerButtonName = AJM.globalFramePrefix.."ContainerButton"..iterateItems
-		local key1, key2 = GetBindingKey( "JAMBAITEMUSE"..iterateItems )		
-		if key1 then 
+		local key1, key2 = GetBindingKey( "JAMBAITEMUSE"..iterateItems )
+		if key1 then
 			SetOverrideBindingClick( AJM.keyBindingFrame, false, key1, containerButtonName ) 
 		end
 		if key2 then 

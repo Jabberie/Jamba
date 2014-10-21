@@ -1,3 +1,20 @@
+Jamba Version: 6.0.2.3
+WoW Game Version: 6.0.2
+Release Date: 21st October 2014
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Fixes
+
+Jamba-Item-Use
+* Key bindings work again.
+
+Known Issues
+
+* Temporarily disabled popup quests in Jamba Quest Watcher until a solution can be implemented.
+* Also see known issues in 6.0.2.2 and 6.0.2.1
+
+=====================================================================================================================================================
+
 Jamba Version: 6.0.2.2
 WoW Game Version: 6.0.2
 Release Date: 19th October 2014

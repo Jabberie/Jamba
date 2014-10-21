@@ -2,7 +2,7 @@
 ## Title: Jamba-QuestWatcher
 ## Notes: Jamba-QuestWatcher
 ## Author: Jafula
-## Version: 6.0.2.2
+## Version: 6.0.2.3
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
