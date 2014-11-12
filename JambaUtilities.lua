@@ -44,34 +44,9 @@ function JambaUtilities:ClearTable( object )
 	end
 end
 
--- Capitalise the name.	
-function JambaUtilities:Capitalise( name )
-    return string.utf8upper( string.utf8sub( name, 1, 1 ) )..string.utf8lower( string.utf8sub( name, 2 ) )
-end
-
--- Capitalise the name.	
+-- Lowercase the name.
 function JambaUtilities:Lowercase( name )
 	return string.utf8lower( name )
-end
-
-JambaUtilities.GUID_REPRESENTS_PLAYER = 0
-JambaUtilities.GUID_REPRESENTS_NPC = 1
-JambaUtilities.GUID_REPRESENTS_PET = 2
-JambaUtilities.GUID_REPRESENTS_VEHICLE = 3
-
--- Parse a GUID.
-function JambaUtilities:ParseGUID( guid )
-	local first3 = tonumber( "0x"..strsub( guid, 3,5 ) )
-	local unitType = bit.band( first3, 0x00f )
-	if unitType == 0x000 then
-		return JambaUtilities.GUID_REPRESENTS_PLAYER
-	elseif unitType == 0x003 then
-		return JambaUtilities.GUID_REPRESENTS_NPC
-	elseif unitType == 0x004 then
-		return JambaUtilities.GUID_REPRESENTS_PET
-	elseif unitType == 0x005 then
-		return JambaUtilities.GUID_REPRESENTS_VEHICLE
-	end
 end
 
 -- Money constants.

@@ -205,7 +205,7 @@ function AJM:SettingsCreateTrade( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Trade Excess Gold To Master From Slave"],
+		L["Trade Excess Gold To Master From Minion"],
 		AJM.SettingsToggleAdjustMoneyWithMasterOnTrade
 	)	
 	movingTop = movingTop - checkBoxHeight

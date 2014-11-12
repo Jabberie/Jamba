@@ -19,7 +19,7 @@ local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
 local LibBagUtils = LibStub:GetLibrary( "LibBagUtils-1.0" )
 local LibGratuity = LibStub( "LibGratuity-3.0" )
-local LibActionButton = LibStub( "LibActionButton-1.0" )
+local LibActionButton = LibStub( "LibActionButtonJamba-1.0" )
 AJM.SharedMedia = LibStub( "LibSharedMedia-3.0" )
 
 --  Constants and Locale for this module.

@@ -628,7 +628,7 @@ local function SettingsCreateWarnings( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Warn If Hit First Time In Combat (Slave)"],
+		L["Warn If Hit First Time In Combat (Minion)"],
 		AJM.SettingsToggleWarnHitFirstTimeCombat
 	)	
 	movingTop = movingTop - checkBoxHeight
@@ -645,7 +645,7 @@ local function SettingsCreateWarnings( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Warn If Target Not Master On Combat (Slave)"],
+		L["Warn If Target Not Master On Combat (Minion)"],
 		AJM.SettingsToggleWarnTargetNotMasterEnterCombat
 	)	
 	movingTop = movingTop - checkBoxHeight
@@ -662,7 +662,7 @@ local function SettingsCreateWarnings( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Warn If Focus Not Master On Combat (Slave)"],
+		L["Warn If Focus Not Master On Combat (Minion)"],
 		AJM.SettingsToggleWarnFocusNotMasterEnterCombat
 	)	
 	movingTop = movingTop - checkBoxHeight

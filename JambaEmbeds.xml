@@ -28,7 +28,7 @@ http://jafula.com/jamba/
 	<Include file="Libs\LibBabble-Inventory-3.0\lib.xml" />
 	<Include file="Libs\LibDeformat-3.0\lib.xml" />
 	<Include file="LibItemUtilsJamba-1.0.lua" />
-	<Include file="LibActionButton-1.0.lua" />
+	<Include file="LibActionButtonJamba-1.0.lua" />
 	<Include file="Libs\LibRangeCheck-2.0\LibRangeCheck-2.0.lua" />
 	<Include file="Libs\UTF8\utf8data.lua" />
 	<Include file="Libs\UTF8\utf8.lua" />

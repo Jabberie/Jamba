@@ -1,3 +1,25 @@
+Jamba Version: 6.0.3-1
+WoW Game Version: 6.0.3
+Release Date: 12th November 2014
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Core
+* Initial cross realm support.
+* Slaves renamed to minions.
+* Attempt to increase character to character addon message performance by only sending messages once (sometimes messages were being sent twice).
+
+Jamba-Quest-Watcher
+* Quests now remove themselves from the quest watcher when they have been completed.
+* Popup quests are back, but without the fancy frame.
+
+Item-Bar
+* Forked LibActionButton library in attempt to help compatibility with ElvUI.
+
+Known Issues
+* The functions on the quest log bar (abandon all, share all, etc) may no longer work properly.
+
+=====================================================================================================================================================
+
 Jamba Version: 6.0.2.3
 WoW Game Version: 6.0.2
 Release Date: 21st October 2014
@@ -231,7 +253,7 @@ Modules: Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest,
 
 New module: Target
 
-Target allows you to target a mob on the master, mark it with a raid icon (moon, star, square, etc) and have your slaves target that mob when you press the key associated with that raid icon.  See WoW keybindings for target keybinds.
+Target allows you to target a mob on the master, mark it with a raid icon (moon, star, square, etc) and have your minions target that mob when you press the key associated with that raid icon.  See WoW keybindings for target keybinds.
 
 =====================================================================================================================================================
 
@@ -256,10 +278,10 @@ Sell
 	* New option to auto-sell lower-tiered unusable soulbound armor types.  For instance, if set, a paladin would sell all soulbound mail, leather and cloth armour types (not weapons, not rings, not necklaces and not trinkets).  If you turn this option, be careful with cloaks (equip them if you want to keep them when you get them).
 
 Trade
-	* New option to adjust money with master on trade.  If this option is turned on, anytime a slave toon trades with a master toon, the slave toon will automatically load any excess money over the amount specified into the trade window ready for trading.
+	* New option to adjust money with master on trade.  If this option is turned on, anytime a minion toon trades with a master toon, the minion toon will automatically load any excess money over the amount specified into the trade window ready for trading.
 
 Team
-	* New option - activate click-to-move on slaves and deactivate on master when switching master.
+	* New option - activate click-to-move on minions and deactivate on master when switching master.
 
 Quest
 	* If choose best reward option selected and the claim sub-option is off, when a toon completes a quest, the others in the party will complete it as well, rather than you having to click complete quest on each toon.
@@ -507,7 +529,7 @@ Modules: Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest,
 	
 Jamba-Quest
 
-    * New Quest Watcher frame, watch quests from slaves on master.
+    * New Quest Watcher frame, watch quests from minions on master.
     
 Jamba-Toon
 
@@ -540,7 +562,7 @@ Jamba-Proc
 
 Jamba-Team
 
-    * Slaves opting out of loot will now stop telling you everytime a party member joins/leaves, party leader changes, etc.
+    * Minions opting out of loot will now stop telling you everytime a party member joins/leaves, party leader changes, etc.
     
 Jamba-Display-Team
 
@@ -650,7 +672,7 @@ Modules: Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest,
 
 Jamba-Team
 
-    * Can now set pass on loot for slaves regardless of loot settings.
+    * Can now set pass on loot for minions regardless of loot settings.
     * New option to switch to group loot if a stranger joins your group.
     * New slash command to add all party members to your team: /jamba-team addparty
 
@@ -787,7 +809,7 @@ Modules: Core, Follow, Group, Me, Purchase, Quest, Sell, Talk, Target, Taxi
 
 Jamba-Quest
 
-    * Added an option to JambaQuest to allow reward selection on slaves before clicking "Complete Quest" on master when using the Mirror Master Complete Quest (No Reward Choice) option.
+    * Added an option to JambaQuest to allow reward selection on minions before clicking "Complete Quest" on master when using the Mirror Master Complete Quest (No Reward Choice) option.
 
 =====================================================================================================================================================
 
@@ -916,7 +938,7 @@ Modules: Core, Follow, Group, Me, Merchant, No, Quest, Talk, Target, Taxi
 Jamba
 
     * Party experience shown in GUI.
-    * GUI to constantly display of the /follow status of my slaves (green if on /follow, red if not).
+    * GUI to constantly display of the /follow status of my minions (green if on /follow, red if not).
     * New target system - before combat select targets and label with raid icons and bake /target <mobname> into specific keybinds.
     * GUI for jamba set target 1-8.
 
@@ -976,7 +998,7 @@ Team
     * After adding a member, enable that member by default.
     * Make sure that self is always on the list (not necessarily enabled, but enabled upon initial adding to the list).
     * If there is no master, then set self as the master.
-    * Fixed a bug where if the master goes offline and forward system messages is on; the slave gets spammed with player cannot be found messages.
+    * Fixed a bug where if the master goes offline and forward system messages is on; the minion gets spammed with player cannot be found messages.
 
 Tags
 
@@ -1012,7 +1034,7 @@ New: Jamba-Follow
 
     * Move follow breaking warning from Jamba-Warning to Jamba-Follow.
     * Add an option to specify the text when follow breaks - default to "Follow Broken".
-    * Automatic /follow from the slaves to the master when exiting combat.
+    * Automatic /follow from the minions to the master when exiting combat.
     * /jamba-follow master <tag>
     * /jamba-follow target <target> <tag>
     * /jamba-follow aftercombat <on|off> <tag>
@@ -1040,7 +1062,7 @@ Jamba-Merchant
 
 Jamba-Quest
 
-    * Fix bug where lots of spam is sent when slaves do not have a quest that the master has.
+    * Fix bug where lots of spam is sent when minions do not have a quest that the master has.
     * New GUI for quest log interaction. Pops up with quest log on master only. This solves delay/performance problems.
 
 Jamba-Talk
@@ -1059,9 +1081,9 @@ Release Date: 5th September 2008
 Modules: Core, Group, Merchant, No, Quest, Talk, Taxi, Warning
 
     * Fix infinite loop friends bug reported by some people.
-    * Fix: Basically as i get to the reward page (before i select anything) the slave gets the error: "Invalid reward choice in GetQuestReward([choice])" and basically doesnt do anything from there.
-    * Fix: Slaves no longer auto select the same quest reward as the master when they should not have.
-    * Feature: Add the name of the original whisperer to whisper forwards from slaves.
+    * Fix: Basically as i get to the reward page (before i select anything) the minion gets the error: "Invalid reward choice in GetQuestReward([choice])" and basically doesnt do anything from there.
+    * Fix: Minions no longer auto select the same quest reward as the master when they should not have.
+    * Feature: Add the name of the original whisperer to whisper forwards from minions.
     * Change: In Jamba-Group the option to allow invite from friends has been changed to allow invites from members.
 
 =====================================================================================================================================================

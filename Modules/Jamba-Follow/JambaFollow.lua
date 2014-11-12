@@ -945,7 +945,6 @@ end
 
 function AJM:CommandSetFollowMaster( info, parameters )
 	local target, tag = strsplit( " ", parameters )
-	target = JambaUtilities:Capitalise( target )
 	if tag ~= nil and tag:trim() ~= "" then 
 		AJM:JambaSendCommandToTeam( AJM.COMMAND_SET_FOLLOW_MASTER, target, tag )
 	else
@@ -1063,7 +1062,7 @@ end
 
 function AJM:FollowTarget( target )
 	-- Attempting to follow self?  Note: if target ever is party1, etc, then this will not catch the same character.
-	if JambaUtilities:Capitalise( target ) == JambaUtilities:Capitalise( AJM.characterName ) then
+	if JambaUtilities:Lowercase( target ) == JambaUtilities:Lowercase( AJM.characterName ) then
 		return
 	end
 	local canFollowTarget = true

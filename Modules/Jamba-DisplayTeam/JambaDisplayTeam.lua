@@ -95,6 +95,11 @@ AJM.settings = {
 	},
 }
 
+-- Debug message.
+function AJM:DebugMessage( ... )
+	--AJM:Print( ... )
+end
+
 -- Configuration.
 function AJM:GetConfiguration()
 	local configuration = {
@@ -454,7 +459,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	--SetPortraitTexture( portraitButton.Texture, characterName )
 	--portraitButton.Texture:SetAllPoints()
 	portraitButton:ClearModel()
-	portraitButton:SetUnit( characterName )
+	portraitButton:SetUnit( Ambiguate( characterName, "none" ) )
 	portraitButton:SetPortraitZoom( 1 )
     portraitButton:SetCamDistanceScale( 1 )
     portraitButton:SetPosition( 0, 0, 0 )
@@ -1703,6 +1708,7 @@ end
 
 -- A Jamba command has been recieved.
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )
+	AJM:DebugMessage( "JambaOnCommandReceived", characterName )
 	if commandName == AJM.COMMAND_FOLLOW_STATUS_UPDATE then
 		AJM:ProcessUpdateFollowStatusMessage( characterName, ... )
 	end
@@ -1917,6 +1923,7 @@ function AJM:SendExperienceStatusUpdateCommand()
 		if AJM.db.showTeamListOnMasterOnly == true then
 			AJM:JambaSendCommandToMaster( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID )
 		else
+			AJM:DebugMessage( "SendExperienceStatusUpdateCommand TO TEAM!" )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID )
 		end
 	end
@@ -1933,6 +1940,7 @@ function AJM:SettingsUpdateExperienceAll()
 end
 
 function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxExperience, exhaustionStateID )
+	AJM:DebugMessage( "UpdateExperienceStatus", characterName, playerExperience, playerMaxExperience, exhaustionStateID )
 	if CanDisplayTeamList() == false then
 		return
 	end

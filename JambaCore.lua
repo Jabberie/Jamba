@@ -755,6 +755,6 @@ JambaPrivate.Core.OnSettingsReceived = OnSettingsReceived
 JambaPrivate.Core.SendCommandToTeam = SendCommandToTeam
 JambaPrivate.Core.SendCommandToMaster = SendCommandToMaster
 JambaPrivate.Core.SendCommandToToon = SendCommandToToon
--- TODO: Remove send command to slaves?
---JambaPrivate.Core.SendCommandToSlaves = SendCommandToSlaves
+-- TODO: Remove send command to minions?
+--JambaPrivate.Core.SendCommandToMinions = SendCommandToMinions
 JambaPrivate.Core.OnCommandReceived = OnCommandReceived

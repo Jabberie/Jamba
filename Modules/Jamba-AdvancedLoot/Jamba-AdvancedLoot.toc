@@ -2,7 +2,7 @@
 ## Title: Jamba-AdvancedLoot
 ## Notes: Jamba-AdvancedLoot
 ## Author: Max Schilling
-## Version: 6.0.2.3
+## Version: 6.0.3-1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
@@ -10,5 +10,3 @@
 ## LoadOnDemand: 1
 Locales\Locales.xml
 JambaAdvancedLoot.lua
-
-

@@ -2,7 +2,7 @@
 ## Title: Jamba-Taxi
 ## Notes: Jamba-Taxi
 ## Author: Jafula
-## Version: 6.0.2.3
+## Version: 6.0.3-1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

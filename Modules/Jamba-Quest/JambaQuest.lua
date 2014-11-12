@@ -271,7 +271,7 @@ function AJM:SettingsCreateQuestControl( top )
 	-- Create a heading for quest selection.
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Quest Selection & Acceptance"], movingTop, false )
 	movingTop = movingTop - headingHeight
-	-- Radio box: Slave select, accept and decline quest with master.
+	-- Radio box: Minion select, accept and decline quest with master.
 	AJM.settingsControl.checkBoxMirrorMasterQuestSelectionAndDeclining = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -303,14 +303,14 @@ function AJM:SettingsCreateQuestControl( top )
 		AJM.SettingsToggleAcceptQuests
 	)	
 	movingTop = movingTop - checkBoxHeight		
-	-- Radio box: Slave accept quest with master.
-	AJM.settingsControl.checkBoxSlaveMirrorMasterAccept = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Minion accept quest with master.
+	AJM.settingsControl.checkBoxMinionMirrorMasterAccept = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left + indent, 
 		movingTop,
 		L["Toon Accept Quest From Team"],
-		AJM.SettingsToggleSlaveMirrorMasterAccept
+		AJM.SettingsToggleMinionMirrorMasterAccept
 	)	
 	movingTop = movingTop - checkBoxHeight		
 	-- Radio box: All auto accept any quest.
@@ -412,14 +412,14 @@ function AJM:SettingsCreateQuestControl( top )
 		AJM.SettingsToggleMasterAutoShareQuestOnAccept
 	)	
 	movingTop = movingTop - checkBoxHeight			
-	-- Check box: Slave auto accept escort quest from master.
-	AJM.settingsControl.checkBoxSlaveAutoAcceptEscortQuest = JambaHelperSettings:CreateCheckBox( 
+	-- Check box: Minion auto accept escort quest from master.
+	AJM.settingsControl.checkBoxMinionAutoAcceptEscortQuest = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Toon Auto Accept Escort Quest From Team"],
-		AJM.SettingsToggleSlaveAutoAcceptEscortQuest
+		AJM.SettingsToggleMinionAutoAcceptEscortQuest
 	)	
 	movingTop = movingTop - checkBoxHeight
 	-- Create a heading for other options.
@@ -517,7 +517,7 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 		L["Quest Has No Rewards Or One Reward:"]
 	)	
 	movingTop = movingTop - labelHeight
-	-- Radio box: No choice, slave do nothing.
+	-- Radio box: No choice, minion do nothing.
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllDoNothing = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControlCompletion, 
 		headingWidth, 
@@ -528,16 +528,16 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 	)	
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllDoNothing:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight	
-	-- Radio box: No choice, slave complete quest with master.
-	AJM.settingsControlCompletion.checkBoxNoChoiceSlaveCompleteQuestWithMaster = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: No choice, minion complete quest with master.
+	AJM.settingsControlCompletion.checkBoxNoChoiceMinionCompleteQuestWithMaster = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Toon Complete Quest With Team"],
-		AJM.SettingsToggleNoChoiceSlaveCompleteQuestWithMaster
+		AJM.SettingsToggleNoChoiceMinionCompleteQuestWithMaster
 	)
-	AJM.settingsControlCompletion.checkBoxNoChoiceSlaveCompleteQuestWithMaster:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxNoChoiceMinionCompleteQuestWithMaster:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight
 	-- Radio box: No Choice, all automatically complete quest.
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllAutoCompleteQuest = JambaHelperSettings:CreateCheckBox( 
@@ -559,16 +559,16 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 		L["Quest Has More Than One Reward:"]
 	)	
 	movingTop = movingTop - labelHeight
-	-- Radio box: Has choice, slave do nothing.
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveDoNothing = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Has choice, minion do nothing.
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionDoNothing = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Toon Do Nothing"],
-		AJM.SettingsToggleHasChoiceSlaveDoNothing
+		AJM.SettingsToggleHasChoiceMinionDoNothing
 	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveDoNothing:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionDoNothing:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight
 	-- Radio box: Has choice, choose best reward.
 	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter = JambaHelperSettings:CreateCheckBox( 
@@ -591,52 +591,52 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 		AJM.SettingsToggleActuallyGetTheBestReward
 	)	
 	movingTop = movingTop - checkBoxHeight	
-	-- Radio box: Has choice, slave complete quest with master.
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Has choice, minion complete quest with master.
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Toon Complete Quest With Team"],
-		AJM.SettingsToggleHasChoiceSlaveCompleteQuestWithMaster
+		AJM.SettingsToggleHasChoiceMinionCompleteQuestWithMaster
 	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight
-	-- Radio box: Has choice, slave must choose own reward.
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveMustChooseOwnReward = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Has choice, minion must choose own reward.
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionMustChooseOwnReward = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indent, 
 		movingTop,
 		L["Toon Must Choose Own Reward"],
-		AJM.SettingsToggleHasChoiceSlaveMustChooseOwnReward
+		AJM.SettingsToggleHasChoiceMinionMustChooseOwnReward
 	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveMustChooseOwnReward:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionMustChooseOwnReward:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight	
-	-- Radio box: Has choice, slave choose same reward as master.
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveChooseSameRewardAsMaster = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Has choice, minion choose same reward as master.
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionChooseSameRewardAsMaster = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indent, 
 		movingTop,
 		L["Toon Choose Same Reward As Team"],
-		AJM.SettingsToggleHasChoiceSlaveChooseSameRewardAsMaster
+		AJM.SettingsToggleHasChoiceMinionChooseSameRewardAsMaster
 	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveChooseSameRewardAsMaster:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionChooseSameRewardAsMaster:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight
-	-- Radio box: Has choice, slave reward choice depends on modifier key pressed down.
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveRewardChoiceModifierConditional = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Has choice, minion reward choice depends on modifier key pressed down.
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionRewardChoiceModifierConditional = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indent, 
 		movingTop,
 		L["If Modifier Keys Pressed, Toon Choose Same Reward"],
-		AJM.SettingsToggleHasChoiceSlaveRewardChoiceModifierConditional
+		AJM.SettingsToggleHasChoiceMinionRewardChoiceModifierConditional
 	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveRewardChoiceModifierConditional:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionRewardChoiceModifierConditional:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight
 	-- Label continuing radio box above.
-	AJM.settingsControlCompletion.labelHasChoiceSlaveRewardChoiceModifierConditional = JambaHelperSettings:CreateContinueLabel( 
+	AJM.settingsControlCompletion.labelHasChoiceMinionRewardChoiceModifierConditional = JambaHelperSettings:CreateContinueLabel(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indentContinueLabel, 
@@ -672,18 +672,18 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 		AJM.SettingsToggleHasChoiceAltKeyModifier
 	)	
 	movingTop = movingTop - checkBoxHeight
-	-- Check box: Has choice, override, if slave already has reward selected, choose that reward.
-	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseSlaveRewardSelected = JambaHelperSettings:CreateCheckBox( 
+	-- Check box: Has choice, override, if minion already has reward selected, choose that reward.
+	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseMinionRewardSelected = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indent, 
 		movingTop,
 		L["Override: If Toon Already Has Reward Selected,"],
-		AJM.SettingsToggleHasChoiceOverrideUseSlaveRewardSelected
+		AJM.SettingsToggleHasChoiceOverrideUseMinionRewardSelected
 	)	
 	movingTop = movingTop - checkBoxHeight
 	-- Label continuing check box above.
-	AJM.settingsControlCompletion.labelHasChoiceOverrideUseSlaveRewardSelected = JambaHelperSettings:CreateContinueLabel( 
+	AJM.settingsControlCompletion.labelHasChoiceOverrideUseMinionRewardSelected = JambaHelperSettings:CreateContinueLabel(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indentSpecial, 
@@ -759,7 +759,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxMirrorMasterQuestSelectionAndDeclining:SetValue( AJM.db.mirrorMasterQuestSelectionAndDeclining )
 	AJM.settingsControl.checkBoxAllAutoSelectQuests:SetValue( AJM.db.allAutoSelectQuests )
 	AJM.settingsControl.checkBoxAcceptQuests:SetValue( AJM.db.acceptQuests )
-	AJM.settingsControl.checkBoxSlaveMirrorMasterAccept:SetValue( AJM.db.slaveMirrorMasterAccept )
+	AJM.settingsControl.checkBoxMinionMirrorMasterAccept:SetValue( AJM.db.slaveMirrorMasterAccept )
 	AJM.settingsControl.checkBoxDoNotAutoAccept:SetValue( AJM.db.doNotAutoAccept )
 	AJM.settingsControl.checkBoxAllAcceptAnyQuest:SetValue( AJM.db.allAcceptAnyQuest )
 	AJM.settingsControl.checkBoxOnlyAcceptQuestsFrom:SetValue( AJM.db.onlyAcceptQuestsFrom )
@@ -770,7 +770,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxAcceptFromRaid:SetValue( AJM.db.acceptFromRaid )
 	AJM.settingsControl.checkBoxAcceptFromGuild:SetValue( AJM.db.acceptFromGuild )
 	AJM.settingsControl.checkBoxMasterAutoShareQuestOnAccept:SetValue( AJM.db.masterAutoShareQuestOnAccept )
-	AJM.settingsControl.checkBoxSlaveAutoAcceptEscortQuest:SetValue( AJM.db.slaveAutoAcceptEscortQuest )
+	AJM.settingsControl.checkBoxMinionAutoAcceptEscortQuest:SetValue( AJM.db.slaveAutoAcceptEscortQuest )
 	AJM.settingsControl.checkBoxShowJambaQuestLogWithWoWQuestLog:SetValue( AJM.db.showJambaQuestLogWithWoWQuestLog )
 	AJM.settingsControl.checkBoxOverrideQuestAutoSelectAndComplete:SetValue( AJM.db.overrideQuestAutoSelectAndComplete )
 	AJM.settingsControl.dropdownMessageArea:SetValue( AJM.db.messageArea )
@@ -778,21 +778,21 @@ function AJM:SettingsRefresh()
 	-- Quest completion options.
 	AJM.settingsControlCompletion.checkBoxEnableAutoQuestCompletion:SetValue( AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllDoNothing:SetValue( AJM.db.noChoiceAllDoNothing )
-	AJM.settingsControlCompletion.checkBoxNoChoiceSlaveCompleteQuestWithMaster:SetValue( AJM.db.noChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxNoChoiceMinionCompleteQuestWithMaster:SetValue( AJM.db.noChoiceSlaveCompleteQuestWithMaster )
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllAutoCompleteQuest:SetValue( AJM.db.noChoiceAllAutoCompleteQuest )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveDoNothing:SetValue( AJM.db.hasChoiceSlaveDoNothing )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster:SetValue( AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveChooseSameRewardAsMaster:SetValue( AJM.db.hasChoiceSlaveChooseSameRewardAsMaster )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveMustChooseOwnReward:SetValue( AJM.db.hasChoiceSlaveMustChooseOwnReward )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionDoNothing:SetValue( AJM.db.hasChoiceSlaveDoNothing )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster:SetValue( AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionChooseSameRewardAsMaster:SetValue( AJM.db.hasChoiceSlaveChooseSameRewardAsMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionMustChooseOwnReward:SetValue( AJM.db.hasChoiceSlaveMustChooseOwnReward )
 	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetValue( AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
 	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward:SetValue( AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveRewardChoiceModifierConditional:SetValue( AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionRewardChoiceModifierConditional:SetValue( AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
 	AJM.settingsControlCompletion.checkBoxHasChoiceCtrlKeyModifier:SetValue( AJM.db.hasChoiceCtrlKeyModifier )
 	AJM.settingsControlCompletion.checkBoxHasChoiceShiftKeyModifier:SetValue( AJM.db.hasChoiceShiftKeyModifier )
 	AJM.settingsControlCompletion.checkBoxHasChoiceAltKeyModifier:SetValue( AJM.db.hasChoiceAltKeyModifier )
-	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseSlaveRewardSelected:SetValue( AJM.db.hasChoiceOverrideUseSlaveRewardSelected )
+	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseMinionRewardSelected:SetValue( AJM.db.hasChoiceOverrideUseSlaveRewardSelected )
 	-- Ensure correct state (general and acceptance options).
-	AJM.settingsControl.checkBoxSlaveMirrorMasterAccept:SetDisabled( not AJM.db.acceptQuests )
+	AJM.settingsControl.checkBoxMinionMirrorMasterAccept:SetDisabled( not AJM.db.acceptQuests )
 	AJM.settingsControl.checkBoxDoNotAutoAccept:SetDisabled( not AJM.db.acceptQuests )
 	AJM.settingsControl.checkBoxAllAcceptAnyQuest:SetDisabled( not AJM.db.acceptQuests )
 	AJM.settingsControl.checkBoxOnlyAcceptQuestsFrom:SetDisabled( not AJM.db.acceptQuests )
@@ -806,21 +806,21 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCompletion.labelQuestNoRewardsOrOneReward:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.labelQuestHasMoreThanOneReward:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllDoNothing:SetDisabled( not AJM.db.enableAutoQuestCompletion )
-	AJM.settingsControlCompletion.checkBoxNoChoiceSlaveCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
+	AJM.settingsControlCompletion.checkBoxNoChoiceMinionCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllAutoCompleteQuest:SetDisabled( not AJM.db.enableAutoQuestCompletion )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveDoNothing:SetDisabled( not AJM.db.enableAutoQuestCompletion )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionDoNothing:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveChooseSameRewardAsMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveMustChooseOwnReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveRewardChoiceModifierConditional:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
-	AJM.settingsControlCompletion.labelHasChoiceSlaveRewardChoiceModifierConditional:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionChooseSameRewardAsMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionMustChooseOwnReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionRewardChoiceModifierConditional:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.labelHasChoiceMinionRewardChoiceModifierConditional:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
 	AJM.settingsControlCompletion.checkBoxHasChoiceCtrlKeyModifier:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster or not AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
 	AJM.settingsControlCompletion.checkBoxHasChoiceShiftKeyModifier:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster or not AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
 	AJM.settingsControlCompletion.checkBoxHasChoiceAltKeyModifier:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster or not AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
-	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseSlaveRewardSelected:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
-	AJM.settingsControlCompletion.labelHasChoiceOverrideUseSlaveRewardSelected:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseMinionRewardSelected:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.labelHasChoiceOverrideUseMinionRewardSelected:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
 end
 
 function AJM:SettingsPushSettingsClick( event )
@@ -844,7 +844,7 @@ function AJM:SettingsToggleAcceptQuests( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleSlaveMirrorMasterAccept( event, checked )
+function AJM:SettingsToggleMinionMirrorMasterAccept( event, checked )
 	AJM.db.slaveMirrorMasterAccept = checked
 	AJM:SettingsRefresh()
 end
@@ -910,7 +910,7 @@ function AJM:SettingsToggleMasterAutoShareQuestOnAccept( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleSlaveAutoAcceptEscortQuest( event, checked )
+function AJM:SettingsToggleMinionAutoAcceptEscortQuest( event, checked )
 	AJM.db.slaveAutoAcceptEscortQuest = checked
 	AJM:SettingsRefresh()
 end
@@ -932,7 +932,7 @@ function AJM:SettingsToggleNoChoiceAllDoNothing( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleNoChoiceSlaveCompleteQuestWithMaster( event, checked )
+function AJM:SettingsToggleNoChoiceMinionCompleteQuestWithMaster( event, checked )
 	AJM.db.noChoiceSlaveCompleteQuestWithMaster = checked
 	AJM.db.noChoiceAllDoNothing = not checked
 	AJM.db.noChoiceAllAutoCompleteQuest = not checked
@@ -946,14 +946,14 @@ function AJM:SettingsToggleNoChoiceAllAutoCompleteQuest( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceSlaveDoNothing( event, checked )
+function AJM:SettingsToggleHasChoiceMinionDoNothing( event, checked )
 	AJM.db.hasChoiceSlaveDoNothing = checked
 	AJM.db.hasChoiceAquireBestQuestRewardForCharacter = not checked
 	AJM.db.hasChoiceSlaveCompleteQuestWithMaster = not checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceSlaveCompleteQuestWithMaster( event, checked )
+function AJM:SettingsToggleHasChoiceMinionCompleteQuestWithMaster( event, checked )
 	AJM.db.hasChoiceSlaveCompleteQuestWithMaster = checked
 	AJM.db.hasChoiceAquireBestQuestRewardForCharacter = not checked
 	AJM.db.hasChoiceSlaveDoNothing = not checked
@@ -972,21 +972,21 @@ function AJM:SettingsToggleActuallyGetTheBestReward( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceSlaveChooseSameRewardAsMaster( event, checked )
+function AJM:SettingsToggleHasChoiceMinionChooseSameRewardAsMaster( event, checked )
 	AJM.db.hasChoiceSlaveChooseSameRewardAsMaster = checked
 	AJM.db.hasChoiceSlaveMustChooseOwnReward = not checked
 	AJM.db.hasChoiceSlaveRewardChoiceModifierConditional = not checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceSlaveMustChooseOwnReward( event, checked )
+function AJM:SettingsToggleHasChoiceMinionMustChooseOwnReward( event, checked )
 	AJM.db.hasChoiceSlaveMustChooseOwnReward = checked
 	AJM.db.hasChoiceSlaveChooseSameRewardAsMaster = not checked
 	AJM.db.hasChoiceSlaveRewardChoiceModifierConditional = not checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceSlaveRewardChoiceModifierConditional( event, checked )
+function AJM:SettingsToggleHasChoiceMinionRewardChoiceModifierConditional( event, checked )
 	AJM.db.hasChoiceSlaveRewardChoiceModifierConditional = checked
 	AJM.db.hasChoiceSlaveChooseSameRewardAsMaster = not checked
 	AJM.db.hasChoiceSlaveMustChooseOwnReward = not checked
@@ -1008,7 +1008,7 @@ function AJM:SettingsToggleHasChoiceAltKeyModifier( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceOverrideUseSlaveRewardSelected( event, checked )
+function AJM:SettingsToggleHasChoiceOverrideUseMinionRewardSelected( event, checked )
 	AJM.db.hasChoiceOverrideUseSlaveRewardSelected = checked
 	AJM:SettingsRefresh()
 end
@@ -1297,7 +1297,8 @@ function AJM:DoShowQuestComplete( sender, questName )
 	local questIndex = AJM:GetQuestLogIndexByName( questName )
 	if questIndex ~= 0 then
 		ShowQuestComplete( questIndex )
-		WatchFrameAutoQuest_ClearPopUpByLogIndex( questIndex )
+        --TODO fix this or remove
+		--WatchFrameAutoQuest_ClearPopUpByLogIndex( questIndex )
 	end
 	AJM.isInternalCommand = false	
 end
@@ -1307,9 +1308,9 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:CheckForOverrideAndChooseQuestReward( questIndex )
-	-- Yes, override if slave has reward selected?
+	-- Yes, override if minion has reward selected?
 	if (AJM.db.hasChoiceOverrideUseSlaveRewardSelected == true) and (QuestInfoFrame.itemChoice > 0) then
-		-- Yes, choose slaves reward.
+		-- Yes, choose minions reward.
 		GetQuestReward( QuestInfoFrame.itemChoice )
 	else
 		-- No, choose masters reward.
@@ -1318,10 +1319,10 @@ function AJM:CheckForOverrideAndChooseQuestReward( questIndex )
 end
 
 function AJM:CheckForOverrideAndDoNotChooseQuestReward( questIndex )
-	-- Yes, override if slave has reward selected?
+	-- Yes, override if minion has reward selected?
 	if QuestInfoFrame.itemChoice ~= nil then
 		if (AJM.db.hasChoiceOverrideUseSlaveRewardSelected == true) and (QuestInfoFrame.itemChoice > 0) then
-			-- Yes, choose slaves reward.
+			-- Yes, choose minions reward.
 			GetQuestReward( QuestInfoFrame.itemChoice )
 		end
 	end
@@ -1382,7 +1383,7 @@ function AJM:DoChooseQuestReward( sender, questIndex, modifierKeysPressed, rewar
 				end
 				if (AJM.db.hasChoiceAquireBestQuestRewardForCharacter == true) and (rewardPickedAlready == true) then
 					if QuestInfoFrame.itemChoice > 0 then
-						-- Yes, choose slaves reward.
+						-- Yes, choose minions reward.
 						GetQuestReward( QuestInfoFrame.itemChoice )
 					end
 				end
@@ -1626,7 +1627,7 @@ end
 
 function AJM:AcceptQuest()
 	if AJM.db.acceptQuests == true then
-		if AJM.db.slaveMirrorMasterAccept == true then	
+		if AJM.db.slaveMirrorMasterAccept == true then
 			if AJM.isInternalCommand == false then
                 AJM:DebugMessage( "AcceptQuest" )
 				AJM:JambaSendCommandToTeam( AJM.COMMAND_ACCEPT_QUEST )
@@ -1647,7 +1648,7 @@ end
 
 function AJM:MagicAutoAcceptQuestGrrrr()
 	if AJM.db.acceptQuests == true then
-		if AJM.db.slaveMirrorMasterAccept == true then	
+		if AJM.db.slaveMirrorMasterAccept == true then
 			if AJM.isInternalCommand == false then
                 AJM:DebugMessage( "MagicAutoAcceptQuestGrrrr", QuestGetAutoAccept() )
 				if QuestGetAutoAccept() then

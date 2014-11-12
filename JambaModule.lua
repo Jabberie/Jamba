@@ -13,7 +13,6 @@ if not JambaModule then
 end
 
 -- Load libraries.
-local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 LibStub( "AceConsole-3.0" ):Embed( JambaModule )
 
 -------------------------------------------------------------------------------------------------------------
@@ -111,7 +110,9 @@ function JambaModule:JambaModuleInitialize( settingsFrame )
 	-- Register the chat command for this module.
 	self:RegisterChatCommand( self.chatCommand, "JambaChatCommand" )
 	-- Remember the characters name.
-	self.characterName = UnitName( "player" )
+	self.characterRealm = GetRealmName()
+	self.characterNameLessRealm = UnitName( "player" )
+	self.characterName = self.characterNameLessRealm.."-"..self.characterRealm
 	self.characterGUID = UnitGUID( "player" )
 	-- Register this module with Jamba.
 	self:JambaRegisterModule( self.moduleName )

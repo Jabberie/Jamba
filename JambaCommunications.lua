@@ -279,8 +279,9 @@ local function CommandAll( moduleName, commandName, ... )
     AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
+	local iSentToMySelf = false
 	-- Send command to all in group/raid.
-	if not UnitInBattleground( "player" ) then
+	if not UnitInBattleground( "player" ) and IsInGroup() then
         AJM:DebugMessage( "Sending command to group." )
 		AJM:SendCommMessage( 
 			AJM.COMMAND_PREFIX,
@@ -288,10 +289,11 @@ local function CommandAll( moduleName, commandName, ... )
 			AJM.COMMUNICATION_GROUP,
 			nil,
 			AJM.COMMUNICATION_PRIORITY_ALERT
-		)		
+		)
+		iSentToMySelf = true
 	end
 	-- If player not in a party or raid, then send to player.
-	if GetNumSubgroupMembers() == 0 and GetNumGroupMembers() == 0 then
+	if not IsInGroup() then
         AJM:DebugMessage( "Sending command just to single player." )
 		AJM:SendCommMessage( 
 			AJM.COMMAND_PREFIX,
@@ -299,29 +301,27 @@ local function CommandAll( moduleName, commandName, ... )
 			AJM.COMMUNICATION_WHISPER,
 			UnitName( "player" ),
 			AJM.COMMUNICATION_PRIORITY_ALERT
-		)		
+		)
+		iSentToMySelf = true
 	end
 	-- Send the message to all members of the current team that are not in a party / raid.	
 	for characterName, characterOrder in JambaPrivate.Team.TeamList() do
 		if IsCharacterOnline( characterName ) == true then
-			local canSend = false
+			local canSend = true
 			-- Team member not in party then send command.
-			if not UnitInParty( characterName ) then
-				canSend = true
+			AJM:DebugMessage( "UnitInParty( " , characterName, " ) says [", UnitInParty( characterName ), "]")
+			AJM:DebugMessage( "UnitInParty(  Ambiguate( " , characterName, ", 'none' ) ) says [", UnitInParty( Ambiguate( characterName, "none" ) ), "]")
+			if UnitInParty( characterName ) or UnitInParty( Ambiguate( characterName, "none" ) ) then
+				AJM:DebugMessage( "UnitInParty( characterName ) proved positive." )
+				canSend = false
 			end
-			-- In raid and team member not in raid then send command.
-			if GetNumGroupMembers() > 0 and not IsInRaid() then
-				canSend = true
-			end
-			-- If in a battleground then send a whisper as the party/raid would have not been sent.
-			if UnitInBattleground( "player" ) then
-				canSend = true
-			end
-			if UnitInBattleground( characterName ) then
-				canSend = true
+			-- If this is this character and the message has already been sent to a group, don't sent it again.
+			if characterName == AJM.characterName and iSentToMySelf then
+				AJM:DebugMessage( "Same character and already sent to myself in group or individual, so not sending again." )
+				canSend = false
 			end
 			if canSend == true then
-                AJM:DebugMessage( "Sending command to others not in party/raid." )
+                AJM:DebugMessage( "Sending command to others not in party/raid: [", characterName, "]" )
 				AJM:SendCommMessage( 
 					AJM.COMMAND_PREFIX,
 					message,
@@ -367,8 +367,8 @@ local function CommandToon( moduleName, characterName, commandName, ... )
 	end
 end
 
--- Send a command to all slave characters of the current team.
-local function CommandSlaves( moduleName, commandName, ... )
+-- Send a command to all minion characters of the current team.
+local function CommandMinions( moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	-- Send the message to all members of the current team.
@@ -392,9 +392,10 @@ function AJM:CommandReceived( prefix, message, distribution, sender )
     AJM:DebugMessage( "Command received: ", prefix, message, distribution, sender )
 	-- Check if the command is for Jamba Communications.
 	if prefix == AJM.COMMAND_PREFIX then
-		-- Check if the sender is trusted.
-        sender = Ambiguate(sender, "none")
-        AJM:DebugMessage( "Sender after ambiguate: ", sender )
+		local findDash = sender:find( "-" )
+		if not findDash then
+			sender = sender.."-"..GetRealmName()
+		end
 		if JambaPrivate.Team.IsCharacterInTeam( sender ) == true then
             AJM:DebugMessage( "Sender is in team list." )
 			-- Split the command into its components.
@@ -423,7 +424,9 @@ function AJM:CommandReceived( prefix, message, distribution, sender )
 				-- Any other command can go directly to the module that sent it.
                 AJM:DebugMessage( "Sending command on to module: ", sender, moduleName, commandName, unpack( argumentsTable ) )
 				JambaPrivate.Core.OnCommandReceived( sender, moduleName, commandName, unpack( argumentsTable ) )
-			end			
+			end
+		else
+			AJM:DebugMessage( "Sender is NOT in team list." )
 		end
 	end
 end
@@ -480,7 +483,9 @@ function AJM:OnInitialize()
 		-- Hook the ChatFrame_MessageEventHandler to hide any messages that are for the team online channel.
 		AJM:RawHook( "ChatFrame_MessageEventHandler", true )
 	end
-	AJM.characterName = UnitName( "player" )
+	self.characterRealm = GetRealmName()
+	self.characterNameLessRealm = UnitName( "player" )
+	self.characterName = self.characterNameLessRealm.."-"..self.characterRealm
 	AJM.characterGUID = UnitGUID( "player" )
 	AJM:RegisterChatCommand( AJM.chatCommand, "JambaChatCommand" )
 	-- Register communications as a module.
