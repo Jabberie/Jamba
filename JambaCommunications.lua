@@ -190,7 +190,8 @@ function AJM:CHAT_MSG_CHANNEL_LIST( event, ... )
 			table.insert( characters, character )
 		end
 		for index, character in pairs( characters ) do 
-			local characterName = character:gsub( "%s*%@*%**([^%s]+)", "%1" )	
+			local characterName = character:gsub( "%s*%@*%**([^%s]+)", "%1" )
+			--AJM:Print('found in channel: ', characterName)
 			-- Is this character in our team?		
 			if JambaPrivate.Team.IsCharacterInTeam( characterName ) == true then
 				-- Set the character status to online.

@@ -1,3 +1,28 @@
+Jamba Version: 6.0.3-2
+WoW Game Version: 6.0.3
+Release Date: 16th November 2014
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Core
+* Same realm teams can again now use the channel for team online/offline checks. Cross realm teams must use the assume characters always online option.
+* When adding a character to the team, will automatically append realm name if one does not exist.
+* When master changes, party leader will now change as well if this option is selected.
+* When focus changes, master will update to focus if this option is selected.
+
+Jamba-Display-Team
+* Clique should work with the health and power bars now.
+
+Jamba-Follow
+* Follow strobing now works with new name-server format.
+
+Jamba-Trade
+* Trade now works with new name-server format.
+
+Known Issues
+* The functions on the quest log bar (abandon all, share all, etc) may no longer work properly.
+
+=====================================================================================================================================================
+
 Jamba Version: 6.0.3-1
 WoW Game Version: 6.0.3
 Release Date: 12th November 2014

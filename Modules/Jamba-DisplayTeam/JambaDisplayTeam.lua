@@ -569,7 +569,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	healthBar:SetValue( 100 )
 	healthBar:SetFrameStrata( "LOW" )
 	local healthBarClick = CreateFrame( "CheckButton", healthName.."Click"..characterName, parentFrame, "SecureActionButtonTemplate" )
-	healthBarClick:SetAttribute( "unit", characterName )
+	healthBarClick:SetAttribute( "unit", Ambiguate( characterName, "none" ) )
 	healthBarClick:SetFrameStrata( "MEDIUM" )
 	characterStatusBar["healthBar"] = healthBar
 	characterStatusBar["healthBarClick"] = healthBarClick
@@ -592,7 +592,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	powerBar:SetValue( 100 )
 	powerBar:SetFrameStrata( "LOW" )
 	local powerBarClick = CreateFrame( "CheckButton", powerName.."Click"..characterName, parentFrame, "SecureActionButtonTemplate" )
-	powerBarClick:SetAttribute( "unit", characterName )
+	powerBarClick:SetAttribute( "unit", Ambiguate( characterName, "none" ) )
 	powerBarClick:SetFrameStrata( "MEDIUM" )
 	characterStatusBar["powerBar"] = powerBar
 	characterStatusBar["powerBarClick"] = powerBarClick
@@ -1886,7 +1886,7 @@ function AJM:SettingsUpdateFollowText( characterName, characterLevel )
 	local followBarText = characterStatusBar["followBarText"]	
 	local text = ""
 	if AJM.db.followStatusShowName == true then
-		text = text..characterName
+		text = text..Ambiguate( characterName, "none" )
 	end
 	if AJM.db.followStatusShowLevel == true then
 		if AJM.db.followStatusShowName == true then

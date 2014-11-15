@@ -2234,7 +2234,7 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	-- Set the characters name font string.
 	local frameCharacterName = AJM.globalCurrencyFramePrefix.."CharacterName"
 	local frameCharacterNameText = parentFrame:CreateFontString( frameCharacterName.."Text", "OVERLAY", "GameFontNormal" )
-	frameCharacterNameText:SetText( characterName )
+	frameCharacterNameText:SetText( Ambiguate( characterName , "none" ) )
 	frameCharacterNameText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
 	frameCharacterNameText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
 	frameCharacterNameText:SetWidth( width * 2.5 )

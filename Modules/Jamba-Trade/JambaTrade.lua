@@ -566,7 +566,8 @@ function AJM.JambaTradeLoadMineButtonClicked()
 end
 
 function AJM.JambaTradeLoadTheirsButtonClicked()
-	AJM:JambaSendCommandToToon( UnitName( "npc" ), AJM.COMMAND_LOAD_ITEM_CLASS_INTO_TRADE, AJM.itemClassCurrentSelection, AJM.itemSubClassCurrentSelection, AJM.db.ignoreSoulBound )
+	local name = AJM:GetNPCUnitName()
+	AJM:JambaSendCommandToToon( name, AJM.COMMAND_LOAD_ITEM_CLASS_INTO_TRADE, AJM.itemClassCurrentSelection, AJM.itemSubClassCurrentSelection, AJM.db.ignoreSoulBound )
 end
 
 function AJM:OtherToonInventoryButtonEnter( self )
@@ -587,7 +588,8 @@ function AJM:OtherToonInventoryButtonLeave( self )
 end
 
 function AJM:OtherToonInventoryButtonClick( self )
-	AJM:JambaSendCommandToToon( UnitName( "npc" ), AJM.COMMAND_LOAD_ITEM_INTO_TRADE, self.bag, self.slot, false )
+	local name = AJM:GetNPCUnitName()
+	AJM:JambaSendCommandToToon( name, AJM.COMMAND_LOAD_ITEM_INTO_TRADE, self.bag, self.slot, false )
 	SetItemButtonDesaturated( self, 1, 0.5, 0.5, 0.5 )
 end
 
@@ -627,7 +629,7 @@ function AJM:TRADE_SHOW( event, ... )
 		AJM:TradeShowDisplayJambaTrade()
 	end
 	if AJM.db.adjustMoneyWithMasterOnTrade == true then
-	AJM:ScheduleTimer( "TradeShowAdjustMoneyWithMaster", 1 )
+		AJM:ScheduleTimer( "TradeShowAdjustMoneyWithMaster", 1 )
 	end	
 end
 
@@ -647,6 +649,16 @@ function AJM:TradeShowAdjustMoneyWithMaster()
 	end
 end
 
+function AJM:GetNPCUnitName()
+	local name, realm = UnitName( "npc" )
+	if realm then
+		name = name.."-"..realm
+	else
+		name = name.."-"..GetRealmName()
+	end
+	return name
+end
+
 function AJM:TradeShowDisplayJambaTrade()
 	local slotsFree, totalSlots = LibBagUtils:CountSlots( "BAGS", 0 )
 	JambaTradeInventoryFrame.labelMineBags:SetText( self.characterName..": "..(totalSlots - slotsFree).."/"..totalSlots )
@@ -655,9 +667,10 @@ function AJM:TradeShowDisplayJambaTrade()
 	end
 	JambaTradeInventoryFrame.checkBoxIgnoreSoulBound:SetChecked( AJM.db.ignoreSoulBound )
 	AJM:JambaTradeIgnoreSoulBoundCheckboxChanged()
-	AJM:JambaSendCommandToToon( UnitName( "npc" ), AJM.COMMAND_GET_SLOT_COUNT )
+	local name = AJM:GetNPCUnitName()
+	AJM:JambaSendCommandToToon( name, AJM.COMMAND_GET_SLOT_COUNT )
 	AJM:LoadThisToonsClasses()
-	AJM:JambaSendCommandToToon( UnitName( "npc" ), AJM.COMMAND_SHOW_INVENTORY )
+	AJM:JambaSendCommandToToon (name, AJM.COMMAND_SHOW_INVENTORY )
 end
 
 function AJM:TRADE_CLOSED()

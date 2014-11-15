@@ -1092,8 +1092,9 @@ function AJM:FollowTarget( target )
 		if (AJM.db.autoFollowAfterCombat == true) or (AJM.followingStrobing == true) then
 			AJM.jambaSetFollowTarget = true	
 		end
+		--AJM:Print( target )
 		-- Follow unit only works when in a party or raid for resolving against player names.
-		FollowUnit( target )
+		FollowUnit( Ambiguate( target, "none" ) )
 	end	
 end
 

@@ -547,12 +547,15 @@ local function IsCharacterInTeam( characterName )
 	if not isMember then
 		for fullCharacterName, position in pairs( AJM.db.teamList ) do
 			local checkCharacterName = select( 3, fullCharacterName:find( "^(%w+)-(%w+)$" ) )
+			--AJM:Print('checking', checkCharacterName, 'vs', characterName)
 			if checkCharacterName == characterName then
+				--AJM:Print('match found')
 				isMember = true
 				break
 			end
 		end
 	end
+	--AJM:Print('returning', isMember)
 	return isMember
 end
 
@@ -574,21 +577,23 @@ end
 local function SetMaster( master )
 	-- Make sure a valid string value is supplied.
 	if (master ~= nil) and (master:trim() ~= "") then
+		local character = master
+		local updateMatchStart = master:find( "-" )
+		if not updateMatchStart then
+			local realmName = GetRealmName()
+			character = master.."-"..realmName
+		end
 		-- Only allow characters in the team list to be the master.
-		if IsCharacterInTeam( master ) == true then
+		if IsCharacterInTeam( character ) == true then
 			-- Set the master.
-			AJM.db.master = master
+			AJM.db.master = character
 			-- Refresh the settings.
 			AJM:SettingsRefresh()			
 			-- Send a message to any listeners that the master has changed.
-			AJM:SendMessage( AJM.MESSAGE_TEAM_MASTER_CHANGED, master )				
+			AJM:SendMessage( AJM.MESSAGE_TEAM_MASTER_CHANGED, character )
 		else
 			-- Character not in team.  Tell the team.
-			AJM:JambaSendMessageToTeam( 
-				AJM.characterName, 
-				L["A is not in my team list.  I can not set them to be my master."]( master ),
-				false
-			)
+			AJM:JambaSendMessageToTeam( AJM.characterName, L["A is not in my team list.  I can not set them to be my master."]( character ), false )
 		end
 	end
 end
@@ -598,13 +603,19 @@ local function AddMember( characterName )
 	-- Wow names are at least two characters.
 	if characterName ~= nil and characterName:trim() ~= "" and characterName:len() > 1 then
 		-- If the character is not already on the list...
-		if AJM.db.teamList[characterName] == nil then
+		local character = characterName
+		local updateMatchStart = characterName:find( "-" )
+		if not updateMatchStart then
+			local realmName = GetRealmName()
+			character = characterName.."-"..realmName
+		end
+		if AJM.db.teamList[character] == nil then
 			-- Get the maximum order number.
 			local maxOrder = GetTeamListMaximumOrder()
 			-- Yes, add to the member list.
-			AJM.db.teamList[characterName] = maxOrder + 1
+			AJM.db.teamList[character] = maxOrder + 1
 			-- Send a message to any listeners that AJM character has been added.
-			AJM:SendMessage( AJM.MESSAGE_TEAM_CHARACTER_ADDED, characterName )						
+			AJM:SendMessage( AJM.MESSAGE_TEAM_CHARACTER_ADDED, character )
 			-- Refresh the settings.
 			AJM:SettingsRefresh()			
 		end
@@ -802,7 +813,14 @@ local function SetCharacterOnlineStatus( characterName, isOnline )
 	if JambaPrivate.Communications.AssumeTeamAlwaysOnline() == true then
 		isOnline = true
 	end
-	AJM.characterOnline[characterName] = isOnline
+	local character = characterName
+	local updateMatchStart = characterName:find( "-" )
+	if not updateMatchStart then
+		local realmName = GetRealmName()
+		character = characterName.."-"..realmName
+	end
+	--AJM:Print('setting', character, 'to be online')
+	AJM.characterOnline[character] = isOnline
 	AJM:SettingsTeamListScrollRefresh()
 end
 
@@ -916,10 +934,14 @@ function AJM:PLAYER_FOCUS_CHANGED()
 	if AJM.db.focusChangeSetMaster == true then
 		-- Get the name of the focused unit.
 		local targetName, targetRealm = UnitName( "focus" )
+		local name = targetName
+		if targetRealm ~= nil then
+			name = targetName.."-"..targetRealm
+		end
 		-- Attempt to set this target as the master if the target is in the team.
-		if IsCharacterInTeam( targetName ) == true then
-			if (targetName ~= nil) and (targetName:trim() ~= "") then
-				SetMaster( targetName )
+		if IsCharacterInTeam( name ) == true then
+			if (name ~= nil) and (name:trim() ~= "") then
+				SetMaster( name )
 			end
 		end
 	end
@@ -1065,10 +1087,10 @@ local function LeaveTheParty()
 end
 
 function AJM:OnMasterChange( message, characterName )
-	local playerName = UnitName( "player" )
+	local playerName = AJM.characterName
 	if AJM.db.masterChangePromoteLeader == true then
 		if IsInGroup( "player" ) and UnitIsGroupLeader( "player" ) == true and GetMasterName() ~= playerName then
-			PromoteToLeader( GetMasterName() )
+			PromoteToLeader( Ambiguate( GetMasterName(), "none" ) )
 		end
 	end
 	if AJM.db.masterChangeClickToMove == true then
@@ -1113,14 +1135,20 @@ function AJM:OnInitialize()
 	local updatedTeamList = {}
 	local realmName = GetRealmName()
 	for characterName, position in pairs( AJM.db.teamList ) do
+		--AJM:Print( 'Iterating:', characterName, position )
 		local updateMatchStart = characterName:find( "-" )
 		if not updateMatchStart then
 			updatedTeamList[characterName.."-"..realmName] = position
 		else
-			updatedTeamList[characterName] = position
+			if characterName then
+				updatedTeamList[characterName] = position
+			end
 		end
 	end
 	AJM.db.teamList = JambaUtilities:CopyTable( updatedTeamList )
+--	for characterName, position in pairs( AJM.db.teamList ) do
+--		AJM:Print( 'Iterating after:', characterName, position )
+--	end
 	local updateMatchStart = AJM.db.master:find( "-" )
 	if not updateMatchStart then
 		AJM.db.master = AJM.db.master.."-"..realmName
