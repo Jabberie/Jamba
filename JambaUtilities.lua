@@ -34,7 +34,6 @@ function JambaUtilities:CopyTable(object)
     return _copy(object)
 end
 
--- Clear a table.
 function JambaUtilities:ClearTable( object )
 	for key in next, object do
 		if type( object[key] ) == "table" then
@@ -44,10 +43,28 @@ function JambaUtilities:ClearTable( object )
 	end
 end
 
--- Lowercase the name.
 function JambaUtilities:Lowercase( name )
 	return string.utf8lower( name )
 end
+
+function JambaUtilities:AddRealmToNameIfMissing( name )
+	local fullName = name
+	local matchDash = name:find( "-" )
+	if not matchDash then
+		local realmName = GetRealmName()
+		fullName = name.."-"..realmName
+	end
+	return fullName
+end
+
+function JambaUtilities:AddRealmToNameIfNotNil( name, realm )
+	local fullName = name
+	if realm ~= nil and realm:trim() ~= "" then
+		fullName = name.."-"..realm
+	end
+	return fullName
+end
+
 
 -- Money constants.
 JambaUtilities.COLOUR_COPPER = "eda55f"

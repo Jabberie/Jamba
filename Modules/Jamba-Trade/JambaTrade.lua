@@ -654,7 +654,7 @@ function AJM:GetNPCUnitName()
 	if realm then
 		name = name.."-"..realm
 	else
-		name = name.."-"..GetRealmName()
+		name = name.."-"..AJM.characterRealm
 	end
 	return name
 end

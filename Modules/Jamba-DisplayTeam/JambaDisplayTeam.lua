@@ -504,7 +504,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	followBarText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
 	followBarText:SetAllPoints()
 	characterStatusBar["followBarText"] = followBarText
-	AJM:SettingsUpdateFollowText( characterName, UnitLevel( characterName ) )
+	AJM:SettingsUpdateFollowText( characterName, UnitLevel( Ambiguate( characterName, "none" ) ) )
 	-- Set the experience bar.
 	local experienceName = AJM.globalFramePrefix.."ExperienceBar"
 	local experienceBar = CreateFrame( "StatusBar", experienceName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
@@ -1781,6 +1781,7 @@ function AJM:UpdateBagInformation( characterName, slotsFree, totalSlots )
 	if AJM.db.showBagInformation == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -1847,6 +1848,7 @@ function AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
 	if AJM.db.showFollowStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -1868,7 +1870,7 @@ end
 
 function AJM:SettingsUpdateFollowTextAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:SettingsUpdateFollowText( characterName, UnitLevel( characterName ) )
+		AJM:SettingsUpdateFollowText( characterName, UnitLevel( Ambiguate( characterName, "none" ) ) )
 	end
 end
 
@@ -1879,6 +1881,7 @@ function AJM:SettingsUpdateFollowText( characterName, characterLevel )
 	if AJM.db.showFollowStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -1947,6 +1950,7 @@ function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxE
 	if AJM.db.showExperienceStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2028,6 +2032,7 @@ function AJM:UpdateReputationStatus( characterName, reputationName, reputationSt
 	if AJM.db.showReputationStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2106,8 +2111,9 @@ function AJM:SendHealthStatusUpdateCommand( unit )
 	if AJM.db.showTeamList == true and AJM.db.showHealthStatus == true then
 		local playerHealth = UnitHealth( unit )
 		local playerMaxHealth = UnitHealthMax( unit )
-		local characterName = UnitName( unit )
-		AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
+		local characterName, characterRealm = UnitName( unit )
+		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+		AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth )
 	end
 end
 
@@ -2124,6 +2130,7 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
 	if AJM.db.showHealthStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2185,8 +2192,9 @@ function AJM:SendPowerStatusUpdateCommand( unit )
 	if AJM.db.showTeamList == true and AJM.db.showPowerStatus == true then
 		local playerPower = UnitPower( unit )
 		local playerMaxPower = UnitPowerMax( unit )
-		local characterName = UnitName( unit )
-		AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
+		local characterName, characterRealm = UnitName( unit )
+		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+		AJM:UpdatePowerStatus( character, playerPower, playerMaxPower )
 	end
 end
 
@@ -2203,6 +2211,8 @@ function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
 	if AJM.db.showPowerStatus == false then
 		return
 	end
+	local originalChatacterName = characterName
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2231,10 +2241,11 @@ function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
 		end
 	end
 	powerBarText:SetText( text )		
-	AJM:SetStatusBarColourForPower( powerBar, characterName )
+	AJM:SetStatusBarColourForPower( powerBar, originalChatacterName )
 end
 
 function AJM:SetStatusBarColourForPower( statusBar, unit )
+	unit =  Ambiguate( unit, "none" )
 	local powerIndex, powerString, altR, altG, altB = UnitPowerType( unit )
 	if powerString ~= nil and powerString ~= "" then
 		local r = PowerBarColor[powerString].r
@@ -2295,8 +2306,8 @@ function AJM:OnEnable()
 	AJM:SecureHook( "SetWatchedFactionIndex" )
 	AJM:ScheduleTimer( "RefreshTeamListControls", 5 )
 	AJM:ScheduleTimer( "SendExperienceStatusUpdateCommand", 6 )
-	AJM:ScheduleTimer( "SendReputationStatusUpdateCommand", 7 )
-	AJM:ScheduleTimer( "SendBagInformationUpdateCommand", 8 )
+	AJM:ScheduleTimer( "SendReputationStatusUpdateCommand", 6 )
+	AJM:ScheduleTimer( "SendBagInformationUpdateCommand", 6 )
 end
 
 -- Called when the addon is disabled.

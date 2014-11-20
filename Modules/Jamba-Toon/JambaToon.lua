@@ -1458,14 +1458,18 @@ function AJM:PLAYER_REGEN_DISABLED( event, ... )
 	AJM.haveBeenHit = false
 	if AJM.db.warnTargetNotMasterEnterCombat == true then
 		if JambaApi.IsCharacterTheMaster( AJM.characterName ) == false then
-			if UnitName( "target" ) ~= JambaApi.GetMasterName() then
+			local name, realm = UnitName( "target" )
+			local character = JambaUtilities:AddRealmToNameIfNotNil( name, realm )
+			if character ~= JambaApi.GetMasterName() then
 				AJM:JambaSendMessageToTeam( AJM.db.warningArea, AJM.db.warnTargetNotMasterMessage, false )
 			end
 		end
 	end
 	if AJM.db.warnFocusNotMasterEnterCombat == true then
 		if JambaApi.IsCharacterTheMaster( AJM.characterName ) == false then
-			if UnitName( "focus" ) ~= JambaApi.GetMasterName() then
+			local name, realm = UnitName( "focus" )
+			local character = JambaUtilities:AddRealmToNameIfNotNil( name, realm )
+			if character ~= JambaApi.GetMasterName() then
 				AJM:JambaSendMessageToTeam( AJM.db.warningArea, AJM.db.warnFocusNotMasterMessage, false )
 			end
 		end

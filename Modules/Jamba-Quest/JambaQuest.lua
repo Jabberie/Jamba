@@ -1684,15 +1684,16 @@ function AJM:CanAutoAcceptSharedQuestFromPlayer()
 		canAccept = true
 	elseif AJM.db.onlyAcceptQuestsFrom == true then
 		local questSourceName, questSourceRealm = UnitName( "npc" )
+		local character = JambaUtilities:AddRealmToNameIfNotNil( questSourceName, questSourceRealm )
 		if AJM.db.acceptFromTeam == true then	
-			if JambaApi.IsCharacterInTeam( questSourceName ) == true then
+			if JambaApi.IsCharacterInTeam( character ) == true then
 				canAccept = true
 			end
 		end
 		if AJM.db.acceptFromFriends == true then	
 			for friendIndex = 1, GetNumFriends() do
 				local friendName = GetFriendInfo( friendIndex )
-				if questSourceName == friendName then
+				if character == friendName then
 					canAccept = true
 					break
 				end

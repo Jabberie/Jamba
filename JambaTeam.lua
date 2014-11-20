@@ -577,12 +577,7 @@ end
 local function SetMaster( master )
 	-- Make sure a valid string value is supplied.
 	if (master ~= nil) and (master:trim() ~= "") then
-		local character = master
-		local updateMatchStart = master:find( "-" )
-		if not updateMatchStart then
-			local realmName = GetRealmName()
-			character = master.."-"..realmName
-		end
+		local character = JambaUtilities:AddRealmToNameIfMissing( master )
 		-- Only allow characters in the team list to be the master.
 		if IsCharacterInTeam( character ) == true then
 			-- Set the master.
@@ -603,12 +598,7 @@ local function AddMember( characterName )
 	-- Wow names are at least two characters.
 	if characterName ~= nil and characterName:trim() ~= "" and characterName:len() > 1 then
 		-- If the character is not already on the list...
-		local character = characterName
-		local updateMatchStart = characterName:find( "-" )
-		if not updateMatchStart then
-			local realmName = GetRealmName()
-			character = characterName.."-"..realmName
-		end
+		local character = JambaUtilities:AddRealmToNameIfMissing( characterName )
 		if AJM.db.teamList[character] == nil then
 			-- Get the maximum order number.
 			local maxOrder = GetTeamListMaximumOrder()
@@ -633,9 +623,10 @@ end
 function AJM:AddPartyMembers()
 	local numberPartyMembers = GetNumSubgroupMembers()
 	for iteratePartyMembers = numberPartyMembers, 1, -1 do
-		local partyMemberName = UnitName( "party"..iteratePartyMembers )
-		if IsCharacterInTeam( partyMemberName ) == false then
-			AddMember( partyMemberName )
+		local partyMemberName, partyMemberRealm = UnitName( "party"..iteratePartyMembers )
+		local character = JambaUtilities:AddRealmToNameIfNotNil( partyMemberName, partyMemberRealm )
+		if IsCharacterInTeam( character ) == false then
+			AddMember( character )
 		end
 	end
 end
@@ -813,12 +804,7 @@ local function SetCharacterOnlineStatus( characterName, isOnline )
 	if JambaPrivate.Communications.AssumeTeamAlwaysOnline() == true then
 		isOnline = true
 	end
-	local character = characterName
-	local updateMatchStart = characterName:find( "-" )
-	if not updateMatchStart then
-		local realmName = GetRealmName()
-		character = characterName.."-"..realmName
-	end
+	local character =  JambaUtilities:AddRealmToNameIfMissing( characterName )
 	--AJM:Print('setting', character, 'to be online')
 	AJM.characterOnline[character] = isOnline
 	AJM:SettingsTeamListScrollRefresh()
@@ -910,7 +896,9 @@ local function SetPartyLoot( desiredLootOption )
 				end
 				-- If partyMaster between 1 and 4 then that player (party1 .. party4) is the master looter.
 				if partyMaster > 0 then
-					if UnitName( "party"..partyMaster ) ~= GetMasterName() then
+					local checkName, checkRealm = UnitName( "party"..partyMaster )
+					local character = JambaUtilities:AddRealmToNameIfNotNil( checkName, checkName )
+					if character ~= GetMasterName() then
 						-- Then, yes, can change loot method.
 						canChangeLootMethod = true
 					end
@@ -934,10 +922,7 @@ function AJM:PLAYER_FOCUS_CHANGED()
 	if AJM.db.focusChangeSetMaster == true then
 		-- Get the name of the focused unit.
 		local targetName, targetRealm = UnitName( "focus" )
-		local name = targetName
-		if targetRealm ~= nil then
-			name = targetName.."-"..targetRealm
-		end
+		local name = JambaUtilities:AddRealmToNameIfNotNil( targetName, targetRealm )
 		-- Attempt to set this target as the master if the target is in the team.
 		if IsCharacterInTeam( name ) == true then
 			if (name ~= nil) and (name:trim() ~= "") then
@@ -955,13 +940,14 @@ function AJM:PARTY_LEADER_CHANGED( event, ... )
 			if AJM.db.lootToGroupIfStrangerPresent == true then
 				local numberPartyMembers = GetNumSubgroupMembers()
 				for iteratePartyMembers = numberPartyMembers, 1, -1 do
-					local partyMemberName = UnitName( "party"..iteratePartyMembers )
-					if IsCharacterInTeam( partyMemberName ) == false then
+					local partyMemberName, partyMemberRealm = UnitName( "party"..iteratePartyMembers )
+					local character = JambaUtilities:AddRealmToNameIfNotNil( partyMemberName, partyMemberRealm )
+					if IsCharacterInTeam( character ) == false then
 						if AJM.db.lootToGroupFriendsAreNotStrangers == true then
 							local isAFriend = false
 							for friendIndex = 1, GetNumFriends() do
 								local friendName = GetFriendInfo( friendIndex )
-								if partyMemberName == friendName then
+								if character == friendName then
 									isAFriend = true
 								end
 							end
@@ -1239,6 +1225,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.lootSetFreeForAll = settings.lootSetFreeForAll 
 		AJM.db.lootSetMasterLooter = settings.lootSetMasterLooter 
 		AJM.db.lootSlavesOptOutOfLoot = settings.lootSlavesOptOutOfLoot
+		AJM.db.lootToGroupIfStrangerPresent = settings.lootToGroupIfStrangerPresent
+		AJM.db.lootToGroupFriendsAreNotStrangers = settings.lootToGroupFriendsAreNotStrangers
 		AJM.db.masterChangeClickToMove = settings.masterChangeClickToMove
 		AJM.db.master = settings.master
 		SetMaster( settings.master )

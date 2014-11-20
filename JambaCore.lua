@@ -47,6 +47,17 @@ JambaPrivate.SettingsFrame.WidgetTree:EnableButtonTooltips( false )
 JambaPrivate.SettingsFrame.Widget:AddChild( JambaPrivate.SettingsFrame.WidgetTree )
 JambaPrivate.SettingsFrame.WidgetTree:SetLayout( "Fill" )
 
+function AJM:OnEnable()
+	if AJM.db.showStartupMessage6033 then
+		JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Release Notes / News"] )
+		JambaStartupMessageFrame:Show()
+		AJM.db.showStartupMessage6033 = false
+	end
+end
+
+function AJM:OnDisable()
+end
+
 local function JambaSettingsTreeSort( a, b )
 	local aText = ""
 	local bText = ""
@@ -217,6 +228,7 @@ table.insert( UISpecialFrames, "JambaSettingsWindowsFrame" )
 AJM.settings = {
 	profile = {
 		showMinimapIcon = true,
+		showStartupMessage6033 = true,
 	},
 }
 
@@ -518,12 +530,6 @@ function AJM:LoadJambaModule( moduleName )
 			AJM:Print("Failed to load Jamba Module '"..moduleName.."' ["..reason.."]." )
 		end
 	end
-end
-
-function AJM:OnEnable()
-end
-
-function AJM:OnDisable()
 end
 
 function AJM:CoreSettingsCreateInfo( top )

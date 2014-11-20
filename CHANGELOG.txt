@@ -1,3 +1,29 @@
+Jamba Version: 6.0.3-3
+WoW Game Version: 6.0.3
+Release Date: 20th November 2014
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Core
+* Various fixes for party leader changing and loot options.
+* Push team settings now push the options "Override: Set loot to Group Loot if stranger in group." and "Friends Are Not Strangers"
+* Override: Set loot to Group Loot if stranger in group no longer considers team members to be strangers.
+
+Jamba-Display-Team
+* Character level should display properly again now.
+* Clique should still work with the health and power bars now.
+* Health and power bars should update correctly.
+
+Jamba-Quest
+* Accept shared quest from team should work again.
+
+Jamba-Toon
+* If master not focus / target warnings should work again.
+
+Known Issues
+* The functions on the quest log bar (abandon all, share all, etc) may no longer work properly.
+
+=====================================================================================================================================================
+
 Jamba Version: 6.0.3-2
 WoW Game Version: 6.0.3
 Release Date: 16th November 2014
