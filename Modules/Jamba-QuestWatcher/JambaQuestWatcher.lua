@@ -1,8 +1,7 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
-Copyright 2008 - 2014 Michael "Jafula" Miller
-License: All Rights Reserved
-http://jafula.com/jamba/
+Copyright 2008 - 2015 Michael "Jafula" Miller
+License: The MIT License
 ]]--
 
 -- Create the addon using AceAddon-3.0 and embed some libraries.
@@ -154,6 +153,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "PLAYER_REGEN_ENABLED" )
 	AJM:RegisterEvent( "PLAYER_REGEN_DISABLED" )
 	AJM:RegisterEvent( "QUEST_WATCH_UPDATE" )
+	AJM:RegisterEvent( "QUEST_WATCH_LIST_CHANGED", "QUEST_WATCH_UPDATE" )
 	-- For in the field auto quests.
 	AJM:RegisterEvent( "QUEST_AUTOCOMPLETE" )
 	AJM:RegisterEvent( "QUEST_COMPLETE" )
@@ -492,9 +492,9 @@ function AJM:CreateQuestWatcherFrame()
 	} )
 	-- Create the title for the team list frame.
 	local titleName = frame:CreateFontString( "JambaQuestWatcherWindowFrameTitleText", "OVERLAY", "GameFontNormal" )
-	titleName:SetPoint( "TOPLEFT", frame, "TOPLEFT", 7, -7 )
-	titleName:SetTextColor( 1.00, 1.00, 1.00 )
-	titleName:SetText( L["Jamba Quest Watcher"] )
+    titleName:SetPoint( "TOPLEFT", frame, "TOPLEFT", 7, -7 )
+    titleName:SetTextColor( 1.00, 1.00, 1.00 )
+    titleName:SetText( L["Jamba Quest Watcher"] )
 	frame.titleName = titleName
 	-- Update button.
 	local updateButton = CreateFrame( "Button", "JambaQuestWatcherWindowFrameButtonUpdate", frame, "UIPanelButtonGrayTemplate" )
@@ -846,21 +846,22 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:SelectActiveQuest( questIndex )
-    --AJM:Print("select active quest", questIndex)
+    AJM:DebugMessage("select active quest", questIndex)
 	if AJM.db.enableQuestWatcher == false then
 		return
 	end
 	AJM:SetActiveQuestForQuestWatcherCache( questIndex )
 end
 
-function AJM:GetQuestReward( questIndex )
+function AJM:GetQuestReward( itemChoice )
 	if AJM.db.enableQuestWatcher == false then
 		return
     end
 	local questJustCompletedName = GetTitleText()
     AJM:DebugMessage( "GetQuestReward: ", questIndex, questJustCompletedName )
+    local questIndex = AJM:GetQuestLogIndexByName( questJustCompletedName )
     local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questIndex )
-    AJM:DebugMessage( "GetQuestReward after GetQuestLogTitle: ", questIndex, questJustCompletedName )
+    AJM:DebugMessage( "GetQuestReward after GetQuestLogTitle: ", questIndex, questJustCompletedName, questID )
 	AJM:RemoveQuestFromWatchList( questID )
 end
 
@@ -1076,7 +1077,7 @@ end
 function AJM:QUEST_COMPLETE()
 	if AJM.db.enableQuestWatcher == false then
 		return
-	end
+    end
 	AJM:JambaSendCommandToTeam( AJM.COMMAND_REMOVE_AUTO_QUEST_COMPLETE, questID )
 end
 
@@ -1105,7 +1106,7 @@ function AJM:JambaQuestWatcherUpdate( useCache )
 	if AJM.db.enableQuestWatcher == false then
 		return
 	end
-	--AJM:Print( "Sending quest watch information...")
+	AJM:DebugMessage( "Sending quest watch information...")
 	for iterateWatchedQuests = 1, GetNumQuestWatches() do
 		local questIndex = GetQuestIndexForWatch( iterateWatchedQuests )
         AJM:DebugMessage( "GetQuestIndexForWatch: questIndex: ", questIndex )
@@ -1730,98 +1731,105 @@ function AJM:AutoQuestGetOrCreateFrame( parent, index )
 	if _G["JambaWatchFrameAutoQuestPopUp"..index] then
 		return _G["JambaWatchFrameAutoQuestPopUp"..index]
 	end
-	local frame = CreateFrame( "SCROLLFRAME", "JambaWatchFrameAutoQuestPopUp"..index, parent, "AutoQuestPopUpBlockTemplate" )
+	local frame = CreateFrame( "SCROLLFRAME", "JambaWatchFrameAutoQuestPopUp"..index, parent )
 	frame.index = index
+    frame:EnableMouse( true )
+    local QuestName = frame:CreateFontString( "JambaWatchFrameAutoQuestPopUpQuestName"..index, "OVERLAY", "GameFontNormal" )
+    QuestName:SetPoint( "TOP", frame, "TOP", 0, -12 )
+    QuestName:SetTextColor( 1.00, 1.00, 1.00 )
+    QuestName:SetText( "" )
+    frame.QuestName = QuestName
+    local TopText = frame:CreateFontString( "JambaWatchFrameAutoQuestPopUpTopText"..index, "OVERLAY", "GameFontNormal" )
+    TopText:SetPoint( "TOP", frame, "TOP", 0, -24 )
+    TopText:SetTextColor( 1.00, 1.00, 1.00 )
+    TopText:SetText( "" )
+    frame.TopText = TopText
+    local BottomText = frame:CreateFontString( "JambaWatchFrameAutoQuestPopUpBottomText"..index, "OVERLAY", "GameFontNormal" )
+    BottomText:SetPoint( "TOP", frame, "TOP", 0, -36 )
+    BottomText:SetTextColor( 1.00, 1.00, 1.00 )
+    BottomText:SetText( "BottomText" )
+    frame.BottomText = BottomText
 	AJM.countAutoQuestPopUpFrames = AJM.countAutoQuestPopUpFrames + 1
 	return frame
 end
 
 function AJM:DisplayAutoQuestPopUps()
---	local nextAnchor
---	local countPopUps = 0
---	local iterateQuestPopups = 0
---	JambaQuestWatcherFrame.autoQuestPopupsHeight = 0
---	local parentFrame = JambaQuestWatcherFrame.fieldNotifications
---	for questID, characterInfo in pairs( AJM.currentAutoQuestPopups ) do
---		local characterName, characterPopUpType, popUpType
---		local characterList = ""
---		for characterName, characterPopUpType in pairs( characterInfo ) do
---			characterList = characterList..characterName.." "
---			-- TODO - hack, assuming all characters have the same sort of popup.
---			popUpType = characterPopUpType
---		end
---        local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( GetQuestLogIndexByID( questID ) )
---		if isComplete and isComplete > 0 then
---			isComplete = true
---		else
---			isComplete = false
---		end
---		-- If the current character does not have the quest, show the character names that do have it.
---		local clickToViewText = QUEST_WATCH_POPUP_CLICK_TO_VIEW
---		if not (title and title ~= "") then
---            title = characterList
---			clickToViewText = ""
---		end
---		local frame = AJM:AutoQuestGetOrCreateFrame( parentFrame, countPopUps + 1 )
---		frame:Show()
---		frame:ClearAllPoints()
---		frame:SetParent( parentFrame )
---		if isComplete == true and popUpType == "COMPLETE" then
---			frame.ScrollChild.QuestionMark:Show()
---			frame.ScrollChild.Exclamation:Hide()
---			frame.ScrollChild.TopText:SetText( QUEST_WATCH_POPUP_CLICK_TO_COMPLETE )
---			frame.ScrollChild.BottomText:Hide()
---			frame.ScrollChild.TopText:SetPoint( "TOP", 0, -12 )
---			frame.ScrollChild.QuestName:SetPoint( "TOP", 0, -32 )
---			if frame.questId ~= nil and frame.type == "OFFER" then
---				frame.ScrollChild.Flash:Show()
---			end
---			frame.type = "COMPLETED"
---		elseif popUpType == "OFFER" then
---			frame.ScrollChild.QuestionMark:Hide()
---			frame.ScrollChild.Exclamation:Show()
---			frame.ScrollChild.TopText:SetText( QUEST_WATCH_POPUP_QUEST_DISCOVERED )
---			frame.ScrollChild.BottomText:Show()
---			frame.ScrollChild.BottomText:SetText( clickToViewText )
---			frame.ScrollChild.TopText:SetPoint( "TOP", 0, -4 )
---			frame.ScrollChild.QuestName:SetPoint( "TOP", 0, -24 )
---			frame.ScrollChild.Flash:Hide()
---			frame.type = "OFFER"
---			frame:HookScript( "OnMouseUp", function()
---				AJM:JambaRemoveAllAutoQuestPopUps( questID )
---				AJM:DisplayAutoQuestPopUps()
---				AJM:SettingsUpdateBorderStyle()
---			end )
---		end
---		frame:ClearAllPoints()
---		if nextAnchor ~= nil then
---			if iterateQuestPopups == 1 then
---				frame:SetPoint( "TOP", nextAnchor, "BOTTOM", 0, 0 ) -- -WATCHFRAME_TYPE_OFFSET
---			else
---				frame:SetPoint( "TOP", nextAnchor, "BOTTOM", 0, 0 )
---			end
---		else
---			frame:SetPoint( "TOP", parentFrame, "TOP", 0, 5 ) -- -WATCHFRAME_INITIAL_OFFSET
---		end
---		frame:SetPoint( "LEFT", parentFrame, "LEFT", -20, 0 )
---		frame.ScrollChild.QuestName:SetText( title )
---		frame.questId = questID
---		frame.ScrollChild.Shine:Show()
---		frame.ScrollChild.IconShine:Show()
---		frame.ScrollChild.Shine.Flash:Play()
---		frame.ScrollChild.IconShine.Flash:Play()
---		frame:SetHeight( 75 )
---		frame:UpdateScrollChildRect()
---		frame:SetVerticalScroll( floor( -9 + 0.5 ) )
---		nextAnchor = frame
---		countPopUps = countPopUps + 1
---		JambaQuestWatcherFrame.autoQuestPopupsHeight = JambaQuestWatcherFrame.autoQuestPopupsHeight + frame:GetHeight()
---	end
---	for iterateQuestPopups = countPopUps + 1, AJM.countAutoQuestPopUpFrames do
---		_G["JambaWatchFrameAutoQuestPopUp"..iterateQuestPopups].questId = nil
---		_G["JambaWatchFrameAutoQuestPopUp"..iterateQuestPopups]:Hide()
---	end
---	AJM:UpdateQuestWatcherDimensions()
+	local nextAnchor
+	local countPopUps = 0
+	local iterateQuestPopups = 01
+	JambaQuestWatcherFrame.autoQuestPopupsHeight = 0
+	local parentFrame = JambaQuestWatcherFrame.fieldNotifications
+	for questID, characterInfo in pairs( AJM.currentAutoQuestPopups ) do
+		local characterName, characterPopUpType, popUpType
+		local characterList = ""
+		for characterName, characterPopUpType in pairs( characterInfo ) do
+			characterList = characterList..characterName.." "
+			-- TODO - hack, assuming all characters have the same sort of popup.
+			popUpType = characterPopUpType
+		end
+        local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( GetQuestLogIndexByID( questID ) )
+		if isComplete and isComplete > 0 then
+			isComplete = true
+		else
+			isComplete = false
+		end
+		-- If the current character does not have the quest, show the character names that do have it.
+		local clickToViewText = QUEST_WATCH_POPUP_CLICK_TO_VIEW
+		if not (title and title ~= "") then
+            title = characterList
+			clickToViewText = ""
+		end
+		local frame = AJM:AutoQuestGetOrCreateFrame( parentFrame, countPopUps + 1 )
+		frame:Show()
+		frame:ClearAllPoints()
+		frame:SetParent( parentFrame )
+		if isComplete == true and popUpType == "COMPLETE" then
+			frame.TopText:SetText( QUEST_WATCH_POPUP_CLICK_TO_COMPLETE )
+			frame.BottomText:Hide()
+            frame:SetHeight( 32 )
+			frame.type = "COMPLETED"
+            frame:HookScript( "OnMouseUp", function()
+                ShowQuestComplete( GetQuestLogIndexByID( questID ) )
+                AJM:JambaRemoveAllAutoQuestPopUps( questID )
+                AJM:DisplayAutoQuestPopUps()
+                AJM:SettingsUpdateBorderStyle()
+            end )
+		elseif popUpType == "OFFER" then
+			frame.TopText:SetText( QUEST_WATCH_POPUP_QUEST_DISCOVERED )
+			frame.BottomText:Show()
+			frame.BottomText:SetText( clickToViewText )
+            frame:SetHeight( 48 )
+			frame.type = "OFFER"
+			frame:HookScript( "OnMouseUp", function()
+				AJM:JambaRemoveAllAutoQuestPopUps( questID )
+				AJM:DisplayAutoQuestPopUps()
+				AJM:SettingsUpdateBorderStyle()
+			end )
+		end
+		frame:ClearAllPoints()
+		if nextAnchor ~= nil then
+			if iterateQuestPopups == 1 then
+				frame:SetPoint( "TOP", nextAnchor, "BOTTOM", 0, 0 ) -- -WATCHFRAME_TYPE_OFFSET
+			else
+				frame:SetPoint( "TOP", nextAnchor, "BOTTOM", 0, 0 )
+			end
+		else
+			frame:SetPoint( "TOP", parentFrame, "TOP", 0, 5 ) -- -WATCHFRAME_INITIAL_OFFSET
+		end
+		frame:SetPoint( "LEFT", parentFrame, "LEFT", -20, 0 )
+		frame.QuestName:SetText( title )
+		frame.questId = questID
+		--frame:UpdateScrollChildRect()
+		--frame:SetVerticalScroll( floor( -9 + 0.5 ) )
+		nextAnchor = frame
+		countPopUps = countPopUps + 1
+		JambaQuestWatcherFrame.autoQuestPopupsHeight = JambaQuestWatcherFrame.autoQuestPopupsHeight + frame:GetHeight()
+	end
+	for iterateQuestPopups = countPopUps + 1, AJM.countAutoQuestPopUpFrames do
+		_G["JambaWatchFrameAutoQuestPopUp"..iterateQuestPopups].questId = nil
+		_G["JambaWatchFrameAutoQuestPopUp"..iterateQuestPopups]:Hide()
+	end
+	AJM:UpdateQuestWatcherDimensions()
 end
 
 -------------------------------------------------------------------------------------------------------------

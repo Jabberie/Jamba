@@ -1,8 +1,7 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
-Copyright 2008 - 2014 Michael "Jafula" Miller
-License: All Rights Reserved
-http://jafula.com/jamba/
+Copyright 2008 - 2015 Michael "Jafula" Miller
+License: The MIT License
 ]]--
 
 local MAJOR, MINOR = "JambaModule-1.0", 1

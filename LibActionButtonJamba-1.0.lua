@@ -28,11 +28,8 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ]]
-
--- Forked by Jafula for Jamba - hacked to handle companions and battle bets.
-
 local MAJOR_VERSION = "LibActionButtonJamba-1.0"
-local MINOR_VERSION = 53
+local MINOR_VERSION = 57
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib, oldversion = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
@@ -92,12 +89,6 @@ local Spell_MT = {__index = Spell}
 local Item = setmetatable({}, {__index = Generic})
 local Item_MT = {__index = Item}
 
-local Companion = setmetatable({}, {__index = Generic})
-local Companion_MT = {__index = Companion}
-
-local BattlePet = setmetatable({}, {__index = Generic})
-local BattlePet_MT = {__index = BattlePet}
-
 local Macro = setmetatable({}, {__index = Generic})
 local Macro_MT = {__index = Macro}
 
@@ -111,9 +102,7 @@ local type_meta_map = {
 	spell  = Spell_MT,
 	item   = Item_MT,
 	macro  = Macro_MT,
-	custom = Custom_MT,
-	companion = Companion_MT,
-	battlepet = BattlePet_MT
+	custom = Custom_MT
 }
 
 local ButtonRegistry, ActiveButtons, ActionButtons, NonActionButtons = lib.buttonRegistry, lib.activeButtons, lib.actionButtons, lib.nonActionButtons
@@ -122,13 +111,14 @@ local Update, UpdateButtonState, UpdateUsable, UpdateCount, UpdateCooldown, Upda
 local StartFlash, StopFlash, UpdateFlash, UpdateHotkeys, UpdateRangeTimer, UpdateOverlayGlow
 local UpdateFlyout, ShowGrid, HideGrid, UpdateGrid, SetupSecureSnippets, WrapOnClick
 local ShowOverlayGlow, HideOverlayGlow, GetOverlayGlow, OverlayGlowAnimOutFinished
+local HookCooldown
 
 local InitializeEventHandler, OnEvent, ForAllButtons, OnUpdate
 
 local DefaultConfig = {
 	outOfRangeColoring = "button",
 	tooltip = "enabled",
-	showGrid = true,
+	showGrid = false,
 	colors = {
 		range = { 0.8, 0.1, 0.1 },
 		mana = { 0.5, 0.5, 1.0 }
@@ -143,31 +133,9 @@ local DefaultConfig = {
 	flyoutDirection = "UP",
 }
 
--- Companion functions.
-
-local function getCompanionType(input)
-	--DEFAULT_CHAT_FRAME:AddMessage("lib-dct:"..input)
-	return input:match("^type:(%w+)index:%d+$")	 
-end
-
-local function getCompanionIndex(input)
-	return input:match("^type:%w+index:(%d+)$")
-end
-
-local function getCompanionTypeIndex(input)
-	return getCompanionType(input),  getCompanionIndex(input)
-end
-
-local function getCompanionSpellName(input)
-	--DEFAULT_CHAT_FRAME:AddMessage("gcsn:"..input)
-	local spellId = select(3, GetCompanionInfo(getCompanionTypeIndex(input)))
-	--DEFAULT_CHAT_FRAME:AddMessage("gcsn-spellid:"..spellId)
-	return select(1, GetSpellInfo(spellId))
-end
-
 --- Create a new action button.
--- @param id Internal id of the button (not used by LibActionButtonJamba-1.0, only for tracking inside the calling addon)
--- @param name Name of the button frame to be created (not used by LibActionButtonJamba-1.0 aside from naming the frame)
+-- @param id Internal id of the button (not used by LibActionButton-1.0, only for tracking inside the calling addon)
+-- @param name Name of the button frame to be created (not used by LibActionButton-1.0 aside from naming the frame)
 -- @param header Header that drives these action buttons (if any)
 function lib:CreateButton(id, name, header, config)
 	if type(name) ~= "string" then
@@ -206,22 +174,15 @@ function lib:CreateButton(id, name, header, config)
 	SetupSecureSnippets(button)
 	WrapOnClick(button)
 
-	-- Store all sub frames on the button object for easier access
-	button.icon               = _G[name .. "Icon"]
-	button.flash              = _G[name .. "Flash"]
-	button.FlyoutBorder       = _G[name .. "FlyoutBorder"]
-	button.FlyoutBorderShadow = _G[name .. "FlyoutBorderShadow"]
-	button.FlyoutArrow        = _G[name .. "FlyoutArrow"]
-	button.hotkey             = _G[name .. "HotKey"]
-	button.count              = _G[name .. "Count"]
-	button.actionName         = _G[name .. "Name"]
-	button.border             = _G[name .. "Border"]
-	button.cooldown           = _G[name .. "Cooldown"]
-	button.normalTexture      = _G[name .. "NormalTexture"]
-
 	-- adjust hotkey style for better readability
 	button.HotKey:SetFont(button.HotKey:GetFont(), 13, "OUTLINE")
 	button.HotKey:SetVertexColor(0.75, 0.75, 0.75)
+
+	-- adjust count/stack size
+	button.Count:SetFont(button.Count:GetFont(), 16, "OUTLINE")
+
+	-- hook Cooldown stuff for alpha fix in 6.0
+	HookCooldown(button)
 
 	-- Store the button in the registry, needed for event and OnUpdate handling
 	if not next(ButtonRegistry) then
@@ -251,15 +212,12 @@ function SetupSecureSnippets(button)
 		local state = ...
 		self:SetAttribute("state", state)
 		local type, action = (self:GetAttribute(format("labtype-%s", state)) or "empty"), self:GetAttribute(format("labaction-%s", state))
+
 		self:SetAttribute("type", type)
 		if type ~= "empty" and type ~= "custom" then
 			local action_field = (type == "pet") and "action" or type
 			self:SetAttribute(action_field, action)
 			self:SetAttribute("action_field", action_field)
-			if type == "companion" then
-				self:SetAttribute("type", "spell")
-				self:SetAttribute("spell", self:GetAttribute(format("labcompspell-%s", state)))
-			end
 		end
 		local onStateChanged = self:GetAttribute("OnStateChanged")
 		if onStateChanged then
@@ -282,10 +240,10 @@ function SetupSecureSnippets(button)
 		elseif kind == "action" or kind == "pet" then
 			local actionType = (kind == "pet") and "petaction" or kind
 			return actionType, value
-		elseif kind == "spell" or kind == "item" or kind == "macro" or kind == "companion" or kind == "battlepet" then
+		elseif kind == "spell" or kind == "item" or kind == "macro" then
 			return "clear", kind, value
 		else
-			print("LibActionButtonJamba-1.0: Unknown type: " .. tostring(kind))
+			print("LibActionButton-1.0: Unknown type: " .. tostring(kind))
 			return false
 		end
 	]])
@@ -318,7 +276,6 @@ function SetupSecureSnippets(button)
 	button:SetAttribute("OnReceiveDrag", [[
 		if self:GetAttribute("LABdisableDragNDrop") then return false end
 		local kind, value, subtype, extra = ...
-		-- print("Info: ", kind, value, subtype, extra)
 		if not kind or not value then return false end
 		local state = self:GetAttribute("state")
 		local buttonType, buttonAction = self:GetAttribute("type"), nil
@@ -335,8 +292,6 @@ function SetupSecureSnippets(button)
 				end
 			elseif kind == "item" and value then
 				value = format("item:%d", value)
-			elseif kind == "companion" then
-				value = "type:"..subtype.."index:"..value
 			end
 
 			-- Get the action that was on the button before
@@ -348,9 +303,8 @@ function SetupSecureSnippets(button)
 			-- We can only use a handful of the possible things on the cursor
 			-- return false for all those we can't put on buttons
 
-			self:SetAttribute(format("labtype-%d", state), kind)
-			self:SetAttribute(format("labaction-%d", state), value)
-			self:SetAttribute(format("labcompspell-%d", state), "")
+			self:SetAttribute(format("labtype-%s", state), kind)
+			self:SetAttribute(format("labaction-%s", state), value)
 			-- update internal state
 			self:RunAttribute("UpdateState", state)
 			-- send a notification to the insecure code
@@ -440,10 +394,6 @@ function Generic:ClearStates()
 	wipe(self.state_actions)
 end
 
-function Generic:UpdateCount()
-	UpdateCount(self)
-end
-
 function Generic:SetState(state, kind, action)
 	if not state then state = self:GetAttribute("state") end
 	state = tostring(state)
@@ -480,13 +430,6 @@ function Generic:UpdateState(state)
 	state = tostring(state)
 	self:SetAttribute(format("labtype-%s", state), self.state_types[state])
 	self:SetAttribute(format("labaction-%s", state), self.state_actions[state])
-	self:SetAttribute(format("labcompspell-%d", state), "")
-	if self.state_types[state] == "companion" then
-		if self.state_actions[state] ~= "" then
-			--DEFAULT_CHAT_FRAME:AddMessage("attempting:["..self.state_actions[state].."]")
-			self:SetAttribute(format("labcompspell-%d", state), getCompanionSpellName(self.state_actions[state]))
-		end
-	end
 	if state ~= tostring(self:GetAttribute("state")) then return end
 	if self.header then
 		self.header:SetFrameRef("updateButton", self)
@@ -495,7 +438,7 @@ function Generic:UpdateState(state)
 			control:RunFor(frame, frame:GetAttribute("UpdateState"), frame:GetAttribute("state"))
 		]])
 	else
-	-- TODO
+		-- TODO
 	end
 	self:UpdateAction()
 end
@@ -522,7 +465,7 @@ end
 
 function Generic:DisableDragNDrop(flag)
 	if InCombatLockdown() then
-		error("LibActionButtonJamba-1.0: You can only toggle DragNDrop out of combat!", 2)
+		error("LibActionButton-1.0: You can only toggle DragNDrop out of combat!", 2)
 	end
 	if flag then
 		self:SetAttribute("LABdisableDragNDrop", true)
@@ -533,7 +476,7 @@ end
 
 function Generic:AddToButtonFacade(group)
 	if type(group) ~= "table" or type(group.AddButton) ~= "function" then
-		error("LibActionButtonJamba-1.0:AddToButtonFacade: You need to supply a proper group to use!", 2)
+		error("LibActionButton-1.0:AddToButtonFacade: You need to supply a proper group to use!", 2)
 	end
 	group:AddButton(self)
 	self.LBFSkinned = true
@@ -572,9 +515,7 @@ local function PickupAny(kind, target, detail, ...)
 	elseif kind == 'spell' then
 		PickupSpell(target)
 	elseif kind == 'companion' then
-		PickupCompanion(getCompanionType(target), getCompanionIndex(target))
-	elseif kind == 'battlepet' then
-		C_PetJournal.PickupPet(target, false)
+		PickupCompanion(target, detail)
 	elseif kind == 'equipmentset' then
 		PickupEquipmentSet(target)
 	end
@@ -602,7 +543,7 @@ end
 -- to place it on the button. Like action buttons work.
 function Generic:PreClick()
 	if self._state_type == "action" or self._state_type == "pet"
-	   or InCombatLockdown() or self:GetAttribute("LABdisableDragNDrop")
+			or InCombatLockdown() or self:GetAttribute("LABdisableDragNDrop")
 	then
 		return
 	end
@@ -667,7 +608,7 @@ end
 
 function Generic:UpdateConfig(config)
 	if config and type(config) ~= "table" then
-		error("LibActionButtonJamba-1.0: UpdateConfig requires a valid configuration!", 2)
+		error("LibActionButton-1.0: UpdateConfig requires a valid configuration!", 2)
 	end
 	local oldconfig = self.config
 	if not self.config then self.config = {} end
@@ -700,10 +641,10 @@ end
 -----------------------------------------------------------
 --- event handler
 
-function ForAllButtons(method, onlyWithAction, ...)
+function ForAllButtons(method, onlyWithAction)
 	assert(type(method) == "function")
 	for button in next, (onlyWithAction and ActiveButtons or ButtonRegistry) do
-		method(button, ...)
+		method(button)
 	end
 end
 
@@ -779,8 +720,8 @@ function OnEvent(frame, event, arg1, ...)
 	elseif event == "PLAYER_TARGET_CHANGED" then
 		UpdateRangeTimer()
 	elseif (event == "ACTIONBAR_UPDATE_STATE") or
-		((event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") and (arg1 == "player")) or
-		((event == "COMPANION_UPDATE") and (arg1 == "MOUNT")) then
+			((event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") and (arg1 == "player")) or
+			((event == "COMPANION_UPDATE") and (arg1 == "MOUNT")) then
 		ForAllButtons(UpdateButtonState, true)
 	elseif event == "ACTIONBAR_UPDATE_USABLE" then
 		for button in next, ActionButtons do
@@ -922,7 +863,7 @@ function OnUpdate(_, elapsed)
 					elseif button.config.outOfRangeColoring == "hotkey" then
 						local hotkey = button.HotKey
 						if hotkey:GetText() == RANGE_INDICATOR then
-							if inRange then
+							if inRange == false then
 								hotkey:Show()
 							else
 								hotkey:Hide()
@@ -1077,7 +1018,6 @@ function Update(self)
 		UpdateButtonState(self)
 		UpdateUsable(self)
 		UpdateCooldown(self)
-		UpdateLossOfControlCooldown(self)
 		UpdateFlash(self)
 	else
 		ActiveButtons[self] = nil
@@ -1087,22 +1027,22 @@ function Update(self)
 			self:SetAlpha(0.0)
 		end
 		self.cooldown:Hide()
-		self:SetChecked(0)
+		self:SetChecked(false)
 	end
 
 	-- Add a green border if button is an equipped item
 	if self:IsEquipped() and not self.config.hideElements.equipped then
-		self.border:SetVertexColor(0, 1.0, 0, 0.35)
-		self.border:Show()
+		self.Border:SetVertexColor(0, 1.0, 0, 0.35)
+		self.Border:Show()
 	else
-		self.border:Hide()
+		self.Border:Hide()
 	end
 
 	-- Update Action Text
 	if not self:IsConsumableOrStackable() then
-		self.actionName:SetText(self:GetActionText())
+		self.Name:SetText(self:GetActionText())
 	else
-		self.actionName:SetText("")
+		self.Name:SetText("")
 	end
 
 	-- Update icon and hotkey
@@ -1110,10 +1050,10 @@ function Update(self)
 	if texture then
 		self.icon:SetTexture(texture)
 		self.icon:Show()
-		self.rangeTimer = -1
+		self.rangeTimer = - 1
 		self:SetNormalTexture("Interface\\Buttons\\UI-Quickslot2")
 		if not self.LBFSkinned and not self.MasqueSkinned then
-			self.normalTexture:SetTexCoord(0, 0, 0, 0)
+			self.NormalTexture:SetTexCoord(0, 0, 0, 0)
 		end
 	else
 		self.icon:Hide()
@@ -1159,7 +1099,7 @@ function Update(self)
 end
 
 function Generic:UpdateLocal()
--- dummy function the other button types can override for special updating
+	-- dummy function the other button types can override for special updating
 end
 
 function UpdateButtonState(self)
@@ -1214,6 +1154,45 @@ function UpdateCount(self)
 	end
 end
 
+local function SetCooldownHook(cooldown, ...)
+	local effectiveAlpha = cooldown:GetEffectiveAlpha()
+	local start, duration = ...
+
+	if start ~= 0 or duration ~= 0 then
+		-- update swipe alpha
+		cooldown.__metaLAB.SetSwipeColor(cooldown, cooldown.__SwipeR, cooldown.__SwipeG, cooldown.__SwipeB, cooldown.__SwipeA * effectiveAlpha)
+
+		-- only draw bling and edge if alpha is over 50%
+		cooldown:SetDrawBling(effectiveAlpha > 0.5)
+		if effectiveAlpha < 0.5 then
+			cooldown:SetDrawEdge(false)
+		end
+
+		-- ensure the swipe isn't drawn on fully faded bars
+		if effectiveAlpha <= 0.0 then
+			cooldown:SetDrawSwipe(false)
+		end
+	end
+
+	return cooldown.__metaLAB.SetCooldown(cooldown, ...)
+end
+
+local function SetSwipeColorHook(cooldown, r, g, b, a)
+	local effectiveAlpha = cooldown:GetEffectiveAlpha()
+	cooldown.__SwipeR, cooldown.__SwipeG, cooldown.__SwipeB, cooldown.__SwipeA = r, g, b, (a or 1)
+	return cooldown.__metaLAB.SetSwipeColor(cooldown, r, g, b, a * effectiveAlpha)
+end
+
+function HookCooldown(button)
+	if not button.cooldown.__metaLAB then
+		button.cooldown.__metaLAB = getmetatable(button.cooldown).__index
+		button.cooldown.__SwipeR, button.cooldown.__SwipeG, button.cooldown.__SwipeB, button.cooldown.__SwipeA = 0, 0, 0, 0.8
+
+		button.cooldown.SetCooldown = SetCooldownHook
+		button.cooldown.SetSwipeColor = SetSwipeColorHook
+	end
+end
+
 function OnCooldownDone(self)
 	self:SetScript("OnCooldownDone", nil)
 	UpdateCooldown(self:GetParent())
@@ -1223,37 +1202,25 @@ function UpdateCooldown(self)
 	local locStart, locDuration = self:GetLossOfControlCooldown()
 	local start, duration, enable, charges, maxCharges = self:GetCooldown()
 
-	local effectiveAlpha = self:GetEffectiveAlpha()
-	-- HACK: only draw "bling" when button sufficiently visible
-	-- this stuff used to inherit alpha....
-	self.cooldown:SetDrawBling(effectiveAlpha > 0.5)
-
 	if (locStart + locDuration) > (start + duration) then
 		if self.cooldown.currentCooldownType ~= COOLDOWN_TYPE_LOSS_OF_CONTROL then
 			self.cooldown:SetEdgeTexture("Interface\\Cooldown\\edge-LoC")
 			self.cooldown:SetHideCountdownNumbers(true)
 			self.cooldown.currentCooldownType = COOLDOWN_TYPE_LOSS_OF_CONTROL
+			self.cooldown:SetSwipeColor(0.17, 0, 0, 0.8)
 		end
-		-- set swipe color and alpha
-		self.cooldown:SetSwipeColor(0.17, 0, 0, effectiveAlpha * 0.8)
-
 		CooldownFrame_SetTimer(self.cooldown, locStart, locDuration, 1, nil, nil, true)
 	else
 		if self.cooldown.currentCooldownType ~= COOLDOWN_TYPE_NORMAL then
 			self.cooldown:SetEdgeTexture("Interface\\Cooldown\\edge")
 			self.cooldown:SetHideCountdownNumbers(false)
 			self.cooldown.currentCooldownType = COOLDOWN_TYPE_NORMAL
+			self.cooldown:SetSwipeColor(0, 0, 0, 0.8)
 		end
-		-- set swipe color and alpha
-		self.cooldown:SetSwipeColor(0, 0, 0, effectiveAlpha * 0.8)
 		if locStart > 0 then
 			self.cooldown:SetScript("OnCooldownDone", OnCooldownDone)
 		end
 		CooldownFrame_SetTimer(self.cooldown, start, duration, enable, charges, maxCharges)
-
-		if effectiveAlpha < 0.5 then
-			self.cooldown:SetDrawEdge(false)
-		end
 	end
 end
 
@@ -1548,43 +1515,6 @@ Item.IsUnitInRange           = function(self, unit) return IsItemInRange(self._s
 Item.SetTooltip              = function(self) return GameTooltip:SetHyperlink(self._state_action) end
 Item.GetSpellId              = function(self) return nil end
 
------------------------------------------------------------
---- Companion Button
-Companion.HasAction               = function(self) return true end
-Companion.GetActionText           = function(self) return "" end
-Companion.GetTexture              = function(self) return select(4, GetCompanionInfo(getCompanionTypeIndex(self._state_action))) end
-Companion.GetCharges              = function(self) return nil end
-Companion.GetCount                = function(self) return 0 end
-Companion.GetCooldown             = function(self) return GetSpellCooldown(getCompanionTypeIndex(self._state_action)) end
-Companion.IsAttack                = function(self) return nil end
-Companion.IsEquipped              = function(self) return nil end
-Companion.IsCurrentlyActive       = function(self) return select(5, GetCompanionInfo(getCompanionTypeIndex(self._state_action))) end
-Companion.IsAutoRepeat            = function(self) return nil end
-Companion.IsUsable                = function(self) return true end
-Companion.IsConsumableOrStackable = function(self) return nil end
-Companion.IsUnitInRange           = function(self) return nil end
-Companion.SetTooltip              = function(self) return GameTooltip:SetHyperlink("spell:"..select(3, GetCompanionInfo(getCompanionTypeIndex(self._state_action)))) end
-Companion.GetSpellId              = function(self) return select(3, GetCompanionInfo(getCompanionTypeIndex(self._state_action))) end
-
------------------------------------------------------------
---- BattlePet Button
-BattlePet.HasAction               = function(self) return true end
-BattlePet.GetActionText           = function(self) return "" end
---local speciesID, customName, level, xp, maxXp, displayID, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoByPetID(petid)
-BattlePet.GetTexture              = function(self) return select(8, C_PetJournal.GetPetInfoByPetID(self._state_action)) end
-BattlePet.GetCharges              = function(self) return nil end
-BattlePet.GetCount                = function(self) return 0 end
-BattlePet.GetCooldown             = function(self) return 0, 0, 0 end
-BattlePet.IsAttack                = function(self) return nil end
-BattlePet.IsEquipped              = function(self) return nil end
-BattlePet.IsCurrentlyActive       = function(self) return nil end
-BattlePet.IsAutoRepeat            = function(self) return nil end
-BattlePet.IsUsable                = function(self) return true end
-BattlePet.IsConsumableOrStackable = function(self) return nil end
-BattlePet.IsUnitInRange           = function(self) return nil end
-BattlePet.SetTooltip              = function(self) return nil end
-BattlePet.GetSpellId              = function(self) return self._state_action end
-         
 -----------------------------------------------------------
 --- Macro Button
 -- TODO: map results of GetMacroSpell/GetMacroItem to proper results
