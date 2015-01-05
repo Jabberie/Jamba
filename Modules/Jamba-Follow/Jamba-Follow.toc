@@ -2,7 +2,7 @@
 ## Title: Jamba-Follow
 ## Notes: Jamba-Follow
 ## Author: Jafula
-## Version: 6.0.2.3
+## Version: 6.0.3.4
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

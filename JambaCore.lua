@@ -556,7 +556,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Copyright 2008-2014 Michael 'Jafula' Miller"] 
+		L["Copyright 2008-2015 Michael 'Jafula' Miller"]
 	)	
 	movingTop = movingTop - labelContinueHeight
 	
@@ -584,42 +584,6 @@ function AJM:CoreSettingsCreateInfo( top )
 		column1Left, 
 		movingTop,
 		L["For user manuals and documentation please visit:"]
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation5 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		""
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation6 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["http://jafula.com/jamba/"]
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation7 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		""
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation8 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["Other useful websites:"]
 	)	
 	movingTop = movingTop - labelContinueHeight
 

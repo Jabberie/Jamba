@@ -2,7 +2,7 @@
 ## Title: Jamba
 ## Notes: Jamba
 ## Author: Jafula
-## Version: 6.0.2.3
+## Version: 6.0.3.4
 ## X-Category: Interface Enhancements
 ## SavedVariables: JambaCoreProfileDB, JambaCommunicationsProfileDB, JambaTeamProfileDB, JambaTagProfileDB, JambaMessageProfileDB
 JambaEmbeds.xml
