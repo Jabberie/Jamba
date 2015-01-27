@@ -8,6 +8,27 @@ http://www.dual-boxing.com/threads/51880-The-future-of-Jamba
 
 Jafula
 
+Jamba Version: 6.0.3.5
+WoW Game Version: 6.0.3
+Release Date: 26th January 2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+1st release by Ebony.
+
+Fixes
+
+Jamba-Team
+No longer should add -realmname when adding team names to the team list. This is going to help with ISBoxerboxer addon that adds character-realmname
+will not help if already have character-reamname and you may need to reset the pofile still, But they should no longer keep getting added by ISBoxer. Idea from Lax
+
+Added a button to add party members to the team under on the GUI team display so you don't have to use the the command line. ( I did not even know this was there.)
+
+Known Issues
+* The functions on the quest log bar (abandon all, share all, etc) may no longer work properly.
+* Select best quest reward may no longer work properly.
+
+---------
+
 Jamba Version: 6.0.3.4
 WoW Game Version: 6.0.3
 Release Date: 5th January 2015

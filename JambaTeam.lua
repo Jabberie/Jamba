@@ -163,6 +163,7 @@ AJM.MESSAGE_TEAM_ORDER_CHANGED = "JambaTeamOrderChanged"
 AJM.MESSAGE_TEAM_CHARACTER_ADDED = "JambaTeamCharacterAdded"
 -- Character has been removed, parameter: characterName.
 AJM.MESSAGE_TEAM_CHARACTER_REMOVED = "JambaTeamCharacterRemoved"
+-- Character has been added, parameter: characterName.
 
 -------------------------------------------------------------------------------------------------------------
 -- Constants used by module.
@@ -205,7 +206,7 @@ local function SettingsCreateTeamList()
 	list.listTop = topOfList
 	list.listLeft = left
 	list.listWidth = teamListWidth
-	list.rowHeight = 20
+	list.rowHeight = 25
 	list.rowsToDisplay = 5
 	list.columnsToDisplay = 2
 	list.columnInformation = {}
@@ -220,7 +221,7 @@ local function SettingsCreateTeamList()
 	AJM.settingsControl.teamList = list
 	JambaHelperSettings:CreateScrollList( AJM.settingsControl.teamList )
 	-- Position and size constants (once list height is known).
-	local bottomOfList = topOfList - list.listHeight - verticalSpacing	
+	local bottomOfList = topOfList - list.listHeight - verticalSpacing
 	local bottomOfSection = bottomOfList -  buttonHeight - verticalSpacing		
 	-- Create buttons.
 	AJM.settingsControl.teamListButtonMoveUp = JambaHelperSettings:CreateButton( 
@@ -247,14 +248,23 @@ local function SettingsCreateTeamList()
 		L["Add"],
 		AJM.SettingsAddClick
 	)
+	--ebony
+	AJM.settingsControl.teamListButtonParty = JambaHelperSettings:CreateButton(
+		AJM.settingsControl, 
+		teamListButtonControlWidth, 
+		rightOfList, 
+		topOfList - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight,
+		L["Add Party"],
+		AJM.SettingsAddPartyClick
+	)
 	AJM.settingsControl.teamListButtonRemove = JambaHelperSettings:CreateButton(
 		AJM.settingsControl, 
 		teamListButtonControlWidth, 
 		rightOfList, 
-		topOfList - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight, 
+		topOfList - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight, 
 		L["Remove"],
 		AJM.SettingsRemoveClick
-	)	
+	)
 	AJM.settingsControl.teamListButtonSetMaster = JambaHelperSettings:CreateButton(
 		AJM.settingsControl,  
 		setMasterButtonWidth, 
@@ -592,6 +602,8 @@ local function AddMember( value )
 	if value ~= nil and value:trim() ~= "" and value:len() > 1 then	
 		-- Capitalise the name.
 		local characterName = JambaUtilities:Capitalise( value )
+		-- Checks for realm and removes -realm if added
+		local characterName = JambaUtilities:RemoveRealmToNameIfAdded( characterName )
 		-- If the character is not already on the list...
 		if AJM.db.teamList[characterName] == nil then
 			-- Get the maximum order number.
@@ -1125,7 +1137,8 @@ function AJM:OnInitialize()
 	JambaTeamSecureButtonDisband = CreateFrame( "CheckButton", "JambaTeamSecureButtonDisband", nil, "SecureActionButtonTemplate" )
 	JambaTeamSecureButtonDisband:SetAttribute( "type", "macro" )
 	JambaTeamSecureButtonDisband:SetAttribute( "macrotext", "/jamba-team disband" )
-	JambaTeamSecureButtonDisband:Hide()	
+	JambaTeamSecureButtonDisband:Hide()
+	
 end
 
 -- Called when the addon is enabled.
@@ -1329,6 +1342,11 @@ end
 function AJM:SettingsRemoveClick( event )
 	local characterName = GetCharacterNameAtOrderPosition( AJM.settingsControl.teamListHighlightRow )
 	StaticPopup_Show( "JAMBATEAM_CONFIRM_REMOVE_CHARACTER", characterName )
+end
+
+-- ebony
+function AJM.SettingsAddPartyClick( event )
+	AJM:AddPartyMembers()
 end
 
 function AJM:SettingsInviteClick( event )

@@ -43,6 +43,17 @@ function JambaUtilities:ClearTable( object )
 	end
 end
 
+
+--ebony
+function JambaUtilities:RemoveRealmToNameIfAdded( name )
+	local fullName = name
+	local matchDash = name:find( "-" )
+	if matchDash then
+		fullName = gsub(name, "%-[^|]+", "")
+	end
+	return fullName
+end
+
 -- Capitalise the name.	
 function JambaUtilities:Capitalise( name )
     return string.utf8upper( string.utf8sub( name, 1, 1 ) )..string.utf8lower( string.utf8sub( name, 2 ) )
