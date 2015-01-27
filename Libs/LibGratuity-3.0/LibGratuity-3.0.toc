@@ -12,10 +12,6 @@
 ## X-Curse-Project-Name: LibGratuity-3.0
 ## X-Curse-Project-ID: libgratuity-3-0
 ## X-Curse-Repository-ID: wow/libgratuity-3-0/mainline
-## X-Curse-Packaged-Version: release-6.0.3.4
-## X-Curse-Project-Name: Jamba
-## X-Curse-Project-ID: jamba
-## X-Curse-Repository-ID: wow/jamba/mainline
 
 LibStub\LibStub.lua
 lib.xml

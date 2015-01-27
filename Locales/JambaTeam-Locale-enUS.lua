@@ -9,7 +9,6 @@ L["Slash Commands"] = true
 L["Team"] = true
 L["Core: Team"] = true
 L["Add"] = true
-L["Add Party"] = true
 L["Add a member to the team list."] = true
 L["Remove"] = true
 L["Remove a member from the team list."] = true
