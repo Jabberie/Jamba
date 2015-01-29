@@ -2,12 +2,16 @@
 ## Title: Jamba-Proc
 ## Notes: Jamba-Proc
 ## Author: Jafula
-## Version: 6.0.3.5
+## Version: 6.0.3.5-2
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
 ## SavedVariables: JambaProcProfileDBv2
 ## LoadOnDemand: 1
+## X-Curse-Packaged-Version: release-6.0.3.7
+## X-Curse-Project-Name: Jamba
+## X-Curse-Project-ID: jamba
+## X-Curse-Repository-ID: wow/jamba/mainline
 Locales\Locales.xml
 JambaProc.lua
 

@@ -1296,7 +1296,8 @@ function AJM:DoShowQuestComplete( sender, questName )
 	local questIndex = AJM:GetQuestLogIndexByName( questName )
 	if questIndex ~= 0 then
 		ShowQuestComplete( questIndex )
-		WatchFrameAutoQuest_ClearPopUpByLogIndex( questIndex )
+		--TODO fix this or remove
+	-- WatchFrameAutoQuest_ClearPopUpByLogIndex( questIndex )
 	end
 	AJM.isInternalCommand = false	
 end
@@ -1682,15 +1683,16 @@ function AJM:CanAutoAcceptSharedQuestFromPlayer()
 		canAccept = true
 	elseif AJM.db.onlyAcceptQuestsFrom == true then
 		local questSourceName, questSourceRealm = UnitName( "npc" )
+		
 		if AJM.db.acceptFromTeam == true then	
-			if JambaApi.IsCharacterInTeam( questSourceName ) == true then
+			if JambaApi.IsCharacterInTeam( character ) == true then
 				canAccept = true
 			end
 		end
 		if AJM.db.acceptFromFriends == true then	
 			for friendIndex = 1, GetNumFriends() do
 				local friendName = GetFriendInfo( friendIndex )
-				if questSourceName == friendName then
+				if character == friendName then
 					canAccept = true
 					break
 				end
@@ -1763,7 +1765,7 @@ end
 
 function AJM.JambaQuestSelectButtonClicked()
 	if AJM:IsCurrentlySelectedQuestValid() == true then
-		AJM:JambaSendCommandToTeam( AJM.COMMAND_SELECT_QUEST_LOG_ENTRY, AJM.currentlySelectedQuest, AJM.selectedTag )
+		AJM:JambaSendCommandToTeam( AJM.COMMAND_SELECT_QUEST_LOG_ENTRY, AJM.CurrentlySelectedQuest, AJM.selectedTag )
 	else
 		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["You must select a quest from the quest log in order to action it on your other characters."], false )
 	end
@@ -1793,12 +1795,12 @@ function AJM.TrackAllNextQuest()
 			SelectQuestLogEntry( AJM.iterateQuests )	
 			if AJM:IsCurrentlySelectedQuestValid() == true then
 				local watch = 0
-				local questIndex = AJM:GetQuestLogIndexByName( AJM.currentlySelectedQuest )
+				local questIndex = AJM:GetQuestLogIndexByName( AJM.CurrentlySelectedQuest )
 				if questIndex ~= 0 then
 					AddQuestWatch( questIndex )
 					watch = 1
 				end	
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.currentlySelectedQuest, watch, AJM.selectedTag )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.CurrentlySelectedQuest, watch, AJM.selectedTag )
 			end	
 		end
 	end
@@ -1822,12 +1824,12 @@ function AJM.TrackNoneNextQuest()
 			SelectQuestLogEntry( AJM.iterateQuests )	
 			if AJM:IsCurrentlySelectedQuestValid() == true then
 				local watch = 0
-				local questIndex = AJM:GetQuestLogIndexByName( AJM.currentlySelectedQuest )
+				local questIndex = AJM:GetQuestLogIndexByName( AJM.CurrentlySelectedQuest )
 				if questIndex ~= 0 then
 					RemoveQuestWatch( questIndex )
 					watch = 0
 				end	
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.currentlySelectedQuest, watch, AJM.selectedTag )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.CurrentlySelectedQuest, watch, AJM.selectedTag )
 			end	
 		end
 	end
@@ -1840,7 +1842,7 @@ end
 function AJM.JambaQuestTrackToggleButtonClicked()
 	if AJM:IsCurrentlySelectedQuestValid() == true then
 		local watch = 0
-		local questIndex = AJM:GetQuestLogIndexByName( AJM.currentlySelectedQuest )
+		local questIndex = AJM:GetQuestLogIndexByName( AJM.CurrentlySelectedQuest )
 		if questIndex ~= 0 then
 			if IsQuestWatched( questIndex ) then
 				RemoveQuestWatch( questIndex )
@@ -1850,7 +1852,7 @@ function AJM.JambaQuestTrackToggleButtonClicked()
 				watch = 1
 			end
 		end	
-		AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.currentlySelectedQuest, watch, AJM.selectedTag )
+		AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.CurrentlySelectedQuest, watch, AJM.selectedTag )
 	else
 		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["You must select a quest from the quest log in order to action it on your other characters."], false )
 	end
@@ -1870,7 +1872,7 @@ function AJM.TrackToggleNextQuest()
 			SelectQuestLogEntry( AJM.iterateQuests )	
 			if AJM:IsCurrentlySelectedQuestValid() == true then
 				local watch = 0
-				local questIndex = AJM:GetQuestLogIndexByName( AJM.currentlySelectedQuest )
+				local questIndex = AJM:GetQuestLogIndexByName( AJM.CurrentlySelectedQuest )
 				if questIndex ~= 0 then
 					if IsQuestWatched( questIndex ) then
 						RemoveQuestWatch( questIndex )
@@ -1880,7 +1882,7 @@ function AJM.TrackToggleNextQuest()
 						watch = 1
 					end
 				end	
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.currentlySelectedQuest, watch, AJM.selectedTag )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.CurrentlySelectedQuest, watch, AJM.selectedTag )
 			end	
 		end
 	end
@@ -1969,7 +1971,7 @@ function AJM:CreateJambaQuestLogFrame()
     JambaQuestLogWindowFrame = CreateFrame( "Frame", "JambaQuestLogWindowFrame", UIParent )
     local frame = JambaQuestLogWindowFrame
 	frame:SetWidth( 670 )
-	frame:SetHeight( 61 )
+	frame:SetHeight( 50 )
 	frame:SetFrameStrata( "HIGH" )
 	frame:SetToplevel( true )
 	frame:SetClampedToScreen( true )
@@ -2003,15 +2005,15 @@ function AJM:CreateJambaQuestLogFrame()
 	local buttonWidth = 100
 	local buttonWidthTag = 120
 	local buttonWidthToggle = 140
-	local buttonTop = -8
-	local buttonTopSecondRow = buttonTop - buttonHeight - 2
+	local buttonTop = -10
+	--local buttonTopSecondRow = buttonTop - buttonHeight - 2
 	local left = 8
 	local spacing = 1
-	-- Tags
+	-- Tags should this get removed at some point? 
 	local dropDownTag = AceGUI:Create( "Dropdown" )
 	dropDownTag.frame:SetParent( frame )
 	dropDownTag:SetLabel( "" )
-	dropDownTag:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, -5 )
+	dropDownTag:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, -10 )
 	dropDownTag:SetWidth( buttonWidthTag )
 	dropDownTag:SetList( JambaApi.AllTagsList() )
 	dropDownTag:SetCallback( "OnValueChanged", AJM.JambaQuestTagDropDownOnClick )
@@ -2020,13 +2022,16 @@ function AJM:CreateJambaQuestLogFrame()
 	AJM.selectedTag = JambaApi.AllTag()	
 	AJM.jambaQuestLogFrameDropDownTag = dropDownTag
 	-- Select.
+	left = left + buttonWidth + spacing
+	left = left + 30
 	local selectButton = CreateFrame( "Button", frameName.."ButtonSelect", frame, "UIPanelButtonTemplate" )
 	selectButton:SetScript( "OnClick", AJM.JambaQuestSelectButtonClicked )
-	selectButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
+	selectButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
 	selectButton:SetHeight( buttonHeight )
-	selectButton:SetWidth( buttonWidthTag )
+	selectButton:SetWidth( buttonWidth )
 	selectButton:SetText( L["Select"] )		
-	left = left + buttonWidthTag + spacing
+	left = left + buttonWidth + spacing
+	--left = left + 70
 	-- Share / Share All.
 	local shareButton = CreateFrame( "Button", frameName.."ButtonShare", frame, "UIPanelButtonTemplate" )
 	shareButton:SetScript( "OnClick", AJM.JambaQuestShareButtonClicked )
@@ -2035,51 +2040,53 @@ function AJM:CreateJambaQuestLogFrame()
 	shareButton:SetWidth( buttonWidth )
 	shareButton:SetText( L["Share"] )		
 	AJM.jambaQuestLogFrameShareButton = shareButton
+	left = left + buttonWidth + spacing
 	local shareAllButton = CreateFrame( "Button", frameName.."ButtonShareAll", frame, "UIPanelButtonTemplate" )
 	shareAllButton:SetScript( "OnClick", AJM.JambaQuestShareAllButtonClicked )
-	shareAllButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
+	shareAllButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
 	shareAllButton:SetHeight( buttonHeight )
 	shareAllButton:SetWidth( buttonWidth )
 	shareAllButton:SetText( L["Share All"] )		
 	left = left + buttonWidth + spacing
 	-- Track / Track All.
-	local trackButtonToggle = CreateFrame( "Button", frameName.."ButtonToggleTrack", frame, "UIPanelButtonTemplate" )
-	trackButtonToggle:SetScript( "OnClick", AJM.JambaQuestTrackToggleButtonClicked )
-	trackButtonToggle:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
-	trackButtonToggle:SetHeight( buttonHeight )
-	trackButtonToggle:SetWidth( buttonWidthToggle )
-	trackButtonToggle:SetText( L["Toggle Track"] )
-	local trackAllButtonToggle = CreateFrame( "Button", frameName.."ButtonToggleTrackAll", frame, "UIPanelButtonTemplate" )
-	trackAllButtonToggle:SetScript( "OnClick", AJM.JambaQuestTrackToggleAllButtonClicked )
-	trackAllButtonToggle:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
-	trackAllButtonToggle:SetHeight( buttonHeight )
-	trackAllButtonToggle:SetWidth( buttonWidthToggle )
-	trackAllButtonToggle:SetText( L["Toggle Track All"] )	
-	left = left + buttonWidthToggle + spacing
-	local trackButton = CreateFrame( "Button", frameName.."ButtonTrackAll", frame, "UIPanelButtonTemplate" )
-	trackButton:SetScript( "OnClick", AJM.JambaQuestTrackAllButtonClicked )
-	trackButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
-	trackButton:SetHeight( buttonHeight )
-	trackButton:SetWidth( buttonWidth )
-	trackButton:SetText( L["Track All"] )
-	local trackNoneButton = CreateFrame( "Button", frameName.."ButtonTrackNone", frame, "UIPanelButtonTemplate" )
-	trackNoneButton:SetScript( "OnClick", AJM.JambaQuestTrackNoneButtonClicked )
-	trackNoneButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
-	trackNoneButton:SetHeight( buttonHeight )
-	trackNoneButton:SetWidth( buttonWidth )
-	trackNoneButton:SetText( L["Track None"] )	
-	left = left + buttonWidth + spacing
-	left = left + 70
+	--local trackButtonToggle = CreateFrame( "Button", frameName.."ButtonToggleTrack", frame, "UIPanelButtonTemplate" )
+	--trackButtonToggle:SetScript( "OnClick", AJM.JambaQuestTrackToggleButtonClicked )
+	--trackButtonToggle:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
+	--trackButtonToggle:SetHeight( buttonHeight )
+	--trackButtonToggle:SetWidth( buttonWidthToggle )
+	--trackButtonToggle:SetText( L["Toggle Track"] )
+	--local trackAllButtonToggle = CreateFrame( "Button", frameName.."ButtonToggleTrackAll", frame, "UIPanelButtonTemplate" )
+	--trackAllButtonToggle:SetScript( "OnClick", AJM.JambaQuestTrackToggleAllButtonClicked )
+	--trackAllButtonToggle:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
+	--trackAllButtonToggle:SetHeight( buttonHeight )
+	--trackAllButtonToggle:SetWidth( buttonWidthToggle )
+	--trackAllButtonToggle:SetText( L["Toggle Track All"] )	
+	--left = left + buttonWidthToggle + spacing
+	--local trackButton = CreateFrame( "Button", frameName.."ButtonTrackAll", frame, "UIPanelButtonTemplate" )
+	--trackButton:SetScript( "OnClick", AJM.JambaQuestTrackAllButtonClicked )
+	--trackButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
+	--trackButton:SetHeight( buttonHeight )
+	--trackButton:SetWidth( buttonWidth )
+	--trackButton:SetText( L["Track All"] )
+	--local trackNoneButton = CreateFrame( "Button", frameName.."ButtonTrackNone", frame, "UIPanelButtonTemplate" )
+	--trackNoneButton:SetScript( "OnClick", AJM.JambaQuestTrackNoneButtonClicked )
+	--trackNoneButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
+	--trackNoneButton:SetHeight( buttonHeight )
+	--trackNoneButton:SetWidth( buttonWidth )
+	--trackNoneButton:SetText( L["Track None"] )	
+	--left = left + buttonWidth + spacing
+	--left = left + 70
 	-- Abandon / Abandon All.
 	local abandonButton = CreateFrame( "Button", frameName.."ButtonAbandon", frame, "UIPanelButtonTemplate" )
 	abandonButton:SetScript( "OnClick", AJM.JambaQuestAbandonButtonClicked )
 	abandonButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
 	abandonButton:SetHeight( buttonHeight )
 	abandonButton:SetWidth( buttonWidth )
-	abandonButton:SetText( L["Abandon"] )		
+	abandonButton:SetText( L["Abandon"] )
+	left = left + buttonWidth + spacing	
 	local abandonAllButton = CreateFrame( "Button", frameName.."ButtonAbandonAll", frame, "UIPanelButtonTemplate" )
 	abandonAllButton:SetScript( "OnClick", AJM.JambaQuestAbandonAllButtonClicked )
-	abandonAllButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
+	abandonAllButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
 	abandonAllButton:SetHeight( buttonHeight )
 	abandonAllButton:SetWidth( buttonWidth )
 	abandonAllButton:SetText( L["Abandon All"] )		
@@ -2114,13 +2121,15 @@ function AJM:CreateJambaQuestLogFrame()
     }        
 end
 
-function AJM:ToggleFrame( frame )
+--ebony wip
+function AJM:ToggleFrame ( frame )
     --AJM:Print( "in toggle frame", frame )
 	if frame == WorldMapFrame then
 		if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
-            --AJM:Print("check qmfiv:", WorldMapFrame:IsVisible() )
-			if WorldMapFrame:IsVisible() then
-				AJM:ToggleShowQuestCommandWindow( true )		
+          --AJM:Print("check qmfiv:", WorldMapFrame:IsVisible() )
+			--if WorldMapFrame:IsVisible() then -ebs and QuestLogDetailScrollFrame:IsVisible
+			if WorldMapFrame:IsVisible() and QuestMapFrame:IsVisible() then
+				AJM:ToggleShowQuestCommandWindow( true )				
 			else
 				AJM:ToggleShowQuestCommandWindow( false )
 			end
@@ -2141,22 +2150,26 @@ function AJM:ToggleShowQuestCommandWindow( show )
 		JambaQuestLogWindowFrame:Hide()
     end
 end
-
+--ebony-wip
 function AJM:UpdateQuestLog( questIndex )		
-	if WorldMapFrame:IsVisible() or QuestLogDetailScrollFrame:IsVisible() then
+	if WorldMapFrame:IsVisible() and QuestMapFrame:IsVisible() then
 		if questIndex then
-			QuestLog_SetSelection( questIndex )
+		SelectQuestLogEntry( questIndex )
+		--	QuestLog_SetSelection( questIndex ) -- Removed by blizzard in 6.0.2 changed to SelectQuestLogEntry
 		end
-	end
-	if WorldMapFrame1:IsVisible() then
-		QuestLog_Update()
-	end
-	if QuestLogDetailScrollFrame:IsVisible() then		
+	end	
+--	What does this do???????-ebony Junk????
+--	if WorldMapFrame1:IsVisible() then
+--		QuestLog_Update()
+--	end
+	--if QuestScrollFrameScrollBar:IsVisible() then	-- ebony was QuestLogDetailScrollFrame turned back nothing.
+	if QuestScrollFrameScrollBar:IsVisible() then	
 		QuestLog_UpdateQuestDetails( false )
- 	end
-	if WatchFrame:IsVisible() then		
-		WatchFrame_Update()
- 	end
+	end
+	-- is this needed ebony???? truns back nothing? Don't think was needed??
+	--if WatchFrame:IsVisible() then		
+	--	WatchFrame_Update()
+ 	--end
 end
 
 function AJM:GetQuestLogIndexByName( questName )
@@ -2173,22 +2186,29 @@ end
 
 function AJM:SelectQuestLogEntry( questIndex )
 	AJM.currentlySelectedQuest =  L["(No Quest Selected)"]
+	--AJM.SelectQuestLogEntry =  L["(No Quest Selected)"]
+	--if questIndex ~= nil then
 	if questIndex ~= nil then
         local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questIndex )
 		if not isHeader then
 			if title then
 				AJM.currentlySelectedQuest = title
+				-- SelectQuestLogEntry = title
 				if JambaQuestLogWindowFrame:IsVisible() then
 					if GetQuestLogPushable() and GetNumSubgroupMembers() > 0 then
 						AJM.jambaQuestLogFrameShareButton:Enable()
+						--AJM.jambaQuestLogFrameShareButton:Enable()
 					else
 						AJM.jambaQuestLogFrameShareButton:Disable()
+						--AJM.jambaQuestLogFrameShareButton:Disable()
 					end
 				end
 			end
 		end
 	end	
 end
+
+--ebonytest SelectQuestLogEntry
 
 function AJM:IsCurrentlySelectedQuestValid()
 	if AJM.currentlySelectedQuest:trim() ~= "" and AJM.currentlySelectedQuest ~= L["(No Quest Selected)"] then
@@ -2250,7 +2270,8 @@ function AJM:DoAbandonAllQuests( sender, tag )
 end
 
 function AJM:AutoSelectToggleCommand( info, parameters )
-	local toggle, tag = strsplit( " ", parameters )
+	--xx
+	local toggle, tag = strsplit ( " ", parameters )
 	if tag ~= nil and tag:trim() ~= "" then
 		AJM:JambaSendCommandToTeam( AJM.COMMAND_TOGGLE_AUTO_SELECT, toggle, tag )
 	else
