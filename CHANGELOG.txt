@@ -1,7 +1,8 @@
-Jamba Version: 6.0.3.5-2
+Jamba Version: 6.0.3.5-3
 WoW Game Version: 6.0.3
 Release Date: 29th January 2015
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+1st release by Ebony.
 
 Fixes
 
@@ -44,11 +45,6 @@ Known Issues
 
 ---------
 
-Jamba Version: 6.0.3.4
-WoW Game Version: 6.0.3
-Release Date: 5th January 2015
-Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
-
 PLEASE NOTE: THIS IS MY LAST UPDATE. IT IS TIME FOR ME TO MOVE ON.
 
 I am no longer able to keep supporting Jamba. Thanks everyone for your support and donations over the last six years.
@@ -58,6 +54,13 @@ Announcement here:
 http://www.dual-boxing.com/threads/51880-The-future-of-Jamba
 
 Jafula
+
+---------
+
+Jamba Version: 6.0.3.4
+WoW Game Version: 6.0.3
+Release Date: 5th January 2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
 Fixes
 

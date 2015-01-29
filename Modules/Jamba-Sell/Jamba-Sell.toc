@@ -2,7 +2,7 @@
 ## Title: Jamba-Sell
 ## Notes: Jamba-Sell
 ## Author: Jafula
-## Version: 6.0.3.5-2
+## Version: 6.0.3.5-3
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
