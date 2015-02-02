@@ -326,7 +326,7 @@ end
 
 -- Send a command for the module specified (using its address) to the master character.
 local function SendCommandToMaster( moduleAddress, commandName, ... )
-	-- Get the name of the module.
+-- Get the name of the module.
 	local moduleName = AJM.registeredModulesByAddress[moduleAddress]
 	-- Send the command identified by the module name.
 	JambaPrivate.Communications.SendCommandMaster( moduleName, commandName, ... )

@@ -1,16 +1,12 @@
 ## Interface: 60000
 ## Title: Jamba-FTL
 ## Notes: Jamba-FTL
-## Author: olipcs (although most of the code is originaly from Jafula)
-## Version: 6.0.3.5-3
+## Author: Olipcs, Ebony, Former Author: Jafula
+## Version: Beta-6.0.3.5.1-001
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
 ## SavedVariables: JambaFTLProfileDB
 ## LoadOnDemand: 1
-## X-Curse-Packaged-Version: release-6.0.3.7
-## X-Curse-Project-Name: Jamba
-## X-Curse-Project-ID: jamba
-## X-Curse-Repository-ID: wow/jamba/mainline
 Locales\Locales.xml
 JambaFTL.lua

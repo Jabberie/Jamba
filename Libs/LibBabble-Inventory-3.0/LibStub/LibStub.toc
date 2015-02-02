@@ -17,5 +17,9 @@
 ## X-Curse-Project-Name: Jamba
 ## X-Curse-Project-ID: jamba
 ## X-Curse-Repository-ID: wow/jamba/mainline
+## X-Curse-Packaged-Version: release-6.0.3.5-3
+## X-Curse-Project-Name: Jamba
+## X-Curse-Project-ID: jamba
+## X-Curse-Repository-ID: wow/jamba/mainline
 
 LibStub.lua

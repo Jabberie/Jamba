@@ -275,31 +275,31 @@ end
 
 -- Send a command to all members of the current team.
 local function CommandAll( moduleName, commandName, ... )
-    AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
+    --AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	-- Send command to all in group/raid.
-	if not UnitInBattleground( "player" ) then
-        AJM:DebugMessage( "Sending command to group." )
-		AJM:SendCommMessage( 
-			AJM.COMMAND_PREFIX,
-			message,
-			AJM.COMMUNICATION_GROUP,
-			nil,
-			AJM.COMMUNICATION_PRIORITY_ALERT
-		)		
-	end
+--	if not UnitInBattleground( "player" ) then
+--     AJM:DebugMessage( "Sending command to group." )
+--			AJM:SendCommMessage( 
+--			AJM.COMMAND_PREFIX,
+--			message,
+--			AJM.COMMUNICATION_GROUP,
+--			nil,
+--			AJM.COMMUNICATION_PRIORITY_ALERT
+--		)		
+--	end
 	-- If player not in a party or raid, then send to player.
-	if GetNumSubgroupMembers() == 0 and GetNumGroupMembers() == 0 then
-        AJM:DebugMessage( "Sending command just to single player." )
-		AJM:SendCommMessage( 
-			AJM.COMMAND_PREFIX,
-			message,
-			AJM.COMMUNICATION_WHISPER,
-			UnitName( "player" ),
-			AJM.COMMUNICATION_PRIORITY_ALERT
-		)		
-	end
+--	if GetNumSubgroupMembers() == 0 and GetNumGroupMembers() == 0 then
+--       AJM:DebugMessage( "Sending command just to single player." )
+--		AJM:SendCommMessage( 
+--			AJM.COMMAND_PREFIX,
+--			message,
+--			AJM.COMMUNICATION_WHISPER,
+--			UnitName( "player" ),
+--			AJM.COMMUNICATION_PRIORITY_ALERT
+--		)		
+--	end
 	-- Send the message to all members of the current team that are not in a party / raid.	
 	for characterName, characterOrder in JambaPrivate.Team.TeamList() do
 		if IsCharacterOnline( characterName ) == true then
@@ -313,12 +313,12 @@ local function CommandAll( moduleName, commandName, ... )
 				canSend = true
 			end
 			-- If in a battleground then send a whisper as the party/raid would have not been sent.
-			if UnitInBattleground( "player" ) then
-				canSend = true
-			end
-			if UnitInBattleground( characterName ) then
-				canSend = true
-			end
+--			if UnitInBattleground( "player" ) then
+--				canSend = true
+--			end
+--			if UnitInBattleground( characterName ) then
+--				canSend = true
+--			end
 			if canSend == true then
                 AJM:DebugMessage( "Sending command to others not in party/raid." )
 				AJM:SendCommMessage( 
@@ -335,7 +335,7 @@ end
 
 -- Send a command to the master.
 local function CommandMaster( moduleName, commandName, ... )
-    AJM:DebugMessage( "Command Master: ", moduleName, commandName, ... )
+--	AJM:DebugMessage( "Command Master: ", moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	-- Send the message to the master.
@@ -358,8 +358,7 @@ local function CommandToon( moduleName, characterName, commandName, ... )
 	if IsCharacterOnline( characterName ) == true then
 		AJM:SendCommMessage( 
 			AJM.COMMAND_PREFIX,
-			message,
-			AJM.COMMUNICATION_WHISPER,
+			message,			AJM.COMMUNICATION_WHISPER,
 			characterName,
 			AJM.COMMUNICATION_PRIORITY_ALERT
 		)
@@ -443,7 +442,7 @@ local function SendCommandAll( moduleName, commandName, ... )
 	CommandAll( moduleName, commandName, ... )
 end
 
--- Command the master.
+-- 	Command the master.
 local function SendCommandMaster( moduleName, commandName, ... )
 	-- Send the command to the master character.
 	CommandMaster( moduleName, commandName, ... )

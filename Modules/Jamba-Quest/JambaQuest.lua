@@ -163,6 +163,9 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "GOSSIP_SHOW" )
 	AJM:RegisterEvent( "QUEST_GREETING" )
 	AJM:RegisterEvent( "QUEST_PROGRESS" )
+	--ebony
+	--AJM:RegisterEvent ( "ToggleQuestLog" )
+	--AJM:RegisterEvent ( "QuestLogFrame" )
     -- Quest post hooks.
     AJM:SecureHook( "SelectGossipOption" )
     AJM:SecureHook( "SelectGossipActiveQuest" )
@@ -175,6 +178,7 @@ function AJM:OnEnable()
 	AJM:SecureHook( "GetQuestReward" )
 	AJM:SecureHook( "ToggleFrame" )
 	AJM:SecureHook( WorldMapFrame, "Hide", "QuestLogFrameHide" )
+	--AJM:SecureHook( QuestLogFrame, "Hide", "QuestLogFrameHide" )
 	AJM:SecureHook( "SelectQuestLogEntry" )
 	AJM:SecureHook( "ShowQuestComplete" )
 	QuestFrameAcceptButton:HookScript( "OnClick", function() AJM:MagicAutoAcceptQuestGrrrr() end )
@@ -1634,13 +1638,16 @@ function AJM:AcceptQuest()
 		end
 	end
 end
-
+--ebony
 function AJM:DoAcceptQuest( sender )
 	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true then
+	local questIndex = AJM:GetQuestLogIndexByName( questName )
 		AJM.isInternalCommand = true
         AJM:DebugMessage( "DoAcceptQuest" )
-		AcceptQuest()
 		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
+		AcceptQuest()
+		--ebony
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
 		AJM.isInternalCommand = false	
 	end
 end
@@ -1658,14 +1665,16 @@ function AJM:MagicAutoAcceptQuestGrrrr()
 	end
 end
 
-function AJM:DoMagicAutoAcceptQuestGrrrr( sender )
+function AJM:DoMagicAutoAcceptQuestGrrrr( sender, questName )
     AJM:DebugMessage( "Start of DoMagicAutoAcceptQuestGrrrr" )
+	local questIndex = AJM:GetQuestLogIndexByName( questName )
 	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true then
 		AJM.isInternalCommand = true
         AJM:DebugMessage( "DoMagicAutoAcceptQuestGrrrr", QuestGetAutoAccept() )
 		if QuestFrame:IsVisible() then
 			if QuestGetAutoAccept() then
 				HideUIPanel( QuestFrame )
+				--ebony
 				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
 			end
 		end
@@ -1725,17 +1734,20 @@ function AJM:QUEST_DETAIL()
 			-- Quest is shared from a player.
 			if AJM:CanAutoAcceptSharedQuestFromPlayer() == true then		
 				AJM.isInternalCommand = true
-				AcceptQuest()
 				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
+				AcceptQuest()
+				--ebony see under.
 				AJM.isInternalCommand = false
 			end			
 		else
 			-- Quest is from an NPC.
 			if (AJM.db.allAcceptAnyQuest == true) or ((AJM.db.onlyAcceptQuestsFrom == true) and (AJM.db.acceptFromNpc == true)) then		
 				AJM.isInternalCommand = true
+				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
 				AcceptQuest()
                 AJM:DebugMessage( "QUEST_DETAIL - auto accept is: ", QuestGetAutoAccept() )
-				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
+				--ebony questNameGetTitleText
+				--AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
 				AJM.isInternalCommand = false
 			end
 		end
@@ -1941,6 +1953,7 @@ function AJM.JambaQuestShareAllButtonClicked()
 	end
 end
 
+--ebony
 function AJM.PushNextQuest()
     local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( AJM.iterateQuests )
 	if isHeader == nil then
@@ -2136,6 +2149,22 @@ function AJM:ToggleFrame ( frame )
 		end
 	end
 end
+--ebony
+
+--function AJM:ToggleQuestLog ( frame )
+--    AJM:Print( "in toggle frame", frame )
+--	if frame == ToggleQuestLog then
+--		if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
+--          --AJM:Print("check qmfiv:", WorldMapFrame:IsVisible() )
+--			--if WorldMapFrame:IsVisible() then -ebs and QuestLogDetailScrollFrame:IsVisible
+--			if WorldMapFrame:IsVisible() and QuestMapFrame:IsVisible() then
+--				AJM:ToggleShowQuestCommandWindow( true )				
+--			else
+--				AJM:ToggleShowQuestCommandWindow( false )
+--			end
+--		end
+--	end
+--end
 
 function AJM:QuestLogFrameHide()
 	if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
