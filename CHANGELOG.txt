@@ -1,6 +1,6 @@
-Jamba Version: Beta-6.0.3.5.1-001
+Jamba Version: Beta-6.0.3.5.1-015
 WoW Game Version: 6.0.3
-Release Date: 2nd February 2015
+Release Date: 4th February 2015
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
 *Changed the way Version Numbers work, Am now doing it X.X.X.X.X-Y (EG:6.0.3.5.1-001) that stands for wowXpac.wowPatch.JambaVersion.SubVersion.SubSubVersion-BetaVersion
@@ -20,10 +20,11 @@ Jamba-Toon:
 	-Fixed Total Bar from x2 the masters Gold (sorry don't look like you got a much gold now)
 
 Jamba-Communications:
-Fixed some code that was returning x2 of everything on master toon.
-This should clear up a lot of the "spam" in chat or Everything that was seem to be doubled on the masters chars. 
+*Fixed some code that was returning x2 of everything on master toon.
+This should clear up a lot of the "spam" in chat or Everything that was seem to be doubled on the masters characters. 
 As well as sending a lot less communication to the team, This should increase performance a lot.
-And be a lot never to the chat servers.
+And be a lot nicer to the chat servers.
+* Fixed Communications in a raid group from 001 beta.
 
 
 ToDo:

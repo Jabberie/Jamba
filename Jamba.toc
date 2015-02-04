@@ -2,7 +2,7 @@
 ## Title: Jamba
 ## Notes: Jamba
 ## Author: Ebony, Former Author: Jafula
-## Version: Beta-6.0.3.5.1-001
+## Version: 6.0.3.5.1-015
 ## X-Category: Interface Enhancements
 ## SavedVariables: JambaCoreProfileDB, JambaCommunicationsProfileDB, JambaTeamProfileDB, JambaTagProfileDB, JambaMessageProfileDB
 JambaEmbeds.xml

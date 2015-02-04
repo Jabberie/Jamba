@@ -275,12 +275,13 @@ end
 
 -- Send a command to all members of the current team.
 local function CommandAll( moduleName, commandName, ... )
-    --AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
+    AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	-- Send command to all in group/raid.
---	if not UnitInBattleground( "player" ) then
---     AJM:DebugMessage( "Sending command to group." )
+	--if not UnitInBattleground( "player" ) then
+ --   if not UnitInParty( "player" ) then --or UnitInRaid( "player" ) then 
+--	 AJM:DebugMessage( "Sending command to group." )
 --			AJM:SendCommMessage( 
 --			AJM.COMMAND_PREFIX,
 --			message,
@@ -291,7 +292,7 @@ local function CommandAll( moduleName, commandName, ... )
 --	end
 	-- If player not in a party or raid, then send to player.
 --	if GetNumSubgroupMembers() == 0 and GetNumGroupMembers() == 0 then
---       AJM:DebugMessage( "Sending command just to single player." )
+--	AJM:DebugMessage( "Sending command just to single player." )
 --		AJM:SendCommMessage( 
 --			AJM.COMMAND_PREFIX,
 --			message,
@@ -308,8 +309,12 @@ local function CommandAll( moduleName, commandName, ... )
 			if not UnitInParty( characterName ) then
 				canSend = true
 			end
-			-- In raid and team member not in raid then send command.
-			if GetNumGroupMembers() > 0 and not IsInRaid() then
+			-- ebony Team member not in Raid then send command
+--			if not UnitInRaid( characterName ) then
+--				canSend = true
+--			end			
+			-- In raid and team member not in raid then send command. REMOVED REAID EBONY
+			if GetNumGroupMembers() > 0 then --and not IsInRaid() then
 				canSend = true
 			end
 			-- If in a battleground then send a whisper as the party/raid would have not been sent.
