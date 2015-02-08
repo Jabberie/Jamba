@@ -2,7 +2,7 @@
 ## Title: Jamba-ItemUse
 ## Notes: Jamba-ItemUse
 ## Author: Ebony, Former Author: Jafula
-## 6.0.3.5.1
+## 6.0.3.6
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
