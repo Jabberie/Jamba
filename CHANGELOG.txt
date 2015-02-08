@@ -1,4 +1,4 @@
-Jamba Version: 6.0.3.6
+Jamba Version: 6.0.3.9
 WoW Game Version: 6.0.3
 Release Date: 8th February 2015
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
