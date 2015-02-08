@@ -1,6 +1,6 @@
-Jamba Version: Beta-6.0.3.5.1-015
+Jamba Version: 6.0.3.5.1
 WoW Game Version: 6.0.3
-Release Date: 4th February 2015
+Release Date: 8th February 2015
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
 *Changed the way Version Numbers work, Am now doing it X.X.X.X.X-Y (EG:6.0.3.5.1-001) that stands for wowXpac.wowPatch.JambaVersion.SubVersion.SubSubVersion-BetaVersion
@@ -9,6 +9,7 @@ Jamba-Quest:
 
 * JambaQuestbar (abandon all, share all, etc) Now shows when you use the blizzard marciobar Button or pressing the Key L (or own keymap that shows Questlog)
 * When Clones get quests now sends quest name as it should. (thanks for hyperunknown for the report) Accepted Quest:"QuestName" or Automatically Accepted Quest:"QuestName"
+* Removed Toon Selects best quest reward (Not find a good fix I like.)
 
 Jamba-Toon:
 *Add Currency's
@@ -20,11 +21,11 @@ Jamba-Toon:
 	-Fixed Total Bar from x2 the masters Gold (sorry don't look like you got a much gold now)
 
 Jamba-Communications:
+
 *Fixed some code that was returning x2 of everything on master toon.
 This should clear up a lot of the "spam" in chat or Everything that was seem to be doubled on the masters characters. 
 As well as sending a lot less communication to the team, This should increase performance a lot.
 And be a lot nicer to the chat servers.
-* Fixed Communications in a raid group from 001 beta.
 
 
 ToDo:

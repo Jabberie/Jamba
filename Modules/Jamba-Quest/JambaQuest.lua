@@ -56,7 +56,7 @@ AJM.settings = {
 		hasChoiceSlaveChooseSameRewardAsMaster = false,
 		hasChoiceSlaveMustChooseOwnReward = true,
 		hasChoiceSlaveRewardChoiceModifierConditional = false,
-		hasChoiceAquireBestQuestRewardForCharacter = false,
+--		hasChoiceAquireBestQuestRewardForCharacter = false,
 		hasChoiceCtrlKeyModifier = false,
 		hasChoiceShiftKeyModifier = false,
 		hasChoiceAltKeyModifier = false,
@@ -68,7 +68,7 @@ AJM.settings = {
 		frameXOffset = 0,
 		frameYOffset = 0,
 		overrideQuestAutoSelectAndComplete = false,
-		hasChoiceAquireBestQuestRewardForCharacterAndGet = false,
+--		hasChoiceAquireBestQuestRewardForCharacterAndGet = false,
 	},
 }
 
@@ -572,27 +572,28 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 		AJM.SettingsToggleHasChoiceSlaveDoNothing
 	)	
 	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveDoNothing:SetType( "radio" )
-	movingTop = movingTop - radioBoxHeight
+--	movingTop = movingTop - radioBoxHeight
+	-- TODO: Fix or remove.
 	-- Radio box: Has choice, choose best reward.
-	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControlCompletion, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["Toon Auto Selects Best Reward"],
-		AJM.SettingsToggleHasChoiceAquireBestQuestRewardForCharacter
-	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetType( "radio" )
-	movingTop = movingTop - radioBoxHeight
+--		AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter = JambaHelperSettings:CreateCheckBox( 
+--		AJM.settingsControlCompletion, 
+--		headingWidth, 
+--		column1Left, 
+--		movingTop,
+--		L["Toon Auto Selects Best Reward"],
+--		AJM.SettingsToggleHasChoiceAquireBestQuestRewardForCharacter
+--	)	
+--	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetType( "radio" )
+--	movingTop = movingTop - radioBoxHeight
 	-- Radio box: Has choice, choose best reward - actually get it.
-	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControlCompletion, 
-		headingWidth, 
-		column1Left + indent, 
-		movingTop,
-		L["And Claims It As Well"],
-		AJM.SettingsToggleActuallyGetTheBestReward
-	)	
+--	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward = JambaHelperSettings:CreateCheckBox( 
+--		AJM.settingsControlCompletion, 
+--		headingWidth, 
+--		column1Left + indent, 
+--		movingTop,
+--		L["And Claims It As Well"],
+--		AJM.SettingsToggleActuallyGetTheBestReward
+--	)	
 	movingTop = movingTop - checkBoxHeight	
 	-- Radio box: Has choice, slave complete quest with master.
 	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster = JambaHelperSettings:CreateCheckBox( 
@@ -734,8 +735,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.hasChoiceShiftKeyModifier = settings.hasChoiceShiftKeyModifier
 		AJM.db.hasChoiceAltKeyModifier = settings.hasChoiceAltKeyModifier
 		AJM.db.hasChoiceOverrideUseSlaveRewardSelected = settings.hasChoiceOverrideUseSlaveRewardSelected
-		AJM.db.hasChoiceAquireBestQuestRewardForCharacter = settings.hasChoiceAquireBestQuestRewardForCharacter
-		AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet = settings.hasChoiceAquireBestQuestRewardForCharacterAndGet
+--		AJM.db.hasChoiceAquireBestQuestRewardForCharacter = settings.hasChoiceAquireBestQuestRewardForCharacter
+--		AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet = settings.hasChoiceAquireBestQuestRewardForCharacterAndGet
 		AJM.db.messageArea = settings.messageArea
 		AJM.db.warningArea = settings.warningArea
 		AJM.db.overrideQuestAutoSelectAndComplete = settings.overrideQuestAutoSelectAndComplete
@@ -787,8 +788,9 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster:SetValue( AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
 	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveChooseSameRewardAsMaster:SetValue( AJM.db.hasChoiceSlaveChooseSameRewardAsMaster )
 	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveMustChooseOwnReward:SetValue( AJM.db.hasChoiceSlaveMustChooseOwnReward )
-	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetValue( AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
-	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward:SetValue( AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet )
+--	Ebony Fix or remove,
+--	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetValue( AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
+--	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward:SetValue( AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet )
 	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveRewardChoiceModifierConditional:SetValue( AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
 	AJM.settingsControlCompletion.checkBoxHasChoiceCtrlKeyModifier:SetValue( AJM.db.hasChoiceCtrlKeyModifier )
 	AJM.settingsControlCompletion.checkBoxHasChoiceShiftKeyModifier:SetValue( AJM.db.hasChoiceShiftKeyModifier )
@@ -812,8 +814,8 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCompletion.checkBoxNoChoiceSlaveCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllAutoCompleteQuest:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveDoNothing:SetDisabled( not AJM.db.enableAutoQuestCompletion )
-	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetDisabled( not AJM.db.enableAutoQuestCompletion )
-	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
+--	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetDisabled( not AJM.db.enableAutoQuestCompletion )
+--	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
 	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveChooseSameRewardAsMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
 	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveMustChooseOwnReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
@@ -970,10 +972,10 @@ function AJM:SettingsToggleHasChoiceAquireBestQuestRewardForCharacter( event, ch
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleActuallyGetTheBestReward( event, checked )
-	AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet = checked
-	AJM:SettingsRefresh()
-end
+--function AJM:SettingsToggleActuallyGetTheBestReward( event, checked )
+--	AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet = checked
+--	AJM:SettingsRefresh()
+--end
 
 function AJM:SettingsToggleHasChoiceSlaveChooseSameRewardAsMaster( event, checked )
 	AJM.db.hasChoiceSlaveChooseSameRewardAsMaster = checked
@@ -1396,6 +1398,7 @@ function AJM:DoChooseQuestReward( sender, questIndex, modifierKeysPressed, rewar
 	end
 end
 
+--TODO FIX or Remove!
 function AJM:GetBestRewardIndexForCharacter()
 	-- Originally provided by loop: http://www.dual-boxing.com/showpost.php?p=257610&postcount=1505
 	-- New version provided by Mischanix via jamba.uservoice.com.
