@@ -2,7 +2,7 @@
 ## Title: Jamba-Talk
 ## Notes: Jamba-Talk
 ## Author: Ebony, Former Author: Jafula
-## Version: 6.1.0.3.10
+## Version: 3.11
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
