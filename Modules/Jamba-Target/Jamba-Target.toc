@@ -2,7 +2,7 @@
 ## Title: Jamba-Target
 ## Notes: Jamba-Target
 ## Author: Ebony, Former Author: Jafula
-## Version: 6.0.3.9
+## Version: 3.10-B1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
