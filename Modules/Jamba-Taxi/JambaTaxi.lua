@@ -29,6 +29,7 @@ AJM.moduleDisplayName = L["Taxi"]
 AJM.settings = {
 	profile = {
 		takeMastersTaxi = true,
+		requestTaxiStop = true,
 		messageArea = JambaApi.DefaultMessageArea(),
 	},
 }
@@ -63,6 +64,7 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 AJM.COMMAND_TAKE_TAXI = "JambaTaxiTakeTaxi"
+AJM.COMMAND_EXIT_TAXI = "JambaTaxiExitTaxi"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -78,6 +80,7 @@ AJM.MESSAGE_TAXI_TAKEN = "JambaTaxiTaxiTaken"
 -- Initialise the module.
 function AJM:OnInitialize()
 	AJM.jambaTakesTaxi = false
+	AJM.jambaLeavsTaxi = false
 	-- Create the settings control.
 	AJM:SettingsCreate()
 	-- Initialse the JambaModule part of this module.
@@ -90,6 +93,7 @@ end
 function AJM:OnEnable()
 	-- Hook the TaketaxiNode function.
 	AJM:SecureHook( "TakeTaxiNode" )
+	AJM:SecureHook( "TaxiRequestEarlyLanding" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
 end
 
@@ -135,7 +139,16 @@ function AJM:SettingsCreateTaxi( top )
 		movingTop,
 		L["Take Master's Taxi"],
 		AJM.SettingsToggleTakeTaxi
-	)	
+	)
+	movingTop = movingTop - headingHeight
+	AJM.settingsControl.checkBoxrequestStop = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop,
+		L["Request Taxi Stop with Master"],
+		AJM.SettingsTogglerequestStop
+	)		
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControl.dropdownMessageArea = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControl, 
@@ -164,11 +177,18 @@ function AJM:SettingsToggleTakeTaxi( event, checked )
 	AJM:SettingsRefresh()
 end
 
+--ebs
+function AJM:SettingsTogglerequestStop( event, checked )
+	AJM.db.requestTaxiStop = checked
+	AJM:SettingsRefresh()
+end
+
 -- Settings received.
 function AJM:JambaOnSettingsReceived( characterName, settings )	
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
 		AJM.db.takeMastersTaxi = settings.takeMastersTaxi
+		AJM.db.requestTaxiStop = settings.requestTaxiStop
 		AJM.db.messageArea = settings.messageArea
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
@@ -186,6 +206,7 @@ end
 
 function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxTakeMastersTaxi:SetValue( AJM.db.takeMastersTaxi )
+	AJM.settingsControl.checkBoxrequestStop:SetValue( AJM.db.requestTaxiStop )
 	AJM.settingsControl.dropdownMessageArea:SetValue( AJM.db.messageArea )
 end
 
@@ -213,6 +234,7 @@ local function TakeTaxi( sender, nodeName )
 				AJM:SendMessage( AJM.MESSAGE_TAXI_TAKEN )
 				-- Take a taxi.
 				AJM.jambaTakesTaxi = true
+				GetNumRoutes( nodeIndex )
 				TakeTaxiNode( nodeIndex )
 			else
 				-- Tell the master that this character could not take the same flight.
@@ -236,6 +258,33 @@ function AJM:TakeTaxiNode( taxiNodeIndex )
 	end
 end
 
+-- exit taxi with team ebony
+local function LeaveTaxi ( sender )
+	if AJM.db.requestTaxiStop == true then
+		if sender ~= AJM.characterName then
+			AJM.jambaLeavsTaxi = true
+			TaxiRequestEarlyLanding()
+			AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["I Have Requested a Stop From X"]( sender ), false )	
+		end
+	end	
+end
+
+
+
+function AJM.TaxiRequestEarlyLanding( sender )
+	-- If the take masters taxi option is on.
+	if AJM.db.requestTaxiStop == true then
+		if UnitOnTaxi( "player" ) and CanExitVehicle() == true then
+			if AJM.jambaLeavsTaxi == false then
+				-- Send a message to any listeners that a taxi is being taken.
+				AJM:JambaSendCommandToTeam ( AJM.COMMAND_EXIT_TAXI )
+			end
+		end
+		AJM.jambaLeavsTaxi = false
+	end
+end
+
+
 -- A Jamba command has been received.
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	if characterName ~= self.characterName then
@@ -247,6 +296,11 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 				if TaxiFrame:IsVisible() then
 					TakeTaxi( characterName, ... )
 				end
+			end
+		end
+		if commandName == AJM.COMMAND_EXIT_TAXI then
+			if UnitOnTaxi ( "player") then
+				LeaveTaxi ( characterName, ... )
 			end
 		end
 	end

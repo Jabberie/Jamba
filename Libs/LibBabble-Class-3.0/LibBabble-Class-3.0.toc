@@ -9,22 +9,6 @@
 ## X-eMail: ckknight@gmail.com
 ## X-Category: Library
 ## X-License: MIT
-## X-Curse-Packaged-Version: r56
-## X-Curse-Project-Name: LibBabble-Class-3.0
-## X-Curse-Project-ID: libbabble-class-3-0
-## X-Curse-Repository-ID: wow/libbabble-class-3-0/mainline
-## X-Curse-Packaged-Version: release-6.0.3.4
-## X-Curse-Project-Name: Jamba
-## X-Curse-Project-ID: jamba
-## X-Curse-Repository-ID: wow/jamba/mainline
-## X-Curse-Packaged-Version: release-6.0.3.7
-## X-Curse-Project-Name: Jamba
-## X-Curse-Project-ID: jamba
-## X-Curse-Repository-ID: wow/jamba/mainline
-## X-Curse-Packaged-Version: release-6.0.3.5-3
-## X-Curse-Project-Name: Jamba
-## X-Curse-Project-ID: jamba
-## X-Curse-Repository-ID: wow/jamba/mainline
 
 LibStub\LibStub.lua
 lib.xml
