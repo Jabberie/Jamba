@@ -280,17 +280,19 @@ local function CommandAll( moduleName, commandName, ... )
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	-- Send command to all in group/raid.
 	--if not UnitInBattleground( "player" ) then
- --   if not UnitInParty( "player" ) then --or UnitInRaid( "player" ) then 
---	 AJM:DebugMessage( "Sending command to group." )
---			AJM:SendCommMessage( 
---			AJM.COMMAND_PREFIX,
---			message,
---			AJM.COMMUNICATION_GROUP,
---			nil,
---			AJM.COMMUNICATION_PRIORITY_ALERT
---		)		
---	end
-	-- If player not in a party or raid, then send to player.
+	if UnitInParty( "player" ) == true then --or UnitInRaid( "player" ) then 
+		if not UnitInBattleground( "player" ) then
+		AJM:DebugMessage( "Sending command to group." )
+			AJM:SendCommMessage( 
+			AJM.COMMAND_PREFIX,
+			message,
+			AJM.COMMUNICATION_GROUP,
+			nil,
+			AJM.COMMUNICATION_PRIORITY_ALERT
+			)
+		end	
+	end
+	-- If player not in a party or raid, then send to player. Pointless as does it under anyway, x2 everything!
 --	if GetNumSubgroupMembers() == 0 and GetNumGroupMembers() == 0 then
 --	AJM:DebugMessage( "Sending command just to single player." )
 --		AJM:SendCommMessage( 
@@ -309,21 +311,10 @@ local function CommandAll( moduleName, commandName, ... )
 			if not UnitInParty( characterName ) then
 				canSend = true
 			end
-			-- ebony Team member not in Raid then send command
---			if not UnitInRaid( characterName ) then
---				canSend = true
---			end			
-			-- In raid and team member not in raid then send command. REMOVED REAID EBONY
-			if GetNumGroupMembers() > 0 then --and not IsInRaid() then
+			--If in a battleground then send a whisper as the party/raid would have not been sent.
+			if UnitInBattleground( characterName ) then
 				canSend = true
 			end
-			-- If in a battleground then send a whisper as the party/raid would have not been sent.
---			if UnitInBattleground( "player" ) then
---				canSend = true
---			end
---			if UnitInBattleground( characterName ) then
---				canSend = true
---			end
 			if canSend == true then
                 AJM:DebugMessage( "Sending command to others not in party/raid." )
 				AJM:SendCommMessage( 

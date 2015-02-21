@@ -1,3 +1,45 @@
+Jamba Version: 6.1.3.10
+WoW Game Version: 6.1.0
+Release Date: TBA
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Updated for Patch 6.1 
+
+Jamba-Team:
+*Added support for BattleNet friends, Auto Accept Invite and loot opts.
+*Sometimes invite is from XREALM even though Your on the same realm and have already joined the party no longer will the StaticPopup stay.
+
+Jamba-Quest: 
+*Cleared up quest Text from clones when in fact they have not even picked up a quest they still said Accepted Quest:.
+*Fixed AutoPickUpQuests (quests at starting zones) Should now work like normal quests!
+*Fixed a Lua error that sometimes was showing on clones screen when using the jamba-quest-bar.
+
+Jamba-Toon:
+* Added: Auto Accept Summon No Longer do you need to Click that summon box. With cool text that says the PlayerName and where the clone went.
+
+Jamba-Taxi:
+*Uses blizzard new 6.1 code that finds the fastest taxi route.
+*Added Support for the new 6.1 Exit Taxi at next stop, When the master leaves at next point the team should follow.
+
+Jamba-Communications:
+*Added Party Communications again when your in a party if not in own party with member of the team should send that char a /w.
+
+ToDo:
+
+Miscellaneous:
+*Add "New Mail" When a clone gets In game mail.
+
+Jamba-Quest:
+
+* When Quest Button (on Map) Toggle is pressed Needs to open/close jambaQuestBar.
+* Rename Show Jamba-Quest Log with wow quest Log To something a little easier to understand. 
+
+Quest-Watcher:
+*update for WoD
+
+
+---------
+
 Jamba Version: 6.0.3.9
 WoW Game Version: 6.0.3
 Release Date: 8th February 2015
@@ -26,19 +68,6 @@ Jamba-Communications:
 This should clear up a lot of the "spam" in chat or Everything that was seem to be doubled on the masters characters. 
 As well as sending a lot less communication to the team, This should increase performance a lot.
 And be a lot nicer to the chat servers.
-
-
-ToDo:
-
-Miscellaneous:
-
-Add "New Mail" When a clone gets In game mail. And show on bar if have unread somewhere not sure where yet...
-
-Jamba-Quest:
-
-*When Quest Button (on Map) Toggle is pressed Needs to open/close jambaQuestBar.
-
-Quest-Watcher:
 
 
 ---------

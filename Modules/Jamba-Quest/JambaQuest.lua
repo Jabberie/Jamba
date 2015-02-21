@@ -163,9 +163,6 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "GOSSIP_SHOW" )
 	AJM:RegisterEvent( "QUEST_GREETING" )
 	AJM:RegisterEvent( "QUEST_PROGRESS" )
-	--ebony
-	--AJM:RegisterEvent ( "ToggleQuestLog" )
-	--AJM:RegisterEvent ( "QuestLogFrame" )
     -- Quest post hooks.
     AJM:SecureHook( "SelectGossipOption" )
     AJM:SecureHook( "SelectGossipActiveQuest" )
@@ -181,7 +178,7 @@ function AJM:OnEnable()
 	--AJM:SecureHook( QuestLogFrame, "Hide", "QuestLogFrameHide" )
 	AJM:SecureHook( "SelectQuestLogEntry" )
 	AJM:SecureHook( "ShowQuestComplete" )
-	QuestFrameAcceptButton:HookScript( "OnClick", function() AJM:MagicAutoAcceptQuestGrrrr() end )
+--	QuestDetailAcceptButton_OnClick:HookScript( "OnClick", function() AJM:MagicAutoAcceptQuestGrrrr() end )
 end
 
 -- Called when the addon is disabled.
@@ -1302,8 +1299,9 @@ function AJM:DoShowQuestComplete( sender, questName )
 	local questIndex = AJM:GetQuestLogIndexByName( questName )
 	if questIndex ~= 0 then
 		ShowQuestComplete( questIndex )
-		--TODO fix this or remove
+		--TODO fix this or remove still wip (this seems to be new code)
 	-- WatchFrameAutoQuest_ClearPopUpByLogIndex( questIndex )
+		AutoQuestPopupTracker_RemovePopUp ( questIndex )
 	end
 	AJM.isInternalCommand = false	
 end
@@ -1635,55 +1633,60 @@ function AJM:AcceptQuest()
 	if AJM.db.acceptQuests == true then
 		if AJM.db.slaveMirrorMasterAccept == true then	
 			if AJM.isInternalCommand == false then
-                AJM:DebugMessage( "AcceptQuest" )
+				AJM:DebugMessage( "AcceptQuest" )
 				AJM:JambaSendCommandToTeam( AJM.COMMAND_ACCEPT_QUEST )
 			end		
 		end
-	end
+	end	
 end
+
 --ebony
 function AJM:DoAcceptQuest( sender )
 	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true then
 	local questIndex = AJM:GetQuestLogIndexByName( questName )
 		AJM.isInternalCommand = true
-        AJM:DebugMessage( "DoAcceptQuest" )
+		AJM:DebugMessage( "DoAcceptQuest" )
 		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
 		AcceptQuest()
+		HideUIPanel( QuestFrame )
 		--ebony
 		--AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
 		AJM.isInternalCommand = false	
 	end
 end
 
-function AJM:MagicAutoAcceptQuestGrrrr()
-	if AJM.db.acceptQuests == true then
-		if AJM.db.slaveMirrorMasterAccept == true then	
-			if AJM.isInternalCommand == false then
-                AJM:DebugMessage( "MagicAutoAcceptQuestGrrrr", QuestGetAutoAccept() )
-				if QuestGetAutoAccept() then
-					AJM:JambaSendCommandToTeam( AJM.COMMAND_ACCEPT_QUEST_FAKE )
-				end
-			end		
-		end
-	end
-end
 
-function AJM:DoMagicAutoAcceptQuestGrrrr( sender, questName )
-    AJM:DebugMessage( "Start of DoMagicAutoAcceptQuestGrrrr" )
-	local questIndex = AJM:GetQuestLogIndexByName( questName )
-	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true then
-		AJM.isInternalCommand = true
-        AJM:DebugMessage( "DoMagicAutoAcceptQuestGrrrr", QuestGetAutoAccept() )
-		if QuestFrame:IsVisible() then
-			if QuestGetAutoAccept() then
-				HideUIPanel( QuestFrame )
-				--ebony
-				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
-			end
-		end
-		AJM.isInternalCommand = false	
-	end
-end
+--function AJM:MagicAutoAcceptQuestGrrrr()
+--	if AJM.db.acceptQuests == true then
+--		if AJM.db.slaveMirrorMasterAccept == true then	
+--			if AJM.isInternalCommand == false then
+--				-- AJM:DebugMessage( "MagicAutoAcceptQuestGrrrr", QuestGetAutoAccept() )
+--				if QuestGetAutoAccept() == true then
+--					AJM:JambaSendCommandToTeam( AJM.COMMAND_ACCEPT_QUEST_FAKE )
+--				end
+--			end		
+--		end
+--	end
+--end
+
+--function AJM:DoMagicAutoAcceptQuestGrrrr()
+--	AJM:DebugMessage( "Start of DoMagicAutoAcceptQuestGrrrr" )
+--	local questIndex = AJM:GetQuestLogIndexByName( questName )
+--	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true then
+--		if QuestFrame:IsVisible() == true then
+--		--AJM.isInternalCommand = true
+--			 AJM:DebugMessage( "DoMagicAutoAcceptQuestGrrrr", QuestGetAutoAccept() )
+--				if QuestGetAutoAccept() == true then
+--				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
+--				--AcceptQuest()
+--				AcknowledgeAutoAcceptQuest()
+--				HideUIPanel( QuestFrame )
+--				--ebony-
+--			end
+--		end
+--		AJM.isInternalCommand = false
+--	end
+--end
 
 -------------------------------------------------------------------------------------------------------------
 -- QUEST PROCESSING - AUTO ACCEPTING
@@ -1729,16 +1732,23 @@ function AJM:CanAutoAcceptSharedQuestFromPlayer()
 	return canAccept
 end
 
+--ebony wip
 function AJM:QUEST_DETAIL()
     AJM:DebugMessage( "QUEST_DETAIL" )
-	if AJM.db.acceptQuests == true then
+	-- if auto quest then auto close window.
+	if QuestGetAutoAccept() then
+		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted AutoPickupQuest: A"]( GetTitleText() ), false )
+		AcknowledgeAutoAcceptQuest()
+	elseif AJM.db.acceptQuests == true then
 		-- Who is this quest from.
+		--Getting AutoPickupquest to work and hiding the UI.		
 		if UnitIsPlayer( "npc" ) then
 			-- Quest is shared from a player.
 			if AJM:CanAutoAcceptSharedQuestFromPlayer() == true then		
 				AJM.isInternalCommand = true
 				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
 				AcceptQuest()
+				HideUIPanel( QuestFrame )
 				--ebony see under.
 				AJM.isInternalCommand = false
 			end			
@@ -1748,7 +1758,8 @@ function AJM:QUEST_DETAIL()
 				AJM.isInternalCommand = true
 				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
 				AcceptQuest()
-                AJM:DebugMessage( "QUEST_DETAIL - auto accept is: ", QuestGetAutoAccept() )
+				HideUIPanel( QuestFrame )
+               -- AJM:DebugMessage( "QUEST_DETAIL - auto accept is: ", QuestGetAutoAccept() )
 				--ebony questNameGetTitleText
 				--AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
 				AJM.isInternalCommand = false
@@ -2191,17 +2202,18 @@ function AJM:UpdateQuestLog( questIndex )
 		end
 	end	
 --	What does this do???????-ebony Junk????
---	if WorldMapFrame1:IsVisible() then
+--	if WorldMapFrame:IsVisible() then
 --		QuestLog_Update()
 --	end
+	-- ebony not sure,
 	--if QuestScrollFrameScrollBar:IsVisible() then	-- ebony was QuestLogDetailScrollFrame turned back nothing.
 	if QuestScrollFrameScrollBar:IsVisible() then	
-		QuestLog_UpdateQuestDetails( false )
+		QuestMap_UpdateQuestDetails( false )
 	end
-	-- is this needed ebony???? truns back nothing? Don't think was needed??
-	--if WatchFrame:IsVisible() then		
-	--	WatchFrame_Update()
- 	--end
+	-- is this needed ebony???? truns back nothing? Don't think was needed?? was renamed in 6.0 to ObjectiveTrackerFrame
+	if ObjectiveTrackerFrame:IsVisible() then		
+		ObjectiveTrackerFrame_Update()
+ 	end
 end
 
 function AJM:GetQuestLogIndexByName( questName )

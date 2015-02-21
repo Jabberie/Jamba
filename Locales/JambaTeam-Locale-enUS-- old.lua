@@ -33,7 +33,6 @@ L["When Master changes, promote Master to party leader."] = true
 L["Party Invitations Control"] = true
 L["Accept from team."] = true
 L["Accept from friends."] = true
-L["Accept from BattleNet/RealD friends."] = true
 L["Accept from guild."] = true
 L["Decline from strangers."] = true
 L["Party Loot Control"] = true

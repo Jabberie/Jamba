@@ -289,7 +289,7 @@ local function SettingsCreateRequests( top )
 		AJM.SettingsToggleAutoAcceptResurrectRequests
 	)
 	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControlRequests.checkBoxAutoAcceptSummonRequest = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControlRequests.checkBoxautoAcceptSummonRequest = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControlRequests, 
 		headingWidth, 
 		left, 
@@ -909,7 +909,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlRequests.checkBoxAutoAcceptResurrectRequest:SetValue( AJM.db.autoAcceptResurrectRequest )
 	AJM.settingsControlRequests.checkBoxAutoDenyDuels:SetValue( AJM.db.autoDenyDuels )
 	--ebonysum
-	AJM.settingsControlRequests.checkBoxAutoAcceptSummonRequest:SetValue( AJM.db.autoAcceptSummonRequest )
+	AJM.settingsControlRequests.checkBoxautoAcceptSummonRequest:SetValue( AJM.db.autoAcceptSummonRequest )
 	AJM.settingsControlRequests.checkBoxAutoDenyGuildInvites:SetValue( AJM.db.autoDenyGuildInvites )
 	AJM.settingsControlRequests.dropdownRequestArea:SetValue( AJM.db.requestArea )
 	AJM.settingsControlMerchant.checkBoxAutoRepair:SetValue( AJM.db.autoRepair )
@@ -990,7 +990,7 @@ function AJM:SettingsToggleAutoDenyDuels( event, checked )
 end
 
 --ebonysum
-function AJM:SettingsToggleAutoAcceptSummonRequest( event, checked )
+function AJM:SettingsautoAcceptSummonRequest( event, checked )
 	AJM.db.autoAcceptSummonRequest = checked
 	AJM:SettingsRefresh()
 end
@@ -1362,7 +1362,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.autoAcceptResurrectRequest = settings.autoAcceptResurrectRequest
 		AJM.db.autoDenyDuels = settings.autoDenyDuels
 --		ebonnysum
-		AJM.db.autoAcceptSummonRequest = settings.autoAcceptSummonRequest
+		AJM.db.autoAcceptSummonRequest = settings.AcceptSummonRequest
 		AJM.db.autoDenyGuildInvites = settings.autoDenyGuildInvites
 		AJM.db.autoRepair = settings.autoRepair
 		AJM.db.autoRepairUseGuildFunds = settings.autoRepairUseGuildFunds
@@ -1464,13 +1464,12 @@ end
 
 -- EbonySum Accepts summons
 
-function AJM:CONFIRM_SUMMON( event, sender, location, ... )
-	local sender, location = GetSummonConfirmSummoner(), GetSummonConfirmAreaName()
+function AJM:CONFIRM_SUMMON( event, Summoner, ... )
 	if AJM.db.autoAcceptSummonRequest == true then
 		if GetSummonConfirmTimeLeft() > 0 then
 		ConfirmSummon()
 		StaticPopup_Hide("CONFIRM_SUMMON")
-		AJM:JambaSendMessageToTeam( AJM.db.requestArea, L["I Accepted Summon From: X To: Y"]( sender, location ), false )
+		AJM:JambaSendMessageToTeam( AJM.db.requestArea, L["I Accepted Summon From: X"]( Summoner ), false )
 		end
 	end
 end

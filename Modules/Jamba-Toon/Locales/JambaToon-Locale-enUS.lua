@@ -27,6 +27,7 @@ L["Requests"] = true
 L["Auto Deny Duels"] = true
 L["Auto Deny Guild Invites"] = true
 L["Auto Accept Resurrect Request"] = true
+L["Auto Accept Summon Request"] = true
 L["Send Request Message Area"] = true
 L["Combat"] = true
 L["Health / Mana"] = true
@@ -52,6 +53,10 @@ L["I refused a guild invite to: X from: Y"] = function( guild, inviter )
 end
 L["I refused a duel from: X"] = function( challenger )
 	return string.format( "I refused a duel from: %s", challenger )
+end
+--ebony
+L["I Accepted Summon From: X To: Y"] = function( sender, location )
+	return string.format( "I Accepted Summon From: %s To: %s", sender, location )
 end
 L["I do not have enough money to repair all my items."] = true
 L["Repairing cost me: X"] = function( costString )

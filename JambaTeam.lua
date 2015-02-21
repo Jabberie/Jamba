@@ -40,6 +40,7 @@ AJM.settings = {
 		masterChangePromoteLeader = false,
 		inviteAcceptTeam = true,
 		inviteAcceptFriends = false,
+		inviteAcceptBNFriends = false,
 		inviteAcceptGuild = false,
 		inviteDeclineStrangers = false,
 		lootSetAutomatically = false,
@@ -344,7 +345,7 @@ local function SettingsCreatePartyInvitationsControl( top )
 	local checkBoxWidth = (headingWidth - horizontalSpacing) / 2
 	local column1Left = left
 	local column2Left = left + checkBoxWidth + horizontalSpacing
-	local bottomOfSection = top - headingHeight - (checkBoxHeight * 2) - verticalSpacing
+	local bottomOfSection = top - headingHeight - (checkBoxHeight * 3) - verticalSpacing
 	-- Create a heading.
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Party Invitations Control"], top, false )
 	-- Create checkboxes.
@@ -363,7 +364,15 @@ local function SettingsCreatePartyInvitationsControl( top )
 		top - headingHeight, 
 		L["Accept from friends."],
 		AJM.SettingsAcceptInviteFriendsToggle
-	)	
+	)
+	AJM.settingsControl.partyInviteControlCheckBoxAcceptBNFriends = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		checkBoxWidth, 
+		column2Left, 
+		top - headingHeight - checkBoxHeight, 
+		L["Accept from BattleNet/RealD friends."],
+		AJM.SettingsAcceptInviteBNFriendsToggle
+	)		
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptGuild = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
@@ -375,8 +384,8 @@ local function SettingsCreatePartyInvitationsControl( top )
 	AJM.settingsControl.partyInviteControlCheckBoxDeclineStrangers = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
-		column2Left, 
-		top - headingHeight  - checkBoxHeight,
+		column1Left, 
+		top - headingHeight  - checkBoxHeight - checkBoxHeight,
 		L["Decline from strangers."],
 		AJM.SettingsDeclineInviteStrangersToggle
 	)	
@@ -865,6 +874,9 @@ function AJM.DoTeamPartyInvite()
 	AJM.currentInviteCount = AJM.currentInviteCount + 1
 	if AJM.currentInviteCount < AJM.inviteCount then
 		AJM:ScheduleTimer( "DoTeamPartyInvite", 0.5 )
+		if AJM.currentInviteCount > 5 then
+			ConvertToRaid()
+		end	
 	else
 		-- Process group checks.
 		AJM:PARTY_LEADER_CHANGED( "PARTY_LEADER_CHANGED" )
@@ -945,6 +957,17 @@ function AJM:PARTY_LEADER_CHANGED( event, ... )
 									isAFriend = true
 								end
 							end
+							-- For BattleNet/RealD Friends
+							for bnIndex = 1, BNGetNumFriends() do
+							local _, _, _, _, name, toonid = BNGetFriendInfo( bnIndex )
+								for toonIndex = 1, BNGetNumFriendToons( bnIndex ) do
+								local _, friendName = BNGetFriendToonInfo( bnIndex, toonIndex );
+									friendName = friendName:match("(.+)%-.+") or friendName
+									if partyMemberName == friendName then
+										isAFriend = true
+									end
+								end
+							end
 							if isAFriend == false then
 								haveStranger = true
 							end
@@ -1019,8 +1042,23 @@ function AJM:PARTY_INVITE_REQUEST( event, inviter, ... )
 					break
 				end
 			end	
-		end					
-		-- Accept and invite from guild members?
+		end
+		-- Accept an invite from BNET/RealD?
+		if AJM.db.inviteAcceptBNFriends and BNFeaturesEnabledAndConnected() == true then
+			-- Iterate each friend; searching for the inviter in the friends list.
+			for bnIndex = 1, BNGetNumFriends() do
+			local _, _, _, _, name, toonid = BNGetFriendInfo( bnIndex )
+				for toonIndex = 1, BNGetNumFriendToons( bnIndex ) do
+					local _, toonName = BNGetFriendToonInfo( bnIndex, toonIndex );
+					inviter = inviter:match("(.+)%-.+") or inviter
+					if toonName == inviter then
+						acceptInvite = true
+						break
+					end
+				end
+			end	
+		end
+		-- Accept an invite from guild members?
 		if AJM.db.inviteAcceptGuild == true then
 			if UnitIsInMyGuild( inviter ) then
 				acceptInvite = true
@@ -1051,8 +1089,17 @@ function AJM:PARTY_INVITE_REQUEST( event, inviter, ... )
 				dialog.inviteAccepted = 1
 				break
 			end
+			-- Ebony Sometimes invite is from XREALM even though Your on the same realm and have joined the party. This should hide the Popup.
+			if dialog.which == "PARTY_INVITE_XREALM" then
+				-- Set the inviteAccepted flag to true (even if the invite was declined, as the
+				-- flag is only set to stop the dialog from declining in its OnHide event).
+				dialog.inviteAccepted = 1
+				break
+			end	
 		end
 		StaticPopup_Hide( "PARTY_INVITE" )
+		--Ebony Sometimes invite is from XREALM even though Your on the same realm and have joined the party. This should hide the Popup.
+		StaticPopup_Hide( "PARTY_INVITE_XREALM" )
 	end	
 end
 
@@ -1190,6 +1237,7 @@ function AJM:SettingsRefresh()
 	-- Party Invitiation Control.
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptMembers:SetValue( AJM.db.inviteAcceptTeam )
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptFriends:SetValue( AJM.db.inviteAcceptFriends )
+	AJM.settingsControl.partyInviteControlCheckBoxAcceptBNFriends:SetValue( AJM.db.inviteAcceptBNFriends )
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptGuild:SetValue( AJM.db.inviteAcceptGuild )
 	AJM.settingsControl.partyInviteControlCheckBoxDeclineStrangers:SetValue( AJM.db.inviteDeclineStrangers )
 	-- Party Loot Control.
@@ -1219,6 +1267,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.masterChangePromoteLeader = settings.masterChangePromoteLeader 
 		AJM.db.inviteAcceptTeam = settings.inviteAcceptTeam 
 		AJM.db.inviteAcceptFriends = settings.inviteAcceptFriends 
+		AJM.db.inviteAcceptBNFriends = settings.inviteBNAcceptFriends 
 		AJM.db.inviteAcceptGuild = settings.inviteAcceptGuild 
 		AJM.db.inviteDeclineStrangers = settings.inviteDeclineStrangers 
 		AJM.db.lootSetAutomatically = settings.lootSetAutomatically 
@@ -1385,6 +1434,11 @@ end
 
 function AJM:SettingsAcceptInviteFriendsToggle( event, checked )
 	AJM.db.inviteAcceptFriends = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsAcceptInviteBNFriendsToggle( event, checked )
+	AJM.db.inviteAcceptBNFriends = checked
 	AJM:SettingsRefresh()
 end
 

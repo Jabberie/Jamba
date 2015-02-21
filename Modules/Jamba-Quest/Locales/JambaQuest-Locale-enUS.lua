@@ -62,6 +62,9 @@ end
 L["Automatically Accepted Quest: A"] = function( questName )
 	return string.format( "Automatically Accepted Quest: %s", questName )
 end
+L["Automatically Accepted AutoPickupQuest: A"] = function( questName )
+	return string.format( "Automatically Accepted AutoPickupQuest: %s", questName )
+end
 --L["Automatically Accepted Quest: A"] = function( questName )
 --	return string.format( "Automatically Accepted Quest: %s", questName )
 --end
