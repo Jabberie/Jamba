@@ -32,6 +32,7 @@ L["When Focus changes, set the Master to the Focus."] = true
 L["When Master changes, promote Master to party leader."] = true
 L["Party Invitations Control"] = true
 L["Accept from team."] = true
+L["Auto Convert Team Over Five To Raid"] = true
 L["Accept from friends."] = true
 L["Accept from BattleNet/RealD friends."] = true
 L["Accept from guild."] = true

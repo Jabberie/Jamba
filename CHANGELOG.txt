@@ -1,11 +1,12 @@
 Jamba Version: 3.10-B1
 WoW Game Version: 6.0.3
-Release Date: 
+Release Date: 20/2/2015 
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
 Jamba-Team:
 *Added support for BattleNet friends, Auto Accept Invite and loot opts.
 *Sometimes invite is from XREALM even though Your on the same realm and have already joined the party no longer will the StaticPopup stay.
+*Added a option to auto convert to raid if your team is more then five members.
 
 Jamba-Quest: 
 *Cleared up quest Text from clones when in fact they have not even picked up a quest they still said Accepted Quest:.
