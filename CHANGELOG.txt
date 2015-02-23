@@ -1,14 +1,24 @@
-Jamba Version: 3.10
-WoW Game Version: 6.0.3
-Release Date: 23/2/2015 
+Jamba Version: 3.11
+WoW Game Version: 6.1.0
+Release Date: 23/2/2015
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
-Last 6.0.3 Release, Then changing over to 6.1.0.
+Updated for Patch 6.1 
+
+Jamba-Taxi:
+*Uses blizzard new 6.1 code that finds the fastest taxi route.
+*Added Support for the new 6.1 Exit Taxi at next stop, When the master leaves at next point the team should follow.
+
+--------------
+
+Jamba Version: 3.10
+WoW Game Version: 6.0.3
+Release Date: 21/2/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
 Jamba-Team:
 *Added support for BattleNet friends, Auto Accept Invite and loot opts.
 *Sometimes invite is from XREALM even though Your on the same realm and have already joined the party no longer will the StaticPopup stay.
-*Added a option to auto convert to raid if your team is more then five members.
 
 Jamba-Quest: 
 *Cleared up quest Text from clones when in fact they have not even picked up a quest they still said Accepted Quest:.
@@ -19,7 +29,7 @@ Jamba-Toon:
 * Added: Auto Accept Summon No Longer do you need to Click that summon box. With cool text that says the PlayerName and where the clone went.
 
 Jamba-Communications:
-*Added Party Communications again when your in a party if toon is in party with master.
+*Added Party Communications again when your in a party if not in own party with member of the team should send that char a /w.
 
 ToDo:
 
