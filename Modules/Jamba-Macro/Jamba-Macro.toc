@@ -2,7 +2,7 @@
 ## Title: Jamba-Macro
 ## Notes: Jamba-Macro
 ## Author: Ebony, Former Author: Jafula
-## Version: 3.11
+## Version: 3.12
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
