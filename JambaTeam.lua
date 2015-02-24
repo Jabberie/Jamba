@@ -346,7 +346,7 @@ local function SettingsCreatePartyInvitationsControl( top )
 	local checkBoxWidth = (headingWidth - horizontalSpacing) / 2
 	local column1Left = left
 	local column2Left = left + checkBoxWidth + horizontalSpacing
-	local bottomOfSection = top - headingHeight - (checkBoxHeight * 4) - verticalSpacing
+	local bottomOfSection = top - headingHeight - (checkBoxHeight * 3) - verticalSpacing
 	-- Create a heading.
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Party Invitations Control"], top, false )
 	-- Create checkboxes.
@@ -361,15 +361,15 @@ local function SettingsCreatePartyInvitationsControl( top )
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptMembers = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
-		column1Left, 
-		top - headingHeight  - checkBoxHeight, 
+		column2Left, 
+		top - headingHeight, 
 		L["Accept from team."],
 		AJM.SettingsAcceptInviteMembersToggle
 	)
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptFriends = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
-		column2Left, 
+		column1Left, 
 		top - headingHeight - checkBoxHeight, 
 		L["Accept from friends."],
 		AJM.SettingsAcceptInviteFriendsToggle
@@ -378,7 +378,7 @@ local function SettingsCreatePartyInvitationsControl( top )
 		AJM.settingsControl, 
 		checkBoxWidth, 
 		column2Left, 
-		top - headingHeight - checkBoxHeight -checkBoxHeight, 
+		top - headingHeight - checkBoxHeight, 
 		L["Accept from BattleNet/RealD friends."],
 		AJM.SettingsAcceptInviteBNFriendsToggle
 	)		
@@ -393,8 +393,8 @@ local function SettingsCreatePartyInvitationsControl( top )
 	AJM.settingsControl.partyInviteControlCheckBoxDeclineStrangers = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
-		column1Left, 
-		top - headingHeight  - checkBoxHeight - checkBoxHeight - checkBoxHeight,
+		column2Left, 
+		top - headingHeight  - checkBoxHeight - checkBoxHeight,
 		L["Decline from strangers."],
 		AJM.SettingsDeclineInviteStrangersToggle
 	)

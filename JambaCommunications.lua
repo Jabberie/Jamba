@@ -354,7 +354,8 @@ local function CommandToon( moduleName, characterName, commandName, ... )
 	if IsCharacterOnline( characterName ) == true then
 		AJM:SendCommMessage( 
 			AJM.COMMAND_PREFIX,
-			message,			AJM.COMMUNICATION_WHISPER,
+			message,			
+			AJM.COMMUNICATION_WHISPER,
 			characterName,
 			AJM.COMMUNICATION_PRIORITY_ALERT
 		)

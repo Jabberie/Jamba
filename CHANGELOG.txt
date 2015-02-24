@@ -1,12 +1,18 @@
 Jamba Version: 3.11
 WoW Game Version: 6.1.0
-Release Date: 23/2/2015
+Release Date: 21/2/2015
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
-Updated for Patch 6.1 
+Jamba-Core
+*Updated TOC files for Patch 6.1 
+*Fixed a bug with "push settings for all the modules" not sending the full list.
+
+Jamba-Team 
+*Fixed the Core:Team GUI should no longer display the Scrollbar. (somehow this got added to 3.10 and was not tested)
+*Added a Option to auto convent to raid if you have more then five team members (This might of got added in 3.10)
 
 Jamba-Taxi:
-*Uses blizzard new 6.1 code that finds the fastest taxi route.
+*Uses blizzard new 6.1 code th1at finds the fastest taxi route.
 *Added Support for the new 6.1 Exit Taxi at next stop, When the master leaves at next point the team should follow.
 
 --------------
