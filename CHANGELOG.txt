@@ -1,3 +1,13 @@
+Jamba Version: 3.13
+WoW Game Version: 6.1.0
+Release Date: 28/2/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Jamba-Communications:
+* Communications should now default to whispers in LFR dungeons, should no longer get "Not in raid"
+
+-------------
+
 Jamba Version: 3.12
 WoW Game Version: 6.1.0
 Release Date: 24/2/2015

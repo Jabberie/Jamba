@@ -282,14 +282,16 @@ local function CommandAll( moduleName, commandName, ... )
 	--if not UnitInBattleground( "player" ) then
 	if UnitInParty( "player" ) == true then --or UnitInRaid( "player" ) then 
 		if not UnitInBattleground( "player" ) then
-		AJM:DebugMessage( "Sending command to group." )
-			AJM:SendCommMessage( 
-			AJM.COMMAND_PREFIX,
-			message,
-			AJM.COMMUNICATION_GROUP,
-			nil,
-			AJM.COMMUNICATION_PRIORITY_ALERT
-			)
+			if not IsInInstance ("raid") then
+				AJM:DebugMessage( "Sending command to group." )
+				AJM:SendCommMessage( 
+				AJM.COMMAND_PREFIX,
+				message,
+				AJM.COMMUNICATION_GROUP,
+				nil,
+				AJM.COMMUNICATION_PRIORITY_ALERT
+				)
+			end
 		end	
 	end
 	-- If player not in a party or raid, then send to player. Pointless as does it under anyway, x2 everything!
@@ -313,6 +315,10 @@ local function CommandAll( moduleName, commandName, ... )
 			end
 			--If in a battleground then send a whisper as the party/raid would have not been sent.
 			if UnitInBattleground( characterName ) then
+				canSend = true
+			end
+			-- if unit in LFR raid Then sending /w as the the party/raid would not of been sent. ((raid Char don't work))
+			if IsInInstance ("raid") then
 				canSend = true
 			end
 			if canSend == true then
