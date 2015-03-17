@@ -176,10 +176,9 @@ function AJM:OnEnable()
 	AJM:SecureHook( "GetQuestReward" )
 	AJM:SecureHook( "ToggleFrame" )
 	AJM:SecureHook( WorldMapFrame, "Hide", "QuestLogFrameHide" )
-	--AJM:SecureHook( QuestLogFrame, "Hide", "QuestLogFrameHide" )
+	--AJM:SecureHook( WorldMapFrame, "Hide", "QuestLogFrameHide" )
 	AJM:SecureHook( "SelectQuestLogEntry" )
 	AJM:SecureHook( "ShowQuestComplete" )
---	QuestDetailAcceptButton:HookScript( "OnClick", function() AJM:MagicAutoAcceptQuestGrrrr() end )
 end
 
 -- Called when the addon is disabled.
@@ -272,7 +271,7 @@ function AJM:SettingsCreateQuestControl( top )
 	-- Create a heading for quest selection.
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Quest Selection & Acceptance"], movingTop, false )
 	movingTop = movingTop - headingHeight
-	-- Radio box: Slave select, accept and decline quest with master.
+	-- Radio box: Minion select, accept and decline quest with master.
 	AJM.settingsControl.checkBoxMirrorMasterQuestSelectionAndDeclining = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -304,14 +303,14 @@ function AJM:SettingsCreateQuestControl( top )
 		AJM.SettingsToggleAcceptQuests
 	)	
 	movingTop = movingTop - checkBoxHeight		
-	-- Radio box: Slave accept quest with master.
-	AJM.settingsControl.checkBoxSlaveMirrorMasterAccept = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Minion accept quest with master.
+	AJM.settingsControl.checkBoxMinionMirrorMasterAccept = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left + indent, 
 		movingTop,
 		L["Toon Accept Quest From Team"],
-		AJM.SettingsToggleSlaveMirrorMasterAccept
+		AJM.SettingsToggleMinionMirrorMasterAccept
 	)	
 	movingTop = movingTop - checkBoxHeight		
 	-- Radio box: All auto accept any quest.
@@ -413,14 +412,14 @@ function AJM:SettingsCreateQuestControl( top )
 		AJM.SettingsToggleMasterAutoShareQuestOnAccept
 	)	
 	movingTop = movingTop - checkBoxHeight			
-	-- Check box: Slave auto accept escort quest from master.
-	AJM.settingsControl.checkBoxSlaveAutoAcceptEscortQuest = JambaHelperSettings:CreateCheckBox( 
+	-- Check box: Minion auto accept escort quest from master.
+	AJM.settingsControl.checkBoxMinionAutoAcceptEscortQuest = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Toon Auto Accept Escort Quest From Team"],
-		AJM.SettingsToggleSlaveAutoAcceptEscortQuest
+		AJM.SettingsToggleMinionAutoAcceptEscortQuest
 	)	
 	movingTop = movingTop - checkBoxHeight
 	-- Create a heading for other options.
@@ -518,7 +517,7 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 		L["Quest Has No Rewards Or One Reward:"]
 	)	
 	movingTop = movingTop - labelHeight
-	-- Radio box: No choice, slave do nothing.
+	-- Radio box: No choice, minion do nothing.
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllDoNothing = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControlCompletion, 
 		headingWidth, 
@@ -529,16 +528,16 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 	)	
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllDoNothing:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight	
-	-- Radio box: No choice, slave complete quest with master.
-	AJM.settingsControlCompletion.checkBoxNoChoiceSlaveCompleteQuestWithMaster = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: No choice, minion complete quest with master.
+	AJM.settingsControlCompletion.checkBoxNoChoiceMinionCompleteQuestWithMaster = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Toon Complete Quest With Team"],
-		AJM.SettingsToggleNoChoiceSlaveCompleteQuestWithMaster
+		AJM.SettingsToggleNoChoiceMinionCompleteQuestWithMaster
 	)
-	AJM.settingsControlCompletion.checkBoxNoChoiceSlaveCompleteQuestWithMaster:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxNoChoiceMinionCompleteQuestWithMaster:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight
 	-- Radio box: No Choice, all automatically complete quest.
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllAutoCompleteQuest = JambaHelperSettings:CreateCheckBox( 
@@ -560,20 +559,20 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 		L["Quest Has More Than One Reward:"]
 	)	
 	movingTop = movingTop - labelHeight
-	-- Radio box: Has choice, slave do nothing.
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveDoNothing = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Has choice, minion do nothing.
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionDoNothing = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Toon Do Nothing"],
-		AJM.SettingsToggleHasChoiceSlaveDoNothing
+		AJM.SettingsToggleHasChoiceMinionDoNothing
 	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveDoNothing:SetType( "radio" )
---	movingTop = movingTop - radioBoxHeight
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionDoNothing:SetType( "radio" )
+	movingTop = movingTop - radioBoxHeight
 	-- TODO: Fix or remove.
 	-- Radio box: Has choice, choose best reward.
---		AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter = JambaHelperSettings:CreateCheckBox( 
+--	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter = JambaHelperSettings:CreateCheckBox( 
 --		AJM.settingsControlCompletion, 
 --		headingWidth, 
 --		column1Left, 
@@ -591,54 +590,55 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 --		movingTop,
 --		L["And Claims It As Well"],
 --		AJM.SettingsToggleActuallyGetTheBestReward
+--
 --	)	
 	movingTop = movingTop - checkBoxHeight	
-	-- Radio box: Has choice, slave complete quest with master.
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Has choice, minion complete quest with master.
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Toon Complete Quest With Team"],
-		AJM.SettingsToggleHasChoiceSlaveCompleteQuestWithMaster
+		AJM.SettingsToggleHasChoiceMinionCompleteQuestWithMaster
 	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight
-	-- Radio box: Has choice, slave must choose own reward.
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveMustChooseOwnReward = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Has choice, minion must choose own reward.
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionMustChooseOwnReward = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indent, 
 		movingTop,
 		L["Toon Must Choose Own Reward"],
-		AJM.SettingsToggleHasChoiceSlaveMustChooseOwnReward
+		AJM.SettingsToggleHasChoiceMinionMustChooseOwnReward
 	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveMustChooseOwnReward:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionMustChooseOwnReward:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight	
-	-- Radio box: Has choice, slave choose same reward as master.
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveChooseSameRewardAsMaster = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Has choice, minion choose same reward as master.
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionChooseSameRewardAsMaster = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indent, 
 		movingTop,
 		L["Toon Choose Same Reward As Team"],
-		AJM.SettingsToggleHasChoiceSlaveChooseSameRewardAsMaster
+		AJM.SettingsToggleHasChoiceMinionChooseSameRewardAsMaster
 	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveChooseSameRewardAsMaster:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionChooseSameRewardAsMaster:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight
-	-- Radio box: Has choice, slave reward choice depends on modifier key pressed down.
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveRewardChoiceModifierConditional = JambaHelperSettings:CreateCheckBox( 
+	-- Radio box: Has choice, minion reward choice depends on modifier key pressed down.
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionRewardChoiceModifierConditional = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indent, 
 		movingTop,
 		L["If Modifier Keys Pressed, Toon Choose Same Reward"],
-		AJM.SettingsToggleHasChoiceSlaveRewardChoiceModifierConditional
+		AJM.SettingsToggleHasChoiceMinionRewardChoiceModifierConditional
 	)	
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveRewardChoiceModifierConditional:SetType( "radio" )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionRewardChoiceModifierConditional:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight
 	-- Label continuing radio box above.
-	AJM.settingsControlCompletion.labelHasChoiceSlaveRewardChoiceModifierConditional = JambaHelperSettings:CreateContinueLabel( 
+	AJM.settingsControlCompletion.labelHasChoiceMinionRewardChoiceModifierConditional = JambaHelperSettings:CreateContinueLabel(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indentContinueLabel, 
@@ -674,18 +674,18 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 		AJM.SettingsToggleHasChoiceAltKeyModifier
 	)	
 	movingTop = movingTop - checkBoxHeight
-	-- Check box: Has choice, override, if slave already has reward selected, choose that reward.
-	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseSlaveRewardSelected = JambaHelperSettings:CreateCheckBox( 
+	-- Check box: Has choice, override, if minion already has reward selected, choose that reward.
+	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseMinionRewardSelected = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indent, 
 		movingTop,
 		L["Override: If Toon Already Has Reward Selected,"],
-		AJM.SettingsToggleHasChoiceOverrideUseSlaveRewardSelected
+		AJM.SettingsToggleHasChoiceOverrideUseMinionRewardSelected
 	)	
 	movingTop = movingTop - checkBoxHeight
 	-- Label continuing check box above.
-	AJM.settingsControlCompletion.labelHasChoiceOverrideUseSlaveRewardSelected = JambaHelperSettings:CreateContinueLabel( 
+	AJM.settingsControlCompletion.labelHasChoiceOverrideUseMinionRewardSelected = JambaHelperSettings:CreateContinueLabel(
 		AJM.settingsControlCompletion, 
 		headingWidth, 
 		column1Left + indentSpecial, 
@@ -742,6 +742,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 
@@ -761,7 +763,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxMirrorMasterQuestSelectionAndDeclining:SetValue( AJM.db.mirrorMasterQuestSelectionAndDeclining )
 	AJM.settingsControl.checkBoxAllAutoSelectQuests:SetValue( AJM.db.allAutoSelectQuests )
 	AJM.settingsControl.checkBoxAcceptQuests:SetValue( AJM.db.acceptQuests )
-	AJM.settingsControl.checkBoxSlaveMirrorMasterAccept:SetValue( AJM.db.slaveMirrorMasterAccept )
+	AJM.settingsControl.checkBoxMinionMirrorMasterAccept:SetValue( AJM.db.slaveMirrorMasterAccept )
 	AJM.settingsControl.checkBoxDoNotAutoAccept:SetValue( AJM.db.doNotAutoAccept )
 	AJM.settingsControl.checkBoxAllAcceptAnyQuest:SetValue( AJM.db.allAcceptAnyQuest )
 	AJM.settingsControl.checkBoxOnlyAcceptQuestsFrom:SetValue( AJM.db.onlyAcceptQuestsFrom )
@@ -772,7 +774,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxAcceptFromRaid:SetValue( AJM.db.acceptFromRaid )
 	AJM.settingsControl.checkBoxAcceptFromGuild:SetValue( AJM.db.acceptFromGuild )
 	AJM.settingsControl.checkBoxMasterAutoShareQuestOnAccept:SetValue( AJM.db.masterAutoShareQuestOnAccept )
-	AJM.settingsControl.checkBoxSlaveAutoAcceptEscortQuest:SetValue( AJM.db.slaveAutoAcceptEscortQuest )
+	AJM.settingsControl.checkBoxMinionAutoAcceptEscortQuest:SetValue( AJM.db.slaveAutoAcceptEscortQuest )
 	AJM.settingsControl.checkBoxShowJambaQuestLogWithWoWQuestLog:SetValue( AJM.db.showJambaQuestLogWithWoWQuestLog )
 	AJM.settingsControl.checkBoxOverrideQuestAutoSelectAndComplete:SetValue( AJM.db.overrideQuestAutoSelectAndComplete )
 	AJM.settingsControl.dropdownMessageArea:SetValue( AJM.db.messageArea )
@@ -780,22 +782,22 @@ function AJM:SettingsRefresh()
 	-- Quest completion options.
 	AJM.settingsControlCompletion.checkBoxEnableAutoQuestCompletion:SetValue( AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllDoNothing:SetValue( AJM.db.noChoiceAllDoNothing )
-	AJM.settingsControlCompletion.checkBoxNoChoiceSlaveCompleteQuestWithMaster:SetValue( AJM.db.noChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxNoChoiceMinionCompleteQuestWithMaster:SetValue( AJM.db.noChoiceSlaveCompleteQuestWithMaster )
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllAutoCompleteQuest:SetValue( AJM.db.noChoiceAllAutoCompleteQuest )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveDoNothing:SetValue( AJM.db.hasChoiceSlaveDoNothing )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster:SetValue( AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveChooseSameRewardAsMaster:SetValue( AJM.db.hasChoiceSlaveChooseSameRewardAsMaster )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveMustChooseOwnReward:SetValue( AJM.db.hasChoiceSlaveMustChooseOwnReward )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionDoNothing:SetValue( AJM.db.hasChoiceSlaveDoNothing )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster:SetValue( AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionChooseSameRewardAsMaster:SetValue( AJM.db.hasChoiceSlaveChooseSameRewardAsMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionMustChooseOwnReward:SetValue( AJM.db.hasChoiceSlaveMustChooseOwnReward )
 --	Ebony Fix or remove,
 --	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetValue( AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
 --	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward:SetValue( AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveRewardChoiceModifierConditional:SetValue( AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionRewardChoiceModifierConditional:SetValue( AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
 	AJM.settingsControlCompletion.checkBoxHasChoiceCtrlKeyModifier:SetValue( AJM.db.hasChoiceCtrlKeyModifier )
 	AJM.settingsControlCompletion.checkBoxHasChoiceShiftKeyModifier:SetValue( AJM.db.hasChoiceShiftKeyModifier )
 	AJM.settingsControlCompletion.checkBoxHasChoiceAltKeyModifier:SetValue( AJM.db.hasChoiceAltKeyModifier )
-	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseSlaveRewardSelected:SetValue( AJM.db.hasChoiceOverrideUseSlaveRewardSelected )
+	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseMinionRewardSelected:SetValue( AJM.db.hasChoiceOverrideUseSlaveRewardSelected )
 	-- Ensure correct state (general and acceptance options).
-	AJM.settingsControl.checkBoxSlaveMirrorMasterAccept:SetDisabled( not AJM.db.acceptQuests )
+	AJM.settingsControl.checkBoxMinionMirrorMasterAccept:SetDisabled( not AJM.db.acceptQuests )
 	AJM.settingsControl.checkBoxDoNotAutoAccept:SetDisabled( not AJM.db.acceptQuests )
 	AJM.settingsControl.checkBoxAllAcceptAnyQuest:SetDisabled( not AJM.db.acceptQuests )
 	AJM.settingsControl.checkBoxOnlyAcceptQuestsFrom:SetDisabled( not AJM.db.acceptQuests )
@@ -809,21 +811,21 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCompletion.labelQuestNoRewardsOrOneReward:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.labelQuestHasMoreThanOneReward:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllDoNothing:SetDisabled( not AJM.db.enableAutoQuestCompletion )
-	AJM.settingsControlCompletion.checkBoxNoChoiceSlaveCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
+	AJM.settingsControlCompletion.checkBoxNoChoiceMinionCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllAutoCompleteQuest:SetDisabled( not AJM.db.enableAutoQuestCompletion )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveDoNothing:SetDisabled( not AJM.db.enableAutoQuestCompletion )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionDoNothing:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 --	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 --	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveChooseSameRewardAsMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveMustChooseOwnReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
-	AJM.settingsControlCompletion.checkBoxHasChoiceSlaveRewardChoiceModifierConditional:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
-	AJM.settingsControlCompletion.labelHasChoiceSlaveRewardChoiceModifierConditional:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionChooseSameRewardAsMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionMustChooseOwnReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceMinionRewardChoiceModifierConditional:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.labelHasChoiceMinionRewardChoiceModifierConditional:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
 	AJM.settingsControlCompletion.checkBoxHasChoiceCtrlKeyModifier:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster or not AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
 	AJM.settingsControlCompletion.checkBoxHasChoiceShiftKeyModifier:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster or not AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
 	AJM.settingsControlCompletion.checkBoxHasChoiceAltKeyModifier:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster or not AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
-	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseSlaveRewardSelected:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
-	AJM.settingsControlCompletion.labelHasChoiceOverrideUseSlaveRewardSelected:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.checkBoxHasChoiceOverrideUseMinionRewardSelected:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
+	AJM.settingsControlCompletion.labelHasChoiceOverrideUseMinionRewardSelected:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
 end
 
 function AJM:SettingsPushSettingsClick( event )
@@ -847,7 +849,7 @@ function AJM:SettingsToggleAcceptQuests( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleSlaveMirrorMasterAccept( event, checked )
+function AJM:SettingsToggleMinionMirrorMasterAccept( event, checked )
 	AJM.db.slaveMirrorMasterAccept = checked
 	AJM:SettingsRefresh()
 end
@@ -913,7 +915,7 @@ function AJM:SettingsToggleMasterAutoShareQuestOnAccept( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleSlaveAutoAcceptEscortQuest( event, checked )
+function AJM:SettingsToggleMinionAutoAcceptEscortQuest( event, checked )
 	AJM.db.slaveAutoAcceptEscortQuest = checked
 	AJM:SettingsRefresh()
 end
@@ -935,7 +937,7 @@ function AJM:SettingsToggleNoChoiceAllDoNothing( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleNoChoiceSlaveCompleteQuestWithMaster( event, checked )
+function AJM:SettingsToggleNoChoiceMinionCompleteQuestWithMaster( event, checked )
 	AJM.db.noChoiceSlaveCompleteQuestWithMaster = checked
 	AJM.db.noChoiceAllDoNothing = not checked
 	AJM.db.noChoiceAllAutoCompleteQuest = not checked
@@ -949,14 +951,14 @@ function AJM:SettingsToggleNoChoiceAllAutoCompleteQuest( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceSlaveDoNothing( event, checked )
+function AJM:SettingsToggleHasChoiceMinionDoNothing( event, checked )
 	AJM.db.hasChoiceSlaveDoNothing = checked
 	AJM.db.hasChoiceAquireBestQuestRewardForCharacter = not checked
 	AJM.db.hasChoiceSlaveCompleteQuestWithMaster = not checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceSlaveCompleteQuestWithMaster( event, checked )
+function AJM:SettingsToggleHasChoiceMinionCompleteQuestWithMaster( event, checked )
 	AJM.db.hasChoiceSlaveCompleteQuestWithMaster = checked
 	AJM.db.hasChoiceAquireBestQuestRewardForCharacter = not checked
 	AJM.db.hasChoiceSlaveDoNothing = not checked
@@ -975,21 +977,21 @@ end
 --	AJM:SettingsRefresh()
 --end
 
-function AJM:SettingsToggleHasChoiceSlaveChooseSameRewardAsMaster( event, checked )
+function AJM:SettingsToggleHasChoiceMinionChooseSameRewardAsMaster( event, checked )
 	AJM.db.hasChoiceSlaveChooseSameRewardAsMaster = checked
 	AJM.db.hasChoiceSlaveMustChooseOwnReward = not checked
 	AJM.db.hasChoiceSlaveRewardChoiceModifierConditional = not checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceSlaveMustChooseOwnReward( event, checked )
+function AJM:SettingsToggleHasChoiceMinionMustChooseOwnReward( event, checked )
 	AJM.db.hasChoiceSlaveMustChooseOwnReward = checked
 	AJM.db.hasChoiceSlaveChooseSameRewardAsMaster = not checked
 	AJM.db.hasChoiceSlaveRewardChoiceModifierConditional = not checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceSlaveRewardChoiceModifierConditional( event, checked )
+function AJM:SettingsToggleHasChoiceMinionRewardChoiceModifierConditional( event, checked )
 	AJM.db.hasChoiceSlaveRewardChoiceModifierConditional = checked
 	AJM.db.hasChoiceSlaveChooseSameRewardAsMaster = not checked
 	AJM.db.hasChoiceSlaveMustChooseOwnReward = not checked
@@ -1011,7 +1013,7 @@ function AJM:SettingsToggleHasChoiceAltKeyModifier( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleHasChoiceOverrideUseSlaveRewardSelected( event, checked )
+function AJM:SettingsToggleHasChoiceOverrideUseMinionRewardSelected( event, checked )
 	AJM.db.hasChoiceOverrideUseSlaveRewardSelected = checked
 	AJM:SettingsRefresh()
 end
@@ -1300,9 +1302,8 @@ function AJM:DoShowQuestComplete( sender, questName )
 	local questIndex = AJM:GetQuestLogIndexByName( questName )
 	if questIndex ~= 0 then
 		ShowQuestComplete( questIndex )
-		--fixed this (this seems to be thenew code)
-	-- WatchFrameAutoQuest_ClearPopUpByLogIndex( questIndex )
-		AutoQuestPopupTracker_RemovePopUp ( questIndex )
+        --TODO fix this or remove
+		--WatchFrameAutoQuest_ClearPopUpByLogIndex( questIndex )
 	end
 	AJM.isInternalCommand = false	
 end
@@ -1312,9 +1313,9 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:CheckForOverrideAndChooseQuestReward( questIndex )
-	-- Yes, override if slave has reward selected?
+	-- Yes, override if minion has reward selected?
 	if (AJM.db.hasChoiceOverrideUseSlaveRewardSelected == true) and (QuestInfoFrame.itemChoice > 0) then
-		-- Yes, choose slaves reward.
+		-- Yes, choose minions reward.
 		GetQuestReward( QuestInfoFrame.itemChoice )
 	else
 		-- No, choose masters reward.
@@ -1323,10 +1324,10 @@ function AJM:CheckForOverrideAndChooseQuestReward( questIndex )
 end
 
 function AJM:CheckForOverrideAndDoNotChooseQuestReward( questIndex )
-	-- Yes, override if slave has reward selected?
+	-- Yes, override if minion has reward selected?
 	if QuestInfoFrame.itemChoice ~= nil then
 		if (AJM.db.hasChoiceOverrideUseSlaveRewardSelected == true) and (QuestInfoFrame.itemChoice > 0) then
-			-- Yes, choose slaves reward.
+			-- Yes, choose minions reward.
 			GetQuestReward( QuestInfoFrame.itemChoice )
 		end
 	end
@@ -1387,7 +1388,7 @@ function AJM:DoChooseQuestReward( sender, questIndex, modifierKeysPressed, rewar
 				end
 				if (AJM.db.hasChoiceAquireBestQuestRewardForCharacter == true) and (rewardPickedAlready == true) then
 					if QuestInfoFrame.itemChoice > 0 then
-						-- Yes, choose slaves reward.
+						-- Yes, choose minions reward.
 						GetQuestReward( QuestInfoFrame.itemChoice )
 					end
 				end
@@ -1398,6 +1399,7 @@ function AJM:DoChooseQuestReward( sender, questIndex, modifierKeysPressed, rewar
 end
 
 --TODO FIX or Remove!
+--[[
 function AJM:GetBestRewardIndexForCharacter()
 	-- Originally provided by loop: http://www.dual-boxing.com/showpost.php?p=257610&postcount=1505
 	-- New version provided by Mischanix via jamba.uservoice.com.
@@ -1473,7 +1475,7 @@ function AJM:GetBestRewardIndexForCharacter()
 	}
 	local _, class = UnitClass("player")
 	-- Original canWear - here for documentation purposes - Jafula.
-	--[[
+	END
 	local canWear = {
 		DEATHKNIGHT = {"Cloth", "Leather", "Mail", "Plate", "Axe", "Mace", "Polearm", "Sword"},
 		DRUID = {"Cloth", "Leather", "Dagger", "Fist Weapon", "Mace", "Polearm", "Staff"},
@@ -1486,7 +1488,7 @@ function AJM:GetBestRewardIndexForCharacter()
 		WARLOCK = {"Cloth", "Dagger", "Staff", "Sword", "Wand"},
 		WARRIOR = {"Cloth", "Leather", "Mail", "Plate", "Axe", "Dagger", "Fist Weapon", "Mace", "Polearm", "Staff", "Sword", "Bow", "Crossbow", "Gun", "Thrown"}
 	}
-	]]--
+	END
 	-- Removed lower tier armour from canWear table (i.e. DKs, Paladins, Warriers can only wear Plate).
 	-- I personally would not pick up a lower tiered piece for my toons.  Jafula.
 	local canWear = {
@@ -1605,6 +1607,7 @@ function AJM:GetBestRewardIndexForCharacter()
 	end
 	return bestQuestItemIndex
 end
+]]--
 
 -------------------------------------------------------------------------------------------------------------
 -- NPC QUEST PROCESSING - ACCEPTING
@@ -1632,38 +1635,34 @@ end
 
 function AJM:AcceptQuest()
 	if AJM.db.acceptQuests == true then
-		if AJM.db.slaveMirrorMasterAccept == true then	
+		if AJM.db.slaveMirrorMasterAccept == true then
 			if AJM.isInternalCommand == false then
-				AJM:DebugMessage( "AcceptQuest" )
+                AJM:DebugMessage( "AcceptQuest" )
 				AJM:JambaSendCommandToTeam( AJM.COMMAND_ACCEPT_QUEST )
 			end		
 		end
-	end	
+	end
 end
 
---ebony
 function AJM:DoAcceptQuest( sender )
-	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true and QuestFrame:IsVisible() then
+	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true then
 	local questIndex = AJM:GetQuestLogIndexByName( questName )
 		AJM.isInternalCommand = true
-		AJM:DebugMessage( "DoAcceptQuest" )
+        AJM:DebugMessage( "DoAcceptQuest" )
 		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
 		AcceptQuest()
 		HideUIPanel( QuestFrame )
-		--ebony
-		--AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
 		AJM.isInternalCommand = false	
 	end
 end
 
-
 function AJM:AcknowledgeAutoAcceptQuest()
 	if AJM.db.acceptQuests == true then
-		if AJM.db.slaveMirrorMasterAccept == true then	
+		if AJM.db.slaveMirrorMasterAccept == true then
 			if AJM.isInternalCommand == false then
-				AJM:DebugMessage( "MagicAutoAcceptQuestGrrrr" )
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_ACCEPT_QUEST_FAKE )
-			end		
+                AJM:DebugMessage( "MagicAutoAcceptQuestGrrrr", QuestGetAutoAccept() )
+					AJM:JambaSendCommandToTeam( AJM.COMMAND_ACCEPT_QUEST_FAKE )
+			end	
 		end
 	end
 end
@@ -1690,7 +1689,7 @@ function AJM:CanAutoAcceptSharedQuestFromPlayer()
 		canAccept = true
 	elseif AJM.db.onlyAcceptQuestsFrom == true then
 		local questSourceName, questSourceRealm = UnitName( "npc" )
-		
+		local character = JambaUtilities:AddRealmToNameIfNotNil( questSourceName, questSourceRealm )
 		if AJM.db.acceptFromTeam == true then	
 			if JambaApi.IsCharacterInTeam( character ) == true then
 				canAccept = true
@@ -1724,31 +1723,26 @@ function AJM:CanAutoAcceptSharedQuestFromPlayer()
 	return canAccept
 end
 
---ebony wip
 function AJM:QUEST_DETAIL()
     AJM:DebugMessage( "QUEST_DETAIL" )
 	if AJM.db.acceptQuests == true then
-		-- Who is this quest from.	
+		-- Who is this quest from.
 		if UnitIsPlayer( "npc" ) then
 			-- Quest is shared from a player.
 			if AJM:CanAutoAcceptSharedQuestFromPlayer() == true then		
 				AJM.isInternalCommand = true
 				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
 				AcceptQuest()
-				HideUIPanel( QuestFrame )
-				--ebony see under.
 				AJM.isInternalCommand = false
 			end			
 		else
 			-- Quest is from an NPC.
 			if (AJM.db.allAcceptAnyQuest == true) or ((AJM.db.onlyAcceptQuestsFrom == true) and (AJM.db.acceptFromNpc == true)) then		
 				AJM.isInternalCommand = true
+				AJM:DebugMessage( "QUEST_DETAIL - auto accept is: ", QuestGetAutoAccept() )
 				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
 				AcceptQuest()
 				HideUIPanel( QuestFrame )
-               -- AJM:DebugMessage( "QUEST_DETAIL - auto accept is: ", QuestGetAutoAccept() )
-				--ebony questNameGetTitleText
-				--AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
 				AJM.isInternalCommand = false
 			end
 		end
@@ -1778,7 +1772,7 @@ end
 
 function AJM.JambaQuestSelectButtonClicked()
 	if AJM:IsCurrentlySelectedQuestValid() == true then
-		AJM:JambaSendCommandToTeam( AJM.COMMAND_SELECT_QUEST_LOG_ENTRY, AJM.CurrentlySelectedQuest, AJM.selectedTag )
+		AJM:JambaSendCommandToTeam( AJM.COMMAND_SELECT_QUEST_LOG_ENTRY, AJM.currentlySelectedQuest, AJM.selectedTag )
 	else
 		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["You must select a quest from the quest log in order to action it on your other characters."], false )
 	end
@@ -1808,12 +1802,12 @@ function AJM.TrackAllNextQuest()
 			SelectQuestLogEntry( AJM.iterateQuests )	
 			if AJM:IsCurrentlySelectedQuestValid() == true then
 				local watch = 0
-				local questIndex = AJM:GetQuestLogIndexByName( AJM.CurrentlySelectedQuest )
+				local questIndex = AJM:GetQuestLogIndexByName( AJM.currentlySelectedQuest )
 				if questIndex ~= 0 then
 					AddQuestWatch( questIndex )
 					watch = 1
 				end	
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.CurrentlySelectedQuest, watch, AJM.selectedTag )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.currentlySelectedQuest, watch, AJM.selectedTag )
 			end	
 		end
 	end
@@ -1837,12 +1831,12 @@ function AJM.TrackNoneNextQuest()
 			SelectQuestLogEntry( AJM.iterateQuests )	
 			if AJM:IsCurrentlySelectedQuestValid() == true then
 				local watch = 0
-				local questIndex = AJM:GetQuestLogIndexByName( AJM.CurrentlySelectedQuest )
+				local questIndex = AJM:GetQuestLogIndexByName( AJM.currentlySelectedQuest )
 				if questIndex ~= 0 then
 					RemoveQuestWatch( questIndex )
 					watch = 0
 				end	
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.CurrentlySelectedQuest, watch, AJM.selectedTag )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.currentlySelectedQuest, watch, AJM.selectedTag )
 			end	
 		end
 	end
@@ -1855,7 +1849,7 @@ end
 function AJM.JambaQuestTrackToggleButtonClicked()
 	if AJM:IsCurrentlySelectedQuestValid() == true then
 		local watch = 0
-		local questIndex = AJM:GetQuestLogIndexByName( AJM.CurrentlySelectedQuest )
+		local questIndex = AJM:GetQuestLogIndexByName( AJM.currentlySelectedQuest )
 		if questIndex ~= 0 then
 			if IsQuestWatched( questIndex ) then
 				RemoveQuestWatch( questIndex )
@@ -1865,7 +1859,7 @@ function AJM.JambaQuestTrackToggleButtonClicked()
 				watch = 1
 			end
 		end	
-		AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.CurrentlySelectedQuest, watch, AJM.selectedTag )
+		AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.currentlySelectedQuest, watch, AJM.selectedTag )
 	else
 		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["You must select a quest from the quest log in order to action it on your other characters."], false )
 	end
@@ -1885,7 +1879,7 @@ function AJM.TrackToggleNextQuest()
 			SelectQuestLogEntry( AJM.iterateQuests )	
 			if AJM:IsCurrentlySelectedQuestValid() == true then
 				local watch = 0
-				local questIndex = AJM:GetQuestLogIndexByName( AJM.CurrentlySelectedQuest )
+				local questIndex = AJM:GetQuestLogIndexByName( AJM.currentlySelectedQuest )
 				if questIndex ~= 0 then
 					if IsQuestWatched( questIndex ) then
 						RemoveQuestWatch( questIndex )
@@ -1895,7 +1889,7 @@ function AJM.TrackToggleNextQuest()
 						watch = 1
 					end
 				end	
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.CurrentlySelectedQuest, watch, AJM.selectedTag )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, AJM.currentlySelectedQuest, watch, AJM.selectedTag )
 			end	
 		end
 	end
@@ -1954,7 +1948,6 @@ function AJM.JambaQuestShareAllButtonClicked()
 	end
 end
 
---ebony
 function AJM.PushNextQuest()
     local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( AJM.iterateQuests )
 	if isHeader == nil then
@@ -2020,14 +2013,14 @@ function AJM:CreateJambaQuestLogFrame()
 	local buttonWidthTag = 120
 	local buttonWidthToggle = 140
 	local buttonTop = -10
-	--local buttonTopSecondRow = buttonTop - buttonHeight - 2
+--	local buttonTopSecondRow = buttonTop - buttonHeight - 2
 	local left = 8
 	local spacing = 1
-	-- Tags should this get removed at some point? 
+	-- Tags
 	local dropDownTag = AceGUI:Create( "Dropdown" )
 	dropDownTag.frame:SetParent( frame )
 	dropDownTag:SetLabel( "" )
-	dropDownTag:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, -10 )
+	dropDownTag:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, -5 )
 	dropDownTag:SetWidth( buttonWidthTag )
 	dropDownTag:SetList( JambaApi.AllTagsList() )
 	dropDownTag:SetCallback( "OnValueChanged", AJM.JambaQuestTagDropDownOnClick )
@@ -2045,7 +2038,6 @@ function AJM:CreateJambaQuestLogFrame()
 	selectButton:SetWidth( buttonWidth )
 	selectButton:SetText( L["Select"] )		
 	left = left + buttonWidth + spacing
-	--left = left + 70
 	-- Share / Share All.
 	local shareButton = CreateFrame( "Button", frameName.."ButtonShare", frame, "UIPanelButtonTemplate" )
 	shareButton:SetScript( "OnClick", AJM.JambaQuestShareButtonClicked )
@@ -2063,41 +2055,41 @@ function AJM:CreateJambaQuestLogFrame()
 	shareAllButton:SetText( L["Share All"] )		
 	left = left + buttonWidth + spacing
 	-- Track / Track All.
-	--local trackButtonToggle = CreateFrame( "Button", frameName.."ButtonToggleTrack", frame, "UIPanelButtonTemplate" )
-	--trackButtonToggle:SetScript( "OnClick", AJM.JambaQuestTrackToggleButtonClicked )
-	--trackButtonToggle:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
-	--trackButtonToggle:SetHeight( buttonHeight )
-	--trackButtonToggle:SetWidth( buttonWidthToggle )
-	--trackButtonToggle:SetText( L["Toggle Track"] )
-	--local trackAllButtonToggle = CreateFrame( "Button", frameName.."ButtonToggleTrackAll", frame, "UIPanelButtonTemplate" )
-	--trackAllButtonToggle:SetScript( "OnClick", AJM.JambaQuestTrackToggleAllButtonClicked )
-	--trackAllButtonToggle:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
-	--trackAllButtonToggle:SetHeight( buttonHeight )
-	--trackAllButtonToggle:SetWidth( buttonWidthToggle )
-	--trackAllButtonToggle:SetText( L["Toggle Track All"] )	
-	--left = left + buttonWidthToggle + spacing
-	--local trackButton = CreateFrame( "Button", frameName.."ButtonTrackAll", frame, "UIPanelButtonTemplate" )
-	--trackButton:SetScript( "OnClick", AJM.JambaQuestTrackAllButtonClicked )
-	--trackButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
-	--trackButton:SetHeight( buttonHeight )
-	--trackButton:SetWidth( buttonWidth )
-	--trackButton:SetText( L["Track All"] )
-	--local trackNoneButton = CreateFrame( "Button", frameName.."ButtonTrackNone", frame, "UIPanelButtonTemplate" )
-	--trackNoneButton:SetScript( "OnClick", AJM.JambaQuestTrackNoneButtonClicked )
-	--trackNoneButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
-	--trackNoneButton:SetHeight( buttonHeight )
-	--trackNoneButton:SetWidth( buttonWidth )
-	--trackNoneButton:SetText( L["Track None"] )	
-	--left = left + buttonWidth + spacing
-	--left = left + 70
-	-- Abandon / Abandon All.
+--	local trackButtonToggle = CreateFrame( "Button", frameName.."ButtonToggleTrack", frame, "UIPanelButtonTemplate" )
+--	trackButtonToggle:SetScript( "OnClick", AJM.JambaQuestTrackToggleButtonClicked )
+--	trackButtonToggle:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
+--	trackButtonToggle:SetHeight( buttonHeight )
+--	trackButtonToggle:SetWidth( buttonWidthToggle )
+--	trackButtonToggle:SetText( L["Toggle Track"] )
+--	local trackAllButtonToggle = CreateFrame( "Button", frameName.."ButtonToggleTrackAll", frame, "UIPanelButtonTemplate" )
+--	trackAllButtonToggle:SetScript( "OnClick", AJM.JambaQuestTrackToggleAllButtonClicked )
+--	trackAllButtonToggle:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
+--	trackAllButtonToggle:SetHeight( buttonHeight )
+--	trackAllButtonToggle:SetWidth( buttonWidthToggle )
+--	trackAllButtonToggle:SetText( L["Toggle Track All"] )	
+--	left = left + buttonWidthToggle + spacing
+--	local trackButton = CreateFrame( "Button", frameName.."ButtonTrackAll", frame, "UIPanelButtonTemplate" )
+--	trackButton:SetScript( "OnClick", AJM.JambaQuestTrackAllButtonClicked )
+--	trackButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
+--	trackButton:SetHeight( buttonHeight )
+--	trackButton:SetWidth( buttonWidth )
+--	trackButton:SetText( L["Track All"] )
+--	local trackNoneButton = CreateFrame( "Button", frameName.."ButtonTrackNone", frame, "UIPanelButtonTemplate" )
+--	trackNoneButton:SetScript( "OnClick", AJM.JambaQuestTrackNoneButtonClicked )
+--	trackNoneButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTopSecondRow )
+--	trackNoneButton:SetHeight( buttonHeight )
+--	trackNoneButton:SetWidth( buttonWidth )
+--	trackNoneButton:SetText( L["Track None"] )	
+--	left = left + buttonWidth + spacing
+--	left = left + 70
+--	-- Abandon / Abandon All.
 	local abandonButton = CreateFrame( "Button", frameName.."ButtonAbandon", frame, "UIPanelButtonTemplate" )
 	abandonButton:SetScript( "OnClick", AJM.JambaQuestAbandonButtonClicked )
 	abandonButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
 	abandonButton:SetHeight( buttonHeight )
 	abandonButton:SetWidth( buttonWidth )
-	abandonButton:SetText( L["Abandon"] )
-	left = left + buttonWidth + spacing	
+	abandonButton:SetText( L["Abandon"] )		
+	left = left + buttonWidth + spacing
 	local abandonAllButton = CreateFrame( "Button", frameName.."ButtonAbandonAll", frame, "UIPanelButtonTemplate" )
 	abandonAllButton:SetScript( "OnClick", AJM.JambaQuestAbandonAllButtonClicked )
 	abandonAllButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", left, buttonTop )
@@ -2136,36 +2128,20 @@ function AJM:CreateJambaQuestLogFrame()
 end
 
 --ebony wip
-function AJM:ToggleFrame ( frame )
+function AJM:ToggleFrame( frame )
     --AJM:Print( "in toggle frame", frame )
 	if frame == WorldMapFrame then
 		if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
-          --AJM:Print("check qmfiv:", WorldMapFrame:IsVisible() )
+            --AJM:Print("check qmfiv:", WorldMapFrame:IsVisible() )
 			--if WorldMapFrame:IsVisible() then -ebs and QuestLogDetailScrollFrame:IsVisible
 			if WorldMapFrame:IsVisible() and QuestMapFrame:IsVisible() then
-				AJM:ToggleShowQuestCommandWindow( true )				
+				AJM:ToggleShowQuestCommandWindow( true )			
 			else
 				AJM:ToggleShowQuestCommandWindow( false )
 			end
 		end
 	end
 end
---ebony
-
---function AJM:ToggleQuestLog ( frame )
---    AJM:Print( "in toggle frame", frame )
---	if frame == ToggleQuestLog then
---		if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
---          --AJM:Print("check qmfiv:", WorldMapFrame:IsVisible() )
---			--if WorldMapFrame:IsVisible() then -ebs and QuestLogDetailScrollFrame:IsVisible
---			if WorldMapFrame:IsVisible() and QuestMapFrame:IsVisible() then
---				AJM:ToggleShowQuestCommandWindow( true )				
---			else
---				AJM:ToggleShowQuestCommandWindow( false )
---			end
---		end
---	end
---end
 
 function AJM:QuestLogFrameHide()
 	if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
@@ -2180,19 +2156,18 @@ function AJM:ToggleShowQuestCommandWindow( show )
 		JambaQuestLogWindowFrame:Hide()
     end
 end
---ebony-wip
+
 function AJM:UpdateQuestLog( questIndex )		
 	if WorldMapFrame:IsVisible() and QuestMapFrame:IsVisible() then
 		if questIndex then
-		SelectQuestLogEntry( questIndex )
 		--	QuestLog_SetSelection( questIndex ) -- Removed by blizzard in 6.0.2 changed to SelectQuestLogEntry
+			SelectQuestLogEntry( questIndex )
 		end
-	end	
-	if QuestScrollFrameScrollBar:IsVisible() then	
+		if QuestScrollFrameScrollBar:IsVisible() then	
 		QuestMapFrame_UpdateQuestDetailsButtons()
+		end
 	end
-	-- is this needed ebony???? truns back nothing? Don't think was needed?? was renamed in 6.0 to ObjectiveTrackerFrame
-	if ObjectiveTrackerFrame:IsVisible() then		
+		if ObjectiveTrackerFrame:IsVisible() then		
 --		TrackerFrame_Update()
 		QuestObjectiveTracker_UpdatePOIs()
  	end
@@ -2212,29 +2187,22 @@ end
 
 function AJM:SelectQuestLogEntry( questIndex )
 	AJM.currentlySelectedQuest =  L["(No Quest Selected)"]
-	--AJM.SelectQuestLogEntry =  L["(No Quest Selected)"]
-	--if questIndex ~= nil then
 	if questIndex ~= nil then
         local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questIndex )
 		if not isHeader then
 			if title then
 				AJM.currentlySelectedQuest = title
-				-- SelectQuestLogEntry = title
 				if JambaQuestLogWindowFrame:IsVisible() then
 					if GetQuestLogPushable() and GetNumSubgroupMembers() > 0 then
 						AJM.jambaQuestLogFrameShareButton:Enable()
-						--AJM.jambaQuestLogFrameShareButton:Enable()
 					else
 						AJM.jambaQuestLogFrameShareButton:Disable()
-						--AJM.jambaQuestLogFrameShareButton:Disable()
 					end
 				end
 			end
 		end
 	end	
 end
-
---ebonytest SelectQuestLogEntry
 
 function AJM:IsCurrentlySelectedQuestValid()
 	if AJM.currentlySelectedQuest:trim() ~= "" and AJM.currentlySelectedQuest ~= L["(No Quest Selected)"] then
@@ -2296,8 +2264,7 @@ function AJM:DoAbandonAllQuests( sender, tag )
 end
 
 function AJM:AutoSelectToggleCommand( info, parameters )
-	--xx
-	local toggle, tag = strsplit ( " ", parameters )
+	local toggle, tag = strsplit( " ", parameters )
 	if tag ~= nil and tag:trim() ~= "" then
 		AJM:JambaSendCommandToTeam( AJM.COMMAND_TOGGLE_AUTO_SELECT, toggle, tag )
 	else

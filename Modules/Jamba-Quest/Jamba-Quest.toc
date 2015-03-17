@@ -1,8 +1,8 @@
 ## Interface: 60100
-## Title: Jamba-Quest
-## Notes: Jamba-Quest
+## Title: JambaQuest
+## Notes: JambaQuest
 ## Author: Ebony, Former Author: Jafula
-## Version: 3.13
+## Version: 4.0-PublicBeta1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
@@ -11,6 +11,3 @@
 Locales\Locales.xml
 JambaQuest.lua
 Overrides.lua
-
-
-

@@ -1,6 +1,8 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
 Copyright 2008 - 2015 Michael "Jafula" Miller
+
+
 License: The MIT License
 ]]--
 

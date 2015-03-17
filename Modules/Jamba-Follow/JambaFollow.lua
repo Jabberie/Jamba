@@ -648,6 +648,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 
@@ -944,7 +946,6 @@ end
 
 function AJM:CommandSetFollowMaster( info, parameters )
 	local target, tag = strsplit( " ", parameters )
-	target = JambaUtilities:Capitalise( target )
 	if tag ~= nil and tag:trim() ~= "" then 
 		AJM:JambaSendCommandToTeam( AJM.COMMAND_SET_FOLLOW_MASTER, target, tag )
 	else
@@ -1062,7 +1063,7 @@ end
 
 function AJM:FollowTarget( target )
 	-- Attempting to follow self?  Note: if target ever is party1, etc, then this will not catch the same character.
-	if JambaUtilities:Capitalise( target ) == JambaUtilities:Capitalise( AJM.characterName ) then
+	if JambaUtilities:Lowercase( target ) == JambaUtilities:Lowercase( AJM.characterName ) then
 		return
 	end
 	local canFollowTarget = true
@@ -1092,8 +1093,9 @@ function AJM:FollowTarget( target )
 		if (AJM.db.autoFollowAfterCombat == true) or (AJM.followingStrobing == true) then
 			AJM.jambaSetFollowTarget = true	
 		end
+		--AJM:Print( target )
 		-- Follow unit only works when in a party or raid for resolving against player names.
-		FollowUnit( target )
+		FollowUnit( Ambiguate( target, "none" ) )
 	end	
 end
 

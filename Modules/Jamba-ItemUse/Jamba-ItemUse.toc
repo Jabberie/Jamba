@@ -1,8 +1,8 @@
 ## Interface: 60100
-## Title: Jamba-ItemUse
-## Notes: Jamba-ItemUse
+## Title: JambaItemUse
+## Notes: JambaItemUse
 ## Author: Ebony, Former Author: Jafula
-## Version: 3.13
+## Version: 4.0-PublicBeta1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

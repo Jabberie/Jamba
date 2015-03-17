@@ -108,7 +108,7 @@ function AJM:SettingsRefresh()
 	end
 	AJM.settingsControl.checkBoxAdvancedLoot:SetValue( AJM.db.advancedLoot )
 	AJM.settingsControl.checkBoxManageAutoLoot:SetValue( AJM.db.manageAutoLoot )
-	AJM.settingsControl.checkBoxAutoCloseLootWindowOnSlaves:SetValue( AJM.db.autoCloseLootWindowOnSlaves )	
+	AJM.settingsControl.checkBoxAutoCloseLootWindowOnSlaves:SetValue( AJM.db.autoCloseLootWindowOnSlaves )
 	AJM.settingsControl.dropdownCharacterName:SetValue( AJM.advancedLootItemCharacterName )
 	AJM.settingsControl.dropdownMessageArea:SetValue( AJM.db.messageArea )	
 	AJM.settingsControl.lootBindPickupEpic:SetValue( AJM.db.lootBindPickupEpic )
@@ -154,6 +154,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 
@@ -195,13 +197,13 @@ local function SettingsCreateOptions( top )
 		AJM.SettingsToggleAdvancedLootManageAutoLoot
 	)	
 	movingTop = movingTop - checkBoxHeight		
-	AJM.settingsControl.checkBoxAutoCloseLootWindowOnSlaves = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.checkBoxAutoCloseLootWindowOnSlaves = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControl, 
 		halfWidth, 
 		left, 
 		movingTop, 
-		L["Auto Close Loot Window On Slaves"],
-		AJM.SettingsToggleAutoCloseLootWindowOnSlaves
+		L["Auto Close Loot Window On Minions"],
+		AJM.SettingsToggleAutoCloseLootWindowOnMinions
 	)	
 	movingTop = movingTop - checkBoxHeight	
 	AJM.settingsControl.advancedLootHighlightRow = 1
@@ -473,7 +475,7 @@ function AJM:SettingsToggleAdvancedLootManageAutoLoot( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleAutoCloseLootWindowOnSlaves( event, checked )
+function AJM:SettingsToggleAutoCloseLootWindowOnMinions( event, checked )
 	AJM.db.autoCloseLootWindowOnSlaves = checked
 	AJM:SettingsRefresh()
 end
@@ -534,24 +536,23 @@ function AJM:OnInitialize()
 	InitializePopupDialogs()		
 	-- Populate the settings.
 	AJM:SettingsRefresh()
-	-- Create a standalone window for the Advanced Loot.
-	--[[
-	AJM.standaloneWindow = AceGUI:Create( "Window" )
-	AJM.standaloneWindow:Hide()
-	AJM.standaloneWindow:SetTitle( "Jamba-AdvancedLoot" )
-	AJM.standaloneWindow:SetLayout( "Fill" )
-	AJM.standaloneWindow:AddChild( AJM.settingsControl.widgetSettings )
-	AJM.standaloneWindow:SetHeight( 410 )
-	AJM.standaloneWindow:SetWidth( 410 )
-	AJM.standaloneWindow.frame:SetFrameStrata( "HIGH" )
-	]]--
-	
-	CreateFrame( "GameTooltip", "JambaAdvancedLootScanningTooltip" ); -- Tooltip name cannot be nil
-	JambaAdvancedLootScanningTooltip:SetOwner( WorldFrame, "ANCHOR_NONE" );
+	-- Loot scanning tooltip.
+	CreateFrame( "GameTooltip", "JambaAdvancedLootScanningTooltip" )
+	JambaAdvancedLootScanningTooltip:SetOwner( WorldFrame, "ANCHOR_NONE" )
 	-- Allow tooltip SetX() methods to dynamically add new lines based on these
 	JambaAdvancedLootScanningTooltip:AddFontStrings(
-    JambaAdvancedLootScanningTooltip:CreateFontString( "$parentTextLeft1", nil, "GameTooltipText" ),
-    JambaAdvancedLootScanningTooltip:CreateFontString( "$parentTextRight1", nil, "GameTooltipText" ) );	
+    	JambaAdvancedLootScanningTooltip:CreateFontString( "$parentTextLeft1", nil, "GameTooltipText" ),
+    	JambaAdvancedLootScanningTooltip:CreateFontString( "$parentTextRight1", nil, "GameTooltipText" )
+	)
+	-- Upgrade character names if necessary.
+	local realmName = GetRealmName()
+	for position, itemInfoTable in pairs( AJM.db.advancedLootItems ) do
+		local characterName = itemInfoTable.characterName
+		local updateMatchStart = characterName:find( "-" )
+		if not updateMatchStart then
+			itemInfoTable.characterName = characterName.."-"..realmName
+		end
+	end
 end
 
 -- Called when the addon is enabled.

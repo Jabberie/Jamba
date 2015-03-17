@@ -33,7 +33,6 @@ function JambaUtilities:CopyTable(object)
     return _copy(object)
 end
 
--- Clear a table.
 function JambaUtilities:ClearTable( object )
 	for key in next, object do
 		if type( object[key] ) == "table" then
@@ -43,46 +42,54 @@ function JambaUtilities:ClearTable( object )
 	end
 end
 
+function JambaUtilities:Lowercase( name )
+	return string.utf8lower( name )
+end
+--[[
+function JambaUtilities:AddRealmToNameIfMissing( name )
+	--local fullName = name
+	Fullname = name:gsub("^%l", string.upper)
+	local matchDash = Fullname:find( "-" )
+	if not matchDash then
+		local realmName = GetRealmName()
+		Fullname = Fullname.."-"..realmName
+		end
+	return Fullname
+end
+--]]
 
---ebony
-function JambaUtilities:RemoveRealmToNameIfAdded( name )
-	local fullName = name
-	local matchDash = name:find( "-" )
-	if matchDash then
-		fullName = gsub(name, "%-[^|]+", "")
-	end
+--AddRealmToNameIfMissing Blizzard Code does not like spaces in the realm name GetRealmName() pulls back the name with a Space Unwanted for most of the stuff we need to do.
+function JambaUtilities:AddRealmToNameIfMissing( name )
+	Name = name:gsub("^%l", string.upper )
+	fullName = Name:gsub( "%s+", "")
+	--local matchDash = Fullname:find( "-" )
+	--if not matchDash then
+	if not string.find(fullName, "-") then
+		local k = GetRealmName()
+		local realm = k:gsub( "%s+", "")
+		fullName = fullName.."-"..realm
+		end
 	return fullName
 end
+
+--if not string.find(name, "-") then
+--	local _, realm = UnitFullName("player")
+--	name = name.."-"..realm
+--end
 
 -- Capitalise the name.	
 function JambaUtilities:Capitalise( name )
     return string.utf8upper( string.utf8sub( name, 1, 1 ) )..string.utf8lower( string.utf8sub( name, 2 ) )
 end
 
--- Capitalise the name.	
-function JambaUtilities:Lowercase( name )
-	return string.utf8lower( name )
-end
-
-JambaUtilities.GUID_REPRESENTS_PLAYER = 0
-JambaUtilities.GUID_REPRESENTS_NPC = 1
-JambaUtilities.GUID_REPRESENTS_PET = 2
-JambaUtilities.GUID_REPRESENTS_VEHICLE = 3
-
--- Parse a GUID.
-function JambaUtilities:ParseGUID( guid )
-	local first3 = tonumber( "0x"..strsub( guid, 3,5 ) )
-	local unitType = bit.band( first3, 0x00f )
-	if unitType == 0x000 then
-		return JambaUtilities.GUID_REPRESENTS_PLAYER
-	elseif unitType == 0x003 then
-		return JambaUtilities.GUID_REPRESENTS_NPC
-	elseif unitType == 0x004 then
-		return JambaUtilities.GUID_REPRESENTS_PET
-	elseif unitType == 0x005 then
-		return JambaUtilities.GUID_REPRESENTS_VEHICLE
+function JambaUtilities:AddRealmToNameIfNotNil( name, realm )
+	local fullName = name
+	if realm ~= nil and realm:trim() ~= "" then
+		fullName = name.."-"..realm
 	end
+	return fullName
 end
+
 
 -- Money constants.
 JambaUtilities.COLOUR_COPPER = "eda55f"

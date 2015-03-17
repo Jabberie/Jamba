@@ -371,6 +371,10 @@ function AJM:CheckForQuestItemAndAddToBar()
 		-- Don't check slots that have no items and don't check anything in the keyring bag (-2)
 		if link ~= nil and bag ~= -2 then
 			-- Starts a quest items.
+			-- Battlepet links break tooltips!
+			if string.find(link, "battlepet") then
+					return 
+				end
 			LibGratuity:SetHyperlink( link )
 			if LibGratuity:Find( ITEM_STARTS_QUEST ) then
 				AJM:AddAnItemToTheBarIfNotExists( link, true )
@@ -863,6 +867,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 

@@ -27,7 +27,6 @@ L["Requests"] = true
 L["Auto Deny Duels"] = true
 L["Auto Deny Guild Invites"] = true
 L["Auto Accept Resurrect Request"] = true
-L["Auto Accept Summon Request"] = true
 L["Send Request Message Area"] = true
 L["Combat"] = true
 L["Health / Mana"] = true
@@ -35,11 +34,11 @@ L["Bag Space"] = true
 L["Bags Full!"] = true
 L["Warn If All Regular Bags Are Full"] = true
 L["Bags Full Message"] = true	
-L["Warn If Hit First Time In Combat (Slave)"] = true
+L["Warn If Hit First Time In Combat (Minion)"] = true
 L["Hit First Time Message"] = true
-L["Warn If Target Not Master On Combat (Slave)"] = true
+L["Warn If Target Not Master On Combat (Minion)"] = true
 L["Warn Target Not Master Message"] = true
-L["Warn If Focus Not Master On Combat (Slave)"] = true
+L["Warn If Focus Not Master On Combat (Minion)"] = true
 L["Warn Focus Not Master Message"] = true
 L["Warn If My Health Drops Below"] = true
 L["Health Amount - Percentage Allowed Before Warning"] = true
@@ -53,10 +52,6 @@ L["I refused a guild invite to: X from: Y"] = function( guild, inviter )
 end
 L["I refused a duel from: X"] = function( challenger )
 	return string.format( "I refused a duel from: %s", challenger )
-end
---ebony
-L["I Accepted Summon From: X To: Y"] = function( sender, location )
-	return string.format( "I Accepted Summon From: %s To: %s", sender, location )
 end
 L["I do not have enough money to repair all my items."] = true
 L["Repairing cost me: X"] = function( costString )
@@ -99,14 +94,6 @@ L["Mogu Rune Of Fate"] = true
 L["MROF"] = true
 L["Timeless Coin"] = true
 L["TC"] = true
-L["Garrison Resources"] = true
-L["GR"] = true
-L["Seal of Tempered Fate"] = true
-L["SoF"] = true
-L["Apexis Crystal"] = true
-L["AC"] = true
-L["Darkmoon Prize Ticket "] = true
-L["DPT"] = true
 L["Bloody Coin"] = true
 L["BC"] = true
 L["Warforged Seal"] = true

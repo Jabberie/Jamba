@@ -2,6 +2,8 @@
 Jamba - Jafula's Awesome Multi-Boxer Assistant
 Copyright 2008 - 2015 Michael "Jafula" Miller
 License: The MIT License
+
+
 ]]--
 
 -- The global private table for Jamba.
@@ -45,6 +47,17 @@ JambaPrivate.SettingsFrame.WidgetTree:SetStatusTable( JambaPrivate.SettingsFrame
 JambaPrivate.SettingsFrame.WidgetTree:EnableButtonTooltips( false )
 JambaPrivate.SettingsFrame.Widget:AddChild( JambaPrivate.SettingsFrame.WidgetTree )
 JambaPrivate.SettingsFrame.WidgetTree:SetLayout( "Fill" )
+
+function AJM:OnEnable()
+	--if AJM.db.showStartupMessage6033 then
+		--JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Release Notes / News"] )
+		--JambaStartupMessageFrame:Show()
+		--AJM.db.showStartupMessage6033 = false
+	
+end
+
+function AJM:OnDisable()
+end
 
 local function JambaSettingsTreeSort( a, b )
 	local aText = ""
@@ -216,6 +229,7 @@ table.insert( UISpecialFrames, "JambaSettingsWindowsFrame" )
 AJM.settings = {
 	profile = {
 		showMinimapIcon = true,
+		--showStartupMessage6033 = true,
 	},
 }
 
@@ -326,7 +340,7 @@ end
 
 -- Send a command for the module specified (using its address) to the master character.
 local function SendCommandToMaster( moduleAddress, commandName, ... )
--- Get the name of the module.
+	-- Get the name of the module.
 	local moduleName = AJM.registeredModulesByAddress[moduleAddress]
 	-- Send the command identified by the module name.
 	JambaPrivate.Communications.SendCommandMaster( moduleName, commandName, ... )
@@ -519,12 +533,6 @@ function AJM:LoadJambaModule( moduleName )
 	end
 end
 
-function AJM:OnEnable()
-end
-
-function AJM:OnDisable()
-end
-
 function AJM:CoreSettingsCreateInfo( top )
 	-- Get positions and dimensions.
 	local buttonPushAllSettingsWidth = 300
@@ -556,7 +564,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Copyright 2008-2015 Michael 'Jafula' Miller"]
+		L["Copyright 2008-2014 Michael 'Jafula' Miller, Now managed By Ebony"]
 	)	
 	movingTop = movingTop - labelContinueHeight
 	
@@ -565,7 +573,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Made in New Zealand"]
+		L["Made For MultiBoxing"]
 	)	
 	movingTop = movingTop - labelContinueHeight
 
@@ -587,6 +595,42 @@ function AJM:CoreSettingsCreateInfo( top )
 	)	
 	movingTop = movingTop - labelContinueHeight
 
+	AJM.settingsControl.labelInformation5 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["Other useful websites:"]
+	)	
+	movingTop = movingTop - labelContinueHeight
+
+	AJM.settingsControl.labelInformation6 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["http://dual-boxing.com/"]
+	)	
+	movingTop = movingTop - labelContinueHeight
+
+	AJM.settingsControl.labelInformation7 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		""
+	)	
+	movingTop = movingTop - labelContinueHeight
+
+	AJM.settingsControl.labelInformation8 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		""
+	)	
+	movingTop = movingTop - labelContinueHeight
+
 	AJM.settingsControl.labelInformation9 = JambaHelperSettings:CreateContinueLabel( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -601,7 +645,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["http://dual-boxing.com/"]
+		""
 	)	
 	movingTop = movingTop - labelContinueHeight
 
@@ -610,7 +654,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		""
+		L["Special thanks to Michael 'Jafula' Miller who made Jamba"]
 	)	
 	movingTop = movingTop - labelContinueHeight
 	
@@ -683,6 +727,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 
@@ -718,6 +764,6 @@ JambaPrivate.Core.OnSettingsReceived = OnSettingsReceived
 JambaPrivate.Core.SendCommandToTeam = SendCommandToTeam
 JambaPrivate.Core.SendCommandToMaster = SendCommandToMaster
 JambaPrivate.Core.SendCommandToToon = SendCommandToToon
--- TODO: Remove send command to slaves?
---JambaPrivate.Core.SendCommandToSlaves = SendCommandToSlaves
+-- TODO: Remove send command to minions?
+--JambaPrivate.Core.SendCommandToMinions = SendCommandToMinions
 JambaPrivate.Core.OnCommandReceived = OnCommandReceived

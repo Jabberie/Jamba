@@ -53,11 +53,11 @@ L["Shift"] = true
 L["Alt"] = true
 L["Override: If Toon Already Has Reward Selected,"] = true
 L["Choose That Reward"] = true
---L["Accepted Quest: A"] = function( questName )
---	return string.format( "Accepted Quest: %s", questName )
---end
 L["Accepted Quest: A"] = function( questName )
 	return string.format( "Accepted Quest: %s", questName )
+end
+L["Automatically Accepted Quest: A"] = function( questName )
+	return string.format( "Automatically Accepted Quest: %s", questName )
 end
 L["Automatically Accepted Quest: A"] = function( questName )
 	return string.format( "Automatically Accepted Quest: %s", questName )
@@ -65,9 +65,6 @@ end
 L["Automatically Accepted AutoPickupQuest: A"] = function( questName )
 	return string.format( "Automatically Accepted AutoPickupQuest: %s", questName )
 end
---L["Automatically Accepted Quest: A"] = function( questName )
---	return string.format( "Automatically Accepted Quest: %s", questName )
---end
 L["Quest has X reward choices."] = function( choices )
 	return string.format( "Quest has %s reward choices.", choices )
 end

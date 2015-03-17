@@ -22,6 +22,6 @@ L["Settings received from A."] = function( characterName )
 	return "Settings received from "..characterName.."."
 end
 L["master"] = true
-L["slave"] = true
+L["minion"] = true
 L["all"] = true
 L["justme"] = true

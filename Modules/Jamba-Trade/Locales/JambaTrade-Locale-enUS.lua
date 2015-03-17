@@ -38,5 +38,5 @@ L["6. Artifact (golden yellow)"] = true
 L["7. Heirloom (light yellow)"] = true
 L["Unknown"] = true
 L["Ignore Soulbound"] = true
-L["Trade Excess Gold To Master From Slave"] = true
+L["Trade Excess Gold To Master From Minion"] = true
 L["Amount Of Gold To Keep"] = true

@@ -139,7 +139,7 @@ function AJM:SettingsCreateTaxi( top )
 		movingTop,
 		L["Take Master's Taxi"],
 		AJM.SettingsToggleTakeTaxi
-	)
+	)	
 	movingTop = movingTop - headingHeight
 	AJM.settingsControl.checkBoxrequestStop = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
@@ -148,7 +148,7 @@ function AJM:SettingsCreateTaxi( top )
 		movingTop,
 		L["Request Taxi Stop with Master"],
 		AJM.SettingsTogglerequestStop
-	)		
+	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControl.dropdownMessageArea = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControl, 
@@ -182,7 +182,6 @@ function AJM:SettingsTogglerequestStop( event, checked )
 	AJM.db.requestTaxiStop = checked
 	AJM:SettingsRefresh()
 end
-
 -- Settings received.
 function AJM:JambaOnSettingsReceived( characterName, settings )	
 	if characterName ~= AJM.characterName then
@@ -194,6 +193,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 
@@ -257,7 +258,6 @@ function AJM:TakeTaxiNode( taxiNodeIndex )
 		AJM.jambaTakesTaxi = false
 	end
 end
-
 -- exit taxi with team ebony
 local function LeaveTaxi ( sender )
 	if AJM.db.requestTaxiStop == true then
@@ -283,8 +283,6 @@ function AJM.TaxiRequestEarlyLanding( sender )
 		AJM.jambaLeavsTaxi = false
 	end
 end
-
-
 -- A Jamba command has been received.
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	if characterName ~= self.characterName then

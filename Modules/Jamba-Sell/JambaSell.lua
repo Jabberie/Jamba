@@ -152,6 +152,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 
@@ -740,7 +742,7 @@ function AJM:DoSellItem( itemlink )
 					-- Yes, sell this item.
 					UseContainerItem( bag, slot ) 
 					-- Tell the boss.
-					AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
+					--AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
 				end
 			end
 		end

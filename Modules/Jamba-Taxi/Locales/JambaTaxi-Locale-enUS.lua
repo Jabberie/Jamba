@@ -11,10 +11,9 @@ L["Taxi"] = true
 L["Taxi Options"] = true
 L["Take Master's Taxi"] = true
 L["Request Taxi Stop with Master"] = true
-L["Take the same flight as the master did (slaves's must have NPC Flight Master window open)."] = true
+L["Take the same flight as the master did (minions's must have NPC Flight Master window open)."] = true
 L["Push Settings"] = true
 L["Push the taxi settings to all characters in the team."] = true
---L["I Have Requested a Stop"] = true
 L["I Have Requested a Stop From X"] = function( sender )
 	return string.format( "I Have Requested a Stop From %s", sender )
 end

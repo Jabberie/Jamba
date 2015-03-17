@@ -12,7 +12,6 @@ if not JambaModule then
 end
 
 -- Load libraries.
-local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 LibStub( "AceConsole-3.0" ):Embed( JambaModule )
 
 -------------------------------------------------------------------------------------------------------------
@@ -110,7 +109,15 @@ function JambaModule:JambaModuleInitialize( settingsFrame )
 	-- Register the chat command for this module.
 	self:RegisterChatCommand( self.chatCommand, "JambaChatCommand" )
 	-- Remember the characters name.
-	self.characterName = UnitName( "player" )
+	-- If server has a space in realm name GetRealmName() will show space this will not work with blizzard API so we need to hack this to work --ebony
+	--local _, k = UnitFullName("player")
+	local k = GetRealmName()
+	local realm = k:gsub( "%s+", "")
+	self.characterRealm = realm
+	self.characterNameLessRealm = UnitName( "player" ) 
+	--self.characterName = UnitFullName( "player" )
+	self.characterName = self.characterNameLessRealm.."-"..self.characterRealm
+	--self.characterName = UnitFullName("player")
 	self.characterGUID = UnitGUID( "player" )
 	-- Register this module with Jamba.
 	self:JambaRegisterModule( self.moduleName )

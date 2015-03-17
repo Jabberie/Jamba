@@ -2,6 +2,9 @@
 Jamba - Jafula's Awesome Multi-Boxer Assistant
 Copyright 2008 - 2015 Michael "Jafula" Miller
 License: The MIT License
+
+
+
 ]]--
 
 -- Create the addon using AceAddon-3.0 and embed some libraries.
@@ -230,6 +233,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsTeamListRowClick( 1, 1 )
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 
@@ -296,8 +301,8 @@ local function MasterTag()
 	return L["master"]
 end
 
-local function SlaveTag()
-	return L["slave"]
+local function MinionTag()
+	return L["minion"]
 end
 
 local function JustMeTag()
@@ -321,7 +326,7 @@ local function GetTagAtPosition( position )
 end
 
 local function IsTagASystemTag( tag )
-	if tag == MasterTag() or tag == SlaveTag() or tag == AllTag() or tag == JustMeTag() then
+	if tag == MasterTag() or tag == MinionTag() or tag == AllTag() or tag == JustMeTag() then
 		return true
 	end
 	for token, localizedName in pairs( AJM.tagClassesFemale ) do
@@ -359,7 +364,7 @@ function AJM:InitializeAllTagsList()
 	-- Add system tags to the list.
 	AddTagToAllTagsList( AllTag() )
 	AddTagToAllTagsList( MasterTag() )
-	AddTagToAllTagsList( SlaveTag() )
+	AddTagToAllTagsList( MinionTag() )
 	AddTagToAllTagsList( JustMeTag() )
 	-- Add class tags to the list.
 	AJM.tagClassesFemale = {}
@@ -488,7 +493,7 @@ end
 -- Add tag to character from the command line.
 function AJM:AddTagCommand( info, parameters )
 	local characterNameOrExistingTag, tag = strsplit( " ", parameters )
-	local characterName = JambaUtilities:Capitalise( characterNameOrExistingTag )
+	local characterName = characterNameOrExistingTag
 	local finalCharacterNameOrExistingTag = characterNameOrExistingTag
 	if JambaPrivate.Team.IsCharacterInTeam( characterName ) == true then
 		finalCharacterNameOrExistingTag = characterName
@@ -499,7 +504,7 @@ end
 -- Remove tag from character from the command line.
 function AJM:RemoveTagCommand( info, parameters )
 	local characterNameOrExistingTag, tag = strsplit( " ", parameters )
-	local characterName = JambaUtilities:Capitalise( characterNameOrExistingTag )
+	local characterName = characterNameOrExistingTag
 	local finalCharacterNameOrExistingTag = characterNameOrExistingTag
 	if JambaPrivate.Team.IsCharacterInTeam( characterName ) == true then
 		finalCharacterNameOrExistingTag = characterName
@@ -555,22 +560,22 @@ local function CheckSystemTagsAreCorrect()
 		if localizedName ~= nil then
 			InternalAddTagToCharacter( characterName, JambaUtilities:Lowercase( localizedName ))
 		end	
-		-- Master or slave?
+		-- Master or minion?
 		if JambaPrivate.Team.IsCharacterTheMaster( characterName ) == true then
-			-- Make sure the master has the master tag and not a slave tag.
+			-- Make sure the master has the master tag and not a minion tag.
 			if DoesTagListHaveTag( characterTagList, MasterTag() ) == false then
 				AddTag( characterTagList, MasterTag() )
 			end
-			if DoesTagListHaveTag( characterTagList, SlaveTag() ) == true then
-				RemoveTag( characterTagList, SlaveTag() )
+			if DoesTagListHaveTag( characterTagList, MinionTag() ) == true then
+				RemoveTag( characterTagList, MinionTag() )
 			end
 		else
-			-- Make sure slaves have the slave tag and not the master tag.
+			-- Make sure minions have the minion tag and not the master tag.
 			if DoesTagListHaveTag( characterTagList, MasterTag() ) == true then
 				RemoveTag( characterTagList, MasterTag() )
 			end
-			if DoesTagListHaveTag( characterTagList, SlaveTag() ) == false then
-				AddTag( characterTagList, SlaveTag() )
+			if DoesTagListHaveTag( characterTagList, MinionTag() ) == false then
+				AddTag( characterTagList, MinionTag() )
 			end
 		end
 	end
@@ -740,7 +745,7 @@ end
 -- Functions available from Jamba Tag for other Jamba internal objects.
 JambaPrivate.Tag.AllTag = AllTag
 JambaPrivate.Tag.MasterTag = MasterTag
-JambaPrivate.Tag.SlaveTag = SlaveTag
+JambaPrivate.Tag.MinionTag = MinionTag
 JambaPrivate.Tag.JustMeTag = JustMeTag
 JambaPrivate.Tag.AllTagsList = AllTagsList
 JambaPrivate.Tag.AllTagsListIterator = AllTagsListIterator
@@ -751,7 +756,7 @@ JambaPrivate.Tag.GetCharacterWithTag = GetCharacterWithTag
 -- Functions available for other addons.
 JambaApi.AllTag = AllTag
 JambaApi.MasterTag = MasterTag
-JambaApi.SlaveTag = SlaveTag
+JambaApi.MinionTag = MinionTag
 JambaApi.JustMeTag = JustMeTag
 JambaApi.AllTagsList = AllTagsList
 JambaApi.AllTagsListIterator = AllTagsListIterator

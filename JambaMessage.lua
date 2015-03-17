@@ -1,6 +1,8 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
 Copyright 2008 - 2015 Michael "Jafula" Miller
+
+
 License: The MIT License
 ]]--
 
@@ -256,6 +258,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 

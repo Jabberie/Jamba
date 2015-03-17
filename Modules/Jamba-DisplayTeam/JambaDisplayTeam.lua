@@ -34,6 +34,7 @@ AJM.settings = {
 		showTeamList = true,
 		showTeamListOnMasterOnly = true,
 		hideTeamListInCombat = false,
+		enableClique = false,
 		statusBarTexture = L["Blizzard"],
 		borderStyle = L["Blizzard Tooltip"],
 		backgroundStyle = L["Blizzard Dialog Background"],
@@ -93,6 +94,11 @@ AJM.settings = {
 		frameBorderColourA = 1.0,
 	},
 }
+
+-- Debug message.
+function AJM:DebugMessage( ... )
+	--AJM:Print( ... )
+end
 
 -- Configuration.
 function AJM:GetConfiguration()
@@ -453,13 +459,12 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	--SetPortraitTexture( portraitButton.Texture, characterName )
 	--portraitButton.Texture:SetAllPoints()
 	portraitButton:ClearModel()
-	portraitButton:SetUnit( characterName )
+	portraitButton:SetUnit( Ambiguate( characterName, "short" ) )
 	portraitButton:SetPortraitZoom( 1 )
     portraitButton:SetCamDistanceScale( 1 )
     portraitButton:SetPosition( 0, 0, 0 )
 	local portraitButtonClick = CreateFrame( "CheckButton", portraitName.."Click", parentFrame, "SecureActionButtonTemplate" )
-	portraitButtonClick:SetAttribute( "type", "macro" )
-	portraitButtonClick:SetAttribute( "macrotext", "/targetexact "..characterName )
+	portraitButtonClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	characterStatusBar["portraitButton"] = portraitButton
 	characterStatusBar["portraitButtonClick"] = portraitButtonClick
 	-- Set the bag information.
@@ -489,8 +494,8 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	followBar:SetValue( 100 )
 	followBar:SetFrameStrata( "LOW" )
 	local followBarClick = CreateFrame( "CheckButton", followName.."Click", parentFrame, "SecureActionButtonTemplate" )
-	followBarClick:SetAttribute( "type", "macro" )
-	followBarClick:SetAttribute( "macrotext", "/targetexact "..characterName )
+	followBarClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
+	--followBarClick:SetAttribute( "macrotext", "/targetexact "..characterName )
 	followBarClick:SetFrameStrata( "MEDIUM" )
 	characterStatusBar["followBar"] = followBar
 	characterStatusBar["followBarClick"] = followBarClick	
@@ -498,7 +503,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	followBarText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
 	followBarText:SetAllPoints()
 	characterStatusBar["followBarText"] = followBarText
-	AJM:SettingsUpdateFollowText( characterName, UnitLevel( characterName ) )
+	AJM:SettingsUpdateFollowText( characterName, UnitLevel( Ambiguate( characterName, "none" ) ) )
 	-- Set the experience bar.
 	local experienceName = AJM.globalFramePrefix.."ExperienceBar"
 	local experienceBar = CreateFrame( "StatusBar", experienceName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
@@ -511,8 +516,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	experienceBar:SetValue( 100 )
 	experienceBar:SetFrameStrata( "LOW" )
 	local experienceBarClick = CreateFrame( "CheckButton", experienceName.."Click", parentFrame, "SecureActionButtonTemplate" )
-	experienceBarClick:SetAttribute( "type", "macro" )
-	experienceBarClick:SetAttribute( "macrotext", "/targetexact "..characterName )
+	experienceBarClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	experienceBarClick:SetFrameStrata( "MEDIUM" )
 	characterStatusBar["experienceBar"] = experienceBar
 	characterStatusBar["experienceBarClick"] = experienceBarClick
@@ -536,8 +540,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	reputationBar:SetValue( 100 )
 	reputationBar:SetFrameStrata( "LOW" )
 	local reputationBarClick = CreateFrame( "CheckButton", reputationName.."Click", parentFrame, "SecureActionButtonTemplate" )
-	reputationBarClick:SetAttribute( "type", "macro" )
-	reputationBarClick:SetAttribute( "macrotext", "/targetexact "..characterName )
+	reputationBarClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	reputationBarClick:SetFrameStrata( "MEDIUM" )
 	characterStatusBar["reputationBar"] = reputationBar
 	characterStatusBar["reputationBarClick"] = reputationBarClick
@@ -563,7 +566,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	healthBar:SetValue( 100 )
 	healthBar:SetFrameStrata( "LOW" )
 	local healthBarClick = CreateFrame( "CheckButton", healthName.."Click"..characterName, parentFrame, "SecureActionButtonTemplate" )
-	healthBarClick:SetAttribute( "unit", characterName )
+	healthBarClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	healthBarClick:SetFrameStrata( "MEDIUM" )
 	characterStatusBar["healthBar"] = healthBar
 	characterStatusBar["healthBarClick"] = healthBarClick
@@ -586,7 +589,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	powerBar:SetValue( 100 )
 	powerBar:SetFrameStrata( "LOW" )
 	local powerBarClick = CreateFrame( "CheckButton", powerName.."Click"..characterName, parentFrame, "SecureActionButtonTemplate" )
-	powerBarClick:SetAttribute( "unit", characterName )
+	powerBarClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	powerBarClick:SetFrameStrata( "MEDIUM" )
 	characterStatusBar["powerBar"] = powerBar
 	characterStatusBar["powerBarClick"] = powerBarClick
@@ -598,9 +601,24 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	characterStatusBar["powerBarText"] = powerBarText
 	AJM:UpdatePowerStatus( characterName, nil, nil, nil )
 	-- Add the health and power click bars to ClickCastFrames for addons like Clique to use.
+	--Ebony if Support for Clique if not on then default to target unit
+	--TODO there got to be a better way to doing this for sure but right now i can not be assed to do this for now you need to reload the UI when turning off and on clique support. 
 	ClickCastFrames = ClickCastFrames or {}
-	ClickCastFrames[healthBarClick] = true
-	ClickCastFrames[powerBarClick] = true
+	if AJM.db.enableClique == true then
+		ClickCastFrames[portraitButtonClick] = true
+		ClickCastFrames[followBarClick] = true
+		ClickCastFrames[experienceBarClick] = true
+		ClickCastFrames[reputationBarClick] = true
+		ClickCastFrames[healthBarClick] = true
+		ClickCastFrames[powerBarClick] = true
+	else
+		portraitButtonClick:SetAttribute( "type1", "target")
+		followBarClick:SetAttribute( "type1", "target")
+		experienceBarClick:SetAttribute( "type1", "target")
+		reputationBarClick:SetAttribute( "type1", "target")
+		healthBarClick:SetAttribute( "type1", "target")
+		powerBarClick:SetAttribute( "type1", "target")
+	end
 end
 
 function AJM:HideJambaTeamStatusBar( characterName )	
@@ -805,6 +823,7 @@ end
 local function SettingsCreateDisplayOptions( top )
 	-- Get positions.
 	local checkBoxHeight = JambaHelperSettings:GetCheckBoxHeight()
+	local labelContinueHeight = JambaHelperSettings:GetContinueLabelHeight()
 	local sliderHeight = JambaHelperSettings:GetSliderHeight()
 	local mediaHeight = JambaHelperSettings:GetMediaHeight()
 	local left = JambaHelperSettings:LeftOfSettings()
@@ -847,6 +866,15 @@ local function SettingsCreateDisplayOptions( top )
 		movingTop, 
 		L["Hide Team List In Combat"],
 		AJM.SettingsToggleHideTeamListInCombat
+	)
+	movingTop = movingTop - checkBoxHeight - verticalSpacing
+	AJM.settingsControl.displayOptionsCheckBoxEnableClique = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Enable Clique Support - **reload UI to take effect**"],
+		AJM.SettingsToggleEnableClique
 	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing
 	-- Create appearance & layout.
@@ -1284,6 +1312,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.displayOptionsCheckBoxShowTeamList:SetValue( AJM.db.showTeamList )
 	AJM.settingsControl.displayOptionsCheckBoxShowTeamListOnlyOnMaster:SetValue( AJM.db.showTeamListOnMasterOnly )
 	AJM.settingsControl.displayOptionsCheckBoxHideTeamListInCombat:SetValue( AJM.db.hideTeamListInCombat )
+	AJM.settingsControl.displayOptionsCheckBoxEnableClique:SetValue( AJM.db.enableClique )
 	AJM.settingsControl.displayOptionsCheckBoxStackVertically:SetValue( AJM.db.barsAreStackedVertically )
 	AJM.settingsControl.displayOptionsCheckBoxTeamHorizontal:SetValue( AJM.db.teamListHorizontal )
 	AJM.settingsControl.displayOptionsCheckBoxShowListTitle:SetValue( AJM.db.showListTitle )
@@ -1332,6 +1361,7 @@ function AJM:SettingsRefresh()
 	if not InCombatLockdown() then
 		AJM.settingsControl.displayOptionsCheckBoxShowTeamListOnlyOnMaster:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxHideTeamListInCombat:SetDisabled( not AJM.db.showTeamList )
+		AJM.settingsControl.displayOptionsCheckBoxEnableClique:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxStackVertically:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxTeamHorizontal:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxShowListTitle:SetDisabled( not AJM.db.showTeamList )
@@ -1398,6 +1428,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.showTeamList = settings.showTeamList
 		AJM.db.showTeamListOnMasterOnly = settings.showTeamListOnMasterOnly
 		AJM.db.hideTeamListInCombat = settings.hideTeamListInCombat
+		AJM.db.enableClique = settings.enableClique
 		AJM.db.barsAreStackedVertically = settings.barsAreStackedVertically
 		AJM.db.teamListHorizontal = settings.teamListHorizontal
 		AJM.db.showListTitle = settings.showListTitle
@@ -1454,6 +1485,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 
@@ -1477,6 +1510,11 @@ end
 
 function AJM:SettingsToggleHideTeamListInCombat( event, checked )
 	AJM.db.hideTeamListInCombat = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleEnableClique( event, checked )
+	AJM.db.enableClique = checked
 	AJM:SettingsRefresh()
 end
 
@@ -1702,6 +1740,7 @@ end
 
 -- A Jamba command has been recieved.
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )
+	AJM:DebugMessage( "JambaOnCommandReceived", characterName )
 	if commandName == AJM.COMMAND_FOLLOW_STATUS_UPDATE then
 		AJM:ProcessUpdateFollowStatusMessage( characterName, ... )
 	end
@@ -1774,6 +1813,7 @@ function AJM:UpdateBagInformation( characterName, slotsFree, totalSlots )
 	if AJM.db.showBagInformation == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -1840,6 +1880,7 @@ function AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
 	if AJM.db.showFollowStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -1861,7 +1902,7 @@ end
 
 function AJM:SettingsUpdateFollowTextAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:SettingsUpdateFollowText( characterName, UnitLevel( characterName ) )
+		AJM:SettingsUpdateFollowText( characterName, UnitLevel( Ambiguate( characterName, "none" ) ) )
 	end
 end
 
@@ -1872,6 +1913,7 @@ function AJM:SettingsUpdateFollowText( characterName, characterLevel )
 	if AJM.db.showFollowStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -1879,7 +1921,7 @@ function AJM:SettingsUpdateFollowText( characterName, characterLevel )
 	local followBarText = characterStatusBar["followBarText"]	
 	local text = ""
 	if AJM.db.followStatusShowName == true then
-		text = text..characterName
+		text = text..Ambiguate( characterName, "none" )
 	end
 	if AJM.db.followStatusShowLevel == true then
 		if AJM.db.followStatusShowName == true then
@@ -1916,6 +1958,7 @@ function AJM:SendExperienceStatusUpdateCommand()
 		if AJM.db.showTeamListOnMasterOnly == true then
 			AJM:JambaSendCommandToMaster( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID )
 		else
+			AJM:DebugMessage( "SendExperienceStatusUpdateCommand TO TEAM!" )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID )
 		end
 	end
@@ -1932,12 +1975,14 @@ function AJM:SettingsUpdateExperienceAll()
 end
 
 function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxExperience, exhaustionStateID )
+	AJM:DebugMessage( "UpdateExperienceStatus", characterName, playerExperience, playerMaxExperience, exhaustionStateID )
 	if CanDisplayTeamList() == false then
 		return
 	end
 	if AJM.db.showExperienceStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2019,6 +2064,7 @@ function AJM:UpdateReputationStatus( characterName, reputationName, reputationSt
 	if AJM.db.showReputationStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2097,8 +2143,9 @@ function AJM:SendHealthStatusUpdateCommand( unit )
 	if AJM.db.showTeamList == true and AJM.db.showHealthStatus == true then
 		local playerHealth = UnitHealth( unit )
 		local playerMaxHealth = UnitHealthMax( unit )
-		local characterName = UnitName( unit )
-		AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
+		local characterName, characterRealm = UnitName( unit )
+		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+		AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth )
 	end
 end
 
@@ -2115,6 +2162,7 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
 	if AJM.db.showHealthStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2176,8 +2224,9 @@ function AJM:SendPowerStatusUpdateCommand( unit )
 	if AJM.db.showTeamList == true and AJM.db.showPowerStatus == true then
 		local playerPower = UnitPower( unit )
 		local playerMaxPower = UnitPowerMax( unit )
-		local characterName = UnitName( unit )
-		AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
+		local characterName, characterRealm = UnitName( unit )
+		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+		AJM:UpdatePowerStatus( character, playerPower, playerMaxPower )
 	end
 end
 
@@ -2194,6 +2243,8 @@ function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
 	if AJM.db.showPowerStatus == false then
 		return
 	end
+	local originalChatacterName = characterName
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2222,10 +2273,11 @@ function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
 		end
 	end
 	powerBarText:SetText( text )		
-	AJM:SetStatusBarColourForPower( powerBar, characterName )
+	AJM:SetStatusBarColourForPower( powerBar, originalChatacterName )
 end
 
 function AJM:SetStatusBarColourForPower( statusBar, unit )
+	unit =  Ambiguate( unit, "none" )
 	local powerIndex, powerString, altR, altG, altB = UnitPowerType( unit )
 	if powerString ~= nil and powerString ~= "" then
 		local r = PowerBarColor[powerString].r
@@ -2286,8 +2338,8 @@ function AJM:OnEnable()
 	AJM:SecureHook( "SetWatchedFactionIndex" )
 	AJM:ScheduleTimer( "RefreshTeamListControls", 5 )
 	AJM:ScheduleTimer( "SendExperienceStatusUpdateCommand", 6 )
-	AJM:ScheduleTimer( "SendReputationStatusUpdateCommand", 7 )
-	AJM:ScheduleTimer( "SendBagInformationUpdateCommand", 8 )
+	AJM:ScheduleTimer( "SendReputationStatusUpdateCommand", 6 )
+	AJM:ScheduleTimer( "SendBagInformationUpdateCommand", 6 )
 end
 
 -- Called when the addon is disabled.

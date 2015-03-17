@@ -1,6 +1,8 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
 Copyright 2008 - 2015 Michael "Jafula" Miller
+
+
 License: The MIT License
 ]]--
 
@@ -76,10 +78,10 @@ end
 -- Settings - the values to store and their defaults for the settings database.
 AJM.settings = {
 	profile = {
-		teamOnlineChannelName = "JambaTeamIsOnline",
-		teamOnlineChannelPassword = "JambaTeamPassword",
-		showOnlineChannel = false,
-		assumeTeamAlwaysOnline = true,
+--		teamOnlineChannelName = "JambaTeamIsOnline",
+--		teamOnlineChannelPassword = "JambaTeamPassword",
+--		showOnlineChannel = false,
+--		assumeTeamAlwaysOnline = true,
 		boostCommunication = true,
 	},
 }
@@ -100,15 +102,7 @@ local function GetConfiguration()
 				usage = "/jamba-comm push",
 				get = false,
 				set = "JambaSendSettings",
-			},	
-			channel = {
-				type = "input",
-				name = L["Change Channel"],
-				desc = L["Change the communications channel."],
-				usage = "/jamba-comm channel <channel name> <channel password>",
-				get = false,
-				set = "ChangeChannelCommand",
-			},				
+			},			
 		},
 	}
 	return configuration
@@ -123,131 +117,14 @@ end
 -------------------------------------------------------------------------------------------------------------
 -- Character online management.
 -------------------------------------------------------------------------------------------------------------
+-- TODO: Is a character online? This needs Working on Ebony Or needs to go for now it always return true
+local function IsCharacterOnline( characterName )
+	JambaPrivate.Team.SetCharacterOnlineStatus( characterName, true )
+	return true
+end
 
 local function AssumeTeamAlwaysOnline()
-	return AJM.db.assumeTeamAlwaysOnline
-end
-
--- Join the team online status channel.
-local function JoinTeamOnlineStatusChannel()
-	local channelType, channelName = JoinTemporaryChannel( AJM.db.teamOnlineChannelName, AJM.db.teamOnlineChannelPassword )
-	AJM.lastChannel = AJM.db.teamOnlineChannelName
-end
-
--- Leave the team online status channel.
-local function LeaveTeamOnlineStatusChannel()
-	LeaveChannelByName( AJM.channelJustMovedFrom )
-	AJM.channelJustMovedFrom = AJM.lastChannel
-end
-
-function AJM:SettingsChangeChannelClick( event )
-	AJM:StopChannelPollTimer()
-	AJM:Print( "Changing Channel from [", AJM.lastChannel, "] to [", AJM.db.teamOnlineChannelName, "]." )
-	AJM.channelJustMovedFrom = AJM.lastChannel
-	JoinTeamOnlineStatusChannel()
-	LeaveTeamOnlineStatusChannel()
-	AJM:StartChannelPollTimer()
-end
-
--- Is a character online?
-local function IsCharacterOnline( characterName )
-	if AJM.db.assumeTeamAlwaysOnline == true then
-		return true
-	end
-	return JambaPrivate.Team.GetCharacterOnlineStatus( characterName )
-end
-
--- Test to see if the channel name provided is the name of the team online channel.
-local function IsChannelTeamOnlineChannel( channelName )
-	local isTeamOnlineChannel = false
-	if channelName ~= nil then
-		if AJM.db.showOnlineChannel == true then
-			AJM:Print( "Team Channel: match? this:", string.utf8lower( channelName ), "team:", string.utf8lower( AJM.lastChannel ), "or:", string.utf8lower( AJM.channelJustMovedFrom ) )
-		end
-		if string.utf8lower( channelName ) == string.utf8lower( AJM.lastChannel ) then
-			isTeamOnlineChannel = true
-		end
-		if string.utf8lower( channelName) == string.utf8lower( AJM.channelJustMovedFrom ) then
-			isTeamOnlineChannel = true
-		end		
-	end
-	return isTeamOnlineChannel 
-end
-
-function AJM:CHAT_MSG_CHANNEL_LIST( event, ... )
-	if AJM.db.showOnlineChannel == true then
-		AJM:Print( "CHAT_MSG_CHANNEL_LIST" )
-	end
-	local message, arg2, arg3, arg4, arg5, arg6, arg7, arg8, channelName, arg10, arg11, arg12 = ... 	
-	-- Is this the team online channel?
-	if IsChannelTeamOnlineChannel( channelName ) == true then
-		-- Yes, set all characters to be offline.
-		JambaPrivate.Team.SetTeamStatusToOffline()
-		-- Parse the message for characters.
-		local characters = {}
-		for character in message:gmatch( "[^,]+" ) do
-			table.insert( characters, character )
-		end
-		for index, character in pairs( characters ) do 
-			local characterName = character:gsub( "%s*%@*%**([^%s]+)", "%1" )	
-			-- Is this character in our team?		
-			if JambaPrivate.Team.IsCharacterInTeam( characterName ) == true then
-				-- Set the character status to online.
-				JambaPrivate.Team.SetCharacterOnlineStatus( characterName, true )
-			end
-		end
-	end
-end
-
-function AJM:CHAT_MSG_CHANNEL_JOIN( event, ... )
-	if AJM.db.showOnlineChannel == true then
-		AJM:Print( "CHAT_MSG_CHANNEL_JOIN" )
-	end
-	local arg1, sender, arg3, arg4, arg5, arg6, arg7, arg8, channelName, arg10, arg11, arg12 = ... 
-	-- Is this the team online channel?
-	if IsChannelTeamOnlineChannel( channelName ) == true then
-		-- Is this character in our team?		
-		if JambaPrivate.Team.IsCharacterInTeam( sender ) == true then
-			-- Set the character status to online.
-			JambaPrivate.Team.SetCharacterOnlineStatus( sender, true )
-			AJM:SendMessage( AJM.MESSAGE_CHARACTER_ONLINE )
-		end
-	end
-end
-
-function AJM:CHAT_MSG_CHANNEL_LEAVE( event, ... )
-	if AJM.db.showOnlineChannel == true then
-		AJM:Print( "CHAT_MSG_CHANNEL_LEAVE" )
-	end
-	local arg1, sender, arg3, arg4, arg5, arg6, arg7, arg8, channelName, arg10, arg11, arg12 = ... 
-	-- Is this the team online channel?
-	if IsChannelTeamOnlineChannel( channelName ) == true then
-		-- Is this character in our team?		
-		if JambaPrivate.Team.IsCharacterInTeam( sender ) == true then
-			-- Set the character status to offline.
-			JambaPrivate.Team.SetCharacterOnlineStatus( sender, false )
-			AJM:SendMessage( AJM.MESSAGE_CHARACTER_OFFLINE )
-		end
-	end
-end
-
--- TODO: Investigate ChatFrame_AddMessageEventFilter (hooks may be the wrong thing to do here)
--- TODO: See http://www.wowwiki.com/API_ChatFrame_AddMessageEventFilter
--- The ChatFrame_MessageEventHandler hook.
-function AJM:ChatFrame_MessageEventHandler( self, event, ... )
-	if AJM.db.showOnlineChannel == true then
-		AJM:Print( "ChatFrame_MessageEventHandler" )
-	end
-	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, channelName, arg10, arg11, arg12 = ... 	
-	-- Is this the team online channel?
-	if IsChannelTeamOnlineChannel( channelName ) == true then
-		-- Yes, the chat frames don't need to know about this channel.
-		if AJM.db.showOnlineChannel == false then
-			return true
-		end
-	end
-	-- Call the orginal function.
-	return AJM.hooks["ChatFrame_MessageEventHandler"]( self, event, ... )
+	return true
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -273,84 +150,67 @@ local function CreateCommandToSend( moduleName, commandName, ... )
 	return message	
 end
 
--- Send a command to all members of the current team.
+
+-- Rewrite of communications start ebony. Using Guild, Party, then whisper 
+-- Send a command to all members of the current team. Trying to use a goble channel to send all communications on.
 local function CommandAll( moduleName, commandName, ... )
     AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
-	-- Send command to all in group/raid.
-	--if not UnitInBattleground( "player" ) then
-	if UnitInParty( "player" ) == true then --or UnitInRaid( "player" ) then 
-		if not UnitInBattleground( "player" ) then
-			if not IsInInstance ("raid") then
-				AJM:DebugMessage( "Sending command to group." )
-				AJM:SendCommMessage( 
-				AJM.COMMAND_PREFIX,
-				message,
-				AJM.COMMUNICATION_GROUP,
-				nil,
-				AJM.COMMUNICATION_PRIORITY_ALERT
-				)
-			end
-		end	
-	end
-	-- If player not in a party or raid, then send to player. Pointless as does it under anyway, x2 everything!
---	if GetNumSubgroupMembers() == 0 and GetNumGroupMembers() == 0 then
---	AJM:DebugMessage( "Sending command just to single player." )
---		AJM:SendCommMessage( 
---			AJM.COMMAND_PREFIX,
---			message,
---			AJM.COMMUNICATION_WHISPER,
---			UnitName( "player" ),
---			AJM.COMMUNICATION_PRIORITY_ALERT
---		)		
---	end
-	-- Send the message to all members of the current team that are not in a party / raid.	
 	for characterName, characterOrder in JambaPrivate.Team.TeamList() do
-		if IsCharacterOnline( characterName ) == true then
-			local canSend = false
-			-- Team member not in party then send command.
-			if not UnitInParty( characterName ) then
-				canSend = true
-			end
-			--If in a battleground then send a whisper as the party/raid would have not been sent.
-			if UnitInBattleground( characterName ) then
-				canSend = true
-			end
-			-- if unit in LFR raid Then sending /w as the the party/raid would not of been sent. ((raid Char don't work))
-			if IsInInstance ("raid") then
-				canSend = true
-			end
-			if canSend == true then
-                AJM:DebugMessage( "Sending command to others not in party/raid." )
-				AJM:SendCommMessage( 
+		-- Send command to all in party.
+		if UnitInParty( characterName ) == true then	
+			if not UnitInBattleground( "player" ) then
+				if not IsInInstance ("raid") then
+					AJM:DebugMessage("Sending command to group.", message, "WHISPER", nil)
+							AJM:SendCommMessage( 
+							AJM.COMMAND_PREFIX,
+							message,
+							AJM.COMMUNICATION_GROUP,
+							nil,
+							AJM.COMMUNICATION_PRIORITY_ALERT
+							)
+				end	
+			end	
+		else
+			if IsCharacterOnline( characterName ) == true then
+				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+					AJM:SendCommMessage( 
 					AJM.COMMAND_PREFIX,
 					message,
 					AJM.COMMUNICATION_WHISPER,
 					characterName,
 					AJM.COMMUNICATION_PRIORITY_ALERT
-				)
-			end
+					)
+			end		
 		end
 	end
 end
 
+
+-- Should this get removed at some point and use all comms on one line???
+-- WHISPER's don't work cross-realm but do work connected-realm so sending msg to masters would not send.
+-- TODO: Maybe remove masters???, and fall back to everyone being the master?
+-- Not really sure what to do so for now will keep with the master, and whisper them, 
+-- if was to use party/raid then everyone will get the command. 
+
 -- Send a command to the master.
 local function CommandMaster( moduleName, commandName, ... )
---	AJM:DebugMessage( "Command Master: ", moduleName, commandName, ... )
+    AJM:DebugMessage( "Command Master: ", moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	-- Send the message to the master.
 	local characterName = JambaPrivate.Team.GetMasterName()
-	if IsCharacterOnline( characterName ) == true then
-		AJM:SendCommMessage( 
-			AJM.COMMAND_PREFIX,
-			message,
-			AJM.COMMUNICATION_WHISPER,
-			characterName,
-			AJM.COMMUNICATION_PRIORITY_ALERT
-		)
-	end
+		if IsCharacterOnline( characterName ) == true then
+			AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+				AJM:SendCommMessage( 
+				AJM.COMMAND_PREFIX,
+				message,
+				AJM.COMMUNICATION_WHISPER,
+				characterName,
+				AJM.COMMUNICATION_PRIORITY_ALERT
+				)
+		end	
 end
 
 -- Send a command to the master.
@@ -358,34 +218,36 @@ local function CommandToon( moduleName, characterName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	if IsCharacterOnline( characterName ) == true then
-		AJM:SendCommMessage( 
-			AJM.COMMAND_PREFIX,
-			message,			
-			AJM.COMMUNICATION_WHISPER,
-			characterName,
-			AJM.COMMUNICATION_PRIORITY_ALERT
-		)
-	end
-end
-
--- Send a command to all slave characters of the current team.
-local function CommandSlaves( moduleName, commandName, ... )
-	-- Get the message to send.
-	local message = CreateCommandToSend( moduleName, commandName, ... )
-	-- Send the message to all members of the current team.
-	for characterName, characterOrder in JambaPrivate.Team.TeamList() do
-		if IsCharacterOnline( characterName ) == true then
-			if JambaPrivate.Team.IsCharacterTheMaster( characterName ) == false then
-				AJM:SendCommMessage( 
+			if IsCharacterOnline( characterName ) == true then
+				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+					AJM:SendCommMessage( 
 					AJM.COMMAND_PREFIX,
 					message,
 					AJM.COMMUNICATION_WHISPER,
 					characterName,
 					AJM.COMMUNICATION_PRIORITY_ALERT
-				)
+					)
+			end	
+	end		
+end
+
+
+
+-- EbonyTest
+-- hide offline player spam Not reall the best way but it works, Maybe adding tick box's to set members offline?
+function AJM:ChatFrame_MessageEventHandler(frame, event, msg, ...)
+		--if event == "CHAT_MSG_SYSTEM" then
+		if( event == "CHAT_MSG_SYSTEM") then	
+			local match = strmatch(msg, format(ERR_CHAT_PLAYER_NOT_FOUND_S, "(.+)"))
+				if (not match) then
+				--IF not match then Go about whatever you wonted to do, If match hide Msg from player.
+				AJM:DebugMessage( "Not matched!" )
+				AJM.hooks.ChatFrame_MessageEventHandler(frame, event, msg, ...)
 			end
+		else
+		AJM.hooks.ChatFrame_MessageEventHandler(frame, event, msg, ...);
 		end
-	end
+
 end
 
 -- Receive a command from another character.
@@ -393,39 +255,39 @@ function AJM:CommandReceived( prefix, message, distribution, sender )
     AJM:DebugMessage( "Command received: ", prefix, message, distribution, sender )
 	-- Check if the command is for Jamba Communications.
 	if prefix == AJM.COMMAND_PREFIX then
-		-- Check if the sender is trusted.
-        sender = Ambiguate(sender, "none")
-        AJM:DebugMessage( "Sender after ambiguate: ", sender )
+		--checks the char is in the team if not everyone can change settings and we do not want that
 		if JambaPrivate.Team.IsCharacterInTeam( sender ) == true then
-            AJM:DebugMessage( "Sender is in team list." )
+		   AJM:DebugMessage( "Sender is in team list." )
 			-- Split the command into its components.
 			local moduleName, commandName, argumentsStringSerialized = strsplit( AJM.COMMAND_SEPERATOR, message )
 			local argumentsTable  = {}
 			-- Are there any arguments?
 			if (argumentsStringSerialized ~= nil) and (argumentsStringSerialized:trim() == "") then 
 				-- No.
+				else
+					-- Deserialize the arguments.
+					local argumentsTableSerialized = { strsplit( AJM.COMMAND_ARGUMENT_SEPERATOR, argumentsStringSerialized ) }
+					for index, argumentSerialized in ipairs( argumentsTableSerialized ) do
+						local success, argument = AceSerializer:Deserialize( argumentSerialized )
+						if success == true then
+							table.insert( argumentsTable, argument )
+						else
+							error( L["A: Failed to deserialize command arguments for B from C."]( "AJM", moduleName, sender ) )
+						end
+					end			
+				end
+				-- Look for internal Jamba Communication commands.
+				if commandName == AJM.COMMAND_INTERNAL_SEND_SETTINGS then				
+					-- Tell JambaCore to handle the settings received.
+					JambaPrivate.Core.OnSettingsReceived( sender, moduleName, unpack( argumentsTable ) )
+				else
+					-- Any other command can go directly to the module that sent it.
+					AJM:DebugMessage( "Sending command on to module: ", sender, moduleName, commandName, unpack( argumentsTable ) )
+					JambaPrivate.Core.OnCommandReceived( sender, moduleName, commandName, unpack( argumentsTable ) )
+				end
 			else
-				-- Deserialize the arguments.
-				local argumentsTableSerialized = { strsplit( AJM.COMMAND_ARGUMENT_SEPERATOR, argumentsStringSerialized ) }
-				for index, argumentSerialized in ipairs( argumentsTableSerialized ) do
-					local success, argument = AceSerializer:Deserialize( argumentSerialized )
-					if success == true then
-						table.insert( argumentsTable, argument )
-					else
-						error( L["A: Failed to deserialize command arguments for B from C."]( "AJM", moduleName, sender ) )
-					end
-				end			
+				AJM:DebugMessage( "Sender is NOT in team list." )
 			end
-			-- Look for internal Jamba Communication commands.
-			if commandName == AJM.COMMAND_INTERNAL_SEND_SETTINGS then				
-				-- Tell JambaCore to handle the settings received.
-				JambaPrivate.Core.OnSettingsReceived( sender, moduleName, unpack( argumentsTable ) )
-			else
-				-- Any other command can go directly to the module that sent it.
-                AJM:DebugMessage( "Sending command on to module: ", sender, moduleName, commandName, unpack( argumentsTable ) )
-				JambaPrivate.Core.OnCommandReceived( sender, moduleName, commandName, unpack( argumentsTable ) )
-			end			
-		end
 	end
 end
 
@@ -445,7 +307,9 @@ local function SendCommandAll( moduleName, commandName, ... )
 	CommandAll( moduleName, commandName, ... )
 end
 
--- 	Command the master.
+-- TODO: needs to be cleaned up at some point with other communication stuff
+
+-- Command the master.
 local function SendCommandMaster( moduleName, commandName, ... )
 	-- Send the command to the master character.
 	CommandMaster( moduleName, commandName, ... )
@@ -477,26 +341,22 @@ function AJM:OnInitialize()
 	AJM:SettingsCreate()
 	AJM.settingsFrame = AJM.settingsControl.widgetSettings.frame
 	AJM:SettingsRefresh()	
-	if AJM.db.assumeTeamAlwaysOnline == false then
-		-- Hook the ChatFrame_MessageEventHandler to hide any messages that are for the team online channel.
-		AJM:RawHook( "ChatFrame_MessageEventHandler", true )
-	end
-	AJM.characterName = UnitName( "player" )
+	--TODO: Is this needed? as its already in a module??
+	local k = GetRealmName()
+	local realm = k:gsub( "%s+", "" )
+	self.characterRealm = realm
+	self.characterNameLessRealm = UnitName( "player" )
+	self.characterName = self.characterNameLessRealm.."-"..self.characterRealm
 	AJM.characterGUID = UnitGUID( "player" )
+	-- End of needed:
 	AJM:RegisterChatCommand( AJM.chatCommand, "JambaChatCommand" )
 	-- Register communications as a module.
 	JambaPrivate.Core.RegisterModule( AJM, AJM.moduleName )
-	-- The last channel joined.
-	AJM.lastChannel = AJM.db.teamOnlineChannelName
-	AJM.channelJustMovedFrom = AJM.lastChannel
 end
-
+	
 function AJM:OnEnable()
-	if AJM.db.assumeTeamAlwaysOnline == false then
-		-- Wait for some seconds before initialising the team online channel.
-		-- This lets the defaults channels get the usual channel numbers (i.e. Trade is /2).
-		AJM:ScheduleTimer( "InitialiseTeamOnlineChannel", 10 )
-	end
+	local hookSecure = true
+	AJM:RawHook( "ChatFrame_MessageEventHandler", hookSecure )
 	if AJM.db.boostCommunication == true then
 		AJM:BoostCommunication()
 		-- Repeat every 5 minutes.
@@ -524,19 +384,6 @@ function AJM:JambaChatCommand( input )
     else
         LibStub( "AceConfigCmd-3.0" ):HandleCommand( AJM.chatCommand, AJM.moduleName, input )
     end    
-end
-
-function AJM:InitialiseTeamOnlineChannel()
-	-- Register for the list of members in a channel event.
-	AJM:RegisterEvent( "CHAT_MSG_CHANNEL_LIST" )
-	-- And for joiners and leavers.
-	AJM:RegisterEvent( "CHAT_MSG_CHANNEL_JOIN" )
-	AJM:RegisterEvent( "CHAT_MSG_CHANNEL_LEAVE" )
-	-- Join the team online channel.
-	JoinTeamOnlineStatusChannel()
-	-- Ask for a list of characters in the team online channel.
-	ListChannelByName( AJM.lastChannel )
-	AJM:StartChannelPollTimer()
 end
 
 function AJM:StopChannelPollTimer()
@@ -587,26 +434,8 @@ function AJM:SettingsCreateOptions( top )
 	local halfWidth = (headingWidth - horizontalSpacing) / 2
 	local column1Left = left
 	local movingTop = top
-	-- Create a heading for information.
-	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Team Online Check"], movingTop, false )
-	movingTop = movingTop - headingHeight
-	AJM.settingsControl.checkBoxAssumeAlwaysOnline = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop, 
-		L["Assume All Team Members Always Online*"],
-		AJM.CheckBoxAssumeAlwaysOnline
-	)
-	movingTop = movingTop - checkBoxHeight	
-	AJM.settingsControl.labelInformationAlwaysOnline = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["*reload UI to take effect"]
-	)	
-	movingTop = movingTop - labelContinueHeight	
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Team Online Check"], movingTop, false )--
+	movingTop = movingTop - headingHeight	
 	AJM.settingsControl.checkBoxBoostCommunication = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -623,64 +452,6 @@ function AJM:SettingsCreateOptions( top )
 		movingTop,
 		L["**reload UI to take effect, may cause disconnections"]
 	)	
-	movingTop = movingTop - labelContinueHeight			
-	-- Create a heading for information.
-	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Team Online Channel"], movingTop, false )
-	movingTop = movingTop - headingHeight
-	-- Information line 1.
-	AJM.settingsControl.labelInformation1 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["After you change the channel name or password, push the"]
-	)	
-	movingTop = movingTop - labelContinueHeight		
-	-- Information line 2.
-	AJM.settingsControl.labelInformation2 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["new settings to all your other characters and then log off"]
-	)	
-	movingTop = movingTop - labelContinueHeight		
-	-- Information line 3.
-	AJM.settingsControl.labelInformation3 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["all your characters and log them on again."]
-	)	
-	movingTop = movingTop - labelContinueHeight				
-	-- Channel name.
-	AJM.settingsControl.editBoxChannelName = JambaHelperSettings:CreateEditBox( AJM.settingsControl,
-		headingWidth,
-		column1Left,
-		movingTop,
-		L["Channel Name"]
-	)	
-	AJM.settingsControl.editBoxChannelName:SetCallback( "OnEnterPressed", AJM.EditBoxChannelNameChanged )
-	movingTop = movingTop - editBoxHeight
-	-- Channel password.
-	AJM.settingsControl.editBoxChannelPassword = JambaHelperSettings:CreateEditBox( AJM.settingsControl,
-		headingWidth,
-		column1Left,
-		movingTop,
-		L["Channel Password"]
-	)	
-	AJM.settingsControl.editBoxChannelPassword:SetCallback( "OnEnterPressed", AJM.EditBoxChannelPasswordChanged )
-	movingTop = movingTop - editBoxHeight
-	-- Change channel button.
-	AJM.settingsControl.buttonChangeChannel = JambaHelperSettings:CreateButton(
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop, 
-		L["Change Channel (Debug)"],
-		AJM.SettingsChangeChannelClick
-	)	
 	movingTop = movingTop - buttonHeight		
 	AJM.settingsControl.checkBoxShowChannel = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
@@ -694,41 +465,17 @@ function AJM:SettingsCreateOptions( top )
 	return movingTop	
 end
 
-function AJM:EditBoxChannelNameChanged( event, text )
-	AJM.db.teamOnlineChannelName = text
-end
-
-function AJM:EditBoxChannelPasswordChanged( event, text )
-	AJM.db.teamOnlineChannelPassword = text
-end
-
-function AJM:CheckBoxShowChannelClick( event, value )
-	AJM.db.showOnlineChannel = value
-	AJM:SettingsRefresh()	
-end
-
-function AJM:CheckBoxAssumeAlwaysOnline( event, value )
-	AJM.db.assumeTeamAlwaysOnline = value
-	AJM:SettingsRefresh()	
-end
-
 function AJM:CheckBoxBoostCommunication( event, value )
 	AJM.db.boostCommunication = value
 	AJM:SettingsRefresh()	
 end
 
-function AJM:BeforeJambaProfileChanged()	
-end
-
-function AJM:OnJambaProfileChanged()	
-	AJM:SettingsRefresh()
-end
 
 function AJM:SettingsRefresh()	
-	AJM.settingsControl.editBoxChannelName:SetText( AJM.db.teamOnlineChannelName )
-	AJM.settingsControl.editBoxChannelPassword:SetText( AJM.db.teamOnlineChannelPassword )
-	AJM.settingsControl.checkBoxShowChannel:SetValue( AJM.db.showOnlineChannel )
-	AJM.settingsControl.checkBoxAssumeAlwaysOnline:SetValue( AJM.db.assumeTeamAlwaysOnline )
+	--AJM.settingsControl.editBoxChannelName:SetText( AJM.db.teamOnlineChannelName )
+	--AJM.settingsControl.editBoxChannelPassword:SetText( AJM.db.teamOnlineChannelPassword )
+	--AJM.settingsControl.checkBoxShowChannel:SetValue( AJM.db.showOnlineChannel )
+	--AJM.settingsControl.checkBoxAssumeAlwaysOnline:SetValue( AJM.db.assumeTeamAlwaysOnline )
 	AJM.settingsControl.checkBoxBoostCommunication:SetValue( AJM.db.boostCommunication )
 end
 
@@ -741,28 +488,14 @@ end
 function AJM:JambaOnSettingsReceived( characterName, settings )
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
-		AJM.db.teamOnlineChannelName = settings.teamOnlineChannelName
-		AJM.db.teamOnlineChannelPassword = settings.teamOnlineChannelPassword
-		AJM.db.showOnlineChannel = settings.showOnlineChannel
-		AJM.db.assumeTeamAlwaysOnline = settings.assumeTeamAlwaysOnline
 		AJM.db.boostCommunication = settings.boostCommunication
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
-end
-
-function AJM:ChangeChannelCommand( info, parameters )
-	local name, password = strsplit( " ", parameters )
-	AJM:ChangeChannelCommandAction( name, password )
-end
-
-function AJM:ChangeChannelCommandAction( name, password )
-	AJM.db.teamOnlineChannelName = name
-	AJM.db.teamOnlineChannelPassword = password
-	AJM:SettingsRefresh()
-	AJM:SettingsChangeChannelClick( nil )
 end
 
 -- text = message to send
@@ -819,10 +552,11 @@ JambaPrivate.Communications.SendSettings = SendSettings
 JambaPrivate.Communications.SendCommandAll = SendCommandAll
 JambaPrivate.Communications.SendCommandMaster = SendCommandMaster
 JambaPrivate.Communications.SendCommandToon = SendCommandToon
+JambaPrivate.Communications.SendCommandMaster = SendCommandMaster
+JambaPrivate.Communications.SendCommandToon = SendCommandToon
 JambaPrivate.Communications.AssumeTeamAlwaysOnline = AssumeTeamAlwaysOnline
 JambaPrivate.Communications.MESSAGE_CHARACTER_ONLINE = AJM.MESSAGE_CHARACTER_ONLINE
 JambaPrivate.Communications.MESSAGE_CHARACTER_OFFLINE = AJM.MESSAGE_CHARACTER_OFFLINE
-
 JambaApi.SendChatMessage = SendChatMessage
 JambaApi.COMMUNICATION_PRIORITY_BULK = AJM.COMMUNICATION_PRIORITY_BULK
 JambaApi.COMMUNICATION_PRIORITY_NORMAL = AJM.COMMUNICATION_PRIORITY_NORMAL

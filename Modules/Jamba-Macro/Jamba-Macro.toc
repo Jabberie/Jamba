@@ -2,7 +2,7 @@
 ## Title: Jamba-Macro
 ## Notes: Jamba-Macro
 ## Author: Ebony, Former Author: Jafula
-## Version: 3.13
+## Version: 4.0-PublicBeta1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
@@ -10,5 +10,3 @@
 ## LoadOnDemand: 1
 Locales\Locales.xml
 JambaMacro.lua
-
-

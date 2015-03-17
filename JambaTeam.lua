@@ -1,6 +1,8 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
 Copyright 2008 - 2015 Michael "Jafula" Miller
+
+
 License: The MIT License
 ]]--
 
@@ -125,7 +127,7 @@ function AJM:GetConfiguration()
 				desc = L["Remove all members from the team."],
 				usage = "/jamba-team removeall",
 				get = false,
-				set = "RemoveAllMembersFromTeam",
+				set = "DoRemoveAllMembersFromTeam",
 			},
 			push = {
 				type = "input",
@@ -165,7 +167,6 @@ AJM.MESSAGE_TEAM_ORDER_CHANGED = "JambaTeamOrderChanged"
 AJM.MESSAGE_TEAM_CHARACTER_ADDED = "JambaTeamCharacterAdded"
 -- Character has been removed, parameter: characterName.
 AJM.MESSAGE_TEAM_CHARACTER_REMOVED = "JambaTeamCharacterRemoved"
--- Character has been added, parameter: characterName.
 
 -------------------------------------------------------------------------------------------------------------
 -- Constants used by module.
@@ -250,7 +251,6 @@ local function SettingsCreateTeamList()
 		L["Add"],
 		AJM.SettingsAddClick
 	)
-	--ebony
 	AJM.settingsControl.teamListButtonParty = JambaHelperSettings:CreateButton(
 		AJM.settingsControl, 
 		teamListButtonControlWidth, 
@@ -329,7 +329,7 @@ local function SettingsCreateMasterControl( top )
 		headingWidth, 
 		left, 
 		top - headingHeight - checkBoxHeight - checkBoxHeight, 
-		L["Auto activate click-to-move on Slaves and deactivate on Master."],
+		L["Auto activate click-to-move on Minions and deactivate on Master."],
 		AJM.SettingsMasterChangeClickToMoveToggle
 	)	
 	return bottomOfSection	
@@ -381,12 +381,12 @@ local function SettingsCreatePartyInvitationsControl( top )
 		top - headingHeight - checkBoxHeight, 
 		L["Accept from BattleNet/RealD friends."],
 		AJM.SettingsAcceptInviteBNFriendsToggle
-	)		
+	)	
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptGuild = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
 		column1Left, 
-		top - headingHeight  - checkBoxHeight - checkBoxHeight,
+		top - headingHeight - checkBoxHeight - checkBoxHeight,
 		L["Accept from guild."],
 		AJM.SettingsAcceptInviteGuildToggle
 	)	
@@ -466,8 +466,8 @@ local function SettingsCreatePartyLootControl( top )
 		headingWidth, 
 		column1Left,
 		top - headingHeight - checkBoxHeight - radioBoxHeight - checkBoxHeight - checkBoxHeight ,
-		L["Slaves Opt Out of Loot"],
-		AJM.SettingsSetSlavesOptOutToggle
+		L["Minions Opt Out of Loot"],
+		AJM.SettingsSetMinionsOptOutToggle
 	)		
 	return bottomOfSection	
 end
@@ -503,7 +503,7 @@ end
 local function InitializePopupDialogs()
    -- Ask the name of the character to add as a new member.
    StaticPopupDialogs["JAMBATEAM_ASK_CHARACTER_NAME"] = {
-        text = L["Enter name of character to add:"],
+        text = L["Enter character to add in name-server format:"],
         button1 = ACCEPT,
         button2 = CANCEL,
         hasEditBox = 1,
@@ -565,12 +565,35 @@ local function GetTeamListMaximumOrder()
 	return largestPosition
 end
 
+--[[
 -- Return true if the character specified is in the team.
+local function IsCharacterInTeam( characterName )
+	local isMember = false
+	if AJM.db.teamList[characterName] then	
+		isMember = true
+	--AJM:Print('returning', isMember)
+	return isMember
+	end
+end
+--]]
+
 local function IsCharacterInTeam( characterName )
 	local isMember = false
 	if AJM.db.teamList[characterName] then
 		isMember = true
 	end
+	if not isMember then
+		for fullCharacterName, position in pairs( AJM.db.teamList ) do
+			local checkCharacterName = select( 3, fullCharacterName:find( "^(%w+)-(%w+)$" ) )
+			--AJM:Print('checking', checkCharacterName, 'vs', characterName)
+			if checkCharacterName == characterName then
+				--AJM:Print('match found')
+				isMember = true
+				break
+			end
+		end
+	end
+	--AJM:Print('returning', isMember)
 	return isMember
 end
 
@@ -589,47 +612,41 @@ local function IsCharacterTheMaster( characterName )
 end
 
 -- Set the master for AJM character; the master character must be online.
-local function SetMaster( value )
+local function SetMaster( master )
 	-- Make sure a valid string value is supplied.
-	if (value ~= nil) and (value:trim() ~= "") then
-		-- The name must be capitalised.
-		-- TODO: is it necessary to capitalise?
-		local master = JambaUtilities:Capitalise( value )
+	if (master ~= nil) and (master:trim() ~= "") then
+		-- The name must be capitalised i still like this or though its not needed.
+		--local character = JambaUtilities:Capitalise( master )
+		local character = JambaUtilities:AddRealmToNameIfMissing( master )
 		-- Only allow characters in the team list to be the master.
-		if IsCharacterInTeam( master ) == true then
+		if IsCharacterInTeam( character ) == true then
 			-- Set the master.
-			AJM.db.master = master
+			AJM.db.master = character
 			-- Refresh the settings.
 			AJM:SettingsRefresh()			
 			-- Send a message to any listeners that the master has changed.
-			AJM:SendMessage( AJM.MESSAGE_TEAM_MASTER_CHANGED, master )				
+			AJM:SendMessage( AJM.MESSAGE_TEAM_MASTER_CHANGED, character )
 		else
 			-- Character not in team.  Tell the team.
-			AJM:JambaSendMessageToTeam( 
-				AJM.characterName, 
-				L["A is not in my team list.  I can not set them to be my master."]( master ),
-				false
-			)
+			AJM:JambaSendMessageToTeam( AJM.characterName, L["A is not in my team list.  I can not set them to be my master."]( character ), false )
 		end
 	end
 end
 
 -- Add a member to the member list.
-local function AddMember( value )
+local function AddMember( characterName )
 	-- Wow names are at least two characters.
-	if value ~= nil and value:trim() ~= "" and value:len() > 1 then	
-		-- Capitalise the name.
-		local characterName = JambaUtilities:Capitalise( value )
-		-- Checks for realm and removes -realm if added
-		local characterName = JambaUtilities:RemoveRealmToNameIfAdded( characterName )
+	if characterName ~= nil and characterName:trim() ~= "" and characterName:len() > 1 then
 		-- If the character is not already on the list...
-		if AJM.db.teamList[characterName] == nil then
+		--local character = JambaUtilities:Capitalise( charactername )
+		local character = JambaUtilities:AddRealmToNameIfMissing( characterName )
+			if AJM.db.teamList[character] == nil then
 			-- Get the maximum order number.
 			local maxOrder = GetTeamListMaximumOrder()
 			-- Yes, add to the member list.
-			AJM.db.teamList[characterName] = maxOrder + 1
+			AJM.db.teamList[character] = maxOrder + 1
 			-- Send a message to any listeners that AJM character has been added.
-			AJM:SendMessage( AJM.MESSAGE_TEAM_CHARACTER_ADDED, characterName )						
+			AJM:SendMessage( AJM.MESSAGE_TEAM_CHARACTER_ADDED, character )
 			-- Refresh the settings.
 			AJM:SettingsRefresh()			
 		end
@@ -647,9 +664,10 @@ end
 function AJM:AddPartyMembers()
 	local numberPartyMembers = GetNumSubgroupMembers()
 	for iteratePartyMembers = numberPartyMembers, 1, -1 do
-		local partyMemberName = UnitName( "party"..iteratePartyMembers )
-		if IsCharacterInTeam( partyMemberName ) == false then
-			AddMember( partyMemberName )
+		local partyMemberName, partyMemberRealm = UnitName( "party"..iteratePartyMembers )
+		local character = JambaUtilities:AddRealmToNameIfNotNil( partyMemberName, partyMemberRealm )
+		if IsCharacterInTeam( character ) == false then
+			AddMember( character )
 		end
 	end
 end
@@ -733,31 +751,26 @@ local function ConfirmThereIsAMaster()
 end
 
 -- Remove a member from the member list.
-local function RemoveMember( value )
-	-- Wow names are at least two characters.
-	if value ~= nil and value:trim() ~= "" and value:len() > 1 then
-		-- Capitalise the name.
-		local characterName = JambaUtilities:Capitalise( value )
-		-- Is character in team?
-		if IsCharacterInTeam( characterName ) == true then
-			-- Remove character from list.
-			local characterPosition = AJM.db.teamList[characterName]
-			AJM.db.teamList[characterName] = nil
-			-- If any character had an order greater than this character's order, then shift their order down by one.
-			for checkCharacterName, checkCharacterPosition in pairs( AJM.db.teamList ) do	
-				if checkCharacterPosition > characterPosition then
-					AJM.db.teamList[checkCharacterName] = checkCharacterPosition - 1
-				end
+local function RemoveMember( characterName )
+	-- Is character in team?
+	if IsCharacterInTeam( characterName ) == true then
+		-- Remove character from list.
+		local characterPosition = AJM.db.teamList[characterName]
+		AJM.db.teamList[characterName] = nil
+		-- If any character had an order greater than this character's order, then shift their order down by one.
+		for checkCharacterName, checkCharacterPosition in pairs( AJM.db.teamList ) do
+			if checkCharacterPosition > characterPosition then
+				AJM.db.teamList[checkCharacterName] = checkCharacterPosition - 1
 			end
-			-- Send a message to any listeners that this character has been removed.
-			AJM:SendMessage( AJM.MESSAGE_TEAM_CHARACTER_REMOVED, characterName )	
-			-- Make sure AJM character is a member.  
-			ConfirmCharacterIsInTeam()
-			-- Make sure there is a master, if none, set this character.
-			ConfirmThereIsAMaster()
-			-- Refresh the settings.
-			AJM:SettingsRefresh()				
 		end
+		-- Send a message to any listeners that this character has been removed.
+		AJM:SendMessage( AJM.MESSAGE_TEAM_CHARACTER_REMOVED, characterName )
+		-- Make sure AJM character is a member.
+		ConfirmCharacterIsInTeam()
+		-- Make sure there is a master, if none, set this character.
+		ConfirmThereIsAMaster()
+		-- Refresh the settings.
+		AJM:SettingsRefresh()
 	end
 end
 
@@ -772,15 +785,22 @@ end
 -- Remove member from the command line.
 function AJM:RemoveMemberCommand( info, parameters )
 	local characterName = parameters
-	-- Remove the character.
-	RemoveMember( characterName )
+	-- Wow names are at least two characters.
+	if characterName ~= nil and characterName:trim() ~= "" and characterName:len() > 1 then
+		-- Remove the character.
+		RemoveMember( characterName )
+	end
 end
 
--- Remove all members from the team list via command line.
-function AJM:RemoveAllMembersFromTeam( info, parameters )
+local function RemoveAllMembersFromTeam()
 	for characterName, characterPosition in pairs( AJM.db.teamList ) do
 		RemoveMember( characterName )
 	end
+end
+
+-- Remove all members from the team list via command line.
+function AJM:DoRemoveAllMembersFromTeam( info, parameters )
+	RemoveAllMembersFromTeam()
 end
 
 function AJM:CommandIAmMaster( info, parameters )
@@ -795,7 +815,7 @@ end
 
 function AJM:CommandSetMaster( info, parameters )
 	local target, tag = strsplit( " ", parameters )
-	target = JambaUtilities:Capitalise( target )
+	--target = JambaUtilities:Capitalise( target )
 	if tag ~= nil and tag:trim() ~= "" then 
 		AJM:JambaSendCommandToTeam( AJM.COMMAND_SET_MASTER, target, tag )
 	else
@@ -826,7 +846,9 @@ local function SetCharacterOnlineStatus( characterName, isOnline )
 	if JambaPrivate.Communications.AssumeTeamAlwaysOnline() == true then
 		isOnline = true
 	end
-	AJM.characterOnline[characterName] = isOnline
+	local character =  JambaUtilities:AddRealmToNameIfMissing( characterName )
+	--AJM:Print('setting', character, 'to be online')
+	AJM.characterOnline[character] = isOnline
 	AJM:SettingsTeamListScrollRefresh()
 end
 
@@ -839,6 +861,10 @@ local function SetTeamStatusToOffline()
 		SetCharacterOnlineStatus( characterName, false )
 	end
 end
+
+-------------------------------------------------------------------------------------------------------------
+-- Character team list ordering.
+-------------------------------------------------------------------------------------------------------------
 
 local function SortTeamListOrdered( characterA, characterB )
 	local positionA = GetPositionForCharacterName( characterA )
@@ -882,10 +908,10 @@ function AJM.DoTeamPartyInvite()
 	InviteUnit( AJM.inviteList[AJM.currentInviteCount] )
 	AJM.currentInviteCount = AJM.currentInviteCount + 1
 	if AJM.currentInviteCount < AJM.inviteCount then
-			if GetTeamListMaximumOrder() > 5 and AJM.db.inviteConvertToRaid == true then
-			ConvertToRaid()
-			end
-		AJM:ScheduleTimer( "DoTeamPartyInvite", 0.5 )	
+		if GetTeamListMaximumOrder() > 5 and AJM.db.inviteConvertToRaid == true then
+		ConvertToRaid()
+		end
+		AJM:ScheduleTimer( "DoTeamPartyInvite", 0.5 )
 	else
 		-- Process group checks.
 		AJM:PARTY_LEADER_CHANGED( "PARTY_LEADER_CHANGED" )
@@ -915,7 +941,9 @@ local function SetPartyLoot( desiredLootOption )
 				end
 				-- If partyMaster between 1 and 4 then that player (party1 .. party4) is the master looter.
 				if partyMaster > 0 then
-					if UnitName( "party"..partyMaster ) ~= GetMasterName() then
+					local checkName, checkRealm = UnitName( "party"..partyMaster )
+					local character = JambaUtilities:AddRealmToNameIfNotNil( checkName, checkName )
+					if character ~= GetMasterName() then
 						-- Then, yes, can change loot method.
 						canChangeLootMethod = true
 					end
@@ -939,10 +967,11 @@ function AJM:PLAYER_FOCUS_CHANGED()
 	if AJM.db.focusChangeSetMaster == true then
 		-- Get the name of the focused unit.
 		local targetName, targetRealm = UnitName( "focus" )
+		local name = JambaUtilities:AddRealmToNameIfNotNil( targetName, targetRealm )
 		-- Attempt to set this target as the master if the target is in the team.
-		if IsCharacterInTeam( targetName ) == true then
-			if (targetName ~= nil) and (targetName:trim() ~= "") then
-				SetMaster( targetName )
+		if IsCharacterInTeam( name ) == true then
+			if (name ~= nil) and (name:trim() ~= "") then
+				SetMaster( name )
 			end
 		end
 	end
@@ -956,13 +985,14 @@ function AJM:PARTY_LEADER_CHANGED( event, ... )
 			if AJM.db.lootToGroupIfStrangerPresent == true then
 				local numberPartyMembers = GetNumSubgroupMembers()
 				for iteratePartyMembers = numberPartyMembers, 1, -1 do
-					local partyMemberName = UnitName( "party"..iteratePartyMembers )
-					if IsCharacterInTeam( partyMemberName ) == false then
+					local partyMemberName, partyMemberRealm = UnitName( "party"..iteratePartyMembers )
+					local character = JambaUtilities:AddRealmToNameIfNotNil( partyMemberName, partyMemberRealm )
+					if IsCharacterInTeam( character ) == false then
 						if AJM.db.lootToGroupFriendsAreNotStrangers == true then
 							local isAFriend = false
 							for friendIndex = 1, GetNumFriends() do
 								local friendName = GetFriendInfo( friendIndex )
-								if partyMemberName == friendName then
+								if character == friendName then
 									isAFriend = true
 								end
 							end
@@ -972,11 +1002,11 @@ function AJM:PARTY_LEADER_CHANGED( event, ... )
 								for toonIndex = 1, BNGetNumFriendToons( bnIndex ) do
 								local _, friendName = BNGetFriendToonInfo( bnIndex, toonIndex );
 									friendName = friendName:match("(.+)%-.+") or friendName
-									if partyMemberName == friendName then
+									if character == friendName then
 										isAFriend = true
 									end
 								end
-							end
+							end							
 							if isAFriend == false then
 								haveStranger = true
 							end
@@ -1001,14 +1031,14 @@ function AJM:PARTY_LEADER_CHANGED( event, ... )
 			end
 		end
 	end
-	AJM:CheckSlavesOptOutOfLoot()
+	AJM:CheckMinionsOptOutOfLoot()
 end
 
 function AJM:GROUP_ROSTER_UPDATE( event, ... )
-	AJM:CheckSlavesOptOutOfLoot()
+	AJM:CheckMinionsOptOutOfLoot()
 end
 
-function AJM:CheckSlavesOptOutOfLoot()
+function AJM:CheckMinionsOptOutOfLoot()
 	-- Set opt out of loot rolls?
 	if AJM.db.lootSlavesOptOutOfLoot == true then
 		-- Only if not the master.
@@ -1034,10 +1064,11 @@ function AJM:PARTY_INVITE_REQUEST( event, inviter, ... )
 	-- Is character not in a group?
 	if not IsInGroup( "player" ) then	
 		-- Accept an invite from members?
-		if AJM.db.inviteAcceptTeam == true then
+		if AJM.db.inviteAcceptTeam == true then 
 			-- If inviter found in team list, allow the invite to be accepted.
+			inviter = inviter:match("(.+)%-.+") or inviter
 			if IsCharacterInTeam( inviter ) then
-				acceptInvite = true
+			acceptInvite = true
 			end
 		end			
 		-- Accept an invite from friends?
@@ -1066,8 +1097,8 @@ function AJM:PARTY_INVITE_REQUEST( event, inviter, ... )
 					end
 				end
 			end	
-		end
-		-- Accept an invite from guild members?
+		end					
+		-- Accept and invite from guild members?
 		if AJM.db.inviteAcceptGuild == true then
 			if UnitIsInMyGuild( inviter ) then
 				acceptInvite = true
@@ -1104,10 +1135,9 @@ function AJM:PARTY_INVITE_REQUEST( event, inviter, ... )
 				-- flag is only set to stop the dialog from declining in its OnHide event).
 				dialog.inviteAccepted = 1
 				break
-			end	
+			end
 		end
 		StaticPopup_Hide( "PARTY_INVITE" )
-		--Ebony Sometimes invite is from XREALM even though Your on the same realm and have joined the party. This should hide the Popup.
 		StaticPopup_Hide( "PARTY_INVITE_XREALM" )
 	end	
 end
@@ -1123,10 +1153,10 @@ local function LeaveTheParty()
 end
 
 function AJM:OnMasterChange( message, characterName )
-	local playerName = UnitName( "player" )
+	local playerName = AJM.characterName
 	if AJM.db.masterChangePromoteLeader == true then
 		if IsInGroup( "player" ) and UnitIsGroupLeader( "player" ) == true and GetMasterName() ~= playerName then
-			PromoteToLeader( GetMasterName() )
+			PromoteToLeader( Ambiguate( GetMasterName(), "all" ) )
 		end
 	end
 	if AJM.db.masterChangeClickToMove == true then
@@ -1134,33 +1164,6 @@ function AJM:OnMasterChange( message, characterName )
 			ConsoleExec("Autointeract 0")
 		else
 			ConsoleExec("Autointeract 1")
-		end
-	end
-end
-
--------------------------------------------------------------------------------------------------------------
--- NPCS.
--------------------------------------------------------------------------------------------------------------
-
-local function IsCharacterTargetAnNpc()	
---AJM:Print( "UnitIsPlayer (NPC): ", UnitIsPlayer("npc") )
-	-- Is the character targeting something?  Try and get the target's GUID.
-	local guid = UnitGUID( "npc" )
-	if guid == nil then
-		-- No target, so target is not an npc.
---AJM:Print( "Target (NPC): None" )		
-		return false
-	else
-		-- Yes, targeting a valid character, what is it?
-		local guidRepresents = JambaUtilities:ParseGUID( guid )
-		-- Is this character an NPC?
-		if guidRepresents == JambaUtilities.GUID_REPRESENTS_NPC then
---AJM:Print( "Target (NPC): NPC" )			
-			return true
-		else
-			-- Yes, a player, return false.
---AJM:Print( "Target (NPC): Player" )			
-			return false
 		end
 	end
 end
@@ -1194,7 +1197,30 @@ function AJM:OnInitialize()
 	JambaTeamSecureButtonDisband:SetAttribute( "type", "macro" )
 	JambaTeamSecureButtonDisband:SetAttribute( "macrotext", "/jamba-team disband" )
 	JambaTeamSecureButtonDisband:Hide()
-	
+	-- Update teamList if necessary to include realm names.
+	local updatedTeamList = {}
+	--Ebony Using GetRealmName() shows realm name with a space most of the api does not like spaces. so pulling it from the Players full name.
+	local k = GetRealmName()
+	local realmName = k:gsub( "%s+", "")
+	for characterName, position in pairs( AJM.db.teamList ) do
+		--AJM:Print( 'Iterating:', characterName, position )
+		local updateMatchStart = characterName:find( "-" )
+		if not updateMatchStart then
+			updatedTeamList[characterName.."-"..realmName] = position
+		else
+			if characterName then
+				updatedTeamList[characterName] = position
+			end
+		end
+	end
+	AJM.db.teamList = JambaUtilities:CopyTable( updatedTeamList )
+--	for characterName, position in pairs( AJM.db.teamList ) do
+--		AJM:Print( 'Iterating after:', characterName, position )
+--	end
+	local updateMatchStart = AJM.db.master:find( "-" )
+	if not updateMatchStart then
+		AJM.db.master = AJM.db.master.."-"..realmName
+	end
 end
 
 -- Called when the addon is enabled.
@@ -1256,7 +1282,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.partyLootControlCheckBoxSetMasterLooter:SetValue( AJM.db.lootSetMasterLooter )
 	AJM.settingsControl.partyLootControlCheckBoxStrangerToGroup:SetValue( AJM.db.lootToGroupIfStrangerPresent )
 	AJM.settingsControl.partyLootControlCheckBoxFriendsNotStrangers:SetValue( AJM.db.lootToGroupFriendsAreNotStrangers )
-	AJM.settingsControl.partyLootControlCheckBoxSetOptOutOfLoot:SetValue( AJM.db.lootSlavesOptOutOfLoot )		
+	AJM.settingsControl.partyLootControlCheckBoxSetOptOutOfLoot:SetValue( AJM.db.lootSlavesOptOutOfLoot )
 	-- Ensure correct state.
 	AJM.settingsControl.partyLootControlCheckBoxSetFFA:SetDisabled( not AJM.db.lootSetAutomatically )
 	AJM.settingsControl.partyLootControlCheckBoxSetMasterLooter:SetDisabled( not AJM.db.lootSetAutomatically )
@@ -1265,7 +1291,7 @@ function AJM:SettingsRefresh()
 	-- Update the settings team list.
 	AJM:SettingsTeamListScrollRefresh()
 	-- Check the opt out of loot settings.
-	AJM:CheckSlavesOptOutOfLoot()
+	AJM:CheckMinionsOptOutOfLoot()
 end
 
 -- Settings received.
@@ -1277,7 +1303,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.masterChangePromoteLeader = settings.masterChangePromoteLeader 
 		AJM.db.inviteAcceptTeam = settings.inviteAcceptTeam 
 		AJM.db.inviteAcceptFriends = settings.inviteAcceptFriends 
-		AJM.db.inviteAcceptBNFriends = settings.inviteBNAcceptFriends 
+		AJM.db.inviteAcceptBNFriends = settings.inviteBNAcceptFriends
 		AJM.db.inviteAcceptGuild = settings.inviteAcceptGuild 
 		AJM.db.inviteDeclineStrangers = settings.inviteDeclineStrangers
 		AJM.db.inviteConvertToRaid = settings.inviteConvertToRaid
@@ -1285,6 +1311,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.lootSetFreeForAll = settings.lootSetFreeForAll 
 		AJM.db.lootSetMasterLooter = settings.lootSetMasterLooter 
 		AJM.db.lootSlavesOptOutOfLoot = settings.lootSlavesOptOutOfLoot
+		AJM.db.lootToGroupIfStrangerPresent = settings.lootToGroupIfStrangerPresent
+		AJM.db.lootToGroupFriendsAreNotStrangers = settings.lootToGroupFriendsAreNotStrangers
 		AJM.db.masterChangeClickToMove = settings.masterChangeClickToMove
 		AJM.db.master = settings.master
 		SetMaster( settings.master )
@@ -1292,6 +1320,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
+		-- Tell the team?
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 
@@ -1325,7 +1355,7 @@ function AJM:SettingsTeamListScrollRefresh()
 				displayCharacterName = characterName.." "..L["(Offline)"]
 			end
 			local isMaster = false
-			local characterType = L["Slave"]
+			local characterType = L["Minion"]
 			if IsCharacterTheMaster( characterName ) == true then
 				characterType = L["Master"]
 				isMaster = true
@@ -1404,11 +1434,9 @@ function AJM:SettingsRemoveClick( event )
 	StaticPopup_Show( "JAMBATEAM_CONFIRM_REMOVE_CHARACTER", characterName )
 end
 
--- ebony
 function AJM.SettingsAddPartyClick( event )
 	AJM:AddPartyMembers()
 end
-
 function AJM:SettingsInviteClick( event )
 	AJM:InviteTeamToParty()
 end
@@ -1452,7 +1480,6 @@ function AJM:SettingsAcceptInviteBNFriendsToggle( event, checked )
 	AJM.db.inviteAcceptBNFriends = checked
 	AJM:SettingsRefresh()
 end
-
 function AJM:SettingsAcceptInviteGuildToggle( event, checked )
 	AJM.db.inviteAcceptGuild = checked
 	AJM:SettingsRefresh()
@@ -1467,7 +1494,6 @@ function AJM:SettingsinviteConvertToRaidToggle( event, checked )
 	AJM.db.inviteConvertToRaid = checked
 	AJM:SettingsRefresh()
 end
-
 function AJM:SettingsSetLootMethodToggle( event, checked )
 	AJM.db.lootSetAutomatically = checked
 	AJM:SettingsRefresh()
@@ -1495,7 +1521,7 @@ function AJM:SettingsSetFriendsNotStrangers( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsSetSlavesOptOutToggle( event, checked )
+function AJM:SettingsSetMinionsOptOutToggle( event, checked )
 	AJM.db.lootSlavesOptOutOfLoot = checked
 	AJM:SettingsRefresh()
 end
@@ -1556,7 +1582,6 @@ JambaPrivate.Team.GetCharacterOnlineStatus = GetCharacterOnlineStatus
 JambaPrivate.Team.SetCharacterOnlineStatus = SetCharacterOnlineStatus
 JambaPrivate.Team.GetCharacterNameAtOrderPosition = GetCharacterNameAtOrderPosition
 JambaPrivate.Team.GetTeamListMaximumOrder = GetTeamListMaximumOrder
-JambaPrivate.Team.IsCharacterTargetAnNpc = IsCharacterTargetAnNpc
 JambaPrivate.Team.RemoveAllMembersFromTeam = RemoveAllMembersFromTeam
 
 -- Functions available for other addons.
@@ -1565,7 +1590,6 @@ JambaApi.MESSAGE_TEAM_ORDER_CHANGED = AJM.MESSAGE_TEAM_ORDER_CHANGED
 JambaApi.MESSAGE_TEAM_CHARACTER_ADDED = AJM.MESSAGE_TEAM_CHARACTER_ADDED
 JambaApi.MESSAGE_TEAM_CHARACTER_REMOVED = AJM.MESSAGE_TEAM_CHARACTER_REMOVED
 JambaApi.IsCharacterInTeam = IsCharacterInTeam
-JambaApi.IsCharacterTargetAnNpc = IsCharacterTargetAnNpc
 JambaApi.IsCharacterTheMaster = IsCharacterTheMaster
 JambaApi.GetMasterName = GetMasterName
 JambaApi.TeamList = TeamList

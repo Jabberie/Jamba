@@ -1,0 +1,18 @@
+WIP By Ebony! changeing 3.x to 4.x Using the old CRZ test version that did not work.
+
+**Jamba-Core
+Done
+*JambaCommunications* 
+updated to 4.0 With changes from 3.x 100% untested Needs testing in game.
+
+*JambaTeam
+Updated To 4.0 With changes from 3.0 100% untested needs to testing in game.
+
+*JambaTeam-Locale-enUS
+Updated test from 3.13 New buttions i added.
+
+*JambaUtilities
+Updated
+
+.pkgmeta
+Updated.Updated Name to Jamba4

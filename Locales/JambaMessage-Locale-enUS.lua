@@ -13,6 +13,9 @@ L["Push the message settings to all characters in the team."] = true
 L["Settings received from A."] = function( characterName )
 	return string.format( "Settings received from %s.", characterName )
 end
+--L["Settings received from A."] = function( characterName )
+--	return "Settings received from "..characterName.."."
+--end
 L["Default Chat Window"] = true
 L["Specific Chat Window"] = true
 L["Whisper"] = true

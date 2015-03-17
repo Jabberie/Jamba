@@ -48,6 +48,7 @@ L["Hide the display team panel."] = true
 L["Show Team Display"] = true
 L["Show the display team panel."] = true
 L["Hide Team List In Combat"] = true
+L["Enable Clique Support - **reload UI to take effect**"] = true
 L["Transparency"] = true
 L["Border Colour"] = true
 L["Background Colour"] = true
