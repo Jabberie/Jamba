@@ -565,7 +565,7 @@ local function GetTeamListMaximumOrder()
 	return largestPosition
 end
 
---[[
+--[[ TODO REMOVE ME
 -- Return true if the character specified is in the team.
 local function IsCharacterInTeam( characterName )
 	local isMember = false
@@ -584,9 +584,12 @@ local function IsCharacterInTeam( characterName )
 	end
 	if not isMember then
 		for fullCharacterName, position in pairs( AJM.db.teamList ) do
-			local checkCharacterName = select( 3, fullCharacterName:find( "^(%w+)-(%w+)$" ) )
+			local matchDash = fullCharacterName:find( "-" )
+			if matchDash then
+				fullName = gsub(fullCharacterName, "%-[^|]+", "")
+			end
 			--AJM:Print('checking', checkCharacterName, 'vs', characterName)
-			if checkCharacterName == characterName then
+			if fullName == characterName then
 				--AJM:Print('match found')
 				isMember = true
 				break
@@ -596,6 +599,7 @@ local function IsCharacterInTeam( characterName )
 	--AJM:Print('returning', isMember)
 	return isMember
 end
+
 
 -- Get the master for this character.
 local function GetMasterName()
@@ -1066,7 +1070,6 @@ function AJM:PARTY_INVITE_REQUEST( event, inviter, ... )
 		-- Accept an invite from members?
 		if AJM.db.inviteAcceptTeam == true then 
 			-- If inviter found in team list, allow the invite to be accepted.
-			inviter = inviter:match("(.+)%-.+") or inviter
 			if IsCharacterInTeam( inviter ) then
 			acceptInvite = true
 			end
