@@ -234,21 +234,43 @@ end
 
 
 -- EbonyTest
--- hide offline player spam Not reall the best way but it works, Maybe adding tick box's to set members offline?
+-- hide offline player spam Not really the best way but it works, Maybe adding tick box's to set members offline? This should now work with elvUI?
+
+local function SystemSpamFilter(frame, event, message)
+	if( event == "CHAT_MSG_SYSTEM") then
+		if message:match(string.format(ERR_CHAT_PLAYER_NOT_FOUND_S, "(.+)")) then
+			return true
+		end
+	end		
+    return false
+end
+ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", SystemSpamFilter)
+
+
+--Ebony old way. was this is a better way? it did not work with EvlUI.
+--[[
 function AJM:ChatFrame_MessageEventHandler(frame, event, msg, ...)
 		--if event == "CHAT_MSG_SYSTEM" then
 		if( event == "CHAT_MSG_SYSTEM") then	
-			local match = strmatch(msg, format(ERR_CHAT_PLAYER_NOT_FOUND_S, "(.+)"))
-				if (not match) then
+			--local match = strmatch(msg, format(ERR_CHAT_PLAYER_NOT_FOUND_S, "(.+)"))
+				--if match then
+					if msg:match(string.format(ERR_CHAT_PLAYER_NOT_FOUND_S, "(.+)")) then
+					return true
+				--if (not match) then
 				--IF not match then Go about whatever you wonted to do, If match hide Msg from player.
-				AJM:DebugMessage( "Not matched!" )
-				AJM.hooks.ChatFrame_MessageEventHandler(frame, event, msg, ...)
+				--self:DebugMessage( "Not matched!" )
+				--self.hooks.ChatFrame_MessageEventHandler(frame, event, ...)
+				--AJM.hooks["ChatFrame_MessageEventHandler"]( self, event, ... )
 			end
 		else
-		AJM.hooks.ChatFrame_MessageEventHandler(frame, event, msg, ...);
+		self.hooks.ChatFrame_MessageEventHandler(frame, event, ...);
 		end
 
 end
+--]]
+--ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", SystemSpamFilter)
+--AJM.ChatFrame_AddMessageEventVanasKoS("CHAT_MSG_SYSTEM", AJM:ChatFrame_MessageEventHandler)
+
 
 -- Receive a command from another character.
 function AJM:CommandReceived( prefix, message, distribution, sender )
@@ -355,8 +377,8 @@ function AJM:OnInitialize()
 end
 	
 function AJM:OnEnable()
-	local hookSecure = true
-	AJM:RawHook( "ChatFrame_MessageEventHandler", hookSecure )
+	--local hookSecure = true
+	AJM:RawHook( "ChatFrame_MessageEventHandler", true )
 	if AJM.db.boostCommunication == true then
 		AJM:BoostCommunication()
 		-- Repeat every 5 minutes.
