@@ -378,7 +378,7 @@ end
 	
 function AJM:OnEnable()
 	--local hookSecure = true
-	AJM:RawHook( "ChatFrame_MessageEventHandler", true )
+	--AJM:RawHook( "ChatFrame_MessageEventHandler", true )
 	if AJM.db.boostCommunication == true then
 		AJM:BoostCommunication()
 		-- Repeat every 5 minutes.
