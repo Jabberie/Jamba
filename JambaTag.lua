@@ -221,6 +221,7 @@ end
 
 -- Settings received.
 function AJM:JambaOnSettingsReceived( characterName, settings )	
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
 		AJM.db.tagList = JambaUtilities:CopyTable( settings.tagList )
@@ -343,6 +344,7 @@ local function IsTagASystemTag( tag )
 end
 
 local function GetTagListForCharacter( characterName )
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	if AJM.db.tagList[characterName] == nil then
 		AJM.db.tagList[characterName] = {}
 	end
@@ -582,6 +584,7 @@ local function CheckSystemTagsAreCorrect()
 end
 
 local function DoesCharacterHaveTag( characterName, tag )
+	--characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterTagList = GetTagListForCharacter( characterName )
 	return DoesTagListHaveTag( characterTagList, tag )
 end
