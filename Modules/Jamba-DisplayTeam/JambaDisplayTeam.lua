@@ -1873,6 +1873,7 @@ function AJM:ProcessUpdateFollowStatusMessage( characterName, isFollowing )
 	AJM:UpdateFollowStatus( characterName, isFollowing, false )
 end
 
+--TODO: Ebony,-- See if this code could be cleaned up a little as when in combat takes a few mins after to catch up. Sending add-on msg with combat?
 function AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
 	if CanDisplayTeamList() == false then
 		return
@@ -1881,9 +1882,6 @@ function AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
 		return
 	end
 	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
-	
-	
-	
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
