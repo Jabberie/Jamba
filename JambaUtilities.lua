@@ -62,7 +62,7 @@ end
 function JambaUtilities:AddRealmToNameIfMissing( name )
 	Name = name:gsub("^%l", string.upper )
 	fullName = Name:gsub( "%s+", "")
-	--local matchDash = Fullname:find( "-" )
+	local matchDash = fullName:find( "-" )
 	--if not matchDash then
 	if not string.find(fullName, "-") then
 		local k = GetRealmName()
@@ -71,6 +71,8 @@ function JambaUtilities:AddRealmToNameIfMissing( name )
 		end
 	return fullName
 end
+
+
 
 --if not string.find(name, "-") then
 --	local _, realm = UnitFullName("player")

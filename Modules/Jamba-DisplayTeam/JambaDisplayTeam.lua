@@ -1880,7 +1880,10 @@ function AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
 	if AJM.db.showFollowStatus == false then
 		return
 	end
-	--characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
+	
+	
+	
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
