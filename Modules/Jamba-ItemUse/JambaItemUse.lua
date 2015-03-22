@@ -834,8 +834,6 @@ end
 
 -- Settings received.
 function AJM:JambaOnSettingsReceived( characterName, settings )	
-	--Checks character is not the the character that send the settings. Now checks the character has a realm on there name to match Jamba team list.
-	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
 		AJM.db.showItemUse = settings.showItemUse

@@ -312,6 +312,7 @@ end
 
 -- Settings are received, pass them to the relevant module.
 local function OnSettingsReceived( sender, moduleName, settings )
+	sender = JambaUtilities:AddRealmToNameIfMissing( sender )
 	-- Get the address of the module.
 	local moduleAddress = AJM.registeredModulesByName[moduleName]	
 	-- Pass the module its settings.
@@ -355,6 +356,7 @@ end
 
 -- A command is received, pass it to the relevant module.
 local function OnCommandReceived( sender, moduleName, commandName, ... )
+	sender = JambaUtilities:AddRealmToNameIfMissing( sender )
 	-- Get the address of the module.
 	local moduleAddress = AJM.registeredModulesByName[moduleName]
 	-- Pass the module its settings.
@@ -719,6 +721,8 @@ end
 
 -- Core settings received.
 function AJM:JambaOnSettingsReceived( characterName, settings )
+	--Checks character is not the the character that send the settings. Now checks the character has a realm on there name to match Jamba team list.
+	--characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
         -- TODO: What is this minimap icon?
