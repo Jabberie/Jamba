@@ -382,6 +382,7 @@ function AJM:RefreshTeamListControlsHide()
 		return
 	end
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do	
+		characterName = JambaUtilities:AddRealmToNameIfMissing ( characterName ) 
 		-- Hide their status bar.
 		AJM:HideJambaTeamStatusBar( characterName )		
 	end
@@ -396,6 +397,7 @@ function AJM:RefreshTeamListControlsShow()
 	-- Iterate all the team members.
 	AJM.totalMembersDisplayed = 0
 	for index, characterName in JambaApi.TeamListOrdered() do
+		characterName = JambaUtilities:AddRealmToNameIfMissing ( characterName )
 		-- Is the team member online?
 		if JambaApi.GetCharacterOnlineStatus( characterName ) == true then
 			-- Yes, the team member is online, draw their status bars.
@@ -1813,7 +1815,7 @@ function AJM:UpdateBagInformation( characterName, slotsFree, totalSlots )
 	if AJM.db.showBagInformation == false then
 		return
 	end
-	--characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -1881,6 +1883,7 @@ function AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
 	if AJM.db.showFollowStatus == false then
 		return
 	end
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -1913,7 +1916,7 @@ function AJM:SettingsUpdateFollowText( characterName, characterLevel )
 	if AJM.db.showFollowStatus == false then
 		return
 	end
-	--characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -1982,7 +1985,7 @@ function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxE
 	if AJM.db.showExperienceStatus == false then
 		return
 	end
-	--characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2064,7 +2067,7 @@ function AJM:UpdateReputationStatus( characterName, reputationName, reputationSt
 	if AJM.db.showReputationStatus == false then
 		return
 	end
-	--characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2336,10 +2339,10 @@ function AJM:OnEnable()
 	AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_ONLINE, "OnCharactersChanged" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_OFFLINE, "OnCharactersChanged" )
 	AJM:SecureHook( "SetWatchedFactionIndex" )
-	AJM:ScheduleTimer( "RefreshTeamListControls", 5 )
-	AJM:ScheduleTimer( "SendExperienceStatusUpdateCommand", 6 )
-	AJM:ScheduleTimer( "SendReputationStatusUpdateCommand", 6 )
-	AJM:ScheduleTimer( "SendBagInformationUpdateCommand", 6 )
+	AJM:ScheduleTimer( "RefreshTeamListControls", 20 )
+	AJM:ScheduleTimer( "SendExperienceStatusUpdateCommand", 1 )
+	AJM:ScheduleTimer( "SendReputationStatusUpdateCommand", 1 )
+	AJM:ScheduleTimer( "SendBagInformationUpdateCommand", 1 )
 end
 
 -- Called when the addon is disabled.
