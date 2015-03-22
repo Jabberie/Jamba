@@ -2162,7 +2162,7 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
 	if AJM.db.showHealthStatus == false then
 		return
 	end
-	--characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
@@ -2244,7 +2244,7 @@ function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
 		return
 	end
 	local originalChatacterName = characterName
-	--characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
+	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
 		return
