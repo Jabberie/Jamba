@@ -683,8 +683,10 @@ function AJM:AreTeamMembersInCombat()
 		-- Is the team member online?
 		if JambaApi.GetCharacterOnlineStatus( characterName ) == true then
 			-- Yes, is the character in combat?
-			if UnitAffectingCombat( characterName ) then
-				inCombat = true
+			--if UnitAffectingCombat( characterName ) then
+			-- Ebony This API does not like A realmName so better remove it if its from the server we playing on.
+			if UnitAffectingCombat( Ambiguate( characterName, "none" ) ) then
+			inCombat = true
 				break
 			end
 		end
@@ -932,7 +934,6 @@ function AJM:ReceiveCommandFollowTrain( tag )
 		for index, character in JambaApi.TeamListOrdered() do
 			if character == AJM.characterName then
 				if characterInFront ~= nil then
-					
 					--FollowUnit( characterInFront )
 					FollowUnit( Ambiguate( characterInFront, "none" ) )
 				end

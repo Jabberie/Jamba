@@ -1,3 +1,32 @@
+Jamba Version: 4.0-PublicBeta3
+WoW Game Version: 6.1.0
+Release Date: 22/03/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+*Fixed Some Modules that needed a realmname when it got setttings from master on the same realm.
+
+Jamba-Display-Team
+*Fixed a bug with Jamba Follow Looping.
+*fixed Follow Dance YAY! on melee Groups.
+
+Jamba-ItemUse
+*Fixed a bug that the master was not showing as the master. and sending the settings to it self.
+
+Jamba-Communications 
+*Should now support ElvUI/TukUI or other chatmods trying to do the same thing i was. (Player X Not playing)
+
+Jamba-Toon
+*Jamba-Currency No longer Should it list all chars in a The top line.
+
+Jamba-Follow
+*Jamba-Train Follow should now work, and should work crossrelam, BUG report on comments in Curse.
+*ANY TeamMembers In Combat Should now work Again. **Should work crossrelam(untested)**.
+
+Jamba-Sell
+*when selling items using ALT: Toon should again tell master what item is being sold (bug)
+
+------------------
+
 Jamba Version: 4.0-PublicBeta2
 WoW Game Version: 6.1.0
 Release Date: TBA
