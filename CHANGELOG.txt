@@ -7,7 +7,7 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Pu
 
 Jamba-Display-Team
 *Fixed a bug with Jamba Follow Looping.
-*fixed Follow Dance YAY! on melee Groups.
+*fixed Follow Dance on melee groups so its not as bad as it used to be.
 
 Jamba-ItemUse
 *Fixed a bug that the master was not showing as the master. and sending the settings to it self.
