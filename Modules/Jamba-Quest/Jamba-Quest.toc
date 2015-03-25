@@ -10,4 +10,3 @@
 ## LoadOnDemand: 1
 Locales\Locales.xml
 JambaQuest.lua
-Overrides.lua

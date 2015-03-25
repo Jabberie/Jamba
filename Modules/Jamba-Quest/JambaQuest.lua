@@ -175,8 +175,8 @@ function AJM:OnEnable()
     AJM:SecureHook( "DeclineQuest" )
 	AJM:SecureHook( "GetQuestReward" )
 	AJM:SecureHook( "ToggleFrame" )
+	AJM:SecureHook( "ToggleQuestLog" )
 	AJM:SecureHook( WorldMapFrame, "Hide", "QuestLogFrameHide" )
-	--AJM:SecureHook( WorldMapFrame, "Hide", "QuestLogFrameHide" )
 	AJM:SecureHook( "SelectQuestLogEntry" )
 	AJM:SecureHook( "ShowQuestComplete" )
 end
@@ -2127,10 +2127,11 @@ function AJM:CreateJambaQuestLogFrame()
     }        
 end
 
---ebony wip
 function AJM:ToggleFrame( frame )
     --AJM:Print( "in toggle frame", frame )
 	if frame == WorldMapFrame then
+	--if frame == QuestLogFrame then	
+		--ToggleQuestLog = function()
 		if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
             --AJM:Print("check qmfiv:", WorldMapFrame:IsVisible() )
 			--if WorldMapFrame:IsVisible() then -ebs and QuestLogDetailScrollFrame:IsVisible
@@ -2142,6 +2143,19 @@ function AJM:ToggleFrame( frame )
 		end
 	end
 end
+
+-- This sorts out hooking on L or marcioMenu button
+function AJM:ToggleQuestLog()	
+	if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
+    --AJM:Print("check qmfiv:", WorldMapFrame:IsVisible() )
+		if WorldMapFrame:IsVisible() and QuestMapFrame:IsVisible() then
+		AJM:ToggleShowQuestCommandWindow( true )
+		else
+		AJM:ToggleShowQuestCommandWindow( false )
+		end
+	end
+end
+
 
 function AJM:QuestLogFrameHide()
 	if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
