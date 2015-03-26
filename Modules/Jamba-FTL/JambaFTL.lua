@@ -199,7 +199,8 @@ local function createFTLString()
     -- create the string
     local ftlstring = ""
 	for index, characterName in ipairs( activeToons ) do
-        ftlstring = ftlstring .. "["
+        characterName = ( Ambiguate( characterName, "none" ) )
+		ftlstring = ftlstring .. "["
 	    --first if not dontUseLeftRight is set (so its differeniated between l/r)
 	    if (not AJM.db.dontUseLeftRight) then
 	      if useLShift then	         
