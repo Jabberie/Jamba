@@ -161,9 +161,8 @@ local function createFTLString()
     -- create a list of the Toons which should be used
     local activeToons = {}
     for index, characterName in JambaApi.TeamListOrdered() do
-	characterName = ( Ambiguate( characterName, "none" ) )
-    -- check if modifoers for a character exist       	    
-		if AJM.db.CharListWithModifiers[characterName] then
+	    -- check if modifoers for a character exist       	    
+	    if AJM.db.CharListWithModifiers[characterName] then
 	       -- check if useToon is true	        
            if AJM.db.CharListWithModifiers[characterName].useToon then
                -- check if onlyUseOnlineToons is activated and if so, if the toon is online
@@ -200,6 +199,7 @@ local function createFTLString()
     -- create the string
     local ftlstring = ""
 	for index, characterName in ipairs( activeToons ) do
+        characterName = ( Ambiguate( characterName, "none" ) )
 		ftlstring = ftlstring .. "["
 	    --first if not dontUseLeftRight is set (so its differeniated between l/r)
 	    if (not AJM.db.dontUseLeftRight) then
