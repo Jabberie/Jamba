@@ -27,6 +27,7 @@ L["Requests"] = true
 L["Auto Deny Duels"] = true
 L["Auto Deny Guild Invites"] = true
 L["Auto Accept Resurrect Request"] = true
+L["Auto Accept Summon Request"] = true
 L["Send Request Message Area"] = true
 L["Combat"] = true
 L["Health / Mana"] = true
@@ -53,6 +54,9 @@ end
 L["I refused a duel from: X"] = function( challenger )
 	return string.format( "I refused a duel from: %s", challenger )
 end
+L["I Accepted Summon From: X To: Y"] = function( sender, location )
+	return string.format( "I Accepted Summon From: %s To: %s", sender, location )
+end
 L["I do not have enough money to repair all my items."] = true
 L["Repairing cost me: X"] = function( costString )
     return string.format( "Repairing cost me: %s", costString )
@@ -66,10 +70,6 @@ L["Inactive Message"] = true
 L["Inactive"] = true
 -- End special.
 L["Currency"] = true
-L["Justice Points"] = true
-L["JP"] = true
-L["Valor Points"] = true
-L["VP"] = true
 L["Honor Points"] = true
 L["HP"] = true
 L["Conquest Points"] = true
@@ -94,6 +94,14 @@ L["Mogu Rune Of Fate"] = true
 L["MROF"] = true
 L["Timeless Coin"] = true
 L["TC"] = true
+L["Garrison Resources"] = true
+L["GR"] = true
+L["Seal of Tempered Fate"] = true
+L["SoF"] = true
+L["Apexis Crystal"] = true
+L["AC"] = true
+L["Darkmoon Prize Ticket "] = true
+L["DPT"] = true
 L["Bloody Coin"] = true
 L["BC"] = true
 L["Warforged Seal"] = true

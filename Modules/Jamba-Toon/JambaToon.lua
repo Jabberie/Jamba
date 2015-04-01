@@ -38,8 +38,6 @@ AJM.CIllustriousJewelcraftersToken = 361
 AJM.CConquestPoints = 390
 AJM.CTolBaradCommendation = 391
 AJM.CHonorPoints = 392
---AJM.CJusticePoints = 395
---AJM.CValorPoints = 396
 AJM.CIronpawToken = 402
 AJM.CLesserCharmOfGoodFortune = 738
 AJM.CElderCharmOfGoodFortune = 697
@@ -47,6 +45,12 @@ AJM.CMoguRuneOfFate = 752
 AJM.CWarforgedSeal = 776
 AJM.CBloodyCoin = 789
 AJM.CTimelessCoin = 777
+--ebony New WoD Currency
+AJM.CGarrisonResources = 824
+AJM.CTemperedFate = 994
+AJM.CApexisCrystal = 823
+AJM.CDarkmoon = 515
+AJM.C = 824
 AJM.globalCurrencyFramePrefix = "JambaToonCurrencyListFrame"
 
 -- Settings - the values to store and their defaults for the settings database.
@@ -69,6 +73,7 @@ AJM.settings = {
 		warningArea = JambaApi.DefaultWarningArea(),
 		autoAcceptResurrectRequest = true,
 		autoDenyDuels = true,
+		autoAcceptSummonRequest = false,
 		autoDenyGuildInvites = false,
 		requestArea = JambaApi.DefaultMessageArea(),
 		autoRepair = true,
@@ -78,11 +83,10 @@ AJM.settings = {
 		afkMessage = L["I am inactive!"],
 		currGold = true,
 		currGoldInGuildBank = false,
---		currJusticePoints = true,
---		currValorPoints = true,
 		currHonorPoints = true,
 		currConquestPoints = true,
-		currTolBaradCommendation = true,
+		--as there not used much now changed to false ebony
+		currTolBaradCommendation = false,
 		currChampionsSeal = false,
 		currIllustriousJewelcraftersToken = false,
 		currDalaranJewelcraftingToken = false,
@@ -94,6 +98,11 @@ AJM.settings = {
         currWarforgedSeal = false,
         currBloodyCoin = false,
         currTimelessCoin = false,
+		--ebony New WoD Currency
+		currGarrisonResources  = true,
+		currTemperedFate  = false,
+		currApexisCrystal  = false,
+		currDarkmoon = false,
 		currencyFrameAlpha = 1.0,
 		currencyFramePoint = "CENTER",
 		currencyFrameRelativePoint = "CENTER",
@@ -111,7 +120,7 @@ AJM.settings = {
 		currencyBackgroundStyle = L["Blizzard Dialog Background"],
 		currencyScale = 1,
 		currencyNameWidth = 50,
-		currencyPointsWidth = 30,
+		currencyPointsWidth = 40,
 		currencyGoldWidth = 90,
 		currencySpacingWidth = 3,
 		currencyLockWindow = false,
@@ -274,7 +283,16 @@ local function SettingsCreateRequests( top )
 		movingTop, 
 		L["Auto Accept Resurrect Request"],
 		AJM.SettingsToggleAutoAcceptResurrectRequests
-	)	
+	)
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControlRequests.checkBoxAutoAcceptSummonRequest = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControlRequests, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Auto Accept Summon Request"],
+		AJM.SettingsToggleAutoAcceptSummonRequest
+	)
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlRequests.dropdownRequestArea = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControlRequests, 
@@ -330,24 +348,6 @@ local function SettingsCreateCurrency( top )
 		AJM.SettingsToggleCurrencyGoldInGuildBank
 	)	
 	movingTop = movingTop - checkBoxHeight		
---	AJM.settingsControlCurrency.checkBoxCurrencyJusticePoints = JambaHelperSettings:CreateCheckBox(
---		AJM.settingsControlCurrency,
---		headingWidth,
---		left,
---		movingTop,
---		L["Justice Points"]..L[" ("]..L["JP"]..L[")"],
---		AJM.SettingsToggleCurrencyJusticePoints
---	)
---	movingTop = movingTop - checkBoxHeight
---	AJM.settingsControlCurrency.checkBoxCurrencyValorPoints = JambaHelperSettings:CreateCheckBox(
---		AJM.settingsControlCurrency,
---		headingWidth,
---		left,
---		movingTop,
---		L["Valor Points"]..L[" ("]..L["VP"]..L[")"],
---		AJM.SettingsToggleCurrencyValorPoints
---	)
---	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlCurrency.checkBoxCurrencyHonorPoints = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControlCurrency, 
 		headingWidth, 
@@ -472,6 +472,43 @@ local function SettingsCreateCurrency( top )
 		movingTop,
 		L["Timeless Coin"]..L[" ("]..L["TC"]..L[")"],
 		AJM.SettingsToggleCurrencyTimelessCoin
+	)
+	--ebony New WoD Currency
+		movingTop = movingTop - checkBoxHeight
+	AJM.settingsControlCurrency.checkBoxCurrencyGarrisonResources = JambaHelperSettings:CreateCheckBox(
+		AJM.settingsControlCurrency,
+		headingWidth,
+		left,
+		movingTop,
+		L["Garrison Resources"]..L[" ("]..L["GR"]..L[")"],
+		AJM.SettingsToggleCurrencyGarrisonResources
+	)
+		movingTop = movingTop - checkBoxHeight
+		AJM.settingsControlCurrency.checkBoxCurrencyTemperedFate = JambaHelperSettings:CreateCheckBox(
+		AJM.settingsControlCurrency,
+		headingWidth,
+		left,
+		movingTop,
+		L["Seal of Tempered Fate"]..L[" ("]..L["SoF"]..L[")"],
+		AJM.SettingsToggleCurrencyTemperedFate
+	)
+		movingTop = movingTop - checkBoxHeight	
+		AJM.settingsControlCurrency.checkBoxCurrencyApexisCrystal = JambaHelperSettings:CreateCheckBox(
+		AJM.settingsControlCurrency,
+		headingWidth,
+		left,
+		movingTop,
+		L["Apexis Crystal"]..L[" ("]..L["AC"]..L[")"],
+		AJM.SettingsToggleCurrencyApexisCrystal
+	)
+		movingTop = movingTop - checkBoxHeight	
+		AJM.settingsControlCurrency.checkBoxCurrencyDarkmoon = JambaHelperSettings:CreateCheckBox(
+		AJM.settingsControlCurrency,
+		headingWidth,
+		left,
+		movingTop,
+		L["Darkmoon Prize Ticket "]..L[" ("]..L["DPT"]..L[")"],
+		AJM.SettingsToggleCurrencyDarkmoon
 	)
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlCurrency.currencyButtonShowList = JambaHelperSettings:CreateButton( 
@@ -849,6 +886,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlWarnings.dropdownWarningArea:SetValue( AJM.db.warningArea )
 	AJM.settingsControlRequests.checkBoxAutoAcceptResurrectRequest:SetValue( AJM.db.autoAcceptResurrectRequest )
 	AJM.settingsControlRequests.checkBoxAutoDenyDuels:SetValue( AJM.db.autoDenyDuels )
+	AJM.settingsControlRequests.checkBoxAutoAcceptSummonRequest:SetValue( AJM.db.autoAcceptSummonRequest )
 	AJM.settingsControlRequests.checkBoxAutoDenyGuildInvites:SetValue( AJM.db.autoDenyGuildInvites )
 	AJM.settingsControlRequests.dropdownRequestArea:SetValue( AJM.db.requestArea )
 	AJM.settingsControlMerchant.checkBoxAutoRepair:SetValue( AJM.db.autoRepair )
@@ -867,8 +905,6 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCurrency.checkBoxCurrencyGold:SetValue( AJM.db.currGold )
 	AJM.settingsControlCurrency.checkBoxCurrencyGoldInGuildBank:SetValue( AJM.db.currGoldInGuildBank )
 	AJM.settingsControlCurrency.checkBoxCurrencyGoldInGuildBank:SetDisabled( not AJM.db.currGold )
---	AJM.settingsControlCurrency.checkBoxCurrencyJusticePoints:SetValue( AJM.db.currJusticePoints )
---	AJM.settingsControlCurrency.checkBoxCurrencyValorPoints:SetValue( AJM.db.currValorPoints )
 	AJM.settingsControlCurrency.checkBoxCurrencyHonorPoints:SetValue( AJM.db.currHonorPoints )
 	AJM.settingsControlCurrency.checkBoxCurrencyConquestPoints:SetValue( AJM.db.currConquestPoints )
 	AJM.settingsControlCurrency.checkBoxCurrencyTolBaradCommendation:SetValue( AJM.db.currTolBaradCommendation )
@@ -883,6 +919,11 @@ function AJM:SettingsRefresh()
     AJM.settingsControlCurrency.checkBoxCurrencyWarforgedSeal:SetValue( AJM.db.currWarforgedSeal )
     AJM.settingsControlCurrency.checkBoxCurrencyBloodyCoin:SetValue( AJM.db.currBloodyCoin )
     AJM.settingsControlCurrency.checkBoxCurrencyTimelessCoin:SetValue( AJM.db.currTimelessCoin )
+	--ebony New WoD Currency
+	AJM.settingsControlCurrency.checkBoxCurrencyGarrisonResources:SetValue( AJM.db.currGarrisonResources )
+	AJM.settingsControlCurrency.checkBoxCurrencyTemperedFate:SetValue( AJM.db.currTemperedFate )
+	AJM.settingsControlCurrency.checkBoxCurrencyApexisCrystal:SetValue( AJM.db.currApexisCrystal )
+	AJM.settingsControlCurrency.checkBoxCurrencyDarkmoon:SetValue( AJM.db.currDarkmoon )
 	AJM.settingsControlCurrency.checkBoxCurrencyOpenStartUpMaster:SetValue( AJM.db.currOpenStartUpMaster )
 	AJM.settingsControlCurrency.currencyTransparencySlider:SetValue( AJM.db.currencyFrameAlpha )
 	AJM.settingsControlCurrency.currencyScaleSlider:SetValue( AJM.db.currencyScale )
@@ -922,7 +963,10 @@ function AJM:SettingsToggleAutoDenyDuels( event, checked )
 	AJM.db.autoDenyDuels = checked
 	AJM:SettingsRefresh()
 end
-
+function AJM:SettingsToggleAutoAcceptSummonRequest( event, checked )
+	AJM.db.autoAcceptSummonRequest = checked
+	AJM:SettingsRefresh()
+end
 function AJM:SettingsToggleAutoDenyGuildInvites( event, checked )
 	AJM.db.autoDenyGuildInvites = checked
 	AJM:SettingsRefresh()
@@ -1042,16 +1086,6 @@ function AJM:SettingsToggleCurrencyGoldInGuildBank( event, checked )
 	AJM:SettingsRefresh()
 end
 
---function AJM:SettingsToggleCurrencyJusticePoints( event, checked )
---	AJM.db.currJusticePoints = checked
---	AJM:SettingsRefresh()
---end
---
---function AJM:SettingsToggleCurrencyValorPoints( event, checked )
---	AJM.db.currValorPoints = checked
---	AJM:SettingsRefresh()
---end
-
 function AJM:SettingsToggleCurrencyHonorPoints( event, checked )
 	AJM.db.currHonorPoints = checked
 	AJM:SettingsRefresh()
@@ -1122,6 +1156,26 @@ function AJM:SettingsToggleCurrencyTimelessCoin( event, checked )
 	AJM:SettingsRefresh()
 end
 
+--ebony New WoD Currency 
+function AJM:SettingsToggleCurrencyGarrisonResources ( event, checked )
+	AJM.db.currGarrisonResources = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleCurrencyTemperedFate ( event, checked )
+	AJM.db.currTemperedFate = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleCurrencyApexisCrystal ( event, checked )
+	AJM.db.currApexisCrystal = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleCurrencyDarkmoon ( event, checked )
+	AJM.db.currDarkmoon = checked
+	AJM:SettingsRefresh()
+end
 function AJM:SettingsToggleCurrencyOpenStartUpMaster( event, checked )
 	AJM.db.currOpenStartUpMaster = checked
 	AJM:SettingsRefresh()
@@ -1227,6 +1281,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "MERCHANT_SHOW" )
 	AJM:RegisterEvent( "UNIT_MANA" )
 	AJM:RegisterEvent( "RESURRECT_REQUEST" )
+	AJM:RegisterEvent( "CONFIRM_SUMMON")
 	AJM:RegisterEvent( "DUEL_REQUESTED" )
 	AJM:RegisterEvent( "GUILD_INVITE_REQUEST" )
 	AJM:RegisterEvent( "ITEM_PUSH" )
@@ -1267,6 +1322,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.afkMessage = settings.afkMessage		
 		AJM.db.autoAcceptResurrectRequest = settings.autoAcceptResurrectRequest
 		AJM.db.autoDenyDuels = settings.autoDenyDuels
+		--ebonnysum
+		AJM.db.autoAcceptSummonRequest = settings.autoAcceptSummonRequest
 		AJM.db.autoDenyGuildInvites = settings.autoDenyGuildInvites
 		AJM.db.autoRepair = settings.autoRepair
 		AJM.db.autoRepairUseGuildFunds = settings.autoRepairUseGuildFunds
@@ -1275,8 +1332,6 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.merchantArea = settings.merchantArea
 		AJM.db.currGold = settings.currGold
 		AJM.db.currGoldInGuildBank = settings.currGoldInGuildBank
---		AJM.db.currJusticePoints = settings.currJusticePoints
---		AJM.db.currValorPoints = settings.currValorPoints
 		AJM.db.currHonorPoints = settings.currHonorPoints
 		AJM.db.currConquestPoints = settings.currConquestPoints
 		AJM.db.currTolBaradCommendation = settings.currTolBaradCommendation
@@ -1291,6 +1346,11 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
         AJM.db.currWarforgedSeal = settings.currWarforgedSeal
         AJM.db.currBloodyCoin = settings.currBloodyCoin
         AJM.db.currTimelessCoin = settings.currTimelessCoin
+		--ebony New WoD Currency
+		AJM.db.currGarrisonResources = settings.currGarrisonResources
+		AJM.db.currTemperedFate = settings.currTemperedFate
+		AJM.db.currApexisCrystal = settings.currApexisCrystal
+		AJM.db.currApexisCrystal = settings.currDarkmoon
 		AJM.db.currOpenStartUpMaster = settings.currOpenStartUpMaster
 		AJM.db.currencyScale = settings.currencyScale
 		AJM.db.currencyFrameAlpha = settings.currencyFrameAlpha
@@ -1360,6 +1420,19 @@ function AJM:RESURRECT_REQUEST( event, ... )
 		StaticPopup_Hide( "SKINNED" )
 		StaticPopup_Hide( "SKINNED_REPOP" )
 		StaticPopup_Hide( "DEATH" )
+	end
+end
+
+-- EbonySum Accepts summons
+
+function AJM:CONFIRM_SUMMON( event, sender, location, ... )
+	local sender, location = GetSummonConfirmSummoner(), GetSummonConfirmAreaName()
+	if AJM.db.autoAcceptSummonRequest == true then
+		if GetSummonConfirmTimeLeft() > 0 then
+		ConfirmSummon()
+		StaticPopup_Hide("CONFIRM_SUMMON")
+		AJM:JambaSendMessageToTeam( AJM.db.requestArea, L["I Accepted Summon From: X To: Y"]( sender, location ), false )
+		end
 	end
 end
 
@@ -1580,26 +1653,6 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	frameGoldText:SetJustifyH( "CENTER" )
 	frame.GoldText = frameGoldText
 	left = left + spacing	
---	-- Set the JusticePoints font string.
---	local frameJusticePoints = AJM.globalCurrencyFramePrefix.."TitleJusticePoints"
---	local frameJusticePointsText = parentFrame:CreateFontString( frameJusticePoints.."Text", "OVERLAY", "GameFontNormal" )
---	frameJusticePointsText:SetText( L["JP"] )
---	frameJusticePointsText:SetTextColor( r, g, b, a )
---	frameJusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
---	frameJusticePointsText:SetWidth( width )
---	frameJusticePointsText:SetJustifyH( "CENTER" )
---	frame.JusticePointsText = frameJusticePointsText
---	left = left + spacing
---	-- Set the ValorPoints font string.
---	local frameValorPoints = AJM.globalCurrencyFramePrefix.."TitleValorPoints"
---	local frameValorPointsText = parentFrame:CreateFontString( frameValorPoints.."Text", "OVERLAY", "GameFontNormal" )
---	frameValorPointsText:SetText( L["VP"] )
---	frameValorPointsText:SetTextColor( r, g, b, a )
---	frameValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
---	frameValorPointsText:SetWidth( width )
---	frameValorPointsText:SetJustifyH( "CENTER" )
---	frame.ValorPointsText = frameValorPointsText
---	left = left + spacing
 	-- Set the HonorPoints font string.
 	local frameHonorPoints = AJM.globalCurrencyFramePrefix.."TitleHonorPoints"
 	local frameHonorPointsText = parentFrame:CreateFontString( frameHonorPoints.."Text", "OVERLAY", "GameFontNormal" )
@@ -1740,11 +1793,54 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	frameTimelessCoinText:SetJustifyH( "CENTER" )
 	frame.TimelessCoinText = frameTimelessCoinText
 	left = left + spacing
-
+	--ebony New WoD Currency
+	-- Set the GarrisonResources font string.
+	local frameGarrisonResources = AJM.globalCurrencyFramePrefix.."TitleGarrisonResources"
+	local frameGarrisonResourcesText = parentFrame:CreateFontString( frameGarrisonResources .."Text", "OVERLAY", "GameFontNormal" )
+	frameGarrisonResourcesText:SetText( L["GR"] )
+	frameGarrisonResourcesText:SetTextColor( r, g, b, a )
+	frameGarrisonResourcesText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameGarrisonResourcesText:SetWidth( width )
+	frameGarrisonResourcesText:SetJustifyH( "CENTER" )
+	frame.GarrisonResourcesText = frameGarrisonResourcesText
+	left = left + spacing
+		-- Set the Tempered Fate font string.
+	local frameTemperedFate = AJM.globalCurrencyFramePrefix.."TitleTemperedFate"
+	local frameTemperedFateText = parentFrame:CreateFontString( frameTemperedFate .."Text", "OVERLAY", "GameFontNormal" )
+	frameTemperedFateText:SetText( L["SoF"] )
+	frameTemperedFateText:SetTextColor( r, g, b, a )
+	frameTemperedFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTemperedFateText:SetWidth( width )
+	frameTemperedFateText:SetJustifyH( "CENTER" )
+	frame.TemperedFateText = frameTemperedFateText
+	left = left + spacing
+		-- Set the Apexis Crystal font string.
+	local frameApexisCrystal = AJM.globalCurrencyFramePrefix.."TitleApexisCrystal"
+	local frameApexisCrystalText = parentFrame:CreateFontString( frameApexisCrystal .."Text", "OVERLAY", "GameFontNormal" )
+	frameApexisCrystalText:SetText( L["AC"] )
+	frameApexisCrystalText:SetTextColor( r, g, b, a )
+	frameApexisCrystalText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameApexisCrystalText:SetWidth( width )
+	frameApexisCrystalText:SetJustifyH( "CENTER" )
+	frame.ApexisCrystalText = frameApexisCrystalText
+	left = left + spacing
+	-- Set the Darkmoon Prize font string.
+	local frameDarkmoon = AJM.globalCurrencyFramePrefix.."TitleDarkmoon"
+	local frameDarkmoonText = parentFrame:CreateFontString( frameDarkmoon .."Text", "OVERLAY", "GameFontNormal" )
+	frameDarkmoonText:SetText( L["DPT"] )
+	frameDarkmoonText:SetTextColor( r, g, b, a )
+	frameDarkmoonText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameDarkmoonText:SetWidth( width )
+	frameDarkmoonText:SetJustifyH( "CENTER" )
+	frame.DarkmoonText = frameDarkmoonText
+	left = left + spacing
+	
+	
 	-- Set the Total Gold font string.
 	left = 10
 	top = -50
-
+	
+	
 	local frameTotalGoldTitle = AJM.globalCurrencyFramePrefix.."TitleTotalGold"
 	local frameTotalGoldTitleText = parentFrame:CreateFontString( frameTotalGoldTitle.."Text", "OVERLAY", "GameFontNormal" )
 	frameTotalGoldTitleText:SetText( L["Total"] )
@@ -1878,24 +1974,6 @@ function AJM:CurrencyListSetColumnWidth()
 		parentFrame.GoldText:Hide()
 		haveGold = 0
 	end
---	if AJM.db.currJusticePoints == true then
---		parentFrame.JusticePointsText:SetWidth( pointsWidth )
---		parentFrame.JusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
---		left = left + pointsWidth + spacingWidth
---		numberOfPointsColumns = numberOfPointsColumns + 1
---		parentFrame.JusticePointsText:Show()
---	else
---		parentFrame.JusticePointsText:Hide()
---	end
---	if AJM.db.currValorPoints == true then
---		parentFrame.ValorPointsText:SetWidth( pointsWidth )
---		parentFrame.ValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
---		left = left + pointsWidth + spacingWidth
---		numberOfPointsColumns = numberOfPointsColumns + 1
---		parentFrame.ValorPointsText:Show()
---	else
---		parentFrame.ValorPointsText:Hide()
---	end
 	if AJM.db.currHonorPoints == true then
 		parentFrame.HonorPointsText:SetWidth( pointsWidth )
 		parentFrame.HonorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
@@ -2022,6 +2100,43 @@ function AJM:CurrencyListSetColumnWidth()
 	else
 		parentFrame.TimelessCoinText:Hide()
 	end
+	--ebony New WoD Currency
+	if AJM.db.currGarrisonResources == true then
+		parentFrame.GarrisonResourcesText:SetWidth( pointsWidth )
+		parentFrame.GarrisonResourcesText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+		left = left + pointsWidth + spacingWidth
+		numberOfPointsColumns = numberOfPointsColumns + 1
+		parentFrame.GarrisonResourcesText:Show()
+	else
+		parentFrame.GarrisonResourcesText:Hide()
+	end
+		if AJM.db.currTemperedFate == true then
+		parentFrame.TemperedFateText:SetWidth( pointsWidth )
+		parentFrame.TemperedFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+		left = left + pointsWidth + spacingWidth
+		numberOfPointsColumns = numberOfPointsColumns + 1
+		parentFrame.TemperedFateText:Show()
+	else
+		parentFrame.TemperedFateText:Hide()
+	end
+		if AJM.db.currApexisCrystal == true then
+		parentFrame.ApexisCrystalText:SetWidth( pointsWidth )
+		parentFrame.ApexisCrystalText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+		left = left + pointsWidth + spacingWidth
+		numberOfPointsColumns = numberOfPointsColumns + 1
+		parentFrame.ApexisCrystalText:Show()
+	else
+		parentFrame.ApexisCrystalText:Hide()
+	end
+		if AJM.db.currDarkmoon == true then
+		parentFrame.DarkmoonText:SetWidth( pointsWidth )
+		parentFrame.DarkmoonText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+		left = left + pointsWidth + spacingWidth
+		numberOfPointsColumns = numberOfPointsColumns + 1
+		parentFrame.DarkmoonText:Show()
+	else
+		parentFrame.DarkmoonText:Hide()
+	end
 	-- Character rows.
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
 		local left = frameHorizontalSpacing
@@ -2037,22 +2152,6 @@ function AJM:CurrencyListSetColumnWidth()
 		else
 			currencyFrameCharacterInfo.GoldText:Hide()
 		end
---		if AJM.db.currJusticePoints == true then
---			currencyFrameCharacterInfo.JusticePointsText:SetWidth( pointsWidth )
---			currencyFrameCharacterInfo.JusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
---			left = left + pointsWidth + spacingWidth
---			currencyFrameCharacterInfo.JusticePointsText:Show()
---		else
---			currencyFrameCharacterInfo.JusticePointsText:Hide()
---		end
---		if AJM.db.currValorPoints == true then
---			currencyFrameCharacterInfo.ValorPointsText:SetWidth( pointsWidth )
---			currencyFrameCharacterInfo.ValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
---			left = left + pointsWidth + spacingWidth
---			currencyFrameCharacterInfo.ValorPointsText:Show()
---		else
---			currencyFrameCharacterInfo.ValorPointsText:Hide()
---		end
 		if AJM.db.currHonorPoints == true then
 			currencyFrameCharacterInfo.HonorPointsText:SetWidth( pointsWidth )
 			currencyFrameCharacterInfo.HonorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
@@ -2165,6 +2264,39 @@ function AJM:CurrencyListSetColumnWidth()
 		else
 			currencyFrameCharacterInfo.TimelessCoinText:Hide()
 		end
+--ebony New WoD Currency
+		if AJM.db.currGarrisonResources == true then
+			currencyFrameCharacterInfo.GarrisonResourcesText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.GarrisonResourcesText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+			left = left + pointsWidth + spacingWidth
+			currencyFrameCharacterInfo.GarrisonResourcesText:Show()
+		else
+			currencyFrameCharacterInfo.GarrisonResourcesText:Hide()
+		end
+		if AJM.db.currTemperedFate == true then
+			currencyFrameCharacterInfo.TemperedFateText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.TemperedFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+			left = left + pointsWidth + spacingWidth
+			currencyFrameCharacterInfo.TemperedFateText:Show()
+		else
+			currencyFrameCharacterInfo.TemperedFateText:Hide()
+		end
+		if AJM.db.currApexisCrystal == true then
+			currencyFrameCharacterInfo.ApexisCrystalText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.ApexisCrystalText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+			left = left + pointsWidth + spacingWidth
+			currencyFrameCharacterInfo.ApexisCrystalText:Show()
+		else
+			currencyFrameCharacterInfo.ApexisCrystalText:Hide()
+		end	
+		if AJM.db.currDarkmoon == true then
+			currencyFrameCharacterInfo.DarkmoonText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.DarkmoonText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+			left = left + pointsWidth + spacingWidth
+			currencyFrameCharacterInfo.DarkmoonText:Show()
+		else
+			currencyFrameCharacterInfo.DarkmoonText:Hide()
+		end	
 	end
 	-- Parent frame width and title.
 	local finalParentWidth = frameHorizontalSpacing + nameWidth + spacingWidth + (haveGold * (goldWidth + (spacingWidth * 3))) + (numberOfPointsColumns * (pointsWidth + spacingWidth)) + frameHorizontalSpacing
@@ -2257,26 +2389,6 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	frameGoldText:SetJustifyH( "RIGHT" )
 	currencyFrameCharacterInfo.GoldText = frameGoldText
 	left = left + spacing	
---	-- Set the JusticePoints font string.
---	local frameJusticePoints = AJM.globalCurrencyFramePrefix.."JusticePoints"
---	local frameJusticePointsText = parentFrame:CreateFontString( frameJusticePoints.."Text", "OVERLAY", "GameFontNormal" )
---	frameJusticePointsText:SetText( "0" )
---	frameJusticePointsText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
---	frameJusticePointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
---	frameJusticePointsText:SetWidth( width )
---	frameJusticePointsText:SetJustifyH( "CENTER" )
---	currencyFrameCharacterInfo.JusticePointsText = frameJusticePointsText
---	left = left + spacing
---	-- Set the ValorPoints font string.
---	local frameValorPoints = AJM.globalCurrencyFramePrefix.."ValorPoints"
---	local frameValorPointsText = parentFrame:CreateFontString( frameValorPoints.."Text", "OVERLAY", "GameFontNormal" )
---	frameValorPointsText:SetText( "0" )
---	frameValorPointsText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
---	frameValorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
---	frameValorPointsText:SetWidth( width )
---	frameValorPointsText:SetJustifyH( "CENTER" )
---	currencyFrameCharacterInfo.ValorPointsText = frameValorPointsText
---	left = left + spacing
 	-- Set the HonorPoints font string.
 	local frameHonorPoints = AJM.globalCurrencyFramePrefix.."HonorPoints"
 	local frameHonorPointsText = parentFrame:CreateFontString( frameHonorPoints.."Text", "OVERLAY", "GameFontNormal" )
@@ -2417,6 +2529,46 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	frameTimelessCoinText:SetJustifyH( "CENTER" )
 	currencyFrameCharacterInfo.TimelessCoinText = frameTimelessCoinText
 	left = left + spacing
+	--ebony New WoD Currency
+	-- Set the GarrisonResources font string.
+	local frameGarrisonResources = AJM.globalCurrencyFramePrefix.."GarrisonResources"
+	local frameGarrisonResourcesText = parentFrame:CreateFontString( frameGarrisonResources .."Text", "OVERLAY", "GameFontNormal" )
+	frameGarrisonResourcesText:SetText( "0" )
+	frameGarrisonResourcesText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameGarrisonResourcesText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameGarrisonResourcesText:SetWidth( width )
+	frameGarrisonResourcesText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.GarrisonResourcesText = frameGarrisonResourcesText
+	left = left + spacing
+	-- Set the TemperedFate font string.
+	local frameTemperedFate = AJM.globalCurrencyFramePrefix.."TemperedFate"
+	local frameTemperedFateText = parentFrame:CreateFontString( frameTemperedFate .."Text", "OVERLAY", "GameFontNormal" )
+	frameTemperedFateText:SetText( "0" )
+	frameTemperedFateText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTemperedFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTemperedFateText:SetWidth( width )
+	frameTemperedFateText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TemperedFateText = frameTemperedFateText
+	left = left + spacing
+	-- Set the ApexisCrystal font string.
+	local frameApexisCrystal = AJM.globalCurrencyFramePrefix.."ApexisCrystal"
+	local frameApexisCrystalText = parentFrame:CreateFontString( frameApexisCrystal .."Text", "OVERLAY", "GameFontNormal" )
+	frameApexisCrystalText:SetText( "0" )
+	frameApexisCrystalText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameApexisCrystalText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameApexisCrystalText:SetWidth( width )
+	frameApexisCrystalText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.ApexisCrystalText = frameApexisCrystalText
+	left = left + spacing
+	local frameDarkmoon = AJM.globalCurrencyFramePrefix.."Darkmoon"
+	local frameDarkmoonText = parentFrame:CreateFontString( frameDarkmoon .."Text", "OVERLAY", "GameFontNormal" )
+	frameDarkmoonText:SetText( "0" )
+	frameDarkmoonText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameDarkmoonText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameDarkmoonText:SetWidth( width )
+	frameDarkmoonText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.DarkmoonText = frameDarkmoonText
+	left = left + spacing
 end
 
 function AJM:JambaToonHideCurrency()
@@ -2432,8 +2584,6 @@ function AJM:JambaToonRequestCurrency()
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
 		currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
---		currencyFrameCharacterInfo.JusticePointsText:SetTextColor( r, g, b, a )
---		currencyFrameCharacterInfo.ValorPointsText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.HonorPointsText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.ConquestPointsText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.TolBaradCommendationText:SetTextColor( r, g, b, a )
@@ -2448,6 +2598,11 @@ function AJM:JambaToonRequestCurrency()
         currencyFrameCharacterInfo.WarforgedSealText:SetTextColor( r, g, b, a )
         currencyFrameCharacterInfo.BloodyCoinText:SetTextColor( r, g, b, a )
         currencyFrameCharacterInfo.TimelessCoinText:SetTextColor( r, g, b, a )
+		--ebony New WoD Currency
+		currencyFrameCharacterInfo.GarrisonResourcesText:SetTextColor( r, g, b, a )
+		currencyFrameCharacterInfo.TemperedFateText:SetTextColor( r, g, b, a )
+		currencyFrameCharacterInfo.ApexisCrystalText:SetTextColor( r, g, b, a )
+		currencyFrameCharacterInfo.DarkmoonText:SetTextColor( r, g, b, a )
 	end
 	AJM.currencyTotalGold = 0
 	if AJM.db.currGoldInGuildBank == true then
@@ -2461,8 +2616,6 @@ end
 function AJM:DoSendCurrency( characterName, dummyValue )
 	table.wipe( AJM.currentCurrencyValues )
 	AJM.currentCurrencyValues.currGold = GetMoney()
---	AJM.currentCurrencyValues.currJusticePoints = select( 2, GetCurrencyInfo( AJM.CJusticePoints ) )
---	AJM.currentCurrencyValues.currValorPoints = select( 2, GetCurrencyInfo( AJM.CValorPoints ) )
 	AJM.currentCurrencyValues.currHonorPoints = select( 2, GetCurrencyInfo( AJM.CHonorPoints ) )
 	AJM.currentCurrencyValues.currConquestPoints = select( 2, GetCurrencyInfo( AJM.CConquestPoints ) )
 	AJM.currentCurrencyValues.currTolBaradCommendation = select( 2, GetCurrencyInfo( AJM.CTolBaradCommendation ) )
@@ -2477,6 +2630,11 @@ function AJM:DoSendCurrency( characterName, dummyValue )
     AJM.currentCurrencyValues.currWarforgedSeal = select( 2, GetCurrencyInfo( AJM.CWarforgedSeal ) )
     AJM.currentCurrencyValues.currBloodyCoin = select( 2, GetCurrencyInfo( AJM.CBloodyCoin ) )
     AJM.currentCurrencyValues.currTimelessCoin = select( 2, GetCurrencyInfo( AJM.CTimelessCoin ) )
+	--ebony New WoD Currency
+	AJM.currentCurrencyValues.currGarrisonResources = select( 2, GetCurrencyInfo( AJM.CGarrisonResources ) )
+	AJM.currentCurrencyValues.currTemperedFate = select( 2, GetCurrencyInfo( AJM.CTemperedFate ) )
+	AJM.currentCurrencyValues.currApexisCrystal = select( 2, GetCurrencyInfo( AJM.CApexisCrystal ) )
+	AJM.currentCurrencyValues.currDarkmoon = select( 2, GetCurrencyInfo( AJM.CDarkmoon ) )
 	AJM:JambaSendCommandToToon( characterName, AJM.COMMAND_HERE_IS_CURRENCY, AJM.currentCurrencyValues )
 end
 
@@ -2495,8 +2653,6 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	local a = 1.0
 	currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
---	currencyFrameCharacterInfo.JusticePointsText:SetTextColor( r, g, b, a )
---	currencyFrameCharacterInfo.ValorPointsText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.HonorPointsText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.ConquestPointsText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.TolBaradCommendationText:SetTextColor( r, g, b, a )
@@ -2511,10 +2667,13 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
     currencyFrameCharacterInfo.WarforgedSealText:SetTextColor( r, g, b, a )
     currencyFrameCharacterInfo.BloodyCoinText:SetTextColor( r, g, b, a )
     currencyFrameCharacterInfo.TimelessCoinText:SetTextColor( r, g, b, a )
+	--ebony New WoD Currency
+	currencyFrameCharacterInfo.GarrisonResourcesText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.TemperedFateText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.ApexisCrystalText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.DarkmoonText:SetTextColor( r, g, b, a )
 	-- Information.
 	currencyFrameCharacterInfo.GoldText:SetText( JambaUtilities:FormatMoneyString( currencyValues.currGold ) )
---	currencyFrameCharacterInfo.JusticePointsText:SetText( currencyValues.currJusticePoints )
---	currencyFrameCharacterInfo.ValorPointsText:SetText( currencyValues.currValorPoints )
 	currencyFrameCharacterInfo.HonorPointsText:SetText( currencyValues.currHonorPoints )
 	currencyFrameCharacterInfo.ConquestPointsText:SetText( currencyValues.currConquestPoints )
 	currencyFrameCharacterInfo.TolBaradCommendationText:SetText( currencyValues.currTolBaradCommendation )
@@ -2529,6 +2688,11 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
     currencyFrameCharacterInfo.WarforgedSealText:SetText( currencyValues.currWarforgedSeal )
     currencyFrameCharacterInfo.BloodyCoinText:SetText( currencyValues.currBloodyCoin )
     currencyFrameCharacterInfo.TimelessCoinText:SetText( currencyValues.currTimelessCoin )
+	--ebony New WoD Currency
+	currencyFrameCharacterInfo.GarrisonResourcesText:SetText( currencyValues.currGarrisonResources )
+	currencyFrameCharacterInfo.TemperedFateText:SetText( currencyValues.currTemperedFate )
+	currencyFrameCharacterInfo.ApexisCrystalText:SetText( currencyValues.currApexisCrystal )
+	currencyFrameCharacterInfo.DarkmoonText:SetText( currencyValues.currDarkmoon )
 	-- Total gold.
 	AJM.currencyTotalGold = AJM.currencyTotalGold + currencyValues.currGold
 	parentFrame.TotalGoldText:SetText( JambaUtilities:FormatMoneyString( AJM.currencyTotalGold ) )
