@@ -40,10 +40,12 @@ AJM.COMMUNICATION_GROUP = "RAID"
 -- Communication message prefix.
 AJM.MESSAGE_PREFIX = "JmbCmMsg"
 
+--[[
 -- Communication over channel for online status.
 AJM.COMMUNICATION_TEAM_ONLINE_PREFIX = "JmbCmTmOn"
 AJM.COMMUNICATION_MESSAGE_ONLINE = "JmbCmTmOnTe"
 AJM.COMMUNICATION_MESSAGE_OFFLINE = "JmbCmTmOnFe"
+--]]
 
 -- Communication priorities.
 AJM.COMMUNICATION_PRIORITY_BULK = "BULK"
@@ -81,7 +83,7 @@ AJM.settings = {
 --		teamOnlineChannelName = "JambaTeamIsOnline",
 --		teamOnlineChannelPassword = "JambaTeamPassword",
 --		showOnlineChannel = false,
---		assumeTeamAlwaysOnline = true,
+		assumeTeamAlwaysOnline = true,
 		boostCommunication = true,
 	},
 }
@@ -188,11 +190,11 @@ local function CommandAll( moduleName, commandName, ... )
 end
 
 
--- Should this get removed at some point and use all comms on one line???
+-- Should this get removed at some point and use all comms on one channel???
 -- WHISPER's don't work cross-realm but do work connected-realm so sending msg to masters would not send.
 -- TODO: Maybe remove masters???, and fall back to everyone being the master?
 -- Not really sure what to do so for now will keep with the master, and whisper them, 
--- if was to use party/raid then everyone will get the command. 
+-- if was to use party/raid then everyone will get the command and masters would not workd. 
 
 -- Send a command to the master.
 local function CommandMaster( moduleName, commandName, ... )
@@ -349,7 +351,7 @@ end
 
 -- Initialize the addon.
 function AJM:OnInitialize()
-	AJM.channelPollTimer = nil
+	--AJM.channelPollTimer = nil
 	-- Register commands with AceComms - tell AceComms to call the CommandReceived function when a command is received.
 	AJM:RegisterComm( AJM.COMMAND_PREFIX, "CommandReceived" )
 	-- Create the settings database supplying the settings values along with defaults.
@@ -371,7 +373,7 @@ function AJM:OnInitialize()
 	self.characterName = self.characterNameLessRealm.."-"..self.characterRealm
 	AJM.characterGUID = UnitGUID( "player" )
 	-- End of needed:
-	AJM:RegisterChatCommand( AJM.chatCommand, "JambaChatCommand" )
+	--AJM:RegisterChatCommand( AJM.chatCommand, "JambaChatCommand" )
 	-- Register communications as a module.
 	JambaPrivate.Core.RegisterModule( AJM, AJM.moduleName )
 end
@@ -408,19 +410,21 @@ function AJM:JambaChatCommand( input )
     end    
 end
 
+--[[
 function AJM:StopChannelPollTimer()
 	if AJM.channelPollTimer ~= nil then
 		AJM:CancelTimer( AJM.channelPollTimer )
 	end
 end
 
+
 function AJM:StartChannelPollTimer()
 	-- Poll for characters every 5 seconds.
 	AJM.channelPollTimer = AJM:ScheduleRepeatingTimer( ListChannelByName, 5, AJM.lastChannel )
 end
-
+--]]
 function AJM:OnDisable()
-	AJM:CancelAllTimers()
+	--AJM:CancelAllTimers()
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -489,9 +493,15 @@ end
 
 function AJM:CheckBoxBoostCommunication( event, value )
 	AJM.db.boostCommunication = value
-	AJM:SettingsRefresh()	
+	AJM:SettingsRefresh()
 end
 
+function AJM:BeforeJambaProfileChanged()	
+end
+
+function AJM:OnJambaProfileChanged()	
+	AJM:SettingsRefresh()
+end
 
 function AJM:SettingsRefresh()	
 	--AJM.settingsControl.editBoxChannelName:SetText( AJM.db.teamOnlineChannelName )

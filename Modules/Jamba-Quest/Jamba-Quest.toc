@@ -2,7 +2,7 @@
 ## Title: JambaQuest
 ## Notes: JambaQuest
 ## Author: Ebony, Former Author: Jafula
-## Version: 4.0-PublicBeta3
+## Version: 4.0-PublicBeta4
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
