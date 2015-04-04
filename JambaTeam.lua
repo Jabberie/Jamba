@@ -286,11 +286,19 @@ local function SettingsCreateTeamList()
 	AJM.settingsControl.teamListButtonDisband = JambaHelperSettings:CreateButton( 
 		AJM.settingsControl, 
 		inviteDisbandButtonWidth,
-		left + inviteDisbandButtonWidth + horizontalSpacing, 
+		left + inviteDisbandButtonWidth + horizontalSpacing,
 		bottomOfList, 
 		L["Disband"],
-		AJM.SettingsDisbandClick
-	)	
+		AJM.SettingsOfflineClick
+	)
+	AJM.settingsControl.teamListButtonOffline = JambaHelperSettings:CreateButton( 
+		AJM.settingsControl, 
+		setMasterButtonWidth,
+		left + inviteDisbandButtonWidth + horizontalSpacing + inviteDisbandButtonWidth + horizontalSpacing + setMasterButtonWidth + horizontalSpacing,
+		bottomOfList, 
+		L["Set OffLine"],
+		AJM.SettingsOfflineClick
+	)		
 	return bottomOfSection
 end
 
@@ -1200,31 +1208,33 @@ function AJM:OnInitialize()
 	JambaTeamSecureButtonDisband:SetAttribute( "type", "macro" )
 	JambaTeamSecureButtonDisband:SetAttribute( "macrotext", "/jamba-team disband" )
 	JambaTeamSecureButtonDisband:Hide()
-	-- Update teamList if necessary to include realm names.
+	-- Update teamList if necessary to include realm names. Only used from upgrading form 3.x to 4.0
 	local updatedTeamList = {}
-	--Ebony Using GetRealmName() shows realm name with a space most of the api does not like spaces. so pulling it from the Players full name.
+	--Ebony Using GetRealmName() shows realm name with a space the api does not like spaces. So we have to remove it
 	local k = GetRealmName()
+	-- remove space for server name if there is one.
 	local realmName = k:gsub( "%s+", "")
 	for characterName, position in pairs( AJM.db.teamList ) do
 		--AJM:Print( 'Iterating:', characterName, position )
 		local updateMatchStart = characterName:find( "-" )
 		if not updateMatchStart then
 			updatedTeamList[characterName.."-"..realmName] = position
+			AJM.db.teamList = JambaUtilities:CopyTable( updatedTeamList )
 --		else
 --			if characterName then
 --				updatedTeamList[characterName] = position
 --			end
 		end
 	end
-	AJM.db.teamList = JambaUtilities:CopyTable( updatedTeamList )
+--	AJM.db.teamList = JambaUtilities:CopyTable( updatedTeamList )
 --	for characterName, position in pairs( AJM.db.teamList ) do
 --		AJM:Print( 'Iterating after:', characterName, position )
 --	end
 --todo look at this ebony
-	local updateMatchStart = AJM.db.master:find( "-" )
-	if not updateMatchStart then
-		AJM.db.master = AJM.db.master.."-"..realmName
-	end
+--	local updateMatchStart = AJM.db.master:find( "-" )
+--	if not updateMatchStart then
+--		AJM.db.master = AJM.db.master.."-"..realmName
+--	end
 end
 
 -- Called when the addon is enabled.

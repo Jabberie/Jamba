@@ -14,6 +14,7 @@ L["Add a member to the team list."] = true
 L["Remove"] = true
 L["Remove a member from the team list."] = true
 L["Master"] = true
+L["Set OffLine"] = true
 L["Set the master character."] = true
 L["I Am Master"] = true
 L["Set this character to be the master character."] = true
