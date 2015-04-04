@@ -270,7 +270,7 @@ local function SettingsCreateTeamList()
 	AJM.settingsControl.teamListButtonSetMaster = JambaHelperSettings:CreateButton(
 		AJM.settingsControl,  
 		setMasterButtonWidth, 
-		left + inviteDisbandButtonWidth + horizontalSpacing + inviteDisbandButtonWidth + horizontalSpacing, 
+		left + inviteDisbandButtonWidth + horizontalSpacing, 
 		bottomOfList, 
 		L["Set Master"],
 		AJM.SettingsSetMasterClick
@@ -283,18 +283,19 @@ local function SettingsCreateTeamList()
 		L["Invite"],
 		AJM.SettingsInviteClick
 	)
-	AJM.settingsControl.teamListButtonDisband = JambaHelperSettings:CreateButton( 
-		AJM.settingsControl, 
-		inviteDisbandButtonWidth,
-		left + inviteDisbandButtonWidth + horizontalSpacing,
-		bottomOfList, 
-		L["Disband"],
-		AJM.SettingsOfflineClick
-	)
+-- TODO REMOVE ME.
+--	AJM.settingsControl.teamListButtonDisband = JambaHelperSettings:CreateButton( 
+--		AJM.settingsControl, 
+--		inviteDisbandButtonWidth,
+--		left + inviteDisbandButtonWidth + horizontalSpacing,
+--		bottomOfList, 
+--		L["Disband"],
+--		AJM.SettingsDisbandClick
+--	)
 	AJM.settingsControl.teamListButtonOffline = JambaHelperSettings:CreateButton( 
 		AJM.settingsControl, 
 		setMasterButtonWidth,
-		left + inviteDisbandButtonWidth + horizontalSpacing + inviteDisbandButtonWidth + horizontalSpacing + setMasterButtonWidth + horizontalSpacing,
+		left + inviteDisbandButtonWidth + horizontalSpacing + setMasterButtonWidth + horizontalSpacing,
 		bottomOfList, 
 		L["Set OffLine"],
 		AJM.SettingsOfflineClick
@@ -551,7 +552,19 @@ local function InitializePopupDialogs()
         OnAccept = function( self )
 			AJM:RemoveMemberGUI()
 		end,
-    }        
+    }
+	-- OFFLINE TEST STUFF.
+	   StaticPopupDialogs["SET_OFFLINE_WIP"] = {
+        text = L["This Button DOES NOTHING, absolutely nothing at all, or does it?"],
+        button1 = CANCEL,
+        --button2 = CANCEL,
+        timeout = 0,
+		whileDead = 1,
+		hideOnEscape = 1,
+        OnAccept = function( self )
+			--AJM:RemoveMemberGUI() stuff goes here.
+		end,
+    }
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -1220,12 +1233,14 @@ function AJM:OnInitialize()
 		if not updateMatchStart then
 			updatedTeamList[characterName.."-"..realmName] = position
 			AJM.db.teamList = JambaUtilities:CopyTable( updatedTeamList )
+--		TODO Clean ME UP.
 --		else
 --			if characterName then
 --				updatedTeamList[characterName] = position
 --			end
 		end
 	end
+-- TODO CLEAN ME UP ebony	
 --	AJM.db.teamList = JambaUtilities:CopyTable( updatedTeamList )
 --	for characterName, position in pairs( AJM.db.teamList ) do
 --		AJM:Print( 'Iterating after:', characterName, position )
@@ -1452,11 +1467,19 @@ function AJM.SettingsAddPartyClick( event )
 	AJM:AddPartyMembers()
 end
 function AJM:SettingsInviteClick( event )
+	if IsInGroup( "player" ) then
+		DisbandTeamFromParty()
+	else
 	AJM:InviteTeamToParty()
+	end
 end
 
 function AJM:SettingsDisbandClick( event )
 	AJM:DisbandTeamFromParty()
+end
+
+function AJM:SettingsOfflineClick( event )
+	StaticPopup_Show( "SET_OFFLINE_WIP" )
 end
 
 function AJM:SettingsSetMasterClick( event )
