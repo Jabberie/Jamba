@@ -664,7 +664,7 @@ function AJM:AddMemberCommand( info, parameters )
 	AddMember( characterName )
 end
 
--- Add all party members to the member list.
+-- Add all party members to the member list. does not worl cross rwalm todo
 function AJM:AddPartyMembers()
 	local numberPartyMembers = GetNumSubgroupMembers()
 	for iteratePartyMembers = numberPartyMembers, 1, -1 do
@@ -1210,16 +1210,17 @@ function AJM:OnInitialize()
 		local updateMatchStart = characterName:find( "-" )
 		if not updateMatchStart then
 			updatedTeamList[characterName.."-"..realmName] = position
-		else
-			if characterName then
-				updatedTeamList[characterName] = position
-			end
+--		else
+--			if characterName then
+--				updatedTeamList[characterName] = position
+--			end
 		end
 	end
 	AJM.db.teamList = JambaUtilities:CopyTable( updatedTeamList )
 --	for characterName, position in pairs( AJM.db.teamList ) do
 --		AJM:Print( 'Iterating after:', characterName, position )
 --	end
+--todo look at this ebony
 	local updateMatchStart = AJM.db.master:find( "-" )
 	if not updateMatchStart then
 		AJM.db.master = AJM.db.master.."-"..realmName
