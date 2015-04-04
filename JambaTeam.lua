@@ -1467,11 +1467,7 @@ function AJM.SettingsAddPartyClick( event )
 	AJM:AddPartyMembers()
 end
 function AJM:SettingsInviteClick( event )
-	if IsInGroup( "player" ) then
-		DisbandTeamFromParty()
-	else
 	AJM:InviteTeamToParty()
-	end
 end
 
 function AJM:SettingsDisbandClick( event )
