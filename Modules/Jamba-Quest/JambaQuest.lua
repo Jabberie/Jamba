@@ -132,7 +132,7 @@ AJM.COMMAND_ACCEPT_QUEST_FAKE = "AcceptQuestFake"
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:DebugMessage( ... )
-	--AJM:Print( ... )
+	AJM:Print( ... )
 end
 
 -- Initialise the module.
@@ -1619,7 +1619,8 @@ function AJM:QUEST_ACCEPTED( ... )
 		if AJM.db.masterAutoShareQuestOnAccept == true then	
 			if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
 				if AJM.isInternalCommand == false then
-					AJM:JambaSendMessageToTeam( AJM.db.messageArea, "Attempting to auto share newly accepted quest.", false )
+					-- Remove some spam,
+					--AJM:JambaSendMessageToTeam( AJM.db.messageArea, "Attempting to auto share newly accepted quest.", false )
 					SelectQuestLogEntry( questIndex )
 					if AJM:IsCurrentlySelectedQuestValid() == true then
 						if GetQuestLogPushable() and GetNumSubgroupMembers() > 0 then
@@ -1647,15 +1648,19 @@ end
 function AJM:DoAcceptQuest( sender )
 	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true then
 	local questIndex = AJM:GetQuestLogIndexByName( questName )
-		AJM.isInternalCommand = true
-        AJM:DebugMessage( "DoAcceptQuest" )
-		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
-		AcceptQuest()
-		HideUIPanel( QuestFrame )
-		AJM.isInternalCommand = false	
+		--Olny works if the quest frame is open. Stops sending a blank quest.
+		if QuestFrame:IsShown() == true then
+			AJM.isInternalCommand = true
+			AJM:DebugMessage( "DoAcceptQuest" )
+			AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Accepted Quest: A"]( GetTitleText() ), false )
+			AcceptQuest()
+			HideUIPanel( QuestFrame )
+			AJM.isInternalCommand = false
+		end		
 	end
 end
 
+-- Auto quest magic!
 function AJM:AcknowledgeAutoAcceptQuest()
 	if AJM.db.acceptQuests == true then
 		if AJM.db.slaveMirrorMasterAccept == true then
@@ -1683,6 +1688,7 @@ end
 -- QUEST PROCESSING - AUTO ACCEPTING
 -------------------------------------------------------------------------------------------------------------
 
+--TODO: this could do with some work with Friends.
 function AJM:CanAutoAcceptSharedQuestFromPlayer()
 	local canAccept = false
 	if AJM.db.allAcceptAnyQuest == true then
@@ -1698,7 +1704,7 @@ function AJM:CanAutoAcceptSharedQuestFromPlayer()
 		if AJM.db.acceptFromFriends == true then	
 			for friendIndex = 1, GetNumFriends() do
 				local friendName = GetFriendInfo( friendIndex )
-				if character == friendName then
+				if questSourceName == friendName then
 					canAccept = true
 					break
 				end
@@ -1706,6 +1712,7 @@ function AJM:CanAutoAcceptSharedQuestFromPlayer()
 		end
 		if AJM.db.acceptFromParty == true then	
 			if UnitInParty( "npc" ) then
+				AJM:DebugMessage( "test" )
 				canAccept = true
 			end
 		end
@@ -1730,25 +1737,34 @@ function AJM:QUEST_DETAIL()
 		if UnitIsPlayer( "npc" ) then
 			-- Quest is shared from a player.
 			if AJM:CanAutoAcceptSharedQuestFromPlayer() == true then		
-				AJM.isInternalCommand = true
-				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
-				AcceptQuest()
-				AJM.isInternalCommand = false
+				--TODO: is this even needed??? Can auto quests be shared from other players?? unsure so we add it in anyway.
+				if ( QuestFrame.autoQuest ) then
+					AcknowledgeAutoAcceptQuest()
+				else
+					AJM.isInternalCommand = true
+					AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
+					AcceptQuest()
+					AJM.isInternalCommand = false
+				end	
 			end			
 		else
 			-- Quest is from an NPC.
 			if (AJM.db.allAcceptAnyQuest == true) or ((AJM.db.onlyAcceptQuestsFrom == true) and (AJM.db.acceptFromNpc == true)) then		
-				AJM.isInternalCommand = true
-				AJM:DebugMessage( "QUEST_DETAIL - auto accept is: ", QuestGetAutoAccept() )
-				AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
-				AcceptQuest()
-				HideUIPanel( QuestFrame )
-				AJM.isInternalCommand = false
+				--AutoQuest is Accepted no need to accept it again.
+				if ( QuestFrame.autoQuest ) then
+					AcknowledgeAutoAcceptQuest()
+				else 	
+					AJM.isInternalCommand = true
+					--AJM:DebugMessage( "QUEST_DETAIL - auto accept is: ", QuestGetAutoAccept() )
+					AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Automatically Accepted Quest: A"]( GetTitleText() ), false )
+					AcceptQuest()
+					HideUIPanel( QuestFrame )
+					AJM.isInternalCommand = false
+				end
 			end
 		end
 	end	
 end
-
 -------------------------------------------------------------------------------------------------------------
 -- ESCORT QUEST
 -------------------------------------------------------------------------------------------------------------
