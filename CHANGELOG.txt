@@ -1,3 +1,19 @@
+Jamba Version: 4.0-PublicBeta5
+WoW Game Version: 6.1.2
+Release Date: 16/04/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Jamba-Team
+*Added a Toon Off-line Button - This is still WIP so might not do anything at all.
+
+Jamba-Toon
+*Should now have all the 3.13 Stuff added to 4.0, Somehow this was overlooked.
+
+Jamba-Display
+*Should no longer be able to move the TeamBar when the player is in combat.
+
+
+-----------------------------
 Jamba Version: 4.0-PublicBeta4
 WoW Game Version: 6.1.0
 Release Date: 1/04/2015
@@ -10,7 +26,7 @@ Jamba-Quest
 *Longer over Overrides Quest Log (L key) with World Map.
 
 Jamba-FTL
-*Should now be support for 4.0.
+*Should now be supported for 4.0. (Thanks for the help bettysue)
 
 
 -------------------
@@ -20,7 +36,7 @@ WoW Game Version: 6.1.0
 Release Date: 22/03/2015
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
-*Fixed Some Modules that needed a realmname when it got setttings from master on the same realm.
+*Fixed Some Modules that needed a realm-name when it got setttings from master on the same realm.
 
 Jamba-Display-Team
 *Fixed a bug with Jamba Follow Looping.

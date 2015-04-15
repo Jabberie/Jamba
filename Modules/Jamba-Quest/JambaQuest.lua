@@ -132,7 +132,7 @@ AJM.COMMAND_ACCEPT_QUEST_FAKE = "AcceptQuestFake"
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:DebugMessage( ... )
-	AJM:Print( ... )
+	--AJM:Print( ... )
 end
 
 -- Initialise the module.
