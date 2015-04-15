@@ -294,7 +294,9 @@ local function CreateJambaTeamListFrame()
 	frame:SetScript( "OnDragStart", 
 		function( this ) 
 			if IsAltKeyDown() then
-				this:StartMoving() 
+				if not UnitAffectingCombat("player") then		
+					this:StartMoving()
+				end	
 			end
 		end )
 	frame:SetScript( "OnDragStop", 
@@ -2328,7 +2330,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "GROUP_ROSTER_UPDATE" )
 	AJM:RegisterEvent( "ITEM_PUSH" )
 	AJM:RegisterEvent( "CHAT_MSG_COMBAT_FACTION_CHANGE" )
-	--Updateing Bag information when we join a party Might be a better way of doing this.
+	--Updating Bag information when we join a party Might be a better way of doing this.
 	AJM:RegisterEvent( "PARTY_INVITE_REQUEST", "ITEM_PUSH" )
 	--Updates everytime jamba Reads the UI_ERROR_MESSAGE Are This is not very good for me using a spambar! Need's a better system.
 	--AJM:RegisterEvent( "UI_ERROR_MESSAGE", "ITEM_PUSH" )
