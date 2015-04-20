@@ -64,4 +64,6 @@ L["*reload UI to take effect"] = true
 L["Release Notes / News"] = true
 L["Close and Do Not Show Again"] = true
 L["Close"] = true
-
+-- test stuff
+L["**Untick this to use the WIP Set Offline team List Set offline Button"] =true
+L["Use Team List Offline Button"] = true

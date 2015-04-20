@@ -270,7 +270,7 @@ local function SettingsCreateTeamList()
 	AJM.settingsControl.teamListButtonSetMaster = JambaHelperSettings:CreateButton(
 		AJM.settingsControl,  
 		setMasterButtonWidth, 
-		left + inviteDisbandButtonWidth + horizontalSpacing, 
+		left + inviteDisbandButtonWidth + horizontalSpacing + inviteDisbandButtonWidth + horizontalSpacing, 
 		bottomOfList, 
 		L["Set Master"],
 		AJM.SettingsSetMasterClick
@@ -283,19 +283,18 @@ local function SettingsCreateTeamList()
 		L["Invite"],
 		AJM.SettingsInviteClick
 	)
--- TODO REMOVE ME.
---	AJM.settingsControl.teamListButtonDisband = JambaHelperSettings:CreateButton( 
---		AJM.settingsControl, 
---		inviteDisbandButtonWidth,
---		left + inviteDisbandButtonWidth + horizontalSpacing,
---		bottomOfList, 
---		L["Disband"],
---		AJM.SettingsDisbandClick
---	)
+	AJM.settingsControl.teamListButtonDisband = JambaHelperSettings:CreateButton( 
+		AJM.settingsControl, 
+		inviteDisbandButtonWidth,
+		left + inviteDisbandButtonWidth + horizontalSpacing,
+		bottomOfList, 
+		L["Disband"],
+		AJM.SettingsDisbandClick
+	)
 	AJM.settingsControl.teamListButtonOffline = JambaHelperSettings:CreateButton( 
 		AJM.settingsControl, 
 		setMasterButtonWidth,
-		left + inviteDisbandButtonWidth + horizontalSpacing + setMasterButtonWidth + horizontalSpacing,
+		left + inviteDisbandButtonWidth + horizontalSpacing + inviteDisbandButtonWidth + horizontalSpacing + setMasterButtonWidth +  horizontalSpacing,
 		bottomOfList, 
 		L["Set OffLine"],
 		AJM.SettingsOfflineClick
@@ -553,10 +552,18 @@ local function InitializePopupDialogs()
 			AJM:RemoveMemberGUI()
 		end,
     }
+	-- Master can not be set offline PopUp Box.
+	   StaticPopupDialogs["MasterCanNotBeSetOffline"] = {
+        text = L["Master Can not be Set OffLine"],
+        button1 = OKAY,
+		timeout = 0,
+		whileDead = 1,
+		hideOnEscape = 1,
+    }
 	-- OFFLINE TEST STUFF.
 	   StaticPopupDialogs["SET_OFFLINE_WIP"] = {
-        text = L["This Button DOES NOTHING, absolutely nothing at all, or does it?"],
-        button1 = CANCEL,
+        text = L["WIP: This Button Does absolutely nothing at all, Unless you untick Use team List Offline Button in Core:communications Under Advanced. Report bugs to to me -EBONY"],
+		button1 = OKAY,
         --button2 = CANCEL,
         timeout = 0,
 		whileDead = 1,
@@ -868,22 +875,33 @@ end
 
 -- Set a character's online status.
 local function SetCharacterOnlineStatus( characterName, isOnline )
-	if JambaPrivate.Communications.AssumeTeamAlwaysOnline() == true then
-		isOnline = true
-	end
-	local character =  JambaUtilities:AddRealmToNameIfMissing( characterName )
+	--if JambaPrivate.Communications.AssumeTeamAlwaysOnline() == true then
+	--	isOnline = true
+	--end
+	--local character =  JambaUtilities:AddRealmToNameIfMissing( characterName )
 	--AJM:Print('setting', character, 'to be online')
-	AJM.characterOnline[character] = isOnline
+	AJM.characterOnline[characterName] = isOnline
 	AJM:SettingsTeamListScrollRefresh()
 end
 
 local function SetTeamStatusToOffline()
-	if JambaPrivate.Communications.AssumeTeamAlwaysOnline() == true then
-		return
-	end
+	--if JambaPrivate.Communications.AssumeTeamAlwaysOnline() == true then
+	--	return
+	--end
 	-- Set all characters online status to false.
 	for characterName, characterPosition in pairs( AJM.db.teamList ) do
 		SetCharacterOnlineStatus( characterName, false )
+	end
+end
+
+local function SetTeamOnline()
+	--if JambaPrivate.Communications.AssumeTeamAlwaysOnline() == true then
+	--	return
+	--end
+	-- Set all characters online status to false.
+	for characterName, characterPosition in pairs( AJM.db.teamList ) do
+		SetCharacterOnlineStatus( characterName, true )
+		AJM:SettingsTeamListScrollRefresh()
 	end
 end
 
@@ -1210,8 +1228,9 @@ function AJM:OnInitialize()
 	ConfirmCharacterIsInTeam()
 	-- Make sure there is a master, if none, set this character.
 	ConfirmThereIsAMaster()
-	-- Set team members online status to not connected.
-	SetTeamStatusToOffline()	
+	-- Set team members online status to not connected. we do not want to do this on start-up!
+	--SetTeamStatusToOffline()
+	SetTeamOnline()
 	-- Key bindings.
 	JambaTeamSecureButtonInvite = CreateFrame( "CheckButton", "JambaTeamSecureButtonInvite", nil, "SecureActionButtonTemplate" )
 	JambaTeamSecureButtonInvite:SetAttribute( "type", "macro" )
@@ -1474,8 +1493,27 @@ function AJM:SettingsDisbandClick( event )
 	AJM:DisbandTeamFromParty()
 end
 
+--ebony
+
 function AJM:SettingsOfflineClick( event )
+	local characterName = GetCharacterNameAtOrderPosition( AJM.settingsControl.teamListHighlightRow )
+		-- can not set master offline
+		if IsCharacterTheMaster( characterName ) == true then 
+			StaticPopup_Show( "MasterCanNotBeSetOffline" )
+			return
+			--if the character is Offline then set to Online if Offline set to Online.
+		else
+			if GetCharacterOnlineStatus ( characterName ) == false then
+				SetCharacterOnlineStatus( characterName, true )
+				AJM:SettingsTeamListScrollRefresh()
+		else
+				SetCharacterOnlineStatus( characterName, false )
+				AJM:SettingsTeamListScrollRefresh()
+			end
+		end
+	--Shows that this is WIP pop-up box.
 	StaticPopup_Show( "SET_OFFLINE_WIP" )
+	AJM:SettingsTeamListScrollRefresh()
 end
 
 function AJM:SettingsSetMasterClick( event )

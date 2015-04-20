@@ -1,3 +1,16 @@
+Jamba Version: 4.0-PublicBeta6
+WoW Game Version: 6.1.2
+Release Date: 20/04/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Jamba-Team
+*The offline team Button now puts the The team Member offline. will not save over a reload of the UI. This is still in testing and there for i have added a lock and you need
+untick "Use team List Offline Button" in Core:communications Under Advanced.
+
+Jamba-quest
+Turned off debug. 
+
+--------------------------
 Jamba Version: 4.0-PublicBeta5
 WoW Game Version: 6.1.2
 Release Date: 16/04/2015

@@ -121,12 +121,14 @@ end
 -------------------------------------------------------------------------------------------------------------
 -- TODO: Is a character online? This needs Working on Ebony Or needs to go for now it always return true
 local function IsCharacterOnline( characterName )
-	JambaPrivate.Team.SetCharacterOnlineStatus( characterName, true )
-	return true
+	if AJM.db.assumeTeamAlwaysOnline == true then
+		return true
+	end
+	return JambaPrivate.Team.GetCharacterOnlineStatus( characterName )
 end
 
 local function AssumeTeamAlwaysOnline()
-	return true
+	return AJM.db.assumeTeamAlwaysOnline
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -462,6 +464,23 @@ function AJM:SettingsCreateOptions( top )
 	local movingTop = top
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Team Online Check"], movingTop, false )--
 	movingTop = movingTop - headingHeight	
+	AJM.settingsControl.checkBoxAssumeAlwaysOnline = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop, 
+		L["Use Team List Offline Button"],
+		AJM.CheckBoxAssumeAlwaysOnline
+	)
+		movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.labelInformationAlwaysOnline = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["**Untick this to use the WIP Set Offline team List Set offline Button"]
+	)	
+	movingTop = movingTop - labelContinueHeight
 	AJM.settingsControl.checkBoxBoostCommunication = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -496,6 +515,11 @@ function AJM:CheckBoxBoostCommunication( event, value )
 	AJM:SettingsRefresh()
 end
 
+function AJM:CheckBoxAssumeAlwaysOnline( event, value )
+	AJM.db.assumeTeamAlwaysOnline = value
+	AJM:SettingsRefresh()	
+end
+
 function AJM:BeforeJambaProfileChanged()	
 end
 
@@ -504,10 +528,7 @@ function AJM:OnJambaProfileChanged()
 end
 
 function AJM:SettingsRefresh()	
-	--AJM.settingsControl.editBoxChannelName:SetText( AJM.db.teamOnlineChannelName )
-	--AJM.settingsControl.editBoxChannelPassword:SetText( AJM.db.teamOnlineChannelPassword )
-	--AJM.settingsControl.checkBoxShowChannel:SetValue( AJM.db.showOnlineChannel )
-	--AJM.settingsControl.checkBoxAssumeAlwaysOnline:SetValue( AJM.db.assumeTeamAlwaysOnline )
+	AJM.settingsControl.checkBoxAssumeAlwaysOnline:SetValue( AJM.db.assumeTeamAlwaysOnline )
 	AJM.settingsControl.checkBoxBoostCommunication:SetValue( AJM.db.boostCommunication )
 end
 
@@ -520,6 +541,7 @@ end
 function AJM:JambaOnSettingsReceived( characterName, settings )
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
+		AJM.db.assumeTeamAlwaysOnline = settings.assumeTeamAlwaysOnline
 		AJM.db.boostCommunication = settings.boostCommunication
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
