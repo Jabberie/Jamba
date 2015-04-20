@@ -1937,8 +1937,9 @@ end
 
 function AJM.AbandonNextQuest()
     local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( AJM.iterateQuests )
-	if isHeader == nil then
+	if isHeader == false then
 		if title ~= nil then
+			AJM:DebugMessage ( "AbandonQuest" )
 			SelectQuestLogEntry( AJM.iterateQuests )
 			SetAbandonQuest()
 			AbandonQuest()
@@ -2285,12 +2286,12 @@ function AJM:DoAbandonQuest( sender, questName, tag )
 end
 
 function AJM:DoAbandonAllQuests( sender, tag )
-	if JambaApi.DoesCharacterHaveTag( AJM.characterName, tag ) == true then
+	--if JambaApi.DoesCharacterHaveTag( AJM.characterName, tag ) == true then
 		AJM.iterateQuests = 1
 		if AJM.iterateQuests <= GetNumQuestLogEntries() then
 			AJM:ScheduleTimer( "AbandonNextQuest", 1 )
 		end
-	end
+	--end
 end
 
 function AJM:AutoSelectToggleCommand( info, parameters )
