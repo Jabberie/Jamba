@@ -263,7 +263,32 @@ function AJM:SettingsUpdateBorderStyle()
 	frame:SetBackdropBorderColor( AJM.db.frameBorderColourR, AJM.db.frameBorderColourG, AJM.db.frameBorderColourB, AJM.db.frameBorderColourA )		
 end
 
---ebony1
+-- updates after the quest has been handed in,
+function AJM:UpdateQuestItemsInBar()
+	local state = "0"
+	for iterateItems = 1, AJM.maximumNumberOfItems, 1 do
+		local itemContainer = AJM.itemContainer[iterateItems]
+		if itemContainer == nil then
+			AJM:CreateJambaItemUseItemContainer( iterateItems, parentFrame )
+			itemContainer = AJM.itemContainer[iterateItems]
+		end
+		local containerButton = itemContainer["container"]
+		local itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
+		local kind = itemInfo.kind
+		local action = itemInfo.action
+		if kind == "item" then
+			local itemLink,_,_,_,_,questItem = GetItemInfo( action )
+			if questItem == "Quest" then
+				--AJM:Print("Checking Item...", itemLink, action)
+				if AJM:IsInInventory( itemLink ) == false then
+				--AJM:Print("NOT IN BAGS", itemLink)
+					AJM.db.itemsAdvanced[iterateItems] = nil		
+				end
+			end
+		end
+	end	
+end	
+
 function AJM:UpdateItemsInBar()
 	local state = "0"
     local parentFrame = JambaItemUseFrame
@@ -278,27 +303,16 @@ function AJM:UpdateItemsInBar()
 		local kind = itemInfo.kind
 		local action = itemInfo.action
 		if kind == "item" and not tonumber( action ) then
-			local itemLink = GetItemInfo( action )
-			--AJM:Print(itemLink)
-			if AJM:IsInInventory( itemLink ) == false then
-				-- item is no longer in bags there for it needs to be removed from bar.
-				--AJM:Print("NOT IN BAGS", iterateItems)
-				AJM.db.itemsAdvanced[iterateItems] = nil
-			end
 			action = action:sub(6)
 		end
         --AJM:Print(state, kind, action)
-        --AJM:Print(action)
-		--if AJM:IsInInventory(itemInfo) == true then
 		if kind == "mount" or kind == "battlepet" then
             containerButton:ClearStates()
-			--containerButton:SetState(kind, action)
 		else
 		containerButton:SetState(state, kind, action)
         end
 	end
 end
--- ebony 5
 
 function AJM:AddItemToItemDatabase( itemNumber, kind, action )
     if kind == "mount" or kind == "battlepet" then
@@ -441,18 +455,19 @@ function AJM:CheckForQuestItemAndAddToBar()
 	end
 end
 
+--Checks the item is in the player players bag
 function AJM:IsInInventory(itemLink)
-	for b = 0,4,1 do 
-		for s = 1,GetContainerNumSlots(b),1 do 
+	for bag = 0,4,1 do 
+		for slot = 1,GetContainerNumSlots(bag),1 do 
 			--AJM:Debug( "Bags OK. checking", itemLink )
-			local _,_,_,_,_,_,_,_,_,Link = GetContainerItemInfo(b,s)
+			local _,_,_,_,_,_,_,_,_,Link = GetContainerItemInfo(bag,slot)
 			if Link then
 				--AJM:Debug( "Bags OK. checking", itemLink, Link )
 				local itemString = GetItemInfo( Link )
 				--AJM:Debug( "Bags OK. checking", itemLink, itemString )
 				if itemLink == itemString then
 					--AJM:Print( "True" )
-					return true--, b, s
+					return true
 				end
 			end
 		end 
@@ -885,8 +900,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "PLAYER_REGEN_DISABLED" )
 	AJM:RegisterEvent( "BAG_UPDATE" )
 	AJM:RegisterEvent( "ITEM_PUSH" )
-	AJM:RegisterEvent( "QUEST_LOG_UPDATE", "UpdateItemsInBar" )
-	AJM:RegisterEvent( "PLAYER_EQUIPMENT_CHANGED", "UpdateItemsInBar" )
+	AJM:RegisterEvent( "UNIT_QUEST_LOG_CHANGED", "QUEST_UPDATE" )
 	AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_Registered" )
     AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_SetGlobal" )	
 	AJM:RegisterMessage( JambaApi.MESSAGE_TEAM_MASTER_CHANGED, "OnMasterChanged" )
@@ -979,6 +993,12 @@ function AJM:BAG_UPDATE()
 		AJM:UpdateItemsInBar()
 	end
 end
+
+function AJM:QUEST_UPDATE()
+	if not InCombatLockdown() then
+		AJM:UpdateQuestItemsInBar()	end
+end
+
 
 function AJM:ITEM_PUSH()
 	if AJM.db.autoAddQuestItemsToBar == true then
