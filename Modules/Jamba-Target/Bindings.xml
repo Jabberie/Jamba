@@ -3,31 +3,31 @@
   <Binding name="JAMBATARGETMARK" header="JAMBA_TARGET" category="ADDONS" runOnUp="true">
     JambaTargetMarkTargetKeyPress( keystate )
   </Binding>
-  <Binding name="JAMBACLEARTARGET" category="ADDONS">
+  <Binding name="JAMBACLEARTARGET" category="Jamba">
     --[[dummy]]
   </Binding>
-  <Binding name="JAMBATARGET1" category="ADDONS">
+  <Binding name="JAMBATARGET1" category="Jamba">
     --[[dummy]]
   </Binding>
-  <Binding name="JAMBATARGET2" category="ADDONS">
+  <Binding name="JAMBATARGET2" category="Jamba">
     --[[dummy]]
   </Binding>
-  <Binding name="JAMBATARGET3" category="ADDONS">
+  <Binding name="JAMBATARGET3" category="Jamba">
     --[[dummy]]
   </Binding>
-  <Binding name="JAMBATARGET4" category="ADDONS">
+  <Binding name="JAMBATARGET4" category="Jamba">
     --[[dummy]]
   </Binding>
-  <Binding name="JAMBATARGET5" category="ADDONS">
+  <Binding name="JAMBATARGET5" category="Jamba">
     --[[dummy]]
   </Binding>
-  <Binding name="JAMBATARGET6" category="ADDONS">
+  <Binding name="JAMBATARGET6" category="Jamba">
     --[[dummy]]
   </Binding>
-  <Binding name="JAMBATARGET7" category="ADDONS">
+  <Binding name="JAMBATARGET7" category="Jamba">
     --[[dummy]]
   </Binding>
-  <Binding name="JAMBATARGET8" category="ADDONS">
+  <Binding name="JAMBATARGET8" category="Jamba">
     --[[dummy]]
   </Binding>
   

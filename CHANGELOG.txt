@@ -3,8 +3,20 @@ WoW Game Version: 6.1.2
 Release Date: 20/04/2015
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
-Jamba-quest
+*Miscellaneous:
+*Updated LibActionButtonJamba-1.0 to rev 60 (in hope it work with mounts/pets But with no luck)
+*Added LibButtonGlow-1.0
+*Jamba Key Bindings are now on there own Tab on the new 6.x KeyBindingUI
+
+Jamba-Quest
 *Abandon all quest button now works.
+
+Jamba-Item
+*Now should removed QuestsItems/Items No Longer in the player bags.
+
+Jamba-Team
+*Added back the team disband Button.
+
 
 -------------------------
 Jamba Version: 4.0-PublicBeta6

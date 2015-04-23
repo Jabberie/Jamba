@@ -5,10 +5,10 @@ License: The MIT License
 -->
 
 <Bindings>
-	<Binding name="JAMBATEAMINVITE" header="JAMBATEAM" category="ADDONS">
+	<Binding name="JAMBATEAMINVITE" header="JAMBATEAM" category="Jamba">
 		--[[dummy]]
 	</Binding>
-	<Binding name="JAMBATEAMDISBAND" category="ADDONS">
+	<Binding name="JAMBATEAMDISBAND" category="Jamba">
 		--[[dummy]]
 	</Binding>
 </Bindings>

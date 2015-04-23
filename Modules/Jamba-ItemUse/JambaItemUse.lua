@@ -263,6 +263,7 @@ function AJM:SettingsUpdateBorderStyle()
 	frame:SetBackdropBorderColor( AJM.db.frameBorderColourR, AJM.db.frameBorderColourG, AJM.db.frameBorderColourB, AJM.db.frameBorderColourA )		
 end
 
+--ebony1
 function AJM:UpdateItemsInBar()
 	local state = "0"
     local parentFrame = JambaItemUseFrame
@@ -277,16 +278,27 @@ function AJM:UpdateItemsInBar()
 		local kind = itemInfo.kind
 		local action = itemInfo.action
 		if kind == "item" and not tonumber( action ) then
+			local itemLink = GetItemInfo( action )
+			--AJM:Print(itemLink)
+			if AJM:IsInInventory( itemLink ) == false then
+				-- item is no longer in bags there for it needs to be removed from bar.
+				--AJM:Print("NOT IN BAGS", iterateItems)
+				AJM.db.itemsAdvanced[iterateItems] = nil
+			end
 			action = action:sub(6)
 		end
         --AJM:Print(state, kind, action)
-        if kind == "mount" or kind == "battlepet" then
+        --AJM:Print(action)
+		--if AJM:IsInInventory(itemInfo) == true then
+		if kind == "mount" or kind == "battlepet" then
             containerButton:ClearStates()
-        else
-		    containerButton:SetState(state, kind, action)
+			--containerButton:SetState(kind, action)
+		else
+		containerButton:SetState(state, kind, action)
         end
 	end
 end
+-- ebony 5
 
 function AJM:AddItemToItemDatabase( itemNumber, kind, action )
     if kind == "mount" or kind == "battlepet" then
@@ -310,7 +322,7 @@ end
 
 function AJM:OnButtonContentsChanged( event, button, state, type, value, ... )
     if type == "mount" or type == "battlepet" then
-        return
+		return
     end
     AJM:AddItemToItemDatabase( button.itemNumber, type, value )
     AJM:JambaSendSettings()
@@ -356,6 +368,8 @@ function AJM:CreateJambaItemUseItemContainer( itemNumber, parentFrame )
 	itemContainer["container"] = containerButton	
 end
 
+--TODO CLEAN UP NOLONGER NEEDED
+--[[
 function AJM:CheckForQuestItemAndAddToBar()
 	local isQuest
 	local questId
@@ -396,6 +410,56 @@ function AJM:CheckForQuestItemAndAddToBar()
 		end
 	end
 end
+--]]
+
+--ebony test Using the wowapi and not the scanning of tooltips
+function AJM:CheckForQuestItemAndAddToBar()
+	for bag = 0,4,1 do 
+	for slot = 1,GetContainerNumSlots(bag),1 do 
+		local IsQuestItem,StartsQuest,_ = GetContainerItemQuestInfo(bag,slot)
+		local _,_,_,_,readable,_,itemLink = GetContainerItemInfo(bag,slot) -- readable???
+		if not IsQuestItem and StartsQuest then
+			local itemString = GetItemInfo(itemLink)
+				AJM:AddAnItemToTheBarIfNotExists( itemLink, true )
+				end
+			end
+		end 
+	for iterateQuests=1,GetNumQuestLogEntries() do
+	local questLogTitleText,_,_,_,isHeader = GetQuestLogTitle(iterateQuests)
+		if not isHeader then
+			local questItemLink, questItemIcon, questItemCharges = GetQuestLogSpecialItemInfo( iterateQuests )
+			if questItemLink  then
+				local itemName = GetItemInfo(questItemLink)
+				local questname,rank = GetItemSpell(questItemLink) -- Only means to detect if the item is usable
+				if questname then
+					if JambaUtilities:DoItemLinksContainTheSameItem( questItemLink, questItemLink ) == true then
+						AJM:AddAnItemToTheBarIfNotExists( questItemLink, false )				
+					end				
+				end
+			end
+		end
+	end
+end
+
+function AJM:IsInInventory(itemLink)
+	for b = 0,4,1 do 
+		for s = 1,GetContainerNumSlots(b),1 do 
+			--AJM:Debug( "Bags OK. checking", itemLink )
+			local _,_,_,_,_,_,_,_,_,Link = GetContainerItemInfo(b,s)
+			if Link then
+				--AJM:Debug( "Bags OK. checking", itemLink, Link )
+				local itemString = GetItemInfo( Link )
+				--AJM:Debug( "Bags OK. checking", itemLink, itemString )
+				if itemLink == itemString then
+					--AJM:Print( "True" )
+					return true--, b, s
+				end
+			end
+		end 
+	end
+	return false
+end
+
 
 function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest )
 	local itemInfo
@@ -412,6 +476,13 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest )
 	if alreadyExists == false then
 		for iterateItems = 1, AJM.db.numberOfItems, 1 do
 			itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
+			--TODO LOOK in if we need this i don't think we do.
+			--AJM:Print( "ITEMiD", itemLink)
+			--ebonyfassttest
+			--AJM:Print( "checking item is in players bag.")
+			--Checks the items we talking about is in the bags of the player.
+			--if AJM:IsInInventory( itemLink ) == true then
+				--AJM:Print( "is in bags")
 			if itemInfo.kind == "empty" then
 				AJM:AddItemToItemDatabase( iterateItems, "item", itemId )
 				AJM:JambaSendSettings()
@@ -420,6 +491,7 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest )
 					AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["New item that starts a quest found!"], false )
 				end
 				return
+			--end	
 			end
 		end
 	end
@@ -813,6 +885,8 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "PLAYER_REGEN_DISABLED" )
 	AJM:RegisterEvent( "BAG_UPDATE" )
 	AJM:RegisterEvent( "ITEM_PUSH" )
+	AJM:RegisterEvent( "QUEST_LOG_UPDATE", "UpdateItemsInBar" )
+	AJM:RegisterEvent( "PLAYER_EQUIPMENT_CHANGED", "UpdateItemsInBar" )
 	AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_Registered" )
     AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_SetGlobal" )	
 	AJM:RegisterMessage( JambaApi.MESSAGE_TEAM_MASTER_CHANGED, "OnMasterChanged" )
