@@ -1,6 +1,6 @@
 ﻿<Bindings>
 	
-  <Binding name="JAMBATARGETMARK" header="JAMBA_TARGET" category="ADDONS" runOnUp="true">
+  <Binding name="JAMBATARGETMARK" header="JAMBA_TARGET" category="Jamba" runOnUp="true">
     JambaTargetMarkTargetKeyPress( keystate )
   </Binding>
   <Binding name="JAMBACLEARTARGET" category="Jamba">
