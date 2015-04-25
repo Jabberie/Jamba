@@ -12,11 +12,16 @@ Jamba-Quest
 *Abandon all quest button now works.
 
 Jamba-Item
-*Now should removed QuestsItems/Items No Longer in the player bags.
+*Now should remove QuestsItems No Longer in the player bags.
 
 Jamba-Team
 *Added back the team disband Button.
+*Set offline button now works! and will send settings to the team to take a team member not in use.
+*Added new commands /jamba-team setalloffline & setallonline will do what it says on the tin setting all members but the char that runs the command on/off Line
+*Added new command /jamba setoffline(charname-realm) to set a member offline/online.
 
+Jamba-Display
+*now updates on slaves not online anymore using the offline button in jamba-team
 
 -------------------------
 Jamba Version: 4.0-PublicBeta6

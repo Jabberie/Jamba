@@ -38,6 +38,7 @@ AJM.settings = {
 	profile = {
 		master = "",
         teamList = {},
+		characterOnline = {},
 		focusChangeSetMaster = false,
 		masterChangePromoteLeader = false,
 		inviteAcceptTeam = true,
@@ -72,7 +73,15 @@ function AJM:GetConfiguration()
 				usage = "/jamba-team add <name>",
 				get = false,
 				set = "AddMemberCommand",
-			},					
+			},
+			setoffline = {
+				type = "input",
+				name = L["Set Offline"],
+				desc = L["Sets a member offline"],
+				usage = "/jamba-team setoffline <name>",
+				get = false,
+				set = "SetMemberOfflineCommand",
+			},			
 			remove = {
 				type = "input",
 				name = L["Remove"],
@@ -129,6 +138,22 @@ function AJM:GetConfiguration()
 				get = false,
 				set = "DoRemoveAllMembersFromTeam",
 			},
+			setalloffline = {
+				type = "input",
+				name = L["Set Team OffLine"],
+				desc = L["Set All Team Members OffLine"],
+				usage = "/jamba-team setalloffline",
+				get = false,
+				set = "setAllMembersOffline",
+			},
+			setallonline = {
+				type = "input",
+				name = L["Set Team OnLine"],
+				desc = L["Set All Team Members OnLine"],
+				usage = "/jamba-team setallonline",
+				get = false,
+				set = "setAllMembersOnline",
+			},
 			push = {
 				type = "input",
 				name = L["Push Settings"],
@@ -136,14 +161,14 @@ function AJM:GetConfiguration()
 				usage = "/jamba-team push",
 				get = false,
 				set = "JambaSendSettings",
-			},	
+			},				
 		},
 	}
 	return configuration
 end
 
 -- Create the character online table and ordered characters tables.
-AJM.characterOnline = {}
+--AJM.characterOnline = {}
 AJM.orderedCharacters = {}
 
 -------------------------------------------------------------------------------------------------------------
@@ -154,6 +179,9 @@ AJM.orderedCharacters = {}
 AJM.COMMAND_LEAVE_PARTY = "JambaTeamLeaveGroup"
 -- Set master command.
 AJM.COMMAND_SET_MASTER = "JambaTeamSetMaster"
+-- Set Minion OffLine
+AJM.COMMAND_SET_OFFLINE = "JambaTeamSetOffline"
+AJM.COMMAND_SET_ONLINE = "JambaTeamSetOnline"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -167,6 +195,11 @@ AJM.MESSAGE_TEAM_ORDER_CHANGED = "JambaTeamOrderChanged"
 AJM.MESSAGE_TEAM_CHARACTER_ADDED = "JambaTeamCharacterAdded"
 -- Character has been removed, parameter: characterName.
 AJM.MESSAGE_TEAM_CHARACTER_REMOVED = "JambaTeamCharacterRemoved"
+-- character online
+AJM.MESSAGE_CHARACTER_ONLINE = "JmbTmChrOn"
+-- character offline
+AJM.MESSAGE_CHARACTER_OFFLINE = "JmbTmChrOf"
+
 
 -------------------------------------------------------------------------------------------------------------
 -- Constants used by module.
@@ -582,6 +615,10 @@ local function TeamList()
 	return pairs( AJM.db.teamList )
 end
 
+local function Offline()
+	return pairs( AJM.db.characterOnline)
+end
+
 -- Get the largest order number from the team list.
 local function GetTeamListMaximumOrder()
 	local largestPosition = 0
@@ -870,18 +907,17 @@ local function GetCharacterOnlineStatus( characterName )
 	if JambaPrivate.Communications.AssumeTeamAlwaysOnline() == true then
 		return true
 	end
-	return AJM.characterOnline[characterName]
+	return AJM.db.characterOnline[characterName]
 end
 
 -- Set a character's online status.
 local function SetCharacterOnlineStatus( characterName, isOnline )
+	--TODO OLD CLEAN UP
 	--if JambaPrivate.Communications.AssumeTeamAlwaysOnline() == true then
 	--	isOnline = true
 	--end
-	--local character =  JambaUtilities:AddRealmToNameIfMissing( characterName )
 	--AJM:Print('setting', character, 'to be online')
-	AJM.characterOnline[characterName] = isOnline
-	AJM:SettingsTeamListScrollRefresh()
+	AJM.db.characterOnline[characterName] = isOnline
 end
 
 local function SetTeamStatusToOffline()
@@ -891,6 +927,9 @@ local function SetTeamStatusToOffline()
 	-- Set all characters online status to false.
 	for characterName, characterPosition in pairs( AJM.db.teamList ) do
 		SetCharacterOnlineStatus( characterName, false )
+		SetCharacterOnlineStatus( AJM.characterName, true )
+		AJM:SendMessage( AJM.MESSAGE_CHARACTER_OFFLINE )
+		AJM:SettingsTeamListScrollRefresh()
 	end
 end
 
@@ -901,8 +940,86 @@ local function SetTeamOnline()
 	-- Set all characters online status to false.
 	for characterName, characterPosition in pairs( AJM.db.teamList ) do
 		SetCharacterOnlineStatus( characterName, true )
+		AJM:SendMessage( AJM.MESSAGE_CHARACTER_ONLINE )
 		AJM:SettingsTeamListScrollRefresh()
 	end
+end
+	
+--Set character Offline. 
+local function setOffline( characterName )
+	-- can not set master offline
+	if IsCharacterTheMaster( characterName ) == true then 
+		StaticPopup_Show( "MasterCanNotBeSetOffline" )
+		return
+	else
+		SetCharacterOnlineStatus( characterName, false )
+		AJM:SendMessage( AJM.MESSAGE_CHARACTER_OFFLINE )
+		AJM:SettingsTeamListScrollRefresh()
+	end
+end
+
+--Set character OnLine. 
+local function setOnline( characterName )
+	SetCharacterOnlineStatus( characterName, true )
+	AJM:SendMessage( AJM.MESSAGE_CHARACTER_ONLINE )
+	AJM:SettingsTeamListScrollRefresh()
+end
+
+-- Set OfflineClick
+local function setOfflineClick ( characterName )
+	if GetCharacterOnlineStatus( characterName ) == false then
+		setOnline( characterName, true )
+	else
+		setOffline( characterName, false )
+		--AJM:Print("setOffline", characterName )
+	end
+	AJM:SettingsRefresh()
+end
+
+-- Set member offline from the command line.
+function AJM:SetMemberOfflineCommand( info, parameters )
+	local characterName = parameters
+	--AJM:Print("is char in team", characterName )
+	local matchDash = characterName:find( "-" )
+	if matchDash then
+		if IsCharacterInTeam( characterName ) then
+			--AJM:Print("is char in team", characterName )
+			--local character = JambaUtilities:AddRealmToNameIfMissing( characterName )	
+			if GetCharacterOnlineStatus( characterName ) == false then
+				setOnline( characterName, true )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_SET_ONLINE, characterName )
+			else
+				setOffline( characterName, false )
+				--AJM:Print("setOffline", characterName )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_SET_OFFLINE, characterName )
+			end
+		AJM:SettingsRefresh()
+		else
+		AJM:Print( L["A is not in my team list.  I can not set them Offline."]( characterName ) )
+		end	
+	else
+		AJM:Print( "You need to add a Realm Name" )
+	end	
+end
+
+function AJM.ReceivesetOffline( characterName )
+	--AJM:Print("command", characterName )
+	setOffline( characterName, false )
+	AJM:SettingsRefresh()
+end
+
+function AJM.ReceivesetOnline( characterName )
+	--AJM:Print("command", characterName )
+	setOnline( characterName, false )
+	AJM:SettingsRefresh()
+end
+
+function AJM:setAllMembersOffline()
+	SetTeamStatusToOffline()
+end	
+
+function AJM:setAllMembersOnline()
+	SetTeamOnline()
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -1344,8 +1461,8 @@ end
 
 -- Settings received.
 function AJM:JambaOnSettingsReceived( characterName, settings )	
-	if characterName ~= AJM.characterName then
-		-- Update the settings.
+	if characterName ~= AJM.characterName then	
+	-- Update the settings.
 		AJM.db.teamList = JambaUtilities:CopyTable( settings.teamList )
 		AJM.db.focusChangeSetMaster = settings.focusChangeSetMaster 
 		AJM.db.masterChangePromoteLeader = settings.masterChangePromoteLeader 
@@ -1363,9 +1480,11 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.lootToGroupFriendsAreNotStrangers = settings.lootToGroupFriendsAreNotStrangers
 		AJM.db.masterChangeClickToMove = settings.masterChangeClickToMove
 		AJM.db.master = settings.master
+		--Copy the Offline team members.
+		AJM.db.characterOnline = JambaUtilities:CopyTable( settings.characterOnline )
 		SetMaster( settings.master )
 		-- Refresh the settings.
-		AJM:SettingsRefresh()
+		--AJM:SettingsRefresh()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
 		-- Tell the team?
@@ -1495,24 +1614,10 @@ end
 
 --ebony
 
+
 function AJM:SettingsOfflineClick( event )
 	local characterName = GetCharacterNameAtOrderPosition( AJM.settingsControl.teamListHighlightRow )
-		-- can not set master offline
-		if IsCharacterTheMaster( characterName ) == true then 
-			StaticPopup_Show( "MasterCanNotBeSetOffline" )
-			return
-			--if the character is Offline then set to Online if Offline set to Online.
-		else
-			if GetCharacterOnlineStatus ( characterName ) == false then
-				SetCharacterOnlineStatus( characterName, true )
-				AJM:SettingsTeamListScrollRefresh()
-		else
-				SetCharacterOnlineStatus( characterName, false )
-				AJM:SettingsTeamListScrollRefresh()
-			end
-		end
-	--Shows that this is WIP pop-up box.
-	StaticPopup_Show( "SET_OFFLINE_WIP" )
+	setOfflineClick ( characterName )
 	AJM:SettingsTeamListScrollRefresh()
 end
 
@@ -1637,6 +1742,17 @@ function AJM:JambaOnCommandReceived( sender, commandName, ... )
 			AJM:ReceiveCommandSetMaster( ... )
 		end	
 	end
+	--Ebony8
+	if commandName == AJM.COMMAND_SET_OFFLINE then
+		if IsCharacterInTeam( sender ) == true then
+			AJM.ReceivesetOffline( ... )
+		end
+	end
+	if commandName == AJM.COMMAND_SET_ONLINE then
+		if IsCharacterInTeam( sender ) == true then
+			AJM.ReceivesetOnline( ... )
+		end
+	end
 end
 
 -- Functions available from Jamba Team for other Jamba internal objects.
@@ -1664,9 +1780,12 @@ JambaApi.IsCharacterInTeam = IsCharacterInTeam
 JambaApi.IsCharacterTheMaster = IsCharacterTheMaster
 JambaApi.GetMasterName = GetMasterName
 JambaApi.TeamList = TeamList
+JambaApi.Offline = Offline
 JambaApi.TeamListOrdered = TeamListOrdered
 JambaApi.GetCharacterNameAtOrderPosition = GetCharacterNameAtOrderPosition
 JambaApi.GetPositionForCharacterName = GetPositionForCharacterName 
 JambaApi.GetTeamListMaximumOrder = GetTeamListMaximumOrder
 JambaApi.GetCharacterOnlineStatus = GetCharacterOnlineStatus
 JambaApi.RemoveAllMembersFromTeam = RemoveAllMembersFromTeam
+JambaApi.MESSAGE_CHARACTER_ONLINE = AJM.MESSAGE_CHARACTER_ONLINE
+JambaApi.MESSAGE_CHARACTER_OFFLINE = AJM.MESSAGE_CHARACTER_OFFLINE

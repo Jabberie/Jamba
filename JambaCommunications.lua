@@ -64,8 +64,8 @@ AJM.COMMAND_INTERNAL_SEND_SETTINGS = "JmbCmSdSet"
 -- Messages module sends.
 -------------------------------------------------------------------------------------------------------------
 
-AJM.MESSAGE_CHARACTER_ONLINE = "JmbTmChrOn"
-AJM.MESSAGE_CHARACTER_OFFLINE = "JmbTmChrOf"
+--AJM.MESSAGE_CHARACTER_ONLINE = "JmbTmChrOn"
+--AJM.MESSAGE_CHARACTER_OFFLINE = "JmbTmChrOf"
 
 -- Get a settings value.
 function AJM:ConfigurationGetSetting( key )
@@ -609,11 +609,13 @@ JambaPrivate.Communications.SendCommandToon = SendCommandToon
 JambaPrivate.Communications.SendCommandMaster = SendCommandMaster
 JambaPrivate.Communications.SendCommandToon = SendCommandToon
 JambaPrivate.Communications.AssumeTeamAlwaysOnline = AssumeTeamAlwaysOnline
-JambaPrivate.Communications.MESSAGE_CHARACTER_ONLINE = AJM.MESSAGE_CHARACTER_ONLINE
-JambaPrivate.Communications.MESSAGE_CHARACTER_OFFLINE = AJM.MESSAGE_CHARACTER_OFFLINE
+-- moved to jamba-team
+--JambaPrivate.Communications.MESSAGE_CHARACTER_ONLINE = AJM.MESSAGE_CHARACTER_ONLINE
+--JambaPrivate.Communications.MESSAGE_CHARACTER_OFFLINE = AJM.MESSAGE_CHARACTER_OFFLINE
 JambaApi.SendChatMessage = SendChatMessage
 JambaApi.COMMUNICATION_PRIORITY_BULK = AJM.COMMUNICATION_PRIORITY_BULK
 JambaApi.COMMUNICATION_PRIORITY_NORMAL = AJM.COMMUNICATION_PRIORITY_NORMAL
 JambaApi.COMMUNICATION_PRIORITY_ALERT = AJM.COMMUNICATION_PRIORITY_ALERT
-JambaApi.MESSAGE_CHARACTER_ONLINE = AJM.MESSAGE_CHARACTER_ONLINE
-JambaApi.MESSAGE_CHARACTER_OFFLINE = AJM.MESSAGE_CHARACTER_OFFLINE
+-- moved to jamba-team
+--JambaApi.MESSAGE_CHARACTER_ONLINE = AJM.MESSAGE_CHARACTER_ONLINE
+--JambaApi.MESSAGE_CHARACTER_OFFLINE = AJM.MESSAGE_CHARACTER_OFFLINE
