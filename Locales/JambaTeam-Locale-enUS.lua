@@ -54,6 +54,9 @@ L["Are you sure you wish to remove %s from the team list?"] = true
 L["A is not in my team list.  I can not set them to be my master."] = function( characterName )
 	return characterName.." is not in my team list.  I can not set them to be my master."
 end
+L["A is not in my team list.  I can not set them Offline."] = function( characterName )
+	return characterName.." is not in my team list.  I can not set them Offline."
+end
 L["Settings received from A."] = function( characterName )
 	return "Settings received from "..characterName.."."
 end
@@ -67,3 +70,9 @@ L["Friends Are Not Strangers"] = true
 L["Remove All Members"] = true
 L["Remove all members from the team."] = true
 L["Auto activate click-to-move on Minions and deactivate on Master."] = true
+L["Set All Team Members OffLine"] = true
+L["Set Team OffLine"] = true
+L["Set All Team Members OnLine"] = true
+L["Set Team OnLine"] = true
+L["Set Offline"] = true
+L["Sets a member offline"] = true
