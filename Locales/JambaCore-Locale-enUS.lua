@@ -67,3 +67,4 @@ L["Close"] = true
 -- test stuff
 L["**Untick this to use the WIP Set Offline team List Set offline Button"] =true
 L["Use Team List Offline Button"] = true
+L["Auto Set Team Members On and Off Line"] = true

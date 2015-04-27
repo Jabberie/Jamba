@@ -15,6 +15,7 @@ L["Remove"] = true
 L["Remove a member from the team list."] = true
 L["Master"] = true
 L["Set OffLine"] = true
+L["Set On-Line"] = true
 L["Master Can not be Set OffLine"] = true
 --wip
 L["WIP: This Button Does absolutely nothing at all, Unless you untick Use team List Offline Button in Core:communications Under Advanced. Report bugs to to me -EBONY"] = true

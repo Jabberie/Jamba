@@ -74,14 +74,14 @@ function AJM:GetConfiguration()
 				get = false,
 				set = "AddMemberCommand",
 			},
-			setoffline = {
-				type = "input",
-				name = L["Set Offline"],
-				desc = L["Sets a member offline"],
-				usage = "/jamba-team setoffline <name>",
-				get = false,
-				set = "SetMemberOfflineCommand",
-			},			
+			--setoffline = { TODO CLKAN UP>
+			--	type = "input",
+			--	name = L["Set Offline"],
+			--	desc = L["Sets a member offline"],
+			--	usage = "/jamba-team setoffline <name>",
+			--	get = false,
+			--	set = "SetMemberOfflineCommand",
+			--},			
 			remove = {
 				type = "input",
 				name = L["Remove"],
@@ -324,14 +324,14 @@ local function SettingsCreateTeamList()
 		L["Disband"],
 		AJM.SettingsDisbandClick
 	)
-	AJM.settingsControl.teamListButtonOffline = JambaHelperSettings:CreateButton( 
-		AJM.settingsControl, 
-		setMasterButtonWidth,
-		left + inviteDisbandButtonWidth + horizontalSpacing + inviteDisbandButtonWidth + horizontalSpacing + setMasterButtonWidth +  horizontalSpacing,
-		bottomOfList, 
-		L["Set OffLine"],
-		AJM.SettingsOfflineClick
-	)		
+--	AJM.settingsControl.teamListButtonOffline = JambaHelperSettings:CreateButton( 
+--		AJM.settingsControl, 
+--		setMasterButtonWidth,
+--		left + inviteDisbandButtonWidth + horizontalSpacing + inviteDisbandButtonWidth + horizontalSpacing + setMasterButtonWidth +  horizontalSpacing,
+--		bottomOfList, 
+--		L["Set On-Line"],
+--		AJM.SettingsOfflineClick
+--	)		
 	return bottomOfSection
 end
 
@@ -947,25 +947,27 @@ end
 	
 --Set character Offline. 
 local function setOffline( characterName )
-	-- can not set master offline
-	if IsCharacterTheMaster( characterName ) == true then 
-		StaticPopup_Show( "MasterCanNotBeSetOffline" )
-		return
-	else
-		SetCharacterOnlineStatus( characterName, false )
-		AJM:SendMessage( AJM.MESSAGE_CHARACTER_OFFLINE )
-		AJM:SettingsTeamListScrollRefresh()
-	end
+	-- can not set master Offline TODO REMOVE.
+	--if IsCharacterTheMaster( characterName ) == true then 
+	--	StaticPopup_Show( "MasterCanNotBeSetOffline" )
+	--	return
+	--else
+	local character = JambaUtilities:AddRealmToNameIfMissing( characterName )
+	SetCharacterOnlineStatus( character, false )
+	AJM:SendMessage( AJM.MESSAGE_CHARACTER_OFFLINE )
+	AJM:SettingsTeamListScrollRefresh()
+	--end
 end
 
 --Set character OnLine. 
 local function setOnline( characterName )
-	SetCharacterOnlineStatus( characterName, true )
+	local character = JambaUtilities:AddRealmToNameIfMissing( characterName )
+	SetCharacterOnlineStatus( character, true )
 	AJM:SendMessage( AJM.MESSAGE_CHARACTER_ONLINE )
 	AJM:SettingsTeamListScrollRefresh()
 end
 
--- Set OfflineClick
+-- Set OfflineClick TODO CLean up
 local function setOfflineClick ( characterName )
 	if GetCharacterOnlineStatus( characterName ) == false then
 		setOnline( characterName, true )
@@ -976,7 +978,7 @@ local function setOfflineClick ( characterName )
 	AJM:SettingsRefresh()
 end
 
--- Set member offline from the command line.
+-- Set member offline from the command line. AXED CLEAN UP REMOVE!
 function AJM:SetMemberOfflineCommand( info, parameters )
 	local characterName = parameters
 	--AJM:Print("is char in team", characterName )
@@ -1612,8 +1614,7 @@ function AJM:SettingsDisbandClick( event )
 	AJM:DisbandTeamFromParty()
 end
 
---ebony
-
+--TODO CLEAN UP if remove the button. Ebony
 
 function AJM:SettingsOfflineClick( event )
 	local characterName = GetCharacterNameAtOrderPosition( AJM.settingsControl.teamListHighlightRow )
@@ -1770,6 +1771,8 @@ JambaPrivate.Team.SetCharacterOnlineStatus = SetCharacterOnlineStatus
 JambaPrivate.Team.GetCharacterNameAtOrderPosition = GetCharacterNameAtOrderPosition
 JambaPrivate.Team.GetTeamListMaximumOrder = GetTeamListMaximumOrder
 JambaPrivate.Team.RemoveAllMembersFromTeam = RemoveAllMembersFromTeam
+JambaPrivate.Team.setOffline = setOffline
+JambaPrivate.Team.setOnline = setOline
 
 -- Functions available for other addons.
 JambaApi.MESSAGE_TEAM_MASTER_CHANGED = AJM.MESSAGE_TEAM_MASTER_CHANGED
@@ -1789,3 +1792,5 @@ JambaApi.GetCharacterOnlineStatus = GetCharacterOnlineStatus
 JambaApi.RemoveAllMembersFromTeam = RemoveAllMembersFromTeam
 JambaApi.MESSAGE_CHARACTER_ONLINE = AJM.MESSAGE_CHARACTER_ONLINE
 JambaApi.MESSAGE_CHARACTER_OFFLINE = AJM.MESSAGE_CHARACTER_OFFLINE
+JambaApi.setOffline = setOffline
+JambaApi.setOnline = setOnline

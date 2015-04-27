@@ -80,10 +80,12 @@ end
 -- Settings - the values to store and their defaults for the settings database.
 AJM.settings = {
 	profile = {
+--		DO NOT Change lines here!
 --		teamOnlineChannelName = "JambaTeamIsOnline",
 --		teamOnlineChannelPassword = "JambaTeamPassword",
 --		showOnlineChannel = false,
-		assumeTeamAlwaysOnline = true,
+		assumeTeamAlwaysOnline = false, -- This is a place holder And is used as backup DO NOT CHANGE assumeTeamAlwaysOnline unless you know what your doing that you probs don't ;)
+		autoSetTeamOnlineorOffline = true,
 		boostCommunication = true,
 	},
 }
@@ -130,6 +132,7 @@ end
 local function AssumeTeamAlwaysOnline()
 	return AJM.db.assumeTeamAlwaysOnline
 end
+
 
 -------------------------------------------------------------------------------------------------------------
 -- Command management.
@@ -222,28 +225,38 @@ local function CommandToon( moduleName, characterName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	if IsCharacterOnline( characterName ) == true then
-			if IsCharacterOnline( characterName ) == true then
-				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
-					AJM:SendCommMessage( 
-					AJM.COMMAND_PREFIX,
-					message,
-					AJM.COMMUNICATION_WHISPER,
-					characterName,
-					AJM.COMMUNICATION_PRIORITY_ALERT
-					)
-			end	
+		if IsCharacterOnline( characterName ) == true then
+			AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+				AJM:SendCommMessage( 
+				AJM.COMMAND_PREFIX,
+				message,
+				AJM.COMMUNICATION_WHISPER,
+				characterName,
+				AJM.COMMUNICATION_PRIORITY_ALERT
+				)
+		end	
 	end		
 end
-
-
 
 -- EbonyTest
 -- hide offline player spam Not really the best way but it works, Maybe adding tick box's to set members offline? This should now work with elvUI?
 
 local function SystemSpamFilter(frame, event, message)
-	if( event == "CHAT_MSG_SYSTEM") then
+	if( event == "CHAT_MSG_SYSTEM") then	
 		if message:match(string.format(ERR_CHAT_PLAYER_NOT_FOUND_S, "(.+)")) then
-			return true
+			local SearchPlayerNotFound = gsub(ERR_CHAT_PLAYER_NOT_FOUND_S, "%%s", "(.+)")  -- Get from "No player named '%s' is currently playing."
+			local _, _, characterName = strfind(message, SearchPlayerNotFound)
+			if JambaApi.IsCharacterInTeam(characterName) == true then	
+				--AJM:Print("player offline in team", characterName )
+				if AJM.db.autoSetTeamOnlineorOffline == true then
+					JambaApi.setOffline( characterName, false )
+					--AJM:Print("player offline in team", characterName )
+				end
+				return true
+			else
+				--AJM:Print("player offline Not in team")
+				return
+			end
 		end
 	end		
     return false
@@ -283,7 +296,9 @@ function AJM:CommandReceived( prefix, message, distribution, sender )
 	if prefix == AJM.COMMAND_PREFIX then
 		--checks the char is in the team if not everyone can change settings and we do not want that
 		if JambaPrivate.Team.IsCharacterInTeam( sender ) == true then
-		   AJM:DebugMessage( "Sender is in team list." )
+		    AJM:DebugMessage( "Sender is in team list." )
+		   JambaApi.setOnline( sender, true)
+			--AJM:Print("Setting Toon online", sender )
 			-- Split the command into its components.
 			local moduleName, commandName, argumentsStringSerialized = strsplit( AJM.COMMAND_SEPERATOR, message )
 			local argumentsTable  = {}
@@ -464,6 +479,7 @@ function AJM:SettingsCreateOptions( top )
 	local movingTop = top
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Team Online Check"], movingTop, false )--
 	movingTop = movingTop - headingHeight	
+	--[[
 	AJM.settingsControl.checkBoxAssumeAlwaysOnline = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -479,8 +495,17 @@ function AJM:SettingsCreateOptions( top )
 		column1Left, 
 		movingTop,
 		L["**Untick this to use the WIP Set Offline team List Set offline Button"]
-	)	
-	movingTop = movingTop - labelContinueHeight
+	)
+	--]]
+	AJM.settingsControl.checkBoxAutoSetTeamOnlineorOffline = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop, 
+		L["Auto Set Team Members On and Off Line"],
+		AJM.CheckBoxAutoSetTeamOnlineorOffline
+	)
+	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControl.checkBoxBoostCommunication = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -520,6 +545,11 @@ function AJM:CheckBoxAssumeAlwaysOnline( event, value )
 	AJM:SettingsRefresh()	
 end
 
+function AJM:CheckBoxAutoSetTeamOnlineorOffline( event, value )
+	AJM.db.autoSetTeamOnlineorOffline = value
+	AJM:SettingsRefresh()	
+end
+
 function AJM:BeforeJambaProfileChanged()	
 end
 
@@ -528,7 +558,8 @@ function AJM:OnJambaProfileChanged()
 end
 
 function AJM:SettingsRefresh()	
-	AJM.settingsControl.checkBoxAssumeAlwaysOnline:SetValue( AJM.db.assumeTeamAlwaysOnline )
+--	AJM.settingsControl.checkBoxAssumeAlwaysOnline:SetValue( AJM.db.assumeTeamAlwaysOnline )
+	AJM.settingsControl.checkBoxAutoSetTeamOnlineorOffline:SetValue( AJM.db.autoSetTeamOnlineorOffline )
 	AJM.settingsControl.checkBoxBoostCommunication:SetValue( AJM.db.boostCommunication )
 end
 
@@ -542,6 +573,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
 		AJM.db.assumeTeamAlwaysOnline = settings.assumeTeamAlwaysOnline
+		AJM.db.autoSetTeamOnlineorOffline = settings.autoSetTeamOnlineorOffline
 		AJM.db.boostCommunication = settings.boostCommunication
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
