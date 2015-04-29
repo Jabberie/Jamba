@@ -154,7 +154,9 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "PLAYER_REGEN_DISABLED" )
 	AJM:RegisterEvent( "QUEST_WATCH_UPDATE" )
 	AJM:RegisterEvent( "QUEST_WATCH_LIST_CHANGED", "QUEST_WATCH_UPDATE" )
-	-- For in the field auto quests.
+	-- For in the field auto quests. And Bonus Quests.
+	--AJM:RegisterEvent("UNIT_QUEST_LOG_CHANGED", "QUEST_WATCH_UPDATE")
+	AJM:RegisterEvent("UNIT_QUEST_LOG_CHANGED", "JambaQuestWatchListUpdateButtonClicked")
 	AJM:RegisterEvent( "QUEST_AUTOCOMPLETE" )
 	AJM:RegisterEvent( "QUEST_COMPLETE" )
 	AJM:RegisterEvent( "QUEST_DETAIL" )
@@ -962,6 +964,7 @@ end
 
 function AJM:QuestWatchGetObjectiveText( questIndex, objectiveIndex )
 	local objectiveFullText, objectiveType, objectiveFinished = GetQuestLogLeaderBoard( objectiveIndex, questIndex )
+	--local objectiveFullText, objectiveType, objectiveFinished = GetQuestObjectiveInfo( objectiveIndex, questIndex )
 	local amountCompleted, objectiveText = AJM:GetQuestObjectiveCompletion( objectiveFullText )
 	return objectiveText 
 end
@@ -1103,6 +1106,7 @@ end
 -------------------------------------------------------------------------------------------------------------
 -- QUEST WATCH COMMUNICATION
 -------------------------------------------------------------------------------------------------------------
+--Ebony test
 
 function AJM:JambaQuestWatcherUpdate( useCache )
 	if AJM.db.enableQuestWatcher == false then
@@ -1110,16 +1114,23 @@ function AJM:JambaQuestWatcherUpdate( useCache )
 	end
 	AJM:DebugMessage( "Sending quest watch information...")
 	for iterateWatchedQuests = 1, GetNumQuestWatches() do
+	--for iterateQuests = 1, GetNumQuestLogEntries() do
 		local questIndex = GetQuestIndexForWatch( iterateWatchedQuests )
-        AJM:DebugMessage( "GetQuestIndexForWatch: questIndex: ", questIndex )
+        --local _, questIndex = GetNumQuestLogEntries()
+	   --local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questIDD, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( iterateWatchedQuests )
+		--local questIndex = questIDD
+		AJM:DebugMessage( "GetQuestIndexForWatch: questIndex: ", questIndex )
 		if questIndex ~= nil then
-            local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questIndex )
+            --local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questIndex )
+            local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questIndex )			
 			isComplete = AJM:IsCompletedAutoCompleteFieldQuest( questIndex, isComplete )
 			local numObjectives = GetNumQuestLeaderBoards( questIndex )
-            AJM:DebugMessage( "NumObjs:", numObjectives )
+            --local _,_,numObjectives = GetTaskInfo( questIndex )
+			AJM:DebugMessage( "NumObjs:", numObjectives )
             for iterateObjectives = 1, numObjectives do
 				local objectiveFullText, objectiveType, objectiveFinished = GetQuestLogLeaderBoard( iterateObjectives, questIndex )
-                AJM:DebugMessage( "ObjInfo:", objectiveFullText, objectiveType, objectiveFinished, iterateObjectives, questIndex )
+                --local objectiveFullText, objectiveType, objectiveFinished = GetQuestObjectiveInfo( iterateObjectives, questIndex )
+				AJM:DebugMessage( "ObjInfo:", objectiveFullText, objectiveType, objectiveFinished, iterateObjectives, questIndex )
 				local amountCompleted, objectiveText = AJM:GetQuestObjectiveCompletion( objectiveFullText )
                 AJM:DebugMessage( "SplitObjInfo",  amountCompleted, objectiveText )
 				if (AJM:QuestCacheUpdate( questID, iterateObjectives, amountCompleted, objectiveFinished ) == true) or (useCache == false) then
@@ -1132,6 +1143,30 @@ function AJM:JambaQuestWatcherUpdate( useCache )
 			end
 		end
 	end
+	for iterateWatchedQuests = 1, GetNumQuestLogEntries() do
+	   local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( iterateWatchedQuests )
+		--AJM:DebugMessage( "EbonyTest101:", questID)
+		local isInArea, isOnMap, numObjectives = GetTaskInfo(questID);
+		if isInArea and isOnMap then
+			isComplete = AJM:IsCompletedAutoCompleteFieldQuest( questIndex, isComplete )
+			--AJM:Print( "EbonyTestbounsquestID:", questID, numObjectives )
+			for iterateObjectives = 1, numObjectives do
+			local objectiveFullText, objectiveType, finished = GetQuestObjectiveInfo( questID, iterateObjectives )
+				--AJM:DebugMessage("BonuesQuest", objectiveText, finished )
+				local amountCompleted, objectiveText = AJM:GetQuestObjectiveCompletion( objectiveFullText )
+				if (AJM:QuestCacheUpdate( questID, iterateObjectives, amountCompleted, objectiveFinished ) == true) or (useCache == false) then
+					--AJM:DebugMessage("BonusQuest", amountCompleted, objectiveText )
+					--AJM:Print( "UPDATE:", "cache:", useCache, "QuestID", questID, "ObjectID", iterateObjectives )
+					--AJM:Print("BonuesQuest", objectiveText, finished )
+					local name = gsub(title, "[^|]+:", "Bonus:")
+					AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_WATCH_OBJECTIVE_UPDATE, questID, name, iterateObjectives, objectiveText, amountCompleted, objectiveFinished, isComplete )
+					if AJM.db.sendProgressChatMessages == true then
+						AJM:JambaSendMessageToTeam( AJM.db.messageArea, objectiveText.." "..amountCompleted, false )
+					end
+				end
+			end
+		end
+	end	
 end
 
 -- Gathers messages from team.
@@ -1217,6 +1252,7 @@ end
 -- QUEST WATCH DISPLAY LIST LOGIC
 -------------------------------------------------------------------------------------------------------------
 
+--Ebony working here
 function AJM:GetTotalCharacterAmountFromWatchList( questID, objectiveIndex )
 	local amount = 0
 	local total = 0

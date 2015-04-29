@@ -49,11 +49,11 @@ JambaPrivate.SettingsFrame.Widget:AddChild( JambaPrivate.SettingsFrame.WidgetTre
 JambaPrivate.SettingsFrame.WidgetTree:SetLayout( "Fill" )
 
 function AJM:OnEnable()
-	--if AJM.db.showStartupMessage6033 then
-		--JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Release Notes / News"] )
-		--JambaStartupMessageFrame:Show()
-		--AJM.db.showStartupMessage6033 = false
-	
+	if AJM.db.showStartupMessage4000 then
+		JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Release Notes / News"] )
+		JambaStartupMessageFrame:Show()
+		AJM.db.showStartupMessage4000 = false
+	end
 end
 
 function AJM:OnDisable()
@@ -229,7 +229,7 @@ table.insert( UISpecialFrames, "JambaSettingsWindowsFrame" )
 AJM.settings = {
 	profile = {
 		showMinimapIcon = true,
-		--showStartupMessage6033 = true,
+		showStartupMessage4000 = true,
 	},
 }
 

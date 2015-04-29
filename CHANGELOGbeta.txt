@@ -1,0 +1,165 @@
+Jamba Version: 4.0
+WoW Game Version: 6.1.2
+Release Date: 27/04/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Core:
+No longer beta!
+
+Jamba-QuestWatcher
+* Now supports WoD Bonus Quests In outside world.
+
+---------------------------------
+Jamba Version: 4.0-PublicBeta7
+WoW Game Version: 6.1.2
+Release Date: 27/04/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+*Miscellaneous:
+*Updated LibActionButtonJamba-1.0 to rev 60 (in hope it would work with mounts/pets But with no luck)
+*Added LibButtonGlow-1.0
+*Jamba Key Bindings are now on there own Tab on the new 6.x KeyBindingUI
+
+Jamba-Quest
+*Abandon all quest button now works.
+
+Jamba-Item
+*Now should remove QuestsItems No Longer in the player bags.
+
+Jamba-Team
+*Added back the team disband Button.
+*Removed The Off-Line Button (see Jamba-Communications)
+*Added new commands /jamba-team setalloffline & /jamba-team setallonline (sets all on/off-Online )
+
+Jamba-Communications
+* automatic set team members on and off line. set on by default.
+  
+Jamba-Display
+*now updates the Minions not on/off-Line using the new automatic off-line system.
+
+-------------------------
+Jamba Version: 4.0-PublicBeta6
+WoW Game Version: 6.1.2
+Release Date: 20/04/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Jamba-Team
+*The offline team Button now puts the The team Member offline. will not save over a reload of the UI. This is still in testing and there for i have added a lock and you need
+untick "Use team List Offline Button" in Core:communications Under Advanced.
+
+Jamba-quest
+Turned off debug. 
+
+--------------------------
+Jamba Version: 4.0-PublicBeta5
+WoW Game Version: 6.1.2
+Release Date: 16/04/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Jamba-Team
+*Added a Toon Off-line Button - This is still WIP so might not do anything at all.
+
+Jamba-Toon
+*Should now have all the 3.13 Stuff added to 4.0, Somehow this was overlooked.
+
+Jamba-Display
+*Should no longer be able to move the TeamBar when the player is in combat.
+
+
+-----------------------------
+Jamba Version: 4.0-PublicBeta4
+WoW Game Version: 6.1.0
+Release Date: 1/04/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Jamba-Core
+*Fixed a LUA error that happened every time you did anything with profiles. 
+
+Jamba-Quest 
+*Longer over Overrides Quest Log (L key) with World Map.
+
+Jamba-FTL
+*Should now be supported for 4.0. (Thanks for the help bettysue)
+
+
+-------------------
+
+Jamba Version: 4.0-PublicBeta3
+WoW Game Version: 6.1.0
+Release Date: 22/03/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+*Fixed Some Modules that needed a realm-name when it got setttings from master on the same realm.
+
+Jamba-Display-Team
+*Fixed a bug with Jamba Follow Looping.
+*fixed Follow Dance on melee groups so its not as bad as it used to be.
+
+Jamba-ItemUse
+*Fixed a bug that the master was not showing as the master. and sending the settings to it self.
+
+Jamba-Communications 
+*Should now support ElvUI/TukUI or other chatmods trying to do the same thing i was. (Player X Not playing)
+
+Jamba-Toon
+*Jamba-Currency No longer Should it list all chars in a The top line.
+
+Jamba-Follow
+*Jamba-Train Follow should now work, and should work crossrelam, BUG report on comments in Curse.
+*ANY TeamMembers In Combat Should now work Again. **Should work crossrelam(untested)**.
+
+Jamba-Sell
+*when selling items using ALT: Toon should again tell master what item is being sold (bug)
+
+------------------
+
+Jamba Version: 4.0-PublicBeta2
+WoW Game Version: 6.1.0
+Release Date: TBA
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+*Jamba-Team:
+-Now support chars with ASCII Chars in there name.
+
+
+----------------------
+
+Jamba Version: 4.0-PublicBeta1
+WoW Game Version: 6.1.0
+Release Date: TBA
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+*Miscellaneous:
+-Updated Loads of Libs to the newest i can.
+-Fixed bug #164 LuaError on reading items that Have a metadata??, (Battle-Pets)
+-Added support to support IsBoxer adding Realms, by removing any spaces it might feel like adding.
+
+*Jamba-Communications 
+-Did a Rewrite on Jamba-Communications 
+-No-longer Jamba will have the Channel it used to have (that not many use from as far as i can tell) to keep Checking to see if team Members was online.
+-A new way is being worked on to check is the team member is online.
+-Removed "there is no player %Name% Playing" Spam From the chat ((*Cheer*))
+-Now sends Communication to PARTY If all fails then goes back to WHISPER
+
+
+*Jamba-Team
+-Added Support For CR and CRZ** (Read notes about CRZ)
+-Team Members are now added in Name-Realm Again (testing it a lot more then last time we tried this.)
+-Added Support realms with spaces in there names.
+-Updated tons of the Code to support -Realm, Changed many parts and using the newer API that is a lot easier.
+
+*Jamba-Display
+-Supports Cross-realm and Hp/Mana/XP/Rep/Follow
+-Fixed Bars to be crackable with Clique (you need to pick this option under Jamba-Display and reload the UI.
+-If not using Clique or its turn off then bars should target players now works on other realms.
+
+Notes:
+
+CR = connected realms EG You can trade/join guild ETC. All of jamba will work like normal Like your playing the same realm!
+
+CR = Join a Realm Over CRZ tech Note some of jamba will not work this is not down to me this is how blizzard Lets you talk over realms with addons YOU NEED TO BE IN PARTY WITH THE MEMBER FOR ANYTHING TO WORK! And some stuff might not work as you wish
+
+-----TODO-------
+*Jamba-Quest
+-Removed the Jamba-Team quest bar (whatever you want to call it).[*]When you use the blizzard Quest UI to drop quests it will now auto Drop them on the Clones.[*]When you use the blizzzard Quest UI to Track Quests It will not auto Track on clones[*]Holding a Alt Key will stop them going to clones i think its a cleaner System.
+ Not had time to work on this will be done next.

@@ -2,7 +2,7 @@
 ## Title: JambaFollow
 ## Notes: JambaFollow
 ## Author: Ebony, Former Author: Jafula
-## Version: 4.0-PublicBeta7
+## Version: 4.0
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
