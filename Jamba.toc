@@ -2,8 +2,7 @@
 ## Title: Jamba
 ## Notes: Jamba
 ## Author: Ebony, Former Author: Jafula
-## Version: 4.0.0
-## X-Category: Interface Enhancements
+## Version: 4.0.1
 ## SavedVariables: JambaCoreProfileDB, JambaCommunicationsProfileDB, JambaTeamProfileDB, JambaTagProfileDB, JambaMessageProfileDB
 JambaEmbeds.xml
 JambaUtilities.lua

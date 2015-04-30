@@ -714,6 +714,8 @@ local function AddMember( characterName )
 			local maxOrder = GetTeamListMaximumOrder()
 			-- Yes, add to the member list.
 			AJM.db.teamList[character] = maxOrder + 1
+			JambaPrivate.Team.SetTeamOnline()
+			--AJM.Print("teamList", character)
 			-- Send a message to any listeners that AJM character has been added.
 			AJM:SendMessage( AJM.MESSAGE_TEAM_CHARACTER_ADDED, character )
 			-- Refresh the settings.
@@ -927,7 +929,7 @@ local function SetTeamStatusToOffline()
 	-- Set all characters online status to false.
 	for characterName, characterPosition in pairs( AJM.db.teamList ) do
 		SetCharacterOnlineStatus( characterName, false )
-		SetCharacterOnlineStatus( AJM.characterName, true )
+		--SetCharacterOnlineStatus( AJM.characterName, true )
 		AJM:SendMessage( AJM.MESSAGE_CHARACTER_OFFLINE )
 		AJM:SettingsTeamListScrollRefresh()
 	end
@@ -1767,7 +1769,7 @@ JambaPrivate.Team.IsCharacterTheMaster = IsCharacterTheMaster
 JambaPrivate.Team.GetMasterName = GetMasterName
 JambaPrivate.Team.SetTeamStatusToOffline = SetTeamStatusToOffline
 JambaPrivate.Team.GetCharacterOnlineStatus = GetCharacterOnlineStatus
-JambaPrivate.Team.SetCharacterOnlineStatus = SetCharacterOnlineStatus
+JambaPrivate.Team.SetTeamOnline = SetTeamOnline
 JambaPrivate.Team.GetCharacterNameAtOrderPosition = GetCharacterNameAtOrderPosition
 JambaPrivate.Team.GetTeamListMaximumOrder = GetTeamListMaximumOrder
 JambaPrivate.Team.RemoveAllMembersFromTeam = RemoveAllMembersFromTeam

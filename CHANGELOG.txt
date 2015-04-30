@@ -1,3 +1,12 @@
+Jamba Version: 4.0.1
+WoW Game Version: 6.1.0
+Release Date: 30/4/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+Jamba-team:
+* Will now set new members to the team on-line.
+
+-------------
 Jamba Version: 4.0.0
 WoW Game Version: 6.1.2
 Release Date: 29/4/2015
