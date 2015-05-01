@@ -170,6 +170,7 @@ end
 -- Create the character online table and ordered characters tables.
 --AJM.characterOnline = {}
 AJM.orderedCharacters = {}
+AJM.orderedCharactersOnline = {}
 
 -------------------------------------------------------------------------------------------------------------
 -- Command this module sends.
@@ -622,13 +623,24 @@ end
 -- Get the largest order number from the team list.
 local function GetTeamListMaximumOrder()
 	local largestPosition = 0
-	for characterName, position in pairs( AJM.db.teamList ) do
+	for characterName, position in pairs( AJM.db.teamList ) do 
 		if position > largestPosition then
 			largestPosition = position
 		end
 	end
 	return largestPosition
 end
+
+local function GetTeamListMaximumOrderOnline()
+	local totalMembersDisplayed = 0
+		for index, characterName in JambaApi.TeamListOrderedOnline() do
+			--if JambaApi.GetCharacterOnlineStatus( characterName ) == true then
+				totalMembersDisplayed = totalMembersDisplayed + 1
+			--end
+		end	
+	return totalMembersDisplayed
+end		
+		
 
 --[[ TODO REMOVE ME
 -- Return true if the character specified is in the team.
@@ -785,6 +797,20 @@ local function GetPositionForCharacterName( findCharacterName )
 			positionForCharacterName = characterPosition
 			break
 		end
+	end
+	return positionForCharacterName
+end
+
+local function GetPositionForCharacterNameOnline( findCharacterName )
+	local positionForCharacterName = 0
+	--for characterName, characterPosition in pairs( AJM.db.teamList ) do
+		--AJM:Print("test", findCharacterName)
+		for index, characterName in JambaApi.TeamListOrderedOnline() do
+			if characterName == findCharacterName then
+				--AJM:Print("found", characterName, index)
+				positionForCharacterName = index
+				--break
+			end
 	end
 	return positionForCharacterName
 end
@@ -1046,6 +1072,17 @@ local function TeamListOrdered()
 	return ipairs( AJM.orderedCharacters )
 end
 
+-- Return all characters ordered online.
+local function TeamListOrderedOnline()	
+	JambaUtilities:ClearTable( AJM.orderedCharactersOnline )
+	for characterName, characterPosition in pairs( AJM.db.teamList ) do
+		if JambaApi.GetCharacterOnlineStatus( characterName ) == true then	
+			table.insert( AJM.orderedCharactersOnline, characterName )
+		end	
+	end
+	table.sort( AJM.orderedCharactersOnline, SortTeamListOrdered )
+	return ipairs( AJM.orderedCharactersOnline )
+end
 -------------------------------------------------------------------------------------------------------------
 -- Party.
 -------------------------------------------------------------------------------------------------------------
@@ -1796,3 +1833,6 @@ JambaApi.MESSAGE_CHARACTER_ONLINE = AJM.MESSAGE_CHARACTER_ONLINE
 JambaApi.MESSAGE_CHARACTER_OFFLINE = AJM.MESSAGE_CHARACTER_OFFLINE
 JambaApi.setOffline = setOffline
 JambaApi.setOnline = setOnline
+JambaApi.GetTeamListMaximumOrderOnline = GetTeamListMaximumOrderOnline
+JambaApi.TeamListOrderedOnline = TeamListOrderedOnline
+JambaApi.GetPositionForCharacterNameOnline = GetPositionForCharacterNameOnline

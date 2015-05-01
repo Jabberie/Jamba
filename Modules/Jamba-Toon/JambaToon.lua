@@ -180,6 +180,10 @@ AJM.COMMAND_HERE_IS_CURRENCY = "HereIsCurrency"
 -------------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------------
+-- Variables used by module.
+-------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------------------------------
 -- Settings Dialogs.
 -------------------------------------------------------------------------------------------------------------
 
@@ -237,6 +241,10 @@ function AJM:OnMessageAreasChanged( message )
 	AJM.settingsControlMerchant.dropdownMerchantArea:SetList( JambaApi.MessageAreaList() )
 	AJM.settingsControlRequests.dropdownRequestArea:SetList( JambaApi.MessageAreaList() )
 	AJM.settingsControlWarnings.dropdownWarningArea:SetList( JambaApi.MessageAreaList() )
+end
+
+function AJM:OnCharactersChanged()
+	AJM:SettingsRefresh()
 end
 
 local function SettingsCreateRequests( top )
@@ -1289,6 +1297,8 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "UI_ERROR_MESSAGE", "ITEM_PUSH" )
 	AJM:RegisterEvent( "UNIT_AURA" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
+		AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_ONLINE, "OnCharactersChanged" )
+	AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_OFFLINE, "OnCharactersChanged" )
 	if AJM.db.currOpenStartUpMaster == true then
 		if JambaApi.IsCharacterTheMaster( self.characterName ) == true then
 			AJM:ScheduleTimer( "JambaToonRequestCurrency", 2 )
@@ -1946,7 +1956,7 @@ function AJM:CurrencyListSetHeight()
 			addHeight = 5
 		end
 	end
-	JambaToonCurrencyListFrame:SetHeight( 56 + ((JambaApi.GetTeamListMaximumOrder() + additionalLines) * 15) + addHeight )
+	JambaToonCurrencyListFrame:SetHeight( 56 + (( JambaApi.GetTeamListMaximumOrderOnline() + additionalLines) * 15) + addHeight )
 end
 
 function AJM:CurrencyListSetColumnWidth()
@@ -2139,6 +2149,10 @@ function AJM:CurrencyListSetColumnWidth()
 	end
 	-- Character rows.
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
+		--if JambaPrivate.Team.GetCharacterOnlineStatus (characterName) == false then
+		--AJM.Print("offline", characterName)
+		--	currencyFrameCharacterInfo.characterNameText:hide()
+		--end
 		local left = frameHorizontalSpacing
 		local characterRowTopPoint = currencyFrameCharacterInfo.characterRowTopPoint
 		currencyFrameCharacterInfo.characterNameText:SetWidth( nameWidth )
@@ -2330,8 +2344,10 @@ function AJM:CurrencyListSetColumnWidth()
 	-- Total Gold.
 	local nameLeft = frameHorizontalSpacing
 	local goldLeft = frameHorizontalSpacing + nameWidth + spacingWidth
-	local guildTop = -35 - ((JambaApi.GetTeamListMaximumOrder() + 1) * 15) - 5
-	local goldTop = -35 - ((JambaApi.GetTeamListMaximumOrder() + 1) * 15) - 7	
+	--local guildTop = -35 - ((JambaApi.GetTeamListMaximumOrder() + 1) * 15) - 5
+	--local goldTop = -35 - ((JambaApi.GetTeamListMaximumOrder() + 1) * 15) - 7	
+	local guildTop = -35 - ((JambaApi.GetTeamListMaximumOrderOnline() + 1) * 15) - 5
+	local goldTop = -35 - ((JambaApi.GetTeamListMaximumOrderOnline() + 1) * 15) - 7	
 	if AJM.db.currGold == true then
 		if AJM.db.currGoldInGuildBank == true then
 			parentFrame.TotalGoldGuildTitleText:SetWidth( nameWidth )
@@ -2340,7 +2356,8 @@ function AJM:CurrencyListSetColumnWidth()
 			parentFrame.TotalGoldGuildText:SetWidth( goldWidth )
 			parentFrame.TotalGoldGuildText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", goldLeft, guildTop )
 			parentFrame.TotalGoldGuildText:Show()
-			goldTop = -35 - ((JambaApi.GetTeamListMaximumOrder() + 2) * 15) - 5
+			--goldTop = -35 - ((JambaApi.GetTeamListMaximumOrder() + 2) * 15) - 5
+			goldTop = -35 - ((JambaApi.GetTeamListMaximumOrderOnline() + 2) * 15) - 5
 		else
 			parentFrame.TotalGoldGuildTitleText:Hide()
 			parentFrame.TotalGoldGuildText:Hide()			
@@ -2356,15 +2373,18 @@ function AJM:CurrencyListSetColumnWidth()
 		parentFrame.TotalGoldText:Hide()
 		parentFrame.TotalGoldGuildTitleText:Hide()
 		parentFrame.TotalGoldGuildText:Hide()	
+
 	end
 end
 
 function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
+	--AJM.Print("makelist", characterName)
 	local left = 10
 	local spacing = 50
 	local width = 50
-	local top = -35 + (-15 * JambaApi.GetPositionForCharacterName( characterName ))
-	-- Create the table to hold the status bars for this character.
+	--local top = -35 + (-15 * JambaApi.GetPositionForCharacterName( characterName ))
+	local top = -35 + (-15 * JambaApi.GetPositionForCharacterNameOnline( characterName) )
+	-- Create the table to hold the status bars for this character.	
 	AJM.currencyFrameCharacterInfo[characterName] = {}
 	-- Get the character info table.
 	local currencyFrameCharacterInfo = AJM.currencyFrameCharacterInfo[characterName]
@@ -2576,12 +2596,18 @@ function AJM:JambaToonHideCurrency()
 end
 
 function AJM:JambaToonRequestCurrency()
+	--AJM.Print("DoRequestCurrency", characterName)
 	-- Colour red.
 	local r = 1.0
 	local g = 0.0
 	local b = 0.0
 	local a = 0.6
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
+		if JambaApi.GetCharacterOnlineStatus ( characterName ) == true then
+		--	AJM.Print("offlineRemove")
+		--	AJM.currencyFrameCharacterInfo[characterName] = nil
+		--	return
+		--else
 		currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.HonorPointsText:SetTextColor( r, g, b, a )
@@ -2603,6 +2629,11 @@ function AJM:JambaToonRequestCurrency()
 		currencyFrameCharacterInfo.TemperedFateText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.ApexisCrystalText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.DarkmoonText:SetTextColor( r, g, b, a )
+		else
+			--AJM.currencyFrameCharacterInfo[characterName] = nil
+			--table.wipe( AJM.currentCurrencyValues )
+			--AJM.currencyFrameCharacterInfo = {}
+		end
 	end
 	AJM.currencyTotalGold = 0
 	if AJM.db.currGoldInGuildBank == true then
@@ -2611,6 +2642,7 @@ function AJM:JambaToonRequestCurrency()
 		end
 	end
 	AJM:JambaSendCommandToTeam( AJM.COMMAND_REQUEST_CURRENCY, "" )
+	AJM.SettingsRefresh()
 end
 
 function AJM:DoSendCurrency( characterName, dummyValue )
@@ -2639,6 +2671,8 @@ function AJM:DoSendCurrency( characterName, dummyValue )
 end
 
 function AJM:DoShowToonsCurrency( characterName, currencyValues )
+	--AJM.Print("DoShowCurrency", characterName)
+	--if JambaPrivate.Team.GetCharacterOnlineStatus( characterName ) == true then
 	local parentFrame = JambaToonCurrencyListFrame
 	-- Get (or create and get) the character information.
 	local currencyFrameCharacterInfo = AJM.currencyFrameCharacterInfo[characterName]
@@ -2702,6 +2736,7 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	-- Update width of currency list.
 	AJM:CurrencyListSetColumnWidth()
 	JambaToonCurrencyListFrame:Show()
+	--end
 end
 
 -- A Jamba command has been received.
@@ -2714,3 +2749,15 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	end
 end
 
+local function test2()
+	JambaUtilities:ClearTable( AJM.currencyFrameCharacterInfo )
+	--AJM:CreateJambaToonCurrencyListFrame()
+	AJM.Print("clearTable")
+end	
+	
+local function test()
+	--for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
+	return pairs( AJM.currencyFrameCharacterInfo)
+end	
+JambaApi.test = test
+JambaApi.test2 = test2

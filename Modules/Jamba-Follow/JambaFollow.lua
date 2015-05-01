@@ -931,7 +931,7 @@ end
 function AJM:ReceiveCommandFollowTrain( tag )
 	if JambaApi.DoesCharacterHaveTag( AJM.characterName, tag ) then
 		local characterInFront = nil
-		for index, character in JambaApi.TeamListOrdered() do
+		for index, character in JambaApi.TeamListOrderedOnline() do
 			if character == AJM.characterName then
 				if characterInFront ~= nil then
 					--FollowUnit( characterInFront )
