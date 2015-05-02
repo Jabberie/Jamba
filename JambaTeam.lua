@@ -211,6 +211,7 @@ AJM.PARTY_LOOT_GROUP = "group"
 AJM.PARTY_LOOT_MASTER = "master"
 AJM.PARTY_LOOT_NEEDBEFOREGREED = "needbeforegreed"
 AJM.PARTY_LOOT_ROUNDROBIN = "roundrobin"
+AJM.PARTY_LOOT_ROUNDROBIN = "personal"
 
 -------------------------------------------------------------------------------------------------------------
 -- Settings Dialogs.
@@ -1155,7 +1156,9 @@ local function SetPartyLoot( desiredLootOption )
 		-- the same loot method; otherwise an infinite loop occurs).
 		if canChangeLootMethod == true then	
 			if desiredLootOption == AJM.PARTY_LOOT_MASTER then
-				SetLootMethod( desiredLootOption, GetMasterName(), 1 )
+				--SetLootMethod( desiredLootOption, GetMasterName(), 1 )
+				SetLootMethod( desiredLootOption, ( Ambiguate( GetMasterName(), "none" ) ), 1 )
+				--AJM.Print("setloot", name , desiredLootOption)
 			else
 				SetLootMethod( desiredLootOption )
 			end

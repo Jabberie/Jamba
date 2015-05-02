@@ -8,15 +8,16 @@ Core:
 -JambaApi.GetTeamListMaximumOrderOnline
 -JambaApi.TeamListOrderedOnline
 -JambaApi.GetPositionForCharacterNameOnline
-	
 
 Jamba-Follow 
-*jamba-follow train should not not try and follow offline characters
+*jamba-follow train should not try to follow offline characters
 
 Jamba-Toon
-*Currency Should no longer look its displaying offline characters with blank bars.
+*Currency Should no longer look try and display offline characters with blank bars.
 *Currency Background will not only make the room for characters online.
 
+Jamba-Team
+*loot should now set.
 
 -------------
 Jamba Version: 4.0.1
