@@ -65,6 +65,7 @@ AJM.settings = {
 		itemUseVerticalSpacing = 3,
 		itemUseHorizontalSpacing = 2,
 		autoAddQuestItemsToBar = true,
+		itemBarsSynchronized = true,
 		numberOfItems = 10,
 		numberOfRows = 2,
 		messageArea = JambaApi.DefaultWarningArea(),
@@ -599,6 +600,15 @@ local function SettingsCreateOptions( top )
 		movingTop, 
 		L["Only On Master"],
 		AJM.SettingsToggleShowItemUseOnlyOnMaster
+	)
+	movingTop = movingTop - checkBoxHeight - verticalSpacing
+	AJM.settingsControl.displayOptionsCheckBoxItemBarsSynchronized = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Keep Item Bars On Minions Synchronized"],
+		AJM.SettingsToggleItemBarsSynchronized
 	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing
 	AJM.settingsControl.displayOptionsCheckBoxAutoAddQuestItem = JambaHelperSettings:CreateCheckBox( 
@@ -761,6 +771,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.displayOptionsItemUseNumberOfItems:SetValue( AJM.db.numberOfItems )
 	AJM.settingsControl.displayOptionsItemUseNumberOfRows:SetValue( AJM.db.numberOfRows )
 	AJM.settingsControl.displayOptionsCheckBoxAutoAddQuestItem:SetValue( AJM.db.autoAddQuestItemsToBar )
+	AJM.settingsControl.displayOptionsCheckBoxItemBarsSynchronized:SetValue( AJM.db.itemBarsSynchronized )
 	AJM.settingsControl.displayOptionsItemUseScaleSlider:SetValue( AJM.db.itemUseScale )
 	AJM.settingsControl.displayOptionsItemUseTransparencySlider:SetValue( AJM.db.frameAlpha )
 	AJM.settingsControl.displayOptionsItemUseMediaBorder:SetValue( AJM.db.borderStyle )
@@ -777,6 +788,7 @@ function AJM:SettingsRefresh()
 		AJM.settingsControl.displayOptionsItemUseNumberOfItems:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsItemUseNumberOfRows:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsCheckBoxAutoAddQuestItem:SetDisabled( not AJM.db.showItemUse )
+		AJM.settingsControl.displayOptionsCheckBoxItemBarsSynchronized:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsItemUseScaleSlider:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsItemUseTransparencySlider:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsItemUseMediaBorder:SetDisabled( not AJM.db.showItemUse )
@@ -816,6 +828,11 @@ end
 
 function AJM:SettingsToggleAutoAddQuestItem( event, checked )
 	AJM.db.autoAddQuestItemsToBar = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleItemBarsSynchronized( event, checked )
+	AJM.db.itemBarsSynchronized = checked
 	AJM:SettingsRefresh()
 end
 
@@ -934,10 +951,13 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.itemUseVerticalSpacing = settings.itemUseVerticalSpacing
 		AJM.db.itemUseHorizontalSpacing = settings.itemUseHorizontalSpacing
 		AJM.db.autoAddQuestItemsToBar = settings.autoAddQuestItemsToBar
+		AJM.db.itemBarsSynchronized = settings.itemBarsSynchronized
 		AJM.db.numberOfItems = settings.numberOfItems
 		AJM.db.numberOfRows = settings.numberOfRows
 		AJM.db.messageArea = settings.messageArea
-		AJM.db.itemsAdvanced = JambaUtilities:CopyTable( settings.itemsAdvanced )
+		if AJM.db.itemBarsSynchronized == true then
+		 AJM.db.itemsAdvanced = JambaUtilities:CopyTable( settings.itemsAdvanced )
+		end
 		AJM.db.frameAlpha = settings.frameAlpha
 		AJM.db.framePoint = settings.framePoint
 		AJM.db.frameRelativePoint = settings.frameRelativePoint

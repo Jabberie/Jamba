@@ -60,6 +60,7 @@ L["Item 18"] = true
 L["Item 19"] = true
 L["Item 20"] = true
 L["Automatically Add Quest Items To Bar"] = true
+L["Keep Item Bars On Minions Synchronized"] = true
 L["Number Of Rows"] = true
 L["New item that starts a quest found!"] = true
 L["Clear Item Bar"] = true

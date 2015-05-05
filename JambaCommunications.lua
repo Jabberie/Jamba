@@ -19,6 +19,7 @@ local AJM = LibStub( "AceAddon-3.0" ):NewAddon(
 local L = LibStub( "AceLocale-3.0" ):GetLocale( "Jamba-Core" )
 
 -- Get libraries.
+local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 local AceSerializer = LibStub:GetLibrary( "AceSerializer-3.0" )
 local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
 
@@ -166,10 +167,11 @@ local function CommandAll( moduleName, commandName, ... )
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	for characterName, characterOrder in JambaPrivate.Team.TeamList() do
 		-- Send command to all in party.
-		if UnitInParty( characterName ) == true then	
+		--if UnitInParty( characterName ) == true then	
+		if UnitInParty( Ambiguate( characterName, "none" ) ) then
 			if not UnitInBattleground( "player" ) then
 				if not IsInInstance ("raid") then
-					AJM:DebugMessage("Sending command to group.", message, "WHISPER", nil)
+					AJM:DebugMessage("Sending command to group.", message, "Group", nil)
 							AJM:SendCommMessage( 
 							AJM.COMMAND_PREFIX,
 							message,
@@ -177,11 +179,11 @@ local function CommandAll( moduleName, commandName, ... )
 							nil,
 							AJM.COMMUNICATION_PRIORITY_ALERT
 							)
+					end	
 				end	
-			end	
 		else
 			if IsCharacterOnline( characterName ) == true then
-				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName, "online", IsCharacterOnline)	
 					AJM:SendCommMessage( 
 					AJM.COMMAND_PREFIX,
 					message,
@@ -224,7 +226,6 @@ end
 local function CommandToon( moduleName, characterName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
-	if IsCharacterOnline( characterName ) == true then
 		if IsCharacterOnline( characterName ) == true then
 			AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
 				AJM:SendCommMessage( 
@@ -235,8 +236,7 @@ local function CommandToon( moduleName, characterName, commandName, ... )
 				AJM.COMMUNICATION_PRIORITY_ALERT
 				)
 		end	
-	end		
-end
+end		
 
 -- EbonyTest
 -- hide offline player spam Not really the best way but it works, Maybe adding tick box's to set members offline? This should now work with elvUI?
@@ -249,8 +249,10 @@ local function SystemSpamFilter(frame, event, message)
 			if JambaApi.IsCharacterInTeam(characterName) == true then	
 				--AJM:Print("player offline in team", characterName )
 				if AJM.db.autoSetTeamOnlineorOffline == true then
-					JambaApi.setOffline( characterName, false )
-					--AJM:Print("player offline in team", characterName )
+					if IsCharacterOnline( characterName ) == true then
+						JambaApi.setOffline( characterName, false )
+						--AJM:Print("player offline in team", characterName )
+					end
 				end
 				return true
 			else
@@ -291,14 +293,19 @@ end
 
 -- Receive a command from another character.
 function AJM:CommandReceived( prefix, message, distribution, sender )
-    AJM:DebugMessage( "Command received: ", prefix, message, distribution, sender )
+    local characterName = JambaUtilities:AddRealmToNameIfMissing( sender )
+	AJM:DebugMessage( "Command received: ", prefix, message, distribution, sender )
 	-- Check if the command is for Jamba Communications.
 	if prefix == AJM.COMMAND_PREFIX then
 		--checks the char is in the team if not everyone can change settings and we do not want that
 		if JambaPrivate.Team.IsCharacterInTeam( sender ) == true then
 		    AJM:DebugMessage( "Sender is in team list." )
-		   JambaApi.setOnline( sender, true)
-			--AJM:Print("Setting Toon online", sender )
+		   --automaic setting team members online. -- we don't really need to keep sending this so we add a if
+			--AJM:Print("toonnonline", sender )
+			if JambaPrivate.Team.GetCharacterOnlineStatus( characterName ) == false then
+				--AJM:Print("Setting Toon online", sender, characterName )
+				JambaApi.setOnline( characterName, true)
+			end
 			-- Split the command into its components.
 			local moduleName, commandName, argumentsStringSerialized = strsplit( AJM.COMMAND_SEPERATOR, message )
 			local argumentsTable  = {}
