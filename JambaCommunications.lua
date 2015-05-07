@@ -158,7 +158,7 @@ local function CreateCommandToSend( moduleName, commandName, ... )
 	return message	
 end
 
-
+--[[
 -- Rewrite of communications start ebony. Using Guild, Party, then whisper 
 -- Send a command to all members of the current team. Trying to use a goble channel to send all communications on.
 local function CommandAll( moduleName, commandName, ... )
@@ -199,13 +199,66 @@ local function CommandAll( moduleName, commandName, ... )
 		end
 	end
 end
+--]]
+
+local function CommandAll( moduleName, commandName, ... )
+    AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
+	-- Get the message to send.
+	local message = CreateCommandToSend( moduleName, commandName, ... )
+	local channel
+	if UnitInBattleground( "player" ) then
+	AJM:DebugMessage( "PvP_INSTANCE")
+		channel = "INSTANCE_CHAT"
+	elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
+	AJM:DebugMessage( "PartyHome")
+		local isInstance, instanceType = IsInInstance()
+		--AJM.Print(isInstance)
+		if isInstance == true then
+			--AJM.Print("test")
+			AJM:DebugMessage( "RaidInstance")
+			channel = "INSTANCE_CHAT"		
+		else
+			--AJM.Print("not in ins")
+			channel = "RAID"	
+		end
+	end	
+	AJM:Print( "CHANNEL", channel)
+	if channel then
+		AJM:DebugMessage("Sending command to group.", message, "channel", channel, nil)
+			AJM:SendCommMessage(
+			AJM.COMMAND_PREFIX,
+			message,
+			--AJM.COMMUNICATION_GROUP,
+			channel,
+			nil,
+			AJM.COMMUNICATION_PRIORITY_ALERT
+			)	
+	end
+	--if the unit is not in the party then it unlikely did not get the party message,
+	for characterName, characterOrder in JambaPrivate.Team.TeamList() do		
+		if UnitInParty( Ambiguate( characterName, "none" ) ) == false then
+			AJM:DebugMessage( "Toon not in party:", characterName)
+			if IsCharacterOnline( characterName ) == true then
+				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+					AJM:SendCommMessage(
+					AJM.COMMAND_PREFIX,
+					message,
+					AJM.COMMUNICATION_WHISPER,
+					characterName,
+					AJM.COMMUNICATION_PRIORITY_ALERT
+					)
+			end	
+		end
+	end		
+end
+
 
 
 -- Should this get removed at some point and use all comms on one channel???
 -- WHISPER's don't work cross-realm but do work connected-realm so sending msg to masters would not send.
 -- TODO: Maybe remove masters???, and fall back to everyone being the master?
 -- Not really sure what to do so for now will keep with the master, and whisper them, 
--- if was to use party/raid then everyone will get the command and masters would not workd. 
+-- if was to use party/raid then everyone will get the command and masters would not work. 
 
 -- Send a command to the master.
 local function CommandMaster( moduleName, commandName, ... )
