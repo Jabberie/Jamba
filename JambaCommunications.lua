@@ -167,10 +167,14 @@ local function CommandAll( moduleName, commandName, ... )
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	for characterName, characterOrder in JambaPrivate.Team.TeamList() do
 		-- Send command to all in party.
-		--if UnitInParty( characterName ) == true then	
-		if UnitInParty( Ambiguate( characterName, "none" ) ) then
+		--if UnitInParty( characterName ) == true then	and not isInInstance
+		--local Instance, instanceType = IsInInstance()
+		--AJM.Print("Raid test", Instance)
+		--if Instance == false then
+		if UnitInParty( Ambiguate( characterName, "none" ) ) == true then
 			if not UnitInBattleground( "player" ) then
-				if not IsInInstance ("raid") then
+				--if not IsInInstance("raid") then	
+				--AJM.Print("UnitisinParty", characterName )
 					AJM:DebugMessage("Sending command to group.", message, "Group", nil)
 							AJM:SendCommMessage( 
 							AJM.COMMAND_PREFIX,
@@ -179,8 +183,8 @@ local function CommandAll( moduleName, commandName, ... )
 							nil,
 							AJM.COMMUNICATION_PRIORITY_ALERT
 							)
-					end	
-				end	
+				--end	
+			end	
 		else
 			if IsCharacterOnline( characterName ) == true then
 				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName, "online", IsCharacterOnline)	
