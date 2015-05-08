@@ -222,7 +222,7 @@ local function CommandAll( moduleName, commandName, ... )
 			channel = "RAID"	
 		end
 	end	
-	AJM:Print( "CHANNEL", channel)
+	--AJM:Print( "CHANNEL", channel)
 	if channel then
 		AJM:DebugMessage("Sending command to group.", message, "channel", channel, nil)
 			AJM:SendCommMessage(
