@@ -4,6 +4,19 @@ Release Date: 5/5/2015
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
 *JambaCommunications
+- had to change a lot of code to a big bug when In a Instance party/raid (there still might be a small prob if you was in LFR and you was still in the Instance in the outside world.).
+
+
+*Jamba-Team
+- fixed a bug if you have more then five characters in your party list it would change to raid even if there was less then five on-line.
+ 
+-------------
+Jamba Version: 4.0.3
+WoW Game Version: 6.1.0
+Release Date: 5/5/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+*JambaCommunications
  -Members on the same realm should beadle to use party/raid as there Communication again.
  -Every time a command is Received it should not keep try and change the team members on line status if the character is already on line. 
 

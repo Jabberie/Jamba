@@ -1110,7 +1110,7 @@ function AJM.DoTeamPartyInvite()
 	InviteUnit( AJM.inviteList[AJM.currentInviteCount] )
 	AJM.currentInviteCount = AJM.currentInviteCount + 1
 	if AJM.currentInviteCount < AJM.inviteCount then
-		if GetTeamListMaximumOrder() > 5 and AJM.db.inviteConvertToRaid == true then
+		if GetTeamListMaximumOrderOnline() > 5 and AJM.db.inviteConvertToRaid == true then
 		ConvertToRaid()
 		end
 		AJM:ScheduleTimer( "DoTeamPartyInvite", 0.5 )
