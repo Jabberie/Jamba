@@ -209,18 +209,20 @@ local function CommandAll( moduleName, commandName, ... )
 	if UnitInBattleground( "player" ) then
 	AJM:DebugMessage( "PvP_INSTANCE")
 		channel = "INSTANCE_CHAT"
-	elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
-	AJM:DebugMessage( "PartyHome")
+	elseif IsInGroup() then
+		AJM:DebugMessage( "Group")
 		local isInstance, instanceType = IsInInstance()
-		--AJM.Print(isInstance)
-		if isInstance == true then
-			--AJM.Print("test")
-			AJM:DebugMessage( "RaidInstance")
-			channel = "INSTANCE_CHAT"		
+		local name, Type, difficulty, difficultyName, maxPlayers, playerDifficulty, isDynamicInstance = GetInstanceInfo()
+		--isInstance and
+		if isInstance or instanceType == "raid" or IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+			if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+				channel = "INSTANCE_CHAT"
+			else
+				channel = "raid"
+			end	
 		else
-			--AJM.Print("not in ins")
-			channel = "RAID"	
-		end
+			channel = "raid"
+		end	
 	end	
 	--AJM:Print( "CHANNEL", channel)
 	if channel then
@@ -316,6 +318,9 @@ local function SystemSpamFilter(frame, event, message)
 				--AJM:Print("player offline Not in team")
 				return
 			end
+		end	
+		if message:match(string.format(ERR_NOT_IN_RAID, "(.+)")) then
+			return true
 		end
 	end		
     return false
