@@ -59,3 +59,5 @@ L["Only Show Free Bag Slots"] = true
 L["Reputation Bar"] = true
 L["Show Faction Name"] = true
 L["No Faction Selected"] = true
+L["Show Item Level"] = true
+L["Equipped iLvl Only"] = true
