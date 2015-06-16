@@ -12,5 +12,9 @@
 ## X-Curse-Project-Name: Jamba
 ## X-Curse-Project-ID: jamba
 ## X-Curse-Repository-ID: wow/jamba/mainline
+## X-Curse-Packaged-Version: release-4.0.5-1-g9134824
+## X-Curse-Project-Name: Jamba
+## X-Curse-Project-ID: jamba
+## X-Curse-Repository-ID: wow/jamba/mainline
 Locales\Locales.xml
 JambaDisplayTeam.lua

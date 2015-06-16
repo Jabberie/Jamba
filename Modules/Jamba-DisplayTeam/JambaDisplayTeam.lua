@@ -2617,8 +2617,6 @@ function AJM:PLAYER_ENTERING_WORLD( event, ... )
 	AJM:SendExperienceStatusUpdateCommand()
 	AJM:SendIlvlInformationUpdateCommand()
 	AJM:SendReputationStatusUpdateCommand()
-	AJM:SendHealthStatusUpdateCommand()
-	AJM:SendPowerStatusUpdateCommand()
 end
 
 function AJM:OnMasterChanged( message, characterName )
@@ -2633,6 +2631,7 @@ end
 function AJM:GROUP_ROSTER_UPDATE( event, ... )
 	--AJM:SettingsUpdateFollowTextAll()
 	AJM:SendIlvlInformationUpdateCommand()
+	AJM:SendBagInformationUpdateCommand()
 end
 
 function AJM:PLAYER_REGEN_ENABLED( event, ... )
