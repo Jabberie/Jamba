@@ -50,6 +50,7 @@ AJM.settings = {
 		lootSetAutomatically = false,
 		lootSetFreeForAll = true,
 		lootSetMasterLooter = false,
+		lootSetPersLooter = false,
 		lootSlavesOptOutOfLoot = false,
 		lootToGroupIfStrangerPresent = true,
 		lootToGroupFriendsAreNotStrangers = false,
@@ -211,7 +212,7 @@ AJM.PARTY_LOOT_GROUP = "group"
 AJM.PARTY_LOOT_MASTER = "master"
 AJM.PARTY_LOOT_NEEDBEFOREGREED = "needbeforegreed"
 AJM.PARTY_LOOT_ROUNDROBIN = "roundrobin"
-AJM.PARTY_LOOT_ROUNDROBIN = "personal"
+AJM.PARTY_LOOT_PERSONAL = "personalloot"
 
 -------------------------------------------------------------------------------------------------------------
 -- Settings Dialogs.
@@ -488,11 +489,20 @@ local function SettingsCreatePartyLootControl( top )
 		AJM.SettingsSetMasterLooterToggle
 	)	
 	AJM.settingsControl.partyLootControlCheckBoxSetMasterLooter:SetType( "radio" )
+	AJM.settingsControl.partyLootControlCheckBoxSetPersLooter = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		checkBoxWidth, 
+		column1Left, 
+		top - headingHeight - checkBoxHeight - radioBoxHeight, 
+		L["Personal Loot"],
+		AJM.SettingsSetPersLooterToggle
+	)	
+	AJM.settingsControl.partyLootControlCheckBoxSetPersLooter:SetType( "radio" )
 	AJM.settingsControl.partyLootControlCheckBoxStrangerToGroup = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
-		top - headingHeight - checkBoxHeight - radioBoxHeight,
+		top - headingHeight - checkBoxHeight - radioBoxHeight - radioBoxHeight,
 		L["Override: Set loot to Group Loot if stranger in group."],
 		AJM.SettingsSetStrangerToGroup
 	)
@@ -500,7 +510,7 @@ local function SettingsCreatePartyLootControl( top )
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left + indentContinueLabel, 
-		top - headingHeight - checkBoxHeight - radioBoxHeight - checkBoxHeight,
+		top - headingHeight - checkBoxHeight - radioBoxHeight - radioBoxHeight -checkBoxHeight,
 		L["Friends Are Not Strangers"],
 		AJM.SettingsSetFriendsNotStrangers
 	)
@@ -508,7 +518,7 @@ local function SettingsCreatePartyLootControl( top )
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left,
-		top - headingHeight - checkBoxHeight - radioBoxHeight - checkBoxHeight - checkBoxHeight ,
+		top - headingHeight - checkBoxHeight - radioBoxHeight - checkBoxHeight - checkBoxHeight - checkBoxHeight,
 		L["Minions Opt Out of Loot"],
 		AJM.SettingsSetMinionsOptOutToggle
 	)		
@@ -1232,6 +1242,10 @@ function AJM:PARTY_LEADER_CHANGED( event, ... )
 				if AJM.db.lootSetMasterLooter == true then
 					SetPartyLoot( AJM.PARTY_LOOT_MASTER )
 				end
+				-- Automatically set the loot to Personal Loot
+				if AJM.db.lootSetPersLooter == true then
+					SetPartyLoot( AJM.PARTY_LOOT_PERSONAL )
+				end	
 			end
 		end
 	end
@@ -1489,12 +1503,14 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.partyLootControlCheckBoxSetLootMethod:SetValue( AJM.db.lootSetAutomatically )
 	AJM.settingsControl.partyLootControlCheckBoxSetFFA:SetValue( AJM.db.lootSetFreeForAll )
 	AJM.settingsControl.partyLootControlCheckBoxSetMasterLooter:SetValue( AJM.db.lootSetMasterLooter )
+	AJM.settingsControl.partyLootControlCheckBoxSetPersLooter:SetValue( AJM.db.lootSetPersLooter )
 	AJM.settingsControl.partyLootControlCheckBoxStrangerToGroup:SetValue( AJM.db.lootToGroupIfStrangerPresent )
 	AJM.settingsControl.partyLootControlCheckBoxFriendsNotStrangers:SetValue( AJM.db.lootToGroupFriendsAreNotStrangers )
 	AJM.settingsControl.partyLootControlCheckBoxSetOptOutOfLoot:SetValue( AJM.db.lootSlavesOptOutOfLoot )
 	-- Ensure correct state.
 	AJM.settingsControl.partyLootControlCheckBoxSetFFA:SetDisabled( not AJM.db.lootSetAutomatically )
 	AJM.settingsControl.partyLootControlCheckBoxSetMasterLooter:SetDisabled( not AJM.db.lootSetAutomatically )
+	AJM.settingsControl.partyLootControlCheckBoxSetPersLooter:SetDisabled( not AJM.db.lootSetAutomatically )
 	AJM.settingsControl.partyLootControlCheckBoxStrangerToGroup:SetDisabled( not AJM.db.lootSetAutomatically )
 	AJM.settingsControl.partyLootControlCheckBoxFriendsNotStrangers:SetDisabled( not AJM.db.lootSetAutomatically )
 	-- Update the settings team list.
@@ -1519,6 +1535,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.lootSetAutomatically = settings.lootSetAutomatically 
 		AJM.db.lootSetFreeForAll = settings.lootSetFreeForAll 
 		AJM.db.lootSetMasterLooter = settings.lootSetMasterLooter 
+		AJM.db.lootSetPersLooter = settings.lootSetPersLooter 
 		AJM.db.lootSlavesOptOutOfLoot = settings.lootSlavesOptOutOfLoot
 		AJM.db.lootToGroupIfStrangerPresent = settings.lootToGroupIfStrangerPresent
 		AJM.db.lootToGroupFriendsAreNotStrangers = settings.lootToGroupFriendsAreNotStrangers
@@ -1721,12 +1738,21 @@ end
 function AJM:SettingsSetFFALootToggle( event, checked )
 	AJM.db.lootSetFreeForAll = checked
 	AJM.db.lootSetMasterLooter = not checked
+	AJM.db.lootSetPersLooter = not checked
 	AJM:SettingsRefresh()
 end
 
 function AJM:SettingsSetMasterLooterToggle( event, checked )
 	AJM.db.lootSetMasterLooter = checked
 	AJM.db.lootSetFreeForAll = not checked
+	AJM.db.lootSetPersLooter = not checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsSetPersLooterToggle( event, checked )
+	AJM.db.lootSetPersLooter = checked
+	AJM.db.lootSetFreeForAll = not checked
+	AJM.db.lootSetMasterLooter = not checked
 	AJM:SettingsRefresh()
 end
 

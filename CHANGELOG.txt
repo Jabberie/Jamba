@@ -1,13 +1,16 @@
-Jamba Version: 4.1
+Jamba Version: 4.1.0
 WoW Game Version: 6.2
-Release Date: 24/6/2015
+Release Date: 23/6/2015
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
 
-* Updated Patch 6.2
+* Updated ToC for patch Patch 6.2
 
 *Jamba-Display-Team
  - Added a new option to display Characters Item Level
  - Jamba-Display-Team-Bag Should Now Work Again and update correctly
+
+Jamba-Team
+ - Added Support for Personal loot Under Set loot settings.
 
  ------------
 Jamba Version: 4.0.5

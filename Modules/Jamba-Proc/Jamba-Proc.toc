@@ -1,8 +1,8 @@
-## Interface: 60100
+## Interface: 60200
 ## Title: JambaProc
 ## Notes: JambaProc
 ## Author: Ebony, Former Author: Jafula
-## Version: 4.1
+## Version: 4.1.0
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

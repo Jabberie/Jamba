@@ -47,6 +47,7 @@ L["Party Loot Control"] = true
 L["Automatically set the Loot Method to..."] = true
 L["Free For All"] = true
 L["Master Looter"] = true
+L["Personal Loot"] = true
 L["Minions Opt Out of Loot"] = true
 L["Minion"] = true
 L["(Offline)"] = true
