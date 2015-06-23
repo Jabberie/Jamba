@@ -10,8 +10,11 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Pu
  - Jamba-Display-Team-Bag Should Now Work Again and update correctly
 
 Jamba-Team
- - Added Support for Personal loot Under Set loot settings.
+ - Added Jamba to support Personal loot
 
+Jamba-Quest-Watcher
+ - Fixed a LUA error when entering a Bonus Objectives area, due to blizzard API changes for WoW-6.2.0
+ 
  ------------
 Jamba Version: 4.0.5
 WoW Game Version: 6.1.0

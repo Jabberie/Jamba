@@ -965,7 +965,6 @@ end
 
 function AJM:QuestWatchGetObjectiveText( questIndex, objectiveIndex )
 	local objectiveFullText, objectiveType, objectiveFinished = GetQuestLogLeaderBoard( objectiveIndex, questIndex )
-	--local objectiveFullText, objectiveType, objectiveFinished = GetQuestObjectiveInfo( objectiveIndex, questIndex )
 	local amountCompleted, objectiveText = AJM:GetQuestObjectiveCompletion( objectiveFullText )
 	return objectiveText 
 end
@@ -1150,9 +1149,9 @@ function AJM:JambaQuestWatcherUpdate( useCache )
 		local isInArea, isOnMap, numObjectives = GetTaskInfo(questID);
 		if isInArea and isOnMap then
 			isComplete = AJM:IsCompletedAutoCompleteFieldQuest( questIndex, isComplete )
-			--AJM:Print( "EbonyTestbounsquestID:", questID, numObjectives )
+			--AJM:Print( "EbonyTestbounsquestID:", questID, numObjectives, isComplete )
 			for iterateObjectives = 1, numObjectives do
-			local objectiveFullText, objectiveType, finished = GetQuestObjectiveInfo( questID, iterateObjectives )
+			local objectiveFullText, objectiveType, finished = GetQuestObjectiveInfo( questID, iterateObjectives, isComplete )
 				--AJM:DebugMessage("BonuesQuest", objectiveText, finished )
 				local amountCompleted, objectiveText = AJM:GetQuestObjectiveCompletion( objectiveFullText )
 				if (AJM:QuestCacheUpdate( questID, iterateObjectives, amountCompleted, objectiveFinished ) == true) or (useCache == false) then
