@@ -51,6 +51,8 @@ AJM.CTemperedFate = 994
 AJM.CApexisCrystal = 823
 AJM.CDarkmoon = 515
 AJM.C = 824
+AJM.COil = 1101
+AJM.CInevitableFate = 1129
 AJM.globalCurrencyFramePrefix = "JambaToonCurrencyListFrame"
 
 -- Settings - the values to store and their defaults for the settings database.
@@ -103,6 +105,8 @@ AJM.settings = {
 		currTemperedFate  = false,
 		currApexisCrystal  = false,
 		currDarkmoon = false,
+		currInevitableFate  = false,
+		currOil = false,		
 		currencyFrameAlpha = 1.0,
 		currencyFramePoint = "CENTER",
 		currencyFrameRelativePoint = "CENTER",
@@ -497,7 +501,7 @@ local function SettingsCreateCurrency( top )
 		headingWidth,
 		left,
 		movingTop,
-		L["Seal of Tempered Fate"]..L[" ("]..L["SoF"]..L[")"],
+		L["Seal of Tempered Fate"]..L[" ("]..L["SoT"]..L[")"],
 		AJM.SettingsToggleCurrencyTemperedFate
 	)
 		movingTop = movingTop - checkBoxHeight	
@@ -515,8 +519,26 @@ local function SettingsCreateCurrency( top )
 		headingWidth,
 		left,
 		movingTop,
-		L["Darkmoon Prize Ticket "]..L[" ("]..L["DPT"]..L[")"],
+		L["Darkmoon Prize Ticket"]..L[" ("]..L["DPT"]..L[")"],
 		AJM.SettingsToggleCurrencyDarkmoon
+	)
+		movingTop = movingTop - checkBoxHeight	
+		AJM.settingsControlCurrency.checkBoxCurrencyInevitableFate = JambaHelperSettings:CreateCheckBox(
+		AJM.settingsControlCurrency,
+		headingWidth,
+		left,
+		movingTop,
+		L["Seal of Inevitable Fate"]..L[" ("]..L["SoI"]..L[")"],
+		AJM.SettingsToggleCurrencyInevitableFate
+	)
+		movingTop = movingTop - checkBoxHeight	
+		AJM.settingsControlCurrency.checkBoxCurrencyOil = JambaHelperSettings:CreateCheckBox(
+		AJM.settingsControlCurrency,
+		headingWidth,
+		left,
+		movingTop,
+		L["OIL"]..L[" ("]..L["OIL"]..L[")"],
+		AJM.SettingsToggleCurrencyOil
 	)
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlCurrency.currencyButtonShowList = JambaHelperSettings:CreateButton( 
@@ -932,6 +954,9 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCurrency.checkBoxCurrencyTemperedFate:SetValue( AJM.db.currTemperedFate )
 	AJM.settingsControlCurrency.checkBoxCurrencyApexisCrystal:SetValue( AJM.db.currApexisCrystal )
 	AJM.settingsControlCurrency.checkBoxCurrencyDarkmoon:SetValue( AJM.db.currDarkmoon )
+	AJM.settingsControlCurrency.checkBoxCurrencyInevitableFate:SetValue( AJM.db.currInevitableFate )
+	AJM.settingsControlCurrency.checkBoxCurrencyOil:SetValue( AJM.db.currOil )
+	--end
 	AJM.settingsControlCurrency.checkBoxCurrencyOpenStartUpMaster:SetValue( AJM.db.currOpenStartUpMaster )
 	AJM.settingsControlCurrency.currencyTransparencySlider:SetValue( AJM.db.currencyFrameAlpha )
 	AJM.settingsControlCurrency.currencyScaleSlider:SetValue( AJM.db.currencyScale )
@@ -1180,10 +1205,21 @@ function AJM:SettingsToggleCurrencyApexisCrystal ( event, checked )
 	AJM:SettingsRefresh()
 end
 
+function AJM:SettingsToggleCurrencyInevitableFate ( event, checked )
+	AJM.db.currInevitableFate = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleCurrencyOil ( event, checked )
+	AJM.db.currOil = checked
+	AJM:SettingsRefresh()
+end
+
 function AJM:SettingsToggleCurrencyDarkmoon ( event, checked )
 	AJM.db.currDarkmoon = checked
 	AJM:SettingsRefresh()
 end
+
 function AJM:SettingsToggleCurrencyOpenStartUpMaster( event, checked )
 	AJM.db.currOpenStartUpMaster = checked
 	AJM:SettingsRefresh()
@@ -1360,7 +1396,10 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.currGarrisonResources = settings.currGarrisonResources
 		AJM.db.currTemperedFate = settings.currTemperedFate
 		AJM.db.currApexisCrystal = settings.currApexisCrystal
-		AJM.db.currApexisCrystal = settings.currDarkmoon
+		AJM.db.currDarkmoon = settings.currDarkmoon
+		AJM.db.currInevitableFate = settings.currInevitableFate
+		AJM.db.currOil = settings.currOil
+--		END		
 		AJM.db.currOpenStartUpMaster = settings.currOpenStartUpMaster
 		AJM.db.currencyScale = settings.currencyScale
 		AJM.db.currencyFrameAlpha = settings.currencyFrameAlpha
@@ -1817,7 +1856,7 @@ function AJM:CreateJambaToonCurrencyListFrame()
 		-- Set the Tempered Fate font string.
 	local frameTemperedFate = AJM.globalCurrencyFramePrefix.."TitleTemperedFate"
 	local frameTemperedFateText = parentFrame:CreateFontString( frameTemperedFate .."Text", "OVERLAY", "GameFontNormal" )
-	frameTemperedFateText:SetText( L["SoF"] )
+	frameTemperedFateText:SetText( L["SoT"] )
 	frameTemperedFateText:SetTextColor( r, g, b, a )
 	frameTemperedFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
 	frameTemperedFateText:SetWidth( width )
@@ -1843,6 +1882,26 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	frameDarkmoonText:SetWidth( width )
 	frameDarkmoonText:SetJustifyH( "CENTER" )
 	frame.DarkmoonText = frameDarkmoonText
+	left = left + spacing
+	-- Set the Oil font string.
+	local frameOil = AJM.globalCurrencyFramePrefix.."TitleOil"
+	local frameOilText = parentFrame:CreateFontString( frameOil .."Text", "OVERLAY", "GameFontNormal" )
+	frameOilText:SetText( L["OIL"] )
+	frameOilText:SetTextColor( r, g, b, a )
+	frameOilText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameOilText:SetWidth( width )
+	frameOilText:SetJustifyH( "CENTER" )
+	frame.OilText = frameOilText
+	left = left + spacing
+	-- Set the InevitableFate Prize font string.
+	local frameInevitableFate = AJM.globalCurrencyFramePrefix.."TitleInevitableFate"
+	local frameInevitableFateText = parentFrame:CreateFontString( frameInevitableFate .."Text", "OVERLAY", "GameFontNormal" )
+	frameInevitableFateText:SetText( L["SoI"] )
+	frameInevitableFateText:SetTextColor( r, g, b, a )
+	frameInevitableFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameInevitableFateText:SetWidth( width )
+	frameInevitableFateText:SetJustifyH( "CENTER" )
+	frame.InevitableFateText = frameInevitableFateText
 	left = left + spacing
 	
 	
@@ -2147,6 +2206,24 @@ function AJM:CurrencyListSetColumnWidth()
 	else
 		parentFrame.DarkmoonText:Hide()
 	end
+		if AJM.db.currInevitableFate == true then
+		parentFrame.InevitableFateText:SetWidth( pointsWidth )
+		parentFrame.InevitableFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+		left = left + pointsWidth + spacingWidth
+		numberOfPointsColumns = numberOfPointsColumns + 1
+		parentFrame.InevitableFateText:Show()
+	else
+		parentFrame.InevitableFateText:Hide()
+	end
+		if AJM.db.currOil == true then
+		parentFrame.OilText:SetWidth( pointsWidth )
+		parentFrame.OilText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+		left = left + pointsWidth + spacingWidth
+		numberOfPointsColumns = numberOfPointsColumns + 1
+		parentFrame.OilText:Show()
+	else
+		parentFrame.OilText:Hide()
+	end	
 	-- Character rows.
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
 		--if JambaPrivate.Team.GetCharacterOnlineStatus (characterName) == false then
@@ -2310,7 +2387,23 @@ function AJM:CurrencyListSetColumnWidth()
 			currencyFrameCharacterInfo.DarkmoonText:Show()
 		else
 			currencyFrameCharacterInfo.DarkmoonText:Hide()
-		end	
+		end
+		if AJM.db.currInevitableFate == true then
+			currencyFrameCharacterInfo.InevitableFateText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.InevitableFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+			left = left + pointsWidth + spacingWidth
+			currencyFrameCharacterInfo.InevitableFateText:Show()
+		else
+			currencyFrameCharacterInfo.InevitableFateText:Hide()
+		end
+		if AJM.db.currOil == true then
+			currencyFrameCharacterInfo.OilText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.OilText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+			left = left + pointsWidth + spacingWidth
+			currencyFrameCharacterInfo.OilText:Show()
+		else
+			currencyFrameCharacterInfo.OilText:Hide()
+		end		
 	end
 	-- Parent frame width and title.
 	local finalParentWidth = frameHorizontalSpacing + nameWidth + spacingWidth + (haveGold * (goldWidth + (spacingWidth * 3))) + (numberOfPointsColumns * (pointsWidth + spacingWidth)) + frameHorizontalSpacing
@@ -2580,6 +2673,7 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	frameApexisCrystalText:SetJustifyH( "CENTER" )
 	currencyFrameCharacterInfo.ApexisCrystalText = frameApexisCrystalText
 	left = left + spacing
+	-- Set the Darkmoon font string.
 	local frameDarkmoon = AJM.globalCurrencyFramePrefix.."Darkmoon"
 	local frameDarkmoonText = parentFrame:CreateFontString( frameDarkmoon .."Text", "OVERLAY", "GameFontNormal" )
 	frameDarkmoonText:SetText( "0" )
@@ -2588,6 +2682,26 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	frameDarkmoonText:SetWidth( width )
 	frameDarkmoonText:SetJustifyH( "CENTER" )
 	currencyFrameCharacterInfo.DarkmoonText = frameDarkmoonText
+	left = left + spacing
+		-- Set the InevitableFate font string.
+	local frameInevitableFate = AJM.globalCurrencyFramePrefix.."InevitableFate"
+	local frameInevitableFateText = parentFrame:CreateFontString( frameInevitableFate .."Text", "OVERLAY", "GameFontNormal" )
+	frameInevitableFateText:SetText( "0" )
+	frameInevitableFateText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameInevitableFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameInevitableFateText:SetWidth( width )
+	frameInevitableFateText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.InevitableFateText = frameInevitableFateText
+	left = left + spacing
+		-- Set the Oil font string.
+	local frameOil = AJM.globalCurrencyFramePrefix.."Oil"
+	local frameOilText = parentFrame:CreateFontString( frameOil .."Text", "OVERLAY", "GameFontNormal" )
+	frameOilText:SetText( "0" )
+	frameOilText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameOilText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameOilText:SetWidth( width )
+	frameOilText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.OilText = frameOilText
 	left = left + spacing
 end
 
@@ -2629,6 +2743,8 @@ function AJM:JambaToonRequestCurrency()
 		currencyFrameCharacterInfo.TemperedFateText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.ApexisCrystalText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.DarkmoonText:SetTextColor( r, g, b, a )
+		currencyFrameCharacterInfo.InevitableFateText:SetTextColor( r, g, b, a )
+		currencyFrameCharacterInfo.OilText:SetTextColor( r, g, b, a )
 		else
 			--AJM.currencyFrameCharacterInfo[characterName] = nil
 			--table.wipe( AJM.currentCurrencyValues )
@@ -2667,6 +2783,8 @@ function AJM:DoSendCurrency( characterName, dummyValue )
 	AJM.currentCurrencyValues.currTemperedFate = select( 2, GetCurrencyInfo( AJM.CTemperedFate ) )
 	AJM.currentCurrencyValues.currApexisCrystal = select( 2, GetCurrencyInfo( AJM.CApexisCrystal ) )
 	AJM.currentCurrencyValues.currDarkmoon = select( 2, GetCurrencyInfo( AJM.CDarkmoon ) )
+	AJM.currentCurrencyValues.currInevitableFate = select( 2, GetCurrencyInfo( AJM.CInevitableFate ) )
+	AJM.currentCurrencyValues.currOil = select( 2, GetCurrencyInfo( AJM.COil ) )	
 	AJM:JambaSendCommandToToon( characterName, AJM.COMMAND_HERE_IS_CURRENCY, AJM.currentCurrencyValues )
 end
 
@@ -2706,6 +2824,8 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	currencyFrameCharacterInfo.TemperedFateText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.ApexisCrystalText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.DarkmoonText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.InevitableFateText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.OilText:SetTextColor( r, g, b, a )	
 	-- Information.
 	currencyFrameCharacterInfo.GoldText:SetText( JambaUtilities:FormatMoneyString( currencyValues.currGold ) )
 	currencyFrameCharacterInfo.HonorPointsText:SetText( currencyValues.currHonorPoints )
@@ -2727,6 +2847,8 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	currencyFrameCharacterInfo.TemperedFateText:SetText( currencyValues.currTemperedFate )
 	currencyFrameCharacterInfo.ApexisCrystalText:SetText( currencyValues.currApexisCrystal )
 	currencyFrameCharacterInfo.DarkmoonText:SetText( currencyValues.currDarkmoon )
+	currencyFrameCharacterInfo.InevitableFateText:SetText( currencyValues.currInevitableFate )
+	currencyFrameCharacterInfo.OilText:SetText( currencyValues.currOil )
 	-- Total gold.
 	AJM.currencyTotalGold = AJM.currencyTotalGold + currencyValues.currGold
 	parentFrame.TotalGoldText:SetText( JambaUtilities:FormatMoneyString( AJM.currencyTotalGold ) )

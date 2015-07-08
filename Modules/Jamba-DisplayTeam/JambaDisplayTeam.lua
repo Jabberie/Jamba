@@ -80,6 +80,7 @@ AJM.settings = {
 		bagInformationWidth = 80,
 		bagInformationHeight = 20,
 		--EbonyTest
+		stackName = false,
 		showIlvlInformation = true,
 		ShowEquippedOnly = false,
 		--ilvlInformationWidth = 80,
@@ -537,7 +538,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	followBarText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
 	followBarText:SetAllPoints()
 	characterStatusBar["followBarText"] = followBarText
-	AJM:SettingsUpdateFollowText( characterName, UnitLevel( Ambiguate( characterName, "none" ) ) )
+	AJM:SettingsUpdateFollowText( characterName, UnitLevel( Ambiguate( characterName, "none" ) ), nil, nil )
 	-- Set the experience bar.
 	local experienceName = AJM.globalFramePrefix.."ExperienceBar"
 	local experienceBar = CreateFrame( "StatusBar", experienceName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
@@ -1065,20 +1066,28 @@ local function SettingsCreateDisplayOptions( top )
 		movingTop, 
 		L["Name"],
 		AJM.SettingsToggleShowFollowStatusName
-	)	
-	AJM.settingsControl.displayOptionsCheckBoxShowFollowStatusLevel = JambaHelperSettings:CreateCheckBox( 
+	)
+	AJM.settingsControl.displayOptionsCheckBoxstackName = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		thirdWidth, 
 		left3, 
 		movingTop, 
-		L["Level"],
-		AJM.SettingsToggleShowFollowStatusLevel
-	)
+		L["Stack Text"],
+		AJM.SettingsTogglestackName
+	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing
-	AJM.settingsControl.displayOptionsCheckBoxShowIlvlInformation = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.displayOptionsCheckBoxShowFollowStatusLevel = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		thirdWidth, 
 		left, 
+		movingTop, 
+		L["Level"],
+		AJM.SettingsToggleShowFollowStatusLevel
+	)
+	AJM.settingsControl.displayOptionsCheckBoxShowIlvlInformation = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		thirdWidth, 
+		left2, 
 		movingTop, 
 		L["Show Item Level"],
 		AJM.SettingsToggleShowIlvlInformation
@@ -1086,7 +1095,7 @@ local function SettingsCreateDisplayOptions( top )
 	AJM.settingsControl.displayOptionsCheckBoxShowEquippedOnly = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		thirdWidth + thirdWidth, 
-		left2, 
+		left3, 
 		movingTop, 
 		L["Equipped iLvl Only"],
 		AJM.SettingsToggleShowEquippedOnly
@@ -1469,6 +1478,7 @@ function AJM:SettingsRefresh()
 	--Ebony
 	AJM.settingsControl.displayOptionsCheckBoxShowIlvlInformation:SetValue( AJM.db.showIlvlInformation )
 	AJM.settingsControl.displayOptionsCheckBoxShowEquippedOnly:SetValue( AJM.db.ShowEquippedOnly )
+	AJM.settingsControl.displayOptionsCheckBoxstackName:SetValue( AJM.db.stackName )
 	--AJM.settingsControl.displayOptionsIlvlInformationWidthSlider:SetValue( AJM.db.ilvlInformationWidth )
 	--AJM.settingsControl.displayOptionsIlvlInformationHeightSlider:SetValue( AJM.db.ilvlInformationHeight )	
 	-- State.
@@ -1522,6 +1532,7 @@ function AJM:SettingsRefresh()
 		AJM.settingsControl.displayOptionsBagInformationHeightSlider:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxShowIlvlInformation:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxShowEquippedOnly:SetDisabled( not AJM.db.showTeamList )
+		AJM.settingsControl.displayOptionsCheckBoxstackName:SetDisabled( not AJM.db.showTeamList )
 		--AJM.settingsControl.displayOptionsIlvlInformationWidthSlider:SetDisabled( not AJM.db.showTeamList )
 		--AJM.settingsControl.displayOptionsIlvlInformationHeightSlider:SetDisabled( not AJM.db.showTeamList )
 		if AJM.teamListCreated == true then
@@ -1592,6 +1603,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		--EBS
 		AJM.db.showIlvlInformation = settings.showIlvlInformation
 		AJM.db.ShowEquippedOnly = settings.ShowEquippedOnly
+		AJM.db.stackName = settings.stackName
 		--AJM.db.ilvlInformationWidth = settings.ilvlInformationWidth
 		--AJM.db.ilvlInformationHeight = settings.ilvlInformationHeight		
 		AJM.db.frameAlpha = settings.frameAlpha
@@ -1871,6 +1883,11 @@ function AJM:SettingsToggleShowEquippedOnly( event, checked )
 	AJM:SettingsRefresh()
 end
 
+function AJM:SettingsTogglestackName( event, checked )
+	AJM.db.stackName = checked
+	AJM:SettingsRefresh()
+end
+
 --[[
 function AJM:SettingsChangeIlvlInformationWidth( event, value )
 	AJM.db.ilvlInformationWidth = tonumber( value )
@@ -2004,7 +2021,7 @@ end
 
 
 function AJM:SendIlvlInformationUpdateCommand()
-	if AJM.db.showTeamList == true and AJM.db.showIlvlInformation == true then
+	if AJM.db.showTeamList == true and AJM.db.showIlvlInformation == true or AJM.db.followStatusShowLevel == true then
 		if UnitIsGhost( "player" ) then
 			return
 		end
@@ -2091,9 +2108,9 @@ function AJM:SendFollowStatusUpdateCommand( isFollowing )
 		end
 		if canSend == true then
 			if AJM.db.showTeamListOnMasterOnly == true then
-				AJM:JambaSendCommandToMaster( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing, overall, equipped )
+				AJM:JambaSendCommandToMaster( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing )
 			else
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing, overall, equipped )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing )
 			end
 		end
 	end
@@ -2135,12 +2152,14 @@ function AJM:ProcessUpdateIlvlInformationMessage( characterName, characterLevel,
 	AJM:SettingsUpdateFollowText( characterName, characterLevel, overall, equipped )
 end
 
+
 function AJM:SettingsUpdateFollowTextAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
 		AJM:SettingsUpdateFollowText( characterName, nil, nil, nil )
 		--AJM:SettingsUpdateFollowText( characterName, nil, nil, nil )
 	end
 end
+
 
 function AJM:SettingsUpdateFollowText( characterName, characterLevel, overall, equipped )
 	--AJM:Print("Info", characterName, characterLevel,overall, equipped) -- debug
@@ -2176,16 +2195,28 @@ function AJM:SettingsUpdateFollowText( characterName, characterLevel, overall, e
 	end
 	if AJM.db.followStatusShowLevel == true then
 		if AJM.db.followStatusShowName == true then
-			text = text..L[" "]..L["("]..tostring( characterLevel )..L[")"]
+			if AJM.db.stackName == true then
+				text = text..L[" "]..("\n")..L["("]..tostring( characterLevel )..L[")"]
+			else
+				text = text..L[" "]..L["("]..tostring( characterLevel )..L[")"]
+			end	
 		else
 			text = tostring( characterLevel )
 		end
 	end
 	if AJM.db.showIlvlInformation == true then
 		if AJM.db.ShowEquippedOnly == true then
-			text = text..L[" "]..L["("]..tostring (format("%.0f", equipped ))..L[")"]
+			if AJM.db.stackName == true then
+				text = text..L[" "]..("\n")..L["("]..tostring (format("%.0f", equipped ))..L[")"]
+			else
+				text = text..L[" "]..L["("]..tostring (format("%.0f", equipped ))..L[")"]
+			end	
 		else
-			text = text..L[" "]..L["("]..tostring(format("%.0f", equipped )).."/"..tostring(format("%.0f", overall ))..L[")"]
+			if AJM.db.stackName == true then
+				text = text..L[" "]..("\n")..L["("]..tostring(format("%.0f", equipped )).."/"..tostring(format("%.0f", overall ))..L[")"]
+			else
+				text = text..L[" "]..L["("]..tostring(format("%.0f", equipped )).."/"..tostring(format("%.0f", overall ))..L[")"]
+			end
 		end	
 	end
 	followBarText:SetText( text )
@@ -2205,7 +2236,8 @@ end
 
 function AJM:PLAYER_LEVEL_UP( event, ... )
 	AJM:SendExperienceStatusUpdateCommand()	
-	AJM:SettingsUpdateFollowTextAll()
+	--AJM:SettingsUpdateFollowTextAll()
+	AJM:SendIlvlInformationUpdateCommand()
 end
 
 function AJM:SendExperienceStatusUpdateCommand()

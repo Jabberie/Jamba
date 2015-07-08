@@ -61,3 +61,4 @@ L["Show Faction Name"] = true
 L["No Faction Selected"] = true
 L["Show Item Level"] = true
 L["Equipped iLvl Only"] = true
+L["Stack Text"] = true
