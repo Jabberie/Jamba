@@ -75,6 +75,11 @@ AJM.settings = {
 		powerStatusHeight = 20,
 		powerStatusShowValues = true,
 		powerStatusShowPercentage = true,
+		showComboStatus = false,
+		comboStatusWidth = 80,
+		comboStatusHeight = 20,
+		comboStatusShowValues = true,
+		comboStatusShowPercentage = true,		
 		showBagInformation = true,
 		showBagFreeSlotsOnly = true,
 		bagInformationWidth = 80,
@@ -153,6 +158,7 @@ AJM.COMMAND_EXPERIENCE_STATUS_UPDATE = "ExpStsUpd"
 AJM.COMMAND_BAGINFORMATION_UPDATE = "BagInfoUpd"
 AJM.COMMAND_ITEMLEVELINFORMATION_UPDATE = "IlvlInfoUpd"
 AJM.COMMAND_REPUTATION_STATUS_UPDATE = "RepStsUpd"
+AJM.COMMAND_COMBO_STATUS_UPDATE = "CboStsUpd"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -187,6 +193,7 @@ local function GetCharacterHeight()
 	local heightReputationStatus = 0
 	local heightHealthStatus = 0
 	local heightPowerStatus = 0
+	local heightComboStatus = 0	
 	local heightBagInformation = 0	
 	--local heightIlvlInformation = 0	
 	local heightAllBars = 0
@@ -221,10 +228,14 @@ local function GetCharacterHeight()
 		heightPowerStatus = AJM.db.powerStatusHeight + AJM.db.barVerticalSpacing
 		heightAllBars = heightAllBars + heightPowerStatus
 	end
+	if AJM.db.showComboStatus == true then
+		heightComboStatus = AJM.db.comboStatusHeight + AJM.db.barVerticalSpacing
+		heightAllBars = heightAllBars + heightComboStatus
+	end	
 	if AJM.db.barsAreStackedVertically == true then
 		height = max( heightPortrait, heightAllBars )
 	else
-		height = max( heightPortrait, heightBagInformation, heightFollowStatus, heightExperienceStatus, heightReputationStatus, heightHealthStatus, heightPowerStatus )
+		height = max( heightPortrait, heightBagInformation, heightFollowStatus, heightExperienceStatus, heightReputationStatus, heightHealthStatus, heightPowerStatus, heightComboStatus )
 	end
 	return height
 end
@@ -237,6 +248,7 @@ local function GetCharacterWidth()
 	local widthReputationStatus = 0
 	local widthHealthStatus = 0
 	local widthPowerStatus = 0
+	local widthComboStatus = 0	
 	local widthBagInformation = 0
 	local widthIvlInformation = 0
 	local widthAllBars = 0
@@ -270,9 +282,13 @@ local function GetCharacterWidth()
 	if AJM.db.showPowerStatus == true then
 		widthPowerStatus = AJM.db.powerStatusWidth + AJM.db.barHorizontalSpacing
 		widthAllBars = widthAllBars + widthPowerStatus		
-	end	
+	end
+	if AJM.db.showComboStatus == true then
+		widthComboStatus = AJM.db.comboStatusWidth + AJM.db.barHorizontalSpacing
+		widthAllBars = widthAllBars + widthComboStatus		
+	end
 	if AJM.db.barsAreStackedVertically == true then
-		width = widthPortrait + max( widthBagInformation, widthFollowStatus, widthExperienceStatus, widthReputationStatus, widthHealthStatus, widthPowerStatus )
+		width = widthPortrait + max( widthBagInformation, widthFollowStatus, widthExperienceStatus, widthReputationStatus, widthHealthStatus, widthPowerStatus, widthComboStatus )
 	else
 		width = widthPortrait + widthAllBars
 	end
@@ -450,6 +466,9 @@ function AJM:SettingsUpdateStatusBarTexture()
 		characterStatusBar["powerBar"]:SetStatusBarTexture( statusBarTexture )
 		characterStatusBar["powerBar"]:GetStatusBarTexture():SetHorizTile( false )
 		characterStatusBar["powerBar"]:GetStatusBarTexture():SetVertTile( false )
+		characterStatusBar["comboBar"]:SetStatusBarTexture( statusBarTexture )
+		characterStatusBar["comboBar"]:GetStatusBarTexture():SetHorizTile( false )
+		characterStatusBar["comboBar"]:GetStatusBarTexture():SetVertTile( false )
 	end
 end
 
@@ -635,6 +654,30 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	powerBarText.playerMaxPower = 100
 	characterStatusBar["powerBarText"] = powerBarText
 	AJM:UpdatePowerStatus( characterName, nil, nil, nil )
+	-- Set the Combo Points bar.
+	local comboName = AJM.globalFramePrefix.."ComboBar"
+	local comboBar = CreateFrame( "StatusBar", comboName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
+	comboBar.backgroundTexture = comboBar:CreateTexture( comboName.."BackgroundTexture", "ARTWORK" )
+	comboBar.backgroundTexture:SetTexture( 0.58, 0.0, 0.55, 0.15 )
+	comboBar:SetStatusBarTexture( statusBarTexture )
+	comboBar:GetStatusBarTexture():SetHorizTile( false )
+	comboBar:GetStatusBarTexture():SetVertTile( false )
+	comboBar:SetStatusBarColor( 1.00, 0.0, 0.0, 1.00 )
+	comboBar:SetMinMaxValues( 0, 5 )
+	comboBar:SetValue( 5 )
+	comboBar:SetFrameStrata( "LOW" )
+	local comboBarClick = CreateFrame( "CheckButton", comboName.."Click"..characterName, parentFrame, "SecureActionButtonTemplate" )
+	comboBarClick:SetAttribute( "unit", characterName )
+	comboBarClick:SetFrameStrata( "MEDIUM" )
+	characterStatusBar["comboBar"] = comboBar
+	characterStatusBar["comboBarClick"] = comboBarClick
+	local comboBarText = comboBar:CreateFontString( comboName.."Text", "OVERLAY", "GameFontNormal" )
+	comboBarText:SetTextColor( 1.00, 1.00, 0.0, 1.00 )
+	comboBarText:SetAllPoints()
+	comboBarText.playerCombo = 0
+	comboBarText.playerMaxCombo = 5
+	characterStatusBar["comboBarText"] = comboBarText
+	AJM:UpdateComboStatus( characterName, nil, nil )
 	-- Add the health and power click bars to ClickCastFrames for addons like Clique to use.
 	--Ebony if Support for Clique if not on then default to target unit
 	--TODO there got to be a better way to doing this for sure but right now i can not be assed to do this for now you need to reload the UI when turning off and on clique support. 
@@ -646,6 +689,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 		ClickCastFrames[reputationBarClick] = true
 		ClickCastFrames[healthBarClick] = true
 		ClickCastFrames[powerBarClick] = true
+		ClickCastFrames[comboBarClick] = true
 	else
 		portraitButtonClick:SetAttribute( "type1", "target")
 		followBarClick:SetAttribute( "type1", "target")
@@ -653,6 +697,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 		reputationBarClick:SetAttribute( "type1", "target")
 		healthBarClick:SetAttribute( "type1", "target")
 		powerBarClick:SetAttribute( "type1", "target")
+		comboBarClick:SetAttribute( "type1", "target")
 	end
 end
 
@@ -679,6 +724,8 @@ function AJM:HideJambaTeamStatusBar( characterName )
 	characterStatusBar["healthBarClick"]:Hide()
 	characterStatusBar["powerBar"]:Hide()
 	characterStatusBar["powerBarClick"]:Hide()
+	characterStatusBar["comboBar"]:Hide()
+	characterStatusBar["comboBarClick"]:Hide()
 end
 
 function AJM:UpdateJambaTeamStatusBar( characterName, characterPosition )	
@@ -834,6 +881,28 @@ function AJM:UpdateJambaTeamStatusBar( characterName, characterPosition )
 		powerBar:Hide()
 		powerBarClick:Hide()
 	end
+	-- Display the Combo Point bar.
+	local comboBar = characterStatusBar["comboBar"]
+	local comboBarClick = characterStatusBar["comboBarClick"]
+	if AJM.db.showComboStatus == true then
+		comboBar.backgroundTexture:SetAllPoints()
+		comboBar:SetWidth( AJM.db.comboStatusWidth )
+		comboBar:SetHeight( AJM.db.comboStatusHeight )
+		comboBar:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", positionLeft, positionTop )
+		comboBarClick:SetWidth( AJM.db.comboStatusWidth )
+		comboBarClick:SetHeight( AJM.db.comboStatusHeight )
+		comboBarClick:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", positionLeft, positionTop )
+		comboBar:Show()
+		comboBarClick:Show()
+		if AJM.db.barsAreStackedVertically == true then
+			positionTop = positionTop - AJM.db.comboStatusHeight - AJM.db.barVerticalSpacing
+		else
+			positionLeft = positionLeft + AJM.db.comboStatusWidth + AJM.db.teamListHorizontalSpacing
+		end
+	else
+		comboBar:Hide()
+		comboBarClick:Hide()
+	end		
 	-- Display the bag information
 	local bagInformationFrame = characterStatusBar["bagInformationFrame"]
 	local bagInformationFrameText = characterStatusBar["bagInformationFrameText"]
@@ -1317,6 +1386,53 @@ local function SettingsCreateDisplayOptions( top )
 	AJM.settingsControl.displayOptionsPowerStatusHeightSlider:SetSliderValues( 5, 50, 1 )
 	AJM.settingsControl.displayOptionsPowerStatusHeightSlider:SetCallback( "OnValueChanged", AJM.SettingsChangePowerStatusHeight )
 	movingTop = movingTop - sliderHeight - sectionSpacing
+	-- Create Combo Point status.
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Combo Point Bar"], movingTop, true )
+	movingTop = movingTop - headingHeight
+	AJM.settingsControl.displayOptionsCheckBoxShowComboStatus = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		thirdWidth, 
+		left, 
+		movingTop, 
+		L["Show"],
+		AJM.SettingsToggleShowComboStatus
+	)	
+	AJM.settingsControl.displayOptionsCheckBoxShowComboStatusValues = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		thirdWidth, 
+		left2, 
+		movingTop, 
+		L["Values"],
+		AJM.SettingsToggleShowComboStatusValues
+	)	
+	AJM.settingsControl.displayOptionsCheckBoxShowComboStatusPercentage = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		thirdWidth, 
+		left3, 
+		movingTop, 
+		L["Percentage"],
+		AJM.SettingsToggleShowComboStatusPercentage
+	)			
+	movingTop = movingTop - checkBoxHeight - verticalSpacing
+	AJM.settingsControl.displayOptionsComboStatusWidthSlider = JambaHelperSettings:CreateSlider( 
+		AJM.settingsControl, 
+		halfWidthSlider, 
+		left, 
+		movingTop, 
+		L["Width"]
+	)	
+	AJM.settingsControl.displayOptionsComboStatusWidthSlider:SetSliderValues( 5, 200, 1 )
+	AJM.settingsControl.displayOptionsComboStatusWidthSlider:SetCallback( "OnValueChanged", AJM.SettingsChangeComboStatusWidth )
+	AJM.settingsControl.displayOptionsComboStatusHeightSlider = JambaHelperSettings:CreateSlider( 
+		AJM.settingsControl, 
+		halfWidthSlider, 
+		column2left, 
+		movingTop, 
+		L["Height"]
+	)
+	AJM.settingsControl.displayOptionsComboStatusHeightSlider:SetSliderValues( 5, 50, 1 )
+	AJM.settingsControl.displayOptionsComboStatusHeightSlider:SetCallback( "OnValueChanged", AJM.SettingsChangeComboStatusHeight )
+	movingTop = movingTop - sliderHeight - sectionSpacing
 	-- Create bag information status.
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Bag Information"], movingTop, true )
 	movingTop = movingTop - headingHeight
@@ -1469,6 +1585,11 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.displayOptionsCheckBoxShowPowerStatusPercentage:SetValue( AJM.db.powerStatusShowPercentage )
 	AJM.settingsControl.displayOptionsPowerStatusWidthSlider:SetValue( AJM.db.powerStatusWidth )
 	AJM.settingsControl.displayOptionsPowerStatusHeightSlider:SetValue( AJM.db.powerStatusHeight )
+	AJM.settingsControl.displayOptionsCheckBoxShowComboStatus:SetValue( AJM.db.showComboStatus )
+	AJM.settingsControl.displayOptionsCheckBoxShowComboStatusValues:SetValue( AJM.db.comboStatusShowValues )
+	AJM.settingsControl.displayOptionsCheckBoxShowComboStatusPercentage:SetValue( AJM.db.comboStatusShowPercentage )
+	AJM.settingsControl.displayOptionsComboStatusWidthSlider:SetValue( AJM.db.comboStatusWidth )
+	AJM.settingsControl.displayOptionsComboStatusHeightSlider:SetValue( AJM.db.comboStatusHeight )	
 	AJM.settingsControl.displayOptionsBackgroundColourPicker:SetColor( AJM.db.frameBackgroundColourR, AJM.db.frameBackgroundColourG, AJM.db.frameBackgroundColourB, AJM.db.frameBackgroundColourA )
 	AJM.settingsControl.displayOptionsBorderColourPicker:SetColor( AJM.db.frameBorderColourR, AJM.db.frameBorderColourG, AJM.db.frameBorderColourB, AJM.db.frameBorderColourA )
 	AJM.settingsControl.displayOptionsCheckBoxShowBagInformation:SetValue( AJM.db.showBagInformation )
@@ -1524,6 +1645,11 @@ function AJM:SettingsRefresh()
 		AJM.settingsControl.displayOptionsCheckBoxShowPowerStatusPercentage:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsPowerStatusWidthSlider:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsPowerStatusHeightSlider:SetDisabled( not AJM.db.showTeamList )
+		AJM.settingsControl.displayOptionsCheckBoxShowComboStatus:SetDisabled( not AJM.db.showTeamList )
+		AJM.settingsControl.displayOptionsCheckBoxShowComboStatusValues:SetDisabled( not AJM.db.showTeamList )
+		AJM.settingsControl.displayOptionsCheckBoxShowComboStatusPercentage:SetDisabled( not AJM.db.showTeamList )
+		AJM.settingsControl.displayOptionsComboStatusWidthSlider:SetDisabled( not AJM.db.showTeamList )
+		AJM.settingsControl.displayOptionsComboStatusHeightSlider:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsBackgroundColourPicker:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsBorderColourPicker:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxShowBagInformation:SetDisabled( not AJM.db.showTeamList )
@@ -1545,6 +1671,7 @@ function AJM:SettingsRefresh()
 			AJM:SettingsUpdateReputationAll()
 			AJM:SettingsUpdateHealthAll()
 			AJM:SettingsUpdatePowerAll()
+			AJM:SettingsUpdateComboAll()
 			AJM:SettingsUpdateBagInformationAll()
 			--AJM:SettingsUpdateIlvlInformationAll()
 		end
@@ -1596,6 +1723,11 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.powerStatusHeight = settings.powerStatusHeight		
 		AJM.db.powerStatusShowValues = settings.powerStatusShowValues
 		AJM.db.powerStatusShowPercentage = settings.powerStatusShowPercentage
+		AJM.db.showComboStatus = settings.showComboStatus
+		AJM.db.comboStatusWidth = settings.comboStatusWidth
+		AJM.db.comboStatusHeight = settings.comboStatusHeight		
+		AJM.db.comboStatusShowValues = settings.comboStatusShowValues
+		AJM.db.comboStatusShowPercentage = settings.comboStatusShowPercentage
 		AJM.db.showBagInformation = settings.showBagInformation
 		AJM.db.showBagFreeSlotsOnly = settings.showBagFreeSlotsOnly
 		AJM.db.bagInformationWidth = settings.bagInformationWidth
@@ -1836,6 +1968,30 @@ function AJM:SettingsChangePowerStatusHeight( event, value )
 	AJM:SettingsRefresh()
 end
 
+function AJM:SettingsToggleShowComboStatus( event, checked )
+	AJM.db.showComboStatus = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleShowComboStatusValues( event, checked )
+	AJM.db.comboStatusShowValues = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleShowComboStatusPercentage( event, checked )
+	AJM.db.comboStatusShowPercentage = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsChangeComboStatusWidth( event, value )
+	AJM.db.comboStatusWidth = tonumber( value )
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsChangeComboStatusHeight( event, value )
+	AJM.db.comboStatusHeight = tonumber( value )
+	AJM:SettingsRefresh()
+end
 function AJM:SettingsBackgroundColourPickerChanged( event, r, g, b, a )
 	AJM.db.frameBackgroundColourR = r
 	AJM.db.frameBackgroundColourG = g
@@ -1919,9 +2075,12 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	if commandName == AJM.COMMAND_BAGINFORMATION_UPDATE then
 		AJM:ProcessUpdateBagInformationMessage( characterName, ... )
 	end	
-	if commandName == AJM.COMMAND_ITEMLEVELINFORMATION_UPDATE then
+if commandName == AJM.COMMAND_ITEMLEVELINFORMATION_UPDATE then
 		AJM:ProcessUpdateIlvlInformationMessage( characterName, ... )
 	end
+	if commandName == AJM.COMMAND_COMBO_STATUS_UPDATE then
+		AJM:ProcessUpdateComboStatusMessage( characterName, ... )
+	end		
 end	
 
 -------------------------------------------------------------------------------------------------------------
@@ -2429,6 +2588,7 @@ function AJM:UNIT_MAXHEALTH( event, unit, ... )
 	AJM:SendHealthStatusUpdateCommand( unit )	
 end
 
+
 function AJM:SendHealthStatusUpdateCommand( unit )
 	if AJM.db.showTeamList == true and AJM.db.showHealthStatus == true then
 		local playerHealth = UnitHealth( unit )
@@ -2516,6 +2676,7 @@ function AJM:SendPowerStatusUpdateCommand( unit )
 		local playerMaxPower = UnitPowerMax( unit )
 		local characterName, characterRealm = UnitName( unit )
 		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+		--AJM:Print("power", character, playerPower, playerMaxPower )
 		AJM:UpdatePowerStatus( character, playerPower, playerMaxPower )
 	end
 end
@@ -2579,6 +2740,113 @@ function AJM:SetStatusBarColourForPower( statusBar, unit )
 end			
 
 -------------------------------------------------------------------------------------------------------------
+-- Combo Points Status Bar Updates.
+-------------------------------------------------------------------------------------------------------------
+
+function AJM:UNIT_COMBO_POINTS( event, ... )
+	--AJM:Print("hello")
+	AJM:SendComboStatusUpdateCommand()	
+end
+
+
+--function AJM:UNIT_DISPLAYCOMBO( event, unit, ... )
+--	AJM:SendComboStatusUpdateCommand( unit )
+--end
+
+function AJM:SendComboStatusUpdateCommand()
+	if AJM.db.showTeamList == true and AJM.db.showComboStatus == true then
+		if select(2, UnitClass("player")) ~= "DRUID" and select(2, UnitClass("player")) ~= "ROGUE" == true then
+			return
+		end	
+			
+		local playerCombo = UnitPower ( "player", 4)
+		local playerMaxCombo = UnitPowerMax( "player", 4)
+		--AJM:Print ("combo", playerCombo, playerMaxCombo)
+		if AJM.db.showTeamListOnMasterOnly == true then
+			AJM:JambaSendCommandToMaster( AJM.COMMAND_COMBO_STATUS_UPDATE, playerCombo, playerMaxCombo )
+		else
+			AJM:DebugMessage( "SendComboStatusUpdateCommand TO TEAM!" )
+			AJM:JambaSendCommandToTeam( AJM.COMMAND_COMBO_STATUS_UPDATE, playerCombo, playerMaxCombo )
+		end
+	end
+end
+
+function AJM:ProcessUpdateComboStatusMessage( characterName, playerCombo, playerMaxCombo )
+	AJM:UpdateComboStatus( characterName, playerCombo , playerMaxCombo )
+end
+
+function AJM:SettingsUpdateComboAll()
+	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
+		AJM:UpdateComboStatus( characterName, nil, nil )
+	end
+end
+
+function AJM:SettingsUpdateComboAll()
+	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
+		AJM:UpdateComboStatus( characterName, nil, nil )
+	end
+end
+
+function AJM:UpdateComboStatus( characterName, playerCombo, playerMaxCombo )
+	if CanDisplayTeamList() == false then
+		return
+	end
+	
+	if AJM.db.showComboStatus == false then
+		return
+	end
+	
+	local characterStatusBar = AJM.characterStatusBar[characterName]
+	if characterStatusBar == nil then
+		return
+	end
+	
+	local comboBarText = characterStatusBar["comboBarText"]	
+	local comboBar = characterStatusBar["comboBar"]	
+	
+	if playerCombo == nil then
+		playerCombo = comboBarText.playerCombo
+	end
+	
+	if playerMaxCombo == nil then
+		playerMaxCombo = comboBarText.playerMaxCombo
+	end
+	
+	comboBarText.playerCombo = playerCombo
+	comboBarText.playerMaxCombo = playerMaxCombo
+	comboBar:SetMinMaxValues( 0, tonumber( playerMaxCombo ) )
+	comboBar:SetValue( tonumber( playerCombo ) )
+	local text = ""
+	
+	if AJM.db.comboStatusShowValues == true then
+		text = text..tostring( playerCombo )..L[" / "]..tostring( playerMaxCombo )..L[" "]
+	end
+	
+	if AJM.db.ComboStatusShowPercentage == true then
+		if AJM.db.comboStatusShowValues == true then
+			text = text..L["("]..tostring( floor( (playerCombo/playerMaxCombo)*100) )..L["%"]..L[")"]
+		else
+			text = tostring( floor( (playerCombo/playerMaxCombo)*100) )..L["%"]
+		end
+	end
+	comboBarText:SetText( text )		
+end
+
+--[[
+function AJM:SetStatusBarColourForCombo( statusBar, unit )
+	local powerIndex, powerString, altR, altG, altB = UnitPowerType( unit )
+	if comboString ~= nil and comboString ~= "" then
+		local r = ComboBarColor[powerString].r
+		local g = ComboBarColor[powerString].g
+		local b = ComboBarColor[powerString].b
+		statusBar:SetStatusBarColor( r, g, b, 1 )
+		statusBar.backgroundTexture:SetTexture( r, g, b, 0.25 )
+	end
+	
+end	
+--]]
+		
+-------------------------------------------------------------------------------------------------------------
 -- Addon initialization, enabling and disabling.
 -------------------------------------------------------------------------------------------------------------
 
@@ -2618,6 +2886,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "GROUP_ROSTER_UPDATE" )
 	AJM:RegisterEvent( "ITEM_PUSH" )
 	AJM:RegisterEvent( "CHAT_MSG_COMBAT_FACTION_CHANGE" )
+	AJM:RegisterEvent( "UNIT_COMBO_POINTS" )
 	--Updating Bag information -- Chaneged again 4.1  this event fires even for bank bags. When moving an item in your inventory, this fires multiple times: once each for the source and destination bag
 	AJM:RegisterEvent( "BAG_UPDATE", "ITEM_PUSH" )
 	--Updates everytime jamba Reads the UI_ERROR_MESSAGE Are This is not very good for me using a spambar! Need's a better system.

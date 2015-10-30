@@ -42,6 +42,7 @@ L["Follow Status Bar"] = true
 L["Experience Bar"] = true
 L["Health Bar"] = true
 L["Power Bar"] = true
+L["Combo Point Bar"] = true
 L["Jamba Team"] = true
 L["Hide Team Display"] = true
 L["Hide the display team panel."] = true

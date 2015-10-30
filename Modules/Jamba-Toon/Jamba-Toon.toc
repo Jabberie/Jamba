@@ -3,11 +3,6 @@
 ## Notes: JambaToon
 ## Author: Ebony, Former Author: Jafula
 ## Version: 4.1.1
-## X-Category: Interface Enhancements
-## X-Child-Of: Jamba
-## Dependencies: Jamba
-## SavedVariables: JambaToonProfileDB
-## LoadOnDemand: 1
 Locales\Locales.xml
 JambaToon.lua
 

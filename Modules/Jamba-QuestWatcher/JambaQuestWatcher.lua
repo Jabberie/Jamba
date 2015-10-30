@@ -1589,7 +1589,9 @@ function AJM:QuestWatcherQuestListDrawLine( frame, iterateDisplayRows, type, inf
 	end
 	if type == "QUEST_HEADER" then
 		if questTeamCount ~= 0 then
-			teamCount = " ("..questTeamCount.."/"..JambaApi.GetTeamListMaximumOrder()..") "
+			--teamCount = " ("..questTeamCount.."/"..JambaApi.GetTeamListMaximumOrder()..") "
+			--Ebony Only Shows online character info
+			teamCount = " ("..questTeamCount.."/"..JambaApi.GetTeamListMaximumOrderOnline()..") "			
 		end
 	end
 	frame.questWatchList.rows[iterateDisplayRows].columns[1].textString:SetText( padding..toggleDisplay..teamCount..information )

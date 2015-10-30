@@ -1,3 +1,20 @@
+Jamba Version: 4.1.2
+WoW Game Version: 6.2.2
+Release Date: 30/10/2015
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
+*Jamba-quest-watcher
+	- TeamQuests ((EG: :(1/6) )) will nolonger show for offline characters.
+	
+*Jamba-Display-Team
+	- Added Combo points to the Display bar. will show all combo points on all characters
+
+Jamba-Toon
+ - new Currency's 
+	- Added Timewalker Coins
+	
+	
+-------------
 Jamba Version: 4.1.1
 WoW Game Version: 6.2
 Release Date: 08/7/2015
@@ -12,7 +29,7 @@ Jamba-Toon
 	- Oil
 	- Seal of InevitableFate
  
- ------------
+-------------
 Jamba Version: 4.1.0
 WoW Game Version: 6.2
 Release Date: 23/6/2015

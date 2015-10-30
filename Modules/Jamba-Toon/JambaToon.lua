@@ -53,6 +53,7 @@ AJM.CDarkmoon = 515
 AJM.C = 824
 AJM.COil = 1101
 AJM.CInevitableFate = 1129
+AJM.CTimeWalker = 1166
 AJM.globalCurrencyFramePrefix = "JambaToonCurrencyListFrame"
 
 -- Settings - the values to store and their defaults for the settings database.
@@ -107,6 +108,7 @@ AJM.settings = {
 		currDarkmoon = false,
 		currInevitableFate  = false,
 		currOil = false,		
+		currTimeWalker = false,
 		currencyFrameAlpha = 1.0,
 		currencyFramePoint = "CENTER",
 		currencyFrameRelativePoint = "CENTER",
@@ -540,6 +542,15 @@ local function SettingsCreateCurrency( top )
 		L["OIL"]..L[" ("]..L["OIL"]..L[")"],
 		AJM.SettingsToggleCurrencyOil
 	)
+		movingTop = movingTop - checkBoxHeight	
+		AJM.settingsControlCurrency.checkBoxCurrencyTimeWalker = JambaHelperSettings:CreateCheckBox(
+		AJM.settingsControlCurrency,
+		headingWidth,
+		left,
+		movingTop,
+		L["Timewarped Badge"]..L[" ("]..L["TwB"]..L[")"],
+		AJM.SettingsToggleCurrencyTimeWalker
+	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlCurrency.currencyButtonShowList = JambaHelperSettings:CreateButton( 
 		AJM.settingsControlCurrency, 
@@ -956,6 +967,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCurrency.checkBoxCurrencyDarkmoon:SetValue( AJM.db.currDarkmoon )
 	AJM.settingsControlCurrency.checkBoxCurrencyInevitableFate:SetValue( AJM.db.currInevitableFate )
 	AJM.settingsControlCurrency.checkBoxCurrencyOil:SetValue( AJM.db.currOil )
+	AJM.settingsControlCurrency.checkBoxCurrencyTimeWalker:SetValue( AJM.db.currTimeWalker )
 	--end
 	AJM.settingsControlCurrency.checkBoxCurrencyOpenStartUpMaster:SetValue( AJM.db.currOpenStartUpMaster )
 	AJM.settingsControlCurrency.currencyTransparencySlider:SetValue( AJM.db.currencyFrameAlpha )
@@ -1215,6 +1227,11 @@ function AJM:SettingsToggleCurrencyOil ( event, checked )
 	AJM:SettingsRefresh()
 end
 
+function AJM:SettingsToggleCurrencyTimeWalker ( event, checked )
+	AJM.db.currTimeWalker = checked
+	AJM:SettingsRefresh()
+end
+
 function AJM:SettingsToggleCurrencyDarkmoon ( event, checked )
 	AJM.db.currDarkmoon = checked
 	AJM:SettingsRefresh()
@@ -1399,6 +1416,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.currDarkmoon = settings.currDarkmoon
 		AJM.db.currInevitableFate = settings.currInevitableFate
 		AJM.db.currOil = settings.currOil
+		AJM.db.currTimeWalker = settings.currTimeWalker
 --		END		
 		AJM.db.currOpenStartUpMaster = settings.currOpenStartUpMaster
 		AJM.db.currencyScale = settings.currencyScale
@@ -1903,7 +1921,16 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	frameInevitableFateText:SetJustifyH( "CENTER" )
 	frame.InevitableFateText = frameInevitableFateText
 	left = left + spacing
-	
+	-- Set the Time Walker font string.
+	local frameTimeWalker = AJM.globalCurrencyFramePrefix.."TitleTimewalker"
+	local frameTimeWalkerText = parentFrame:CreateFontString( frameTimeWalker .."Text", "OVERLAY", "GameFontNormal" )
+	frameTimeWalkerText:SetText( L["SoI"] )
+	frameTimeWalkerText:SetTextColor( r, g, b, a )
+	frameTimeWalkerText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTimeWalkerText:SetWidth( width )
+	frameTimeWalkerText:SetJustifyH( "CENTER" )
+	frame.TimeWalkerText = frameTimeWalkerText
+	left = left + spacing
 	
 	-- Set the Total Gold font string.
 	left = 10
@@ -2224,6 +2251,16 @@ function AJM:CurrencyListSetColumnWidth()
 	else
 		parentFrame.OilText:Hide()
 	end	
+		if AJM.db.currTimeWalker == true then
+		parentFrame.TimeWalkerText:SetWidth( pointsWidth )
+		parentFrame.TimeWalkerText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+		left = left + pointsWidth + spacingWidth
+		numberOfPointsColumns = numberOfPointsColumns + 1
+		parentFrame.TimeWalkerText:Show()
+	else
+		parentFrame.TimeWalkerText:Hide()
+	end		
+	
 	-- Character rows.
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
 		--if JambaPrivate.Team.GetCharacterOnlineStatus (characterName) == false then
@@ -2403,6 +2440,14 @@ function AJM:CurrencyListSetColumnWidth()
 			currencyFrameCharacterInfo.OilText:Show()
 		else
 			currencyFrameCharacterInfo.OilText:Hide()
+		end
+		if AJM.db.currTimeWalker == true then
+			currencyFrameCharacterInfo.TimeWalkerText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.TimeWalkerText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+			left = left + pointsWidth + spacingWidth
+			currencyFrameCharacterInfo.TimeWalkerText:Show()
+		else
+			currencyFrameCharacterInfo.TimeWalkerText:Hide()
 		end		
 	end
 	-- Parent frame width and title.
@@ -2703,6 +2748,16 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	frameOilText:SetJustifyH( "CENTER" )
 	currencyFrameCharacterInfo.OilText = frameOilText
 	left = left + spacing
+		-- Set the TimeWalker font string.
+	local frameTimeWalker = AJM.globalCurrencyFramePrefix.."TimeWalker"
+	local frameTimeWalkerText = parentFrame:CreateFontString( frameTimeWalker .."Text", "OVERLAY", "GameFontNormal" )
+	frameTimeWalkerText:SetText( "0" )
+	frameTimeWalkerText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTimeWalkerText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTimeWalkerText:SetWidth( width )
+	frameTimeWalkerText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TimeWalkerText = frameTimeWalkerText
+	left = left + spacing	
 end
 
 function AJM:JambaToonHideCurrency()
@@ -2785,6 +2840,7 @@ function AJM:DoSendCurrency( characterName, dummyValue )
 	AJM.currentCurrencyValues.currDarkmoon = select( 2, GetCurrencyInfo( AJM.CDarkmoon ) )
 	AJM.currentCurrencyValues.currInevitableFate = select( 2, GetCurrencyInfo( AJM.CInevitableFate ) )
 	AJM.currentCurrencyValues.currOil = select( 2, GetCurrencyInfo( AJM.COil ) )	
+	AJM.currentCurrencyValues.currTimeWalker = select( 2, GetCurrencyInfo( AJM.CTimeWalker ) )
 	AJM:JambaSendCommandToToon( characterName, AJM.COMMAND_HERE_IS_CURRENCY, AJM.currentCurrencyValues )
 end
 
@@ -2849,6 +2905,7 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	currencyFrameCharacterInfo.DarkmoonText:SetText( currencyValues.currDarkmoon )
 	currencyFrameCharacterInfo.InevitableFateText:SetText( currencyValues.currInevitableFate )
 	currencyFrameCharacterInfo.OilText:SetText( currencyValues.currOil )
+	currencyFrameCharacterInfo.TimeWalkerText:SetText( currencyValues.currTimeWalker )
 	-- Total gold.
 	AJM.currencyTotalGold = AJM.currencyTotalGold + currencyValues.currGold
 	parentFrame.TotalGoldText:SetText( JambaUtilities:FormatMoneyString( AJM.currencyTotalGold ) )
