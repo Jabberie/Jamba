@@ -153,6 +153,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "PLAYER_REGEN_ENABLED" )
 	AJM:RegisterEvent( "PLAYER_REGEN_DISABLED" )
 	AJM:RegisterEvent( "QUEST_WATCH_UPDATE" )
+	AJM:RegisterEvent( "QUEST_LOG_UPDATE")
 	AJM:RegisterEvent( "QUEST_WATCH_LIST_CHANGED", "QUEST_WATCH_UPDATE" )
 	-- For in the field auto quests. And Bonus Quests.
 	AJM:RegisterEvent("QUEST_ACCEPTED", "QUEST_WATCH_UPDATE")
@@ -908,7 +909,16 @@ function AJM:AbandonQuest()
 	AJM:ScheduleTimer( "AbandonQuestDelayed", 1 )		
 end
 
+
 function AJM:QUEST_WATCH_UPDATE( event, ... )
+	if AJM.db.enableQuestWatcher == true then
+		-- Wait a bit for the correct information to come through from the server...
+		AJM:ScheduleTimer( "JambaQuestWatcherUpdate", 1, true )		
+	end
+end
+
+
+function AJM:QUEST_LOG_UPDATE( event, ... )
 	if AJM.db.enableQuestWatcher == true then
 		-- Wait a bit for the correct information to come through from the server...
 		AJM:ScheduleTimer( "JambaQuestWatcherUpdate", 1, true )		
@@ -950,6 +960,7 @@ end
 function AJM:DoQuestWatchListUpdate( characterName )
 	AJM:JambaQuestWatcherUpdate( false )
 end
+
 
 function AJM:GetQuestObjectiveCompletion( text )
 	if text == nil then
@@ -1113,6 +1124,7 @@ function AJM:JambaQuestWatcherUpdate( useCache )
 		return
 	end
 	AJM:DebugMessage( "Sending quest watch information...")
+	-- old wow quests system
 	for iterateWatchedQuests = 1, GetNumQuestWatches() do
 	--for iterateQuests = 1, GetNumQuestLogEntries() do
 		local questIndex = GetQuestIndexForWatch( iterateWatchedQuests )
@@ -1130,7 +1142,7 @@ function AJM:JambaQuestWatcherUpdate( useCache )
             for iterateObjectives = 1, numObjectives do
 				local objectiveFullText, objectiveType, objectiveFinished = GetQuestLogLeaderBoard( iterateObjectives, questIndex )
                 --local objectiveFullText, objectiveType, objectiveFinished = GetQuestObjectiveInfo( iterateObjectives, questIndex )
-				AJM:DebugMessage( "ObjInfo:", objectiveFullText, objectiveType, objectiveFinished, iterateObjectives, questIndex )
+				AJM:DebugMessage( "ObjInfo:", objectiveFullText, objectiveType, objectiveFinished, iterateObjectives, questIndex  )
 				local amountCompleted, objectiveText = AJM:GetQuestObjectiveCompletion( objectiveFullText )
                 AJM:DebugMessage( "SplitObjInfo",  amountCompleted, objectiveText )
 				if (AJM:QuestCacheUpdate( questID, iterateObjectives, amountCompleted, objectiveFinished ) == true) or (useCache == false) then
@@ -1143,6 +1155,7 @@ function AJM:JambaQuestWatcherUpdate( useCache )
 			end
 		end
 	end
+	-- New Bouns Quests!
 	for iterateWatchedQuests = 1, GetNumQuestLogEntries() do
 	   local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( iterateWatchedQuests )
 		--AJM:DebugMessage( "EbonyTest101:", questID)
@@ -1152,21 +1165,45 @@ function AJM:JambaQuestWatcherUpdate( useCache )
 			--AJM:Print( "EbonyTestbounsquestID:", questID, numObjectives, isComplete )
 			for iterateObjectives = 1, numObjectives do
 			local objectiveFullText, objectiveType, finished = GetQuestObjectiveInfo( questID, iterateObjectives, isComplete )
-				--AJM:DebugMessage("BonuesQuest", objectiveText, finished )
-				local amountCompleted, objectiveText = AJM:GetQuestObjectiveCompletion( objectiveFullText )
-				if (AJM:QuestCacheUpdate( questID, iterateObjectives, amountCompleted, objectiveFinished ) == true) or (useCache == false) then
-					--AJM:DebugMessage("BonusQuest", amountCompleted, objectiveText )
-					--AJM:Print( "UPDATE:", "cache:", useCache, "QuestID", questID, "ObjectID", iterateObjectives )
-					--AJM:Print("BonuesQuest", objectiveText, finished )
-					local name = gsub(title, "[^|]+:", "Bonus:")
+				--AJM:Print("BonuesQuest", objectiveFullText, objectiveType, finished )
+				-- if progressbar quest that is not a quest where you kill XYZ and many things can make you do the complete the quest.
+				if objectiveType == "progressbar"  then
+					--AJM:Print("hello123", )
+					local objectiveText = "ProgressBar"
+					local progress = GetQuestProgressBarPercent( questID )
+					local maxProgress = 100
+					local amountCompleted = tostring(progress).."/"..(maxProgress)
+					--AJM:Print("BarQuesttext", amountCompleted )
+					if (AJM:QuestCacheUpdate( questID, iterateObjectives, amountCompleted, objectiveFinished ) == true) or (useCache == false) then
+				    --AJM:Print("QuestPercent", title, objectiveText, amountCompleted )
+					local name = tostring("Bonus:")..(title)
+					--send command to team
+					--AJM:Print("BarQuest", questID, title, iterateObjectives, objectiveText, amountCompleted, objectiveFinished, isComplete)
 					AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_WATCH_OBJECTIVE_UPDATE, questID, name, iterateObjectives, objectiveText, amountCompleted, objectiveFinished, isComplete )
 					if AJM.db.sendProgressChatMessages == true then
 						AJM:JambaSendMessageToTeam( AJM.db.messageArea, objectiveText.." "..amountCompleted, false )
 					end
+					end
+					
+				-- for other bouns quests EG one time world pop up quests that don't have a npc. 
+				else
+				local amountCompleted, objectiveText = AJM:GetQuestObjectiveCompletion( objectiveFullText )
+				if (AJM:QuestCacheUpdate( questID, iterateObjectives, amountCompleted, objectiveFinished ) == true) or (useCache == false) then
+				--AJM:Print("BonusQuest", amountCompleted, objectiveText )
+				--AJM:Print( "UPDATE:", "cache:", useCache, "QuestID", questID, "ObjectID", iterateObjectives )
+				--AJM:Print("sendingquestdata", objectiveText, amountCompleted, finished )
+				local name = gsub(title, "[^|]+:", "Bonus:")
+				-- send command to team
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_WATCH_OBJECTIVE_UPDATE, questID, name, iterateObjectives, objectiveText, amountCompleted, objectiveFinished, isComplete )
+					if AJM.db.sendProgressChatMessages == true then
+						AJM:JambaSendMessageToTeam( AJM.db.messageArea, objectiveText.." "..amountCompleted, false )
+					end	
+				end
 				end
 			end
 		end
-	end	
+	end		
+
 end
 
 -- Gathers messages from team.
@@ -1181,6 +1218,7 @@ function AJM:UpdateQuestWatchList( questID, questName, objectiveIndex, objective
 	local characterPosition = AJM:GetCharacterInWatchList( questID, objectiveIndex, characterName, amountCompleted, objectiveHeaderPosition, objectiveFinished )	
 	local totalAmountCompleted = AJM:GetTotalCharacterAmountFromWatchList( questID, objectiveIndex )
 	objectiveHeaderPosition = AJM:GetObjectiveHeaderInWatchList( questID, questName, objectiveIndex, objectiveText, totalAmountCompleted, questHeaderPosition )
+	--AJM:Print("QuestPosition", objectiveHeaderPosition, questHeaderPosition )
 	-- isComplete piggybacks on the quest watch update, so we are always displaying a complete quest button (in case the QUEST_AUTOCOMPLETE event does not fire).
 	if isComplete == true then
 		AJM:DoAutoQuestFieldComplete( characterName, questID )
@@ -1599,18 +1637,39 @@ function AJM:QuestWatcherQuestListDrawLine( frame, iterateDisplayRows, type, inf
 	-- Turn off the mouse for these buttons.
 	frame.questWatchList.rows[iterateDisplayRows].columns[1]:EnableMouse( false )
 	frame.questWatchList.rows[iterateDisplayRows].columns[2]:EnableMouse( false )
+	--AJM:Print("test2343", type, information )
 	if type == "QUEST_HEADER" then
-		frame.questWatchList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 0.96, 0.41, 1.0 )
-		frame.questWatchList.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 0.96, 0.41, 1.0 )
+		local matchData = string.find( information, "Bonus:" )
+		if matchData then
+		--AJM:Print("Match", information)
+		frame.questWatchList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 0, 0, 1.0 )
+		frame.questWatchList.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 0, 0, 1.0 )
 		-- Turn on the mouse for these buttons.
 		frame.questWatchList.rows[iterateDisplayRows].columns[1]:EnableMouse( true )
 		frame.questWatchList.rows[iterateDisplayRows].columns[2]:EnableMouse( true )
-	end
-	if type == "OBJECTIVE_HEADER" then
-		frame.questWatchList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1.0 )
-		frame.questWatchList.rows[iterateDisplayRows].columns[2].textString:SetTextColor( NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1.0 )
+		else
+		frame.questWatchList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 0.96, 0.41, 1.0 )
+		frame.questWatchList.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 0.96, 0.41, 1.0 )		
 		-- Turn on the mouse for these buttons.
 		frame.questWatchList.rows[iterateDisplayRows].columns[1]:EnableMouse( true )
+		frame.questWatchList.rows[iterateDisplayRows].columns[2]:EnableMouse( true )
+		end
+	end
+	if type == "OBJECTIVE_HEADER" then
+		--AJM:Print("Match", information)
+		local matchData = string.find( information, "ProgressBar" )
+			if matchData then
+			--AJM:Print("Match", information)
+			frame.questWatchList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 0.50, 0.50, 1.0 )
+			frame.questWatchList.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 0.50, 0.50, 1.0 )
+			-- Turn on the mouse for these buttons.
+			frame.questWatchList.rows[iterateDisplayRows].columns[1]:EnableMouse( true )		
+			else
+			frame.questWatchList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1.0 )
+			frame.questWatchList.rows[iterateDisplayRows].columns[2].textString:SetTextColor( NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1.0 )
+			-- Turn on the mouse for these buttons.
+			frame.questWatchList.rows[iterateDisplayRows].columns[1]:EnableMouse( true )
+		end
 	end
 	frame.questWatchList.rows[iterateDisplayRows].key = key
 end

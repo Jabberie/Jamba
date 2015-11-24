@@ -32,7 +32,7 @@ AJM.moduleDisplayName = L["Toon: Warnings"]
 
 -- Currency Identifiers.
 AJM.CDalaranJewelcraftingToken = 61
-AJM.CEpicureansAward = 81
+AJM.CValor = 1191
 AJM.CChampionsSeal = 241
 AJM.CIllustriousJewelcraftersToken = 361
 AJM.CConquestPoints = 390
@@ -94,7 +94,7 @@ AJM.settings = {
 		currIllustriousJewelcraftersToken = false,
 		currDalaranJewelcraftingToken = false,
 		currIronpawToken = false,
-		currEpicureansAward = false,
+		currValor = false,
 		currLesserCharmOfGoodFortune = false,
 		currElderCharmOfGoodFortune = false,
 		currMoguRuneOfFate = false,
@@ -378,7 +378,16 @@ local function SettingsCreateCurrency( top )
 		movingTop, 
 		L["Conquest Points"]..L[" ("]..L["CP"]..L[")"],
 		AJM.SettingsToggleCurrencyConquestPoints
-	)	
+	)
+	movingTop = movingTop - checkBoxHeight	
+	AJM.settingsControlCurrency.checkBoxCurrencyValor = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControlCurrency, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Valor Points"]..L[" ("]..L["VP"]..L[")"],
+		AJM.SettingsToggleCurrencyValor
+	)		
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlCurrency.checkBoxCurrencyTolBaradCommendation = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControlCurrency, 
@@ -423,15 +432,6 @@ local function SettingsCreateCurrency( top )
 		movingTop, 
 		L["Ironpaw Token"]..L[" ("]..L["IT"]..L[")"],
 		AJM.SettingsToggleCurrencyIronpawToken
-	)	
-	movingTop = movingTop - checkBoxHeight	
-	AJM.settingsControlCurrency.checkBoxCurrencyEpicureansAward = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControlCurrency, 
-		headingWidth, 
-		left, 
-		movingTop, 
-		L["Epicurean's Award"]..L[" ("]..L["EA"]..L[")"],
-		AJM.SettingsToggleCurrencyEpicureansAward
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlCurrency.checkBoxCurrencyLesserCharmOfGoodFortune = JambaHelperSettings:CreateCheckBox( 
@@ -948,12 +948,12 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCurrency.checkBoxCurrencyGoldInGuildBank:SetDisabled( not AJM.db.currGold )
 	AJM.settingsControlCurrency.checkBoxCurrencyHonorPoints:SetValue( AJM.db.currHonorPoints )
 	AJM.settingsControlCurrency.checkBoxCurrencyConquestPoints:SetValue( AJM.db.currConquestPoints )
+	AJM.settingsControlCurrency.checkBoxCurrencyValor:SetValue( AJM.db.currValor )	
 	AJM.settingsControlCurrency.checkBoxCurrencyTolBaradCommendation:SetValue( AJM.db.currTolBaradCommendation )
 	AJM.settingsControlCurrency.checkBoxCurrencyChampionsSeal:SetValue( AJM.db.currChampionsSeal )
 	AJM.settingsControlCurrency.checkBoxCurrencyIllustriousJewelcraftersToken:SetValue( AJM.db.currIllustriousJewelcraftersToken )
 	AJM.settingsControlCurrency.checkBoxCurrencyDalaranJewelcraftingToken:SetValue( AJM.db.currDalaranJewelcraftingToken )
 	AJM.settingsControlCurrency.checkBoxCurrencyIronpawToken:SetValue( AJM.db.currIronpawToken )
-	AJM.settingsControlCurrency.checkBoxCurrencyEpicureansAward:SetValue( AJM.db.currEpicureansAward )
 	AJM.settingsControlCurrency.checkBoxCurrencyLesserCharmOfGoodFortune:SetValue( AJM.db.currLesserCharmOfGoodFortune )
 	AJM.settingsControlCurrency.checkBoxCurrencyElderCharmOfGoodFortune:SetValue( AJM.db.currElderCharmOfGoodFortune )
 	AJM.settingsControlCurrency.checkBoxCurrencyMoguRuneOfFate:SetValue( AJM.db.currMoguRuneOfFate )
@@ -1141,6 +1141,11 @@ function AJM:SettingsToggleCurrencyConquestPoints( event, checked )
 	AJM:SettingsRefresh()
 end
 
+function AJM:SettingsToggleCurrencyValor( event, checked )
+	AJM.db.currValor = checked
+	AJM:SettingsRefresh()
+end
+
 function AJM:SettingsToggleCurrencyTolBaradCommendation( event, checked )
 	AJM.db.currTolBaradCommendation = checked
 	AJM:SettingsRefresh()
@@ -1166,10 +1171,6 @@ function AJM:SettingsToggleCurrencyIronpawToken( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyEpicureansAward( event, checked )
-	AJM.db.currEpicureansAward = checked
-	AJM:SettingsRefresh()
-end
 
 function AJM:SettingsToggleCurrencyLesserCharmOfGoodFortune( event, checked )
 	AJM.db.currLesserCharmOfGoodFortune = checked
@@ -1397,12 +1398,12 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.currGoldInGuildBank = settings.currGoldInGuildBank
 		AJM.db.currHonorPoints = settings.currHonorPoints
 		AJM.db.currConquestPoints = settings.currConquestPoints
+		AJM.db.currValor = settings.currValor	
 		AJM.db.currTolBaradCommendation = settings.currTolBaradCommendation
 		AJM.db.currChampionsSeal = settings.currChampionsSeal
 		AJM.db.currIllustriousJewelcraftersToken = settings.currIllustriousJewelcraftersToken
 		AJM.db.currDalaranJewelcraftingToken = settings.currDalaranJewelcraftingToken
 		AJM.db.currIronpawToken = settings.currIronpawToken
-		AJM.db.currEpicureansAward = settings.currEpicureansAward
 		AJM.db.currLesserCharmOfGoodFortune = settings.currLesserCharmOfGoodFortune
 		AJM.db.currElderCharmOfGoodFortune = settings.currElderCharmOfGoodFortune
 		AJM.db.currMoguRuneOfFate = settings.currMoguRuneOfFate
@@ -1740,6 +1741,16 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	frameConquestPointsText:SetJustifyH( "CENTER" )
 	frame.ConquestPointsText = frameConquestPointsText
 	left = left + spacing
+	-- Set the Valor font string.
+	local frameValor = AJM.globalCurrencyFramePrefix.."Valor"
+	local frameValorText = parentFrame:CreateFontString( frameValor.."Text", "OVERLAY", "GameFontNormal" )
+	frameValorText:SetText( L["VP"] )
+	frameValorText:SetTextColor( r, g, b, a )
+	frameValorText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameValorText:SetWidth( width )
+	frameValorText:SetJustifyH( "CENTER" )
+	frame.ValorText = frameValorText
+	left = left + spacing	
 	-- Set the TolBaradCommendation font string.
 	local frameTolBaradCommendation = AJM.globalCurrencyFramePrefix.."TitleTolBaradCommendation"
 	local frameTolBaradCommendationText = parentFrame:CreateFontString( frameTolBaradCommendation.."Text", "OVERLAY", "GameFontNormal" )
@@ -1789,16 +1800,6 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	frameIronpawTokenText:SetWidth( width )
 	frameIronpawTokenText:SetJustifyH( "CENTER" )
 	frame.IronpawTokenText = frameIronpawTokenText
-	left = left + spacing
-	-- Set the EpicureansAward font string.
-	local frameEpicureansAward = AJM.globalCurrencyFramePrefix.."TitleEpicureansAward"
-	local frameEpicureansAwardText = parentFrame:CreateFontString( frameEpicureansAward.."Text", "OVERLAY", "GameFontNormal" )
-	frameEpicureansAwardText:SetText( L["EA"] )
-	frameEpicureansAwardText:SetTextColor( r, g, b, a )
-	frameEpicureansAwardText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameEpicureansAwardText:SetWidth( width )
-	frameEpicureansAwardText:SetJustifyH( "CENTER" )
-	frame.EpicureansAwardText = frameEpicureansAwardText
 	left = left + spacing
 	-- Set the LesserCharmOfGoodFortune font string.
 	local frameLesserCharmOfGoodFortune = AJM.globalCurrencyFramePrefix.."TitleLesserCharmOfGoodFortune"
@@ -2088,6 +2089,15 @@ function AJM:CurrencyListSetColumnWidth()
 	else
 		parentFrame.ConquestPointsText:Hide()
 	end
+	if AJM.db.currValor == true then
+		parentFrame.ValorText:SetWidth( pointsWidth )
+		parentFrame.ValorText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+		left = left + pointsWidth + spacingWidth
+		numberOfPointsColumns = numberOfPointsColumns + 1
+		parentFrame.ValorText:Show()
+	else
+		parentFrame.ValorText:Hide()
+	end	
 	if AJM.db.currTolBaradCommendation == true then
 		parentFrame.TolBaradCommendationText:SetWidth( pointsWidth )
 		parentFrame.TolBaradCommendationText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
@@ -2132,15 +2142,6 @@ function AJM:CurrencyListSetColumnWidth()
 		parentFrame.IronpawTokenText:Show()
 	else
 		parentFrame.IronpawTokenText:Hide()
-	end
-	if AJM.db.currEpicureansAward == true then
-		parentFrame.EpicureansAwardText:SetWidth( pointsWidth )
-		parentFrame.EpicureansAwardText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.EpicureansAwardText:Show()
-	else
-		parentFrame.EpicureansAwardText:Hide()
 	end
 	if AJM.db.currLesserCharmOfGoodFortune == true then
 		parentFrame.LesserCharmOfGoodFortuneText:SetWidth( pointsWidth )
@@ -2296,6 +2297,14 @@ function AJM:CurrencyListSetColumnWidth()
 		else
 			currencyFrameCharacterInfo.ConquestPointsText:Hide()
 		end
+		if AJM.db.currValor == true then
+			currencyFrameCharacterInfo.ValorText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.ValorText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+			left = left + pointsWidth + spacingWidth
+			currencyFrameCharacterInfo.ValorText:Show()
+		else
+			currencyFrameCharacterInfo.ValorText:Hide()
+		end		
 		if AJM.db.currTolBaradCommendation == true then
 			currencyFrameCharacterInfo.TolBaradCommendationText:SetWidth( pointsWidth )
 			currencyFrameCharacterInfo.TolBaradCommendationText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
@@ -2335,14 +2344,6 @@ function AJM:CurrencyListSetColumnWidth()
 			currencyFrameCharacterInfo.IronpawTokenText:Show()
 		else
 			currencyFrameCharacterInfo.IronpawTokenText:Hide()
-		end
-		if AJM.db.currEpicureansAward == true then
-			currencyFrameCharacterInfo.EpicureansAwardText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.EpicureansAwardText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.EpicureansAwardText:Show()
-		else
-			currencyFrameCharacterInfo.EpicureansAwardText:Hide()
 		end
 		if AJM.db.currLesserCharmOfGoodFortune == true then
 			currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:SetWidth( pointsWidth )
@@ -2567,6 +2568,16 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	frameConquestPointsText:SetJustifyH( "CENTER" )
 	currencyFrameCharacterInfo.ConquestPointsText = frameConquestPointsText
 	left = left + spacing
+		-- Set the Valor font string.
+	local frameValor = AJM.globalCurrencyFramePrefix.."Valor"
+	local frameValorText = parentFrame:CreateFontString( frameValor.."Text", "OVERLAY", "GameFontNormal" )
+	frameValorText:SetText( "0" )
+	frameValorText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameValorText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameValorText:SetWidth( width )
+	frameValorText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.ValorText = frameValorText
+	left = left + spacing
 	-- Set the TolBaradCommendation font string.
 	local frameTolBaradCommendation = AJM.globalCurrencyFramePrefix.."TolBaradCommendation"
 	local frameTolBaradCommendationText = parentFrame:CreateFontString( frameTolBaradCommendation.."Text", "OVERLAY", "GameFontNormal" )
@@ -2616,16 +2627,6 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	frameIronpawTokenText:SetWidth( width )
 	frameIronpawTokenText:SetJustifyH( "CENTER" )
 	currencyFrameCharacterInfo.IronpawTokenText = frameIronpawTokenText
-	left = left + spacing
-	-- Set the EpicureansAward font string.
-	local frameEpicureansAward = AJM.globalCurrencyFramePrefix.."EpicureansAward"
-	local frameEpicureansAwardText = parentFrame:CreateFontString( frameEpicureansAward.."Text", "OVERLAY", "GameFontNormal" )
-	frameEpicureansAwardText:SetText( "0" )
-	frameEpicureansAwardText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameEpicureansAwardText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameEpicureansAwardText:SetWidth( width )
-	frameEpicureansAwardText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.EpicureansAwardText = frameEpicureansAwardText
 	left = left + spacing
 	-- Set the LesserCharmOfGoodFortune font string.
 	local frameLesserCharmOfGoodFortune = AJM.globalCurrencyFramePrefix.."LesserCharmOfGoodFortune"
@@ -2781,12 +2782,12 @@ function AJM:JambaToonRequestCurrency()
 		currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.HonorPointsText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.ConquestPointsText:SetTextColor( r, g, b, a )
+		currencyFrameCharacterInfo.ValorText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.TolBaradCommendationText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.ChampionsSealText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.DalaranJewelcraftingTokenText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.IronpawTokenText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.EpicureansAwardText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText:SetTextColor( r, g, b, a )
 		currencyFrameCharacterInfo.MoguRuneOfFateText:SetTextColor( r, g, b, a )
@@ -2821,12 +2822,12 @@ function AJM:DoSendCurrency( characterName, dummyValue )
 	AJM.currentCurrencyValues.currGold = GetMoney()
 	AJM.currentCurrencyValues.currHonorPoints = select( 2, GetCurrencyInfo( AJM.CHonorPoints ) )
 	AJM.currentCurrencyValues.currConquestPoints = select( 2, GetCurrencyInfo( AJM.CConquestPoints ) )
+	AJM.currentCurrencyValues.currValor = select( 2, GetCurrencyInfo( AJM.CValor ) )	
 	AJM.currentCurrencyValues.currTolBaradCommendation = select( 2, GetCurrencyInfo( AJM.CTolBaradCommendation ) )
 	AJM.currentCurrencyValues.currChampionsSeal = select( 2, GetCurrencyInfo(AJM.CChampionsSeal ) )
 	AJM.currentCurrencyValues.currIllustriousJewelcraftersToken = select( 2, GetCurrencyInfo( AJM.CIllustriousJewelcraftersToken ) )
 	AJM.currentCurrencyValues.currDalaranJewelcraftingToken = select( 2, GetCurrencyInfo( AJM.CDalaranJewelcraftingToken ) )
 	AJM.currentCurrencyValues.currIronpawToken = select( 2, GetCurrencyInfo( AJM.CIronpawToken ) )
-	AJM.currentCurrencyValues.currEpicureansAward = select( 2, GetCurrencyInfo( AJM.CEpicureansAward ) )
 	AJM.currentCurrencyValues.currLesserCharmOfGoodFortune = select( 2, GetCurrencyInfo( AJM.CLesserCharmOfGoodFortune ) )
 	AJM.currentCurrencyValues.currElderCharmOfGoodFortune = select( 2, GetCurrencyInfo( AJM.CElderCharmOfGoodFortune ) )
 	AJM.currentCurrencyValues.currMoguRuneOfFate = select( 2, GetCurrencyInfo( AJM.CMoguRuneOfFate ) )
@@ -2863,12 +2864,12 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.HonorPointsText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.ConquestPointsText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.ValorText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.TolBaradCommendationText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.ChampionsSealText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.DalaranJewelcraftingTokenText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.IronpawTokenText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.EpicureansAwardText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.MoguRuneOfFateText:SetTextColor( r, g, b, a )
@@ -2886,12 +2887,12 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	currencyFrameCharacterInfo.GoldText:SetText( JambaUtilities:FormatMoneyString( currencyValues.currGold ) )
 	currencyFrameCharacterInfo.HonorPointsText:SetText( currencyValues.currHonorPoints )
 	currencyFrameCharacterInfo.ConquestPointsText:SetText( currencyValues.currConquestPoints )
+	currencyFrameCharacterInfo.ValorText:SetText( currencyValues.currValor )	
 	currencyFrameCharacterInfo.TolBaradCommendationText:SetText( currencyValues.currTolBaradCommendation )
 	currencyFrameCharacterInfo.ChampionsSealText:SetText( currencyValues.currChampionsSeal )
 	currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText:SetText( currencyValues.currIllustriousJewelcraftersToken )
 	currencyFrameCharacterInfo.DalaranJewelcraftingTokenText:SetText( currencyValues.currDalaranJewelcraftingToken )
 	currencyFrameCharacterInfo.IronpawTokenText:SetText( currencyValues.currIronpawToken )
-	currencyFrameCharacterInfo.EpicureansAwardText:SetText( currencyValues.currEpicureansAward )
 	currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:SetText( currencyValues.currLesserCharmOfGoodFortune )
 	currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText:SetText( currencyValues.currElderCharmOfGoodFortune )
 	currencyFrameCharacterInfo.MoguRuneOfFateText:SetText( currencyValues.currMoguRuneOfFate )

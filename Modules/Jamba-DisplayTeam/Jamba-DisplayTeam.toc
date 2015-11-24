@@ -2,19 +2,11 @@
 ## Title: Jamba-DisplayTeam
 ## Notes: Jamba-DisplayTeam
 ## Author: Ebony, Former Author: Jafula
-## Version: 4.1.2a
+## Version: 4.1.3-Beta1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
 ## SavedVariables: JambaDisplayTeamProfileDB
 ## LoadOnDemand: 1
-## X-Curse-Packaged-Version: release-4.0.5
-## X-Curse-Project-Name: Jamba
-## X-Curse-Project-ID: jamba
-## X-Curse-Repository-ID: wow/jamba/mainline
-## X-Curse-Packaged-Version: release-4.0.5-1-g9134824
-## X-Curse-Project-Name: Jamba
-## X-Curse-Project-ID: jamba
-## X-Curse-Repository-ID: wow/jamba/mainline
 Locales\Locales.xml
 JambaDisplayTeam.lua

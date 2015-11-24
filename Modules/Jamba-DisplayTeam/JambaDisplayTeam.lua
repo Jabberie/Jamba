@@ -53,7 +53,7 @@ AJM.settings = {
 		followStatusWidth = 80,
 		followStatusHeight = 20,
 		followStatusShowName = true,
-		followStatusShowLevel = true,
+		followStatusShowLevel = true,	
 		showExperienceStatus = true,
 		experienceStatusWidth = 80,
 		experienceStatusHeight = 20,
@@ -83,7 +83,7 @@ AJM.settings = {
 		showBagInformation = true,
 		showBagFreeSlotsOnly = true,
 		bagInformationWidth = 80,
-		bagInformationHeight = 20,
+		bagInformationHeight = 25,
 		--EbonyTest
 		stackName = false,
 		showIlvlInformation = true,
@@ -103,6 +103,7 @@ AJM.settings = {
 		frameBorderColourG = 1.0,
 		frameBorderColourB = 1.0,
 		frameBorderColourA = 1.0,
+		timerCount = 1
 	},
 }
 
@@ -512,6 +513,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	local bagInformationFrame = CreateFrame( "Frame", bagInformationFrameName, parentFrame )
 	local bagInformationFrameText = bagInformationFrame:CreateFontString( bagInformationFrameName.."Text", "OVERLAY", "GameFontNormal" )
 	bagInformationFrameText:SetText( "999/999" )
+	bagInformationFrame:SetAlpha( 1 )
 	--bagInformationFrameText:SetPoint( "CENTER", bagInformationFrame, "CENTER", 0, 0 )
 	bagInformationFrameText:SetAllPoints()
 	bagInformationFrameText:SetJustifyH( "CENTER" )
@@ -519,6 +521,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	bagInformationFrameText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
 	bagInformationFrame.slotsFree = 999
 	bagInformationFrame.totalSlots = 999
+	bagInformationFrame.durability = 100
 	characterStatusBar["bagInformationFrame"] = bagInformationFrame
 	characterStatusBar["bagInformationFrameText"] = bagInformationFrameText
 	--set the ilevel Information.	
@@ -547,6 +550,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	followBar:SetMinMaxValues( 0, 100 )
 	followBar:SetValue( 100 )
 	followBar:SetFrameStrata( "LOW" )
+	followBar:SetAlpha( 1 )
 	local followBarClick = CreateFrame( "CheckButton", followName.."Click", parentFrame, "SecureActionButtonTemplate" )
 	followBarClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	--followBarClick:SetAttribute( "macrotext", "/targetexact "..characterName )
@@ -593,6 +597,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	reputationBar:SetMinMaxValues( 0, 100 )
 	reputationBar:SetValue( 100 )
 	reputationBar:SetFrameStrata( "LOW" )
+	reputationBar:SetAlpha( 1 )
 	local reputationBarClick = CreateFrame( "CheckButton", reputationName.."Click", parentFrame, "SecureActionButtonTemplate" )
 	reputationBarClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	reputationBarClick:SetFrameStrata( "MEDIUM" )
@@ -619,6 +624,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	healthBar:SetMinMaxValues( 0, 100 )
 	healthBar:SetValue( 100 )
 	healthBar:SetFrameStrata( "LOW" )
+	healthBar:SetAlpha( 1 )
 	local healthBarClick = CreateFrame( "CheckButton", healthName.."Click"..characterName, parentFrame, "SecureActionButtonTemplate" )
 	healthBarClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	healthBarClick:SetFrameStrata( "MEDIUM" )
@@ -642,6 +648,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	powerBar:SetMinMaxValues( 0, 100 )
 	powerBar:SetValue( 100 )
 	powerBar:SetFrameStrata( "LOW" )
+	powerBar:SetAlpha( 1 )
 	local powerBarClick = CreateFrame( "CheckButton", powerName.."Click"..characterName, parentFrame, "SecureActionButtonTemplate" )
 	powerBarClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	powerBarClick:SetFrameStrata( "MEDIUM" )
@@ -666,6 +673,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	comboBar:SetMinMaxValues( 0, 5 )
 	comboBar:SetValue( 5 )
 	comboBar:SetFrameStrata( "LOW" )
+	comboBar:SetAlpha( 1 )
 	local comboBarClick = CreateFrame( "CheckButton", comboName.."Click"..characterName, parentFrame, "SecureActionButtonTemplate" )
 	comboBarClick:SetAttribute( "unit", characterName )
 	comboBarClick:SetFrameStrata( "MEDIUM" )
@@ -1875,7 +1883,7 @@ end
 
 function AJM:SettingsToggleShowExperienceStatusPercentage( event, checked )
 	AJM.db.experienceStatusShowPercentage = checked
-	AJM:SettingsRefresh()
+	AJM.SettingsRefresh()
 end
 
 function AJM:SettingsChangeExperienceStatusWidth( event, value )
@@ -2114,27 +2122,42 @@ function AJM:SendBagInformationUpdateCommand()
 			return
 		end		
 		local slotsFree, totalSlots = LibBagUtils:CountSlots( "BAGS", 0 )
+		local curTotal, maxTotal, broken = 0, 0, 0
+		for i = 1, 18 do
+			local curItemDurability, maxItemDurability = GetInventoryItemDurability(i)
+		if curItemDurability and maxItemDurability then
+			curTotal = curTotal + curItemDurability
+			maxTotal = maxTotal + maxItemDurability
+			if maxItemDurability > 0 and curItemDurability == 0 then
+				broken = broken + 1
+			end
+		end
+		end
+		local percent = curTotal / maxTotal * 100
+		--return percent, broken
+		--AJM:Print("Durability", percent, broken)
 		--if AJM.previousSlotsFree ~= slotsFree or AJM.previousTotalSlots ~= totalSlots then
 			if AJM.db.showTeamListOnMasterOnly == true then
-				AJM:JambaSendCommandToMaster( AJM.COMMAND_BAGINFORMATION_UPDATE, slotsFree, totalSlots )
+				AJM:JambaSendCommandToMaster( AJM.COMMAND_BAGINFORMATION_UPDATE, slotsFree, totalSlots, percent )
 			else
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_BAGINFORMATION_UPDATE, slotsFree, totalSlots )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_BAGINFORMATION_UPDATE, slotsFree, totalSlots, percent )
 			end
 		--end
 	end
 end
 
-function AJM:ProcessUpdateBagInformationMessage( characterName, slotsFree, totalSlots )
-	AJM:UpdateBagInformation( characterName, slotsFree, totalSlots )
+function AJM:ProcessUpdateBagInformationMessage( characterName, slotsFree, totalSlots, percent )
+	AJM:UpdateBagInformation( characterName, slotsFree, totalSlots, percent )
 end
 
 function AJM:SettingsUpdateBagInformationAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateBagInformation( characterName, nil, nil )
+		AJM:UpdateBagInformation( characterName, nil, nil, nil )
 	end
 end
 
-function AJM:UpdateBagInformation( characterName, slotsFree, totalSlots )
+function AJM:UpdateBagInformation( characterName, slotsFree, totalSlots, percent)
+	--AJM:Print("Data", characterName, slotsFree, totalSlots, percent )
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -2154,13 +2177,21 @@ function AJM:UpdateBagInformation( characterName, slotsFree, totalSlots )
 	if totalSlots == nil then
 		totalSlots = bagInformationFrame.totalSlots
 	end
+	if percent == nil or percent == false then
+		percent = bagInformationFrame.durability
+	end	
 	bagInformationFrame.slotsFree = slotsFree
 	bagInformationFrame.totalSlots = totalSlots
+	bagInformationFrame.durability = percent
 	local text = ""
+	--AJM:Print("test", percent)
+	--local durability = gsub(percent, "%.[^|]+", "")
+	--AJM:Print("hello", durability)
+	text = text..L["Dura"]..L[" "]..tostring(gsub(percent, "%.[^|]+", "") )..L["%"]
 	if AJM.db.showBagFreeSlotsOnly == true then
-		text = tostring(slotsFree)
+		text = text..("\n")..L["BgS"]..L[" "]..tostring(slotsFree)
 	else
-		text = tostring((totalSlots - slotsFree)).."/"..tostring(totalSlots)
+		text = text..("\n")..L["BgS"]..L[" "]..tostring((totalSlots - slotsFree)).."/"..tostring(totalSlots)
 	end
 	bagInformationFrameText:SetText( text )	
 	--AJM:Print("freespace", slotsFree, totalSlots) --Debug
@@ -2401,20 +2432,34 @@ end
 
 function AJM:SendExperienceStatusUpdateCommand()
 	if AJM.db.showTeamList == true and AJM.db.showExperienceStatus == true then
+		
+		-- Hide the xp bar at max level as its nolonger needed.
+		local uLevel = UnitLevel("player")
+		local maxLevel = GetMaxPlayerLevel()
+		if uLevel == maxLevel then
+		--AJM:Print("maxLevel", uLevel, maxLevel) --debug
+		AJM.db.showExperienceStatus = false
+		AJM.SettingsRefresh()
+		AJM:JambaSendSettings()
+		end
+		
 		local playerExperience = UnitXP( "player" )
 		local playerMaxExperience = UnitXPMax( "player" )
-		local exhaustionStateID, exhaustionStateName, exhaustionStateMultiplier = GetRestState()	
-		if AJM.db.showTeamListOnMasterOnly == true then
-			AJM:JambaSendCommandToMaster( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID )
-		else
-			AJM:DebugMessage( "SendExperienceStatusUpdateCommand TO TEAM!" )
-			AJM:JambaSendCommandToTeam( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID )
-		end
+		local playerMaxLevel = GetMaxPlayerLevel()	
+		local playerLevel = UnitLevel("player")
+		local range = UnitInRange("player")
+		local exhaustionStateID, exhaustionStateName, exhaustionStateMultiplier = GetRestState()
+			if AJM.db.showTeamListOnMasterOnly == true then
+				AJM:JambaSendCommandToMaster( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID, range)
+			else
+				AJM:DebugMessage( "SendExperienceStatusUpdateCommand TO TEAM!" )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID, range)
+			end
 	end
 end
 
-function AJM:ProcessUpdateExperienceStatusMessage( characterName, playerExperience, playerMaxExperience, exhaustionStateID )
-	AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxExperience, exhaustionStateID )
+function AJM:ProcessUpdateExperienceStatusMessage( characterName, playerExperience, playerMaxExperience, exhaustionStateID, range )
+	AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxExperience, exhaustionStateID, range )
 end
 
 function AJM:SettingsUpdateExperienceAll()
@@ -2423,14 +2468,16 @@ function AJM:SettingsUpdateExperienceAll()
 	end
 end
 
-function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxExperience, exhaustionStateID )
-	AJM:DebugMessage( "UpdateExperienceStatus", characterName, playerExperience, playerMaxExperience, exhaustionStateID )
+function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxExperience, exhaustionStateID, range )
+	--AJM:Print( "UpdateExperienceStatus", characterName, playerExperience, playerMaxExperience, exhaustionStateID, range)
+	
 	if CanDisplayTeamList() == false then
 		return
 	end
 	if AJM.db.showExperienceStatus == false then
 		return
 	end
+	
 	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
 	local characterStatusBar = AJM.characterStatusBar[characterName]
 	if characterStatusBar == nil then
@@ -2447,11 +2494,21 @@ function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxE
 	if exhaustionStateID == nil then
 		exhaustionStateID = experienceBarText.exhaustionStateID
 	end
+	
 	experienceBarText.playerExperience = playerExperience
 	experienceBarText.playerMaxExperience = playerMaxExperience
 	experienceBarText.exhaustionStateID = exhaustionStateID
 	experienceBar:SetMinMaxValues( 0, tonumber( playerMaxExperience ) )
 	experienceBar:SetValue( tonumber( playerExperience ) )
+	if 	UnitInParty(Ambiguate( characterName, "none" ) ) == true then
+		if range == false then
+			experienceBar:SetAlpha( 0.5 )
+		else
+			experienceBar:SetAlpha( 1 )
+		end
+	else
+		experienceBar:SetAlpha( 1 )
+	end
 	local text = ""
 	if AJM.db.experienceStatusShowValues == true then
 		text = text..tostring( playerExperience )..L[" / "]..tostring( playerMaxExperience )..L[" "]
@@ -2506,7 +2563,7 @@ function AJM:SettingsUpdateReputationAll()
 	end
 end
 
-function AJM:UpdateReputationStatus( characterName, reputationName, reputationStandingID, reputationBarMin, reputationBarMax, reputationBarValue )
+function AJM:UpdateReputationStatus( characterName, reputationName, reputationStandingID, reputationBarMin, reputationBarMax, reputationBarValue, range )
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -2548,6 +2605,15 @@ function AJM:UpdateReputationStatus( characterName, reputationName, reputationSt
         reputationBarValue = 100
         reputationStandingID = 1
     end
+	if 	UnitInParty(Ambiguate( characterName, "none" ) ) == true then
+		if range == false then
+			reputationBar:SetAlpha( 0.5 )
+		else
+			reputationBar:SetAlpha( 1 )
+		end
+	else
+		reputationBar:SetAlpha( 1 )
+	end
 	local text = ""
 	if AJM.db.showReputationName == true then
         if reputationName == 0 then
@@ -2581,31 +2647,35 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:UNIT_HEALTH( event, unit, ... )
-	AJM:SendHealthStatusUpdateCommand( unit )	
+	AJM:SendHealthStatusUpdateCommand( unit,nil )
+	--AJM:Print("test2", unit)	
 end
 
 function AJM:UNIT_MAXHEALTH( event, unit, ... )
-	AJM:SendHealthStatusUpdateCommand( unit )	
+	AJM:SendHealthStatusUpdateCommand( unit, nil )	
 end
 
 
-function AJM:SendHealthStatusUpdateCommand( unit )
+function AJM:SendHealthStatusUpdateCommand( unit, range )
 	if AJM.db.showTeamList == true and AJM.db.showHealthStatus == true then
 		local playerHealth = UnitHealth( unit )
 		local playerMaxHealth = UnitHealthMax( unit )
+		local isDead = UnitIsDeadOrGhost( unit )
 		local characterName, characterRealm = UnitName( unit )
 		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
-		AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth )
+		local range = UnitInRange( unit )
+		--AJM:Print("HeathStats", character, playerHealth, playerMaxHealth, range)
+		AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth, range, isDead )
 	end
 end
 
 function AJM:SettingsUpdateHealthAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateHealthStatus( characterName, nil, nil )
+		AJM:UpdateHealthStatus( characterName, nil, nil, nil )
 	end
 end
 
-function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
+function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, range, isDead )
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -2624,20 +2694,34 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
 	end
 	if playerMaxHealth == nil then
 		playerMaxHealth = healthBarText.playerMaxHealth
+	end	
+	if 	UnitInParty(Ambiguate( characterName, "none" ) ) == true then
+		if range == false then
+			healthBar:SetAlpha( 0.5 )
+		else
+			healthBar:SetAlpha( 1 )
+		end
+	else
+		healthBar:SetAlpha( 1 )
 	end
 	healthBarText.playerHealth = playerHealth
 	healthBarText.playerMaxHealth = playerMaxHealth
 	healthBar:SetMinMaxValues( 0, tonumber( playerMaxHealth ) )
 	healthBar:SetValue( tonumber( playerHealth ) )
 	local text = ""
-	if AJM.db.healthStatusShowValues == true then
-		text = text..tostring( playerHealth )..L[" / "]..tostring( playerMaxHealth )..L[" "]
-	end
-	if AJM.db.healthStatusShowPercentage == true then
+	if isDead == true then
+		--AJM:Print("dead", characterName)
+		text = text..L["DEAD"]	
+	else
 		if AJM.db.healthStatusShowValues == true then
-			text = text..L["("]..tostring( floor( (playerHealth/playerMaxHealth)*100) )..L["%"]..L[")"]
-		else
-			text = tostring( floor( (playerHealth/playerMaxHealth)*100) )..L["%"]
+			text = text..tostring( playerHealth )..L[" / "]..tostring( playerMaxHealth )..L[" "]
+		end
+		if AJM.db.healthStatusShowPercentage == true then
+			if AJM.db.healthStatusShowValues == true then
+				text = text..L["("]..tostring( floor( (playerHealth/playerMaxHealth)*100) )..L["%"]..L[")"]
+			else
+				text = tostring( floor( (playerHealth/playerMaxHealth)*100) )..L["%"]
+			end
 		end
 	end
 	healthBarText:SetText( text )		
@@ -2656,7 +2740,7 @@ function AJM:SetStatusBarColourForHealth( statusBar, statusValue )
 	end
 	b = 0.0
 	statusBar:SetStatusBarColor( r, g, b )
-end			
+end	
 
 -------------------------------------------------------------------------------------------------------------
 -- Power Status Bar Updates.
@@ -2677,7 +2761,7 @@ function AJM:SendPowerStatusUpdateCommand( unit )
 		local characterName, characterRealm = UnitName( unit )
 		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
 		--AJM:Print("power", character, playerPower, playerMaxPower )
-		AJM:UpdatePowerStatus( character, playerPower, playerMaxPower )
+		AJM:UpdatePowerStatus( character, playerPower, playerMaxPower, nil )
 	end
 end
 
@@ -2687,7 +2771,7 @@ function AJM:SettingsUpdatePowerAll()
 	end
 end
 
-function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
+function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower, range )
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -2707,6 +2791,15 @@ function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
 	end
 	if playerMaxPower == nil then
 		playerMaxPower = powerBarText.playerMaxPower
+	end
+	if 	UnitInParty(Ambiguate( characterName, "none" ) ) == true then
+		if range == false then
+			powerBar:SetAlpha( 0.5 )
+		else
+			powerBar:SetAlpha( 1 )
+		end	
+	else
+		powerBar:SetAlpha( 1 )
 	end
 	powerBarText.playerPower = playerPower
 	powerBarText.playerMaxPower = playerMaxPower
@@ -2737,7 +2830,7 @@ function AJM:SetStatusBarColourForPower( statusBar, unit )
 		statusBar:SetStatusBarColor( r, g, b, 1 )
 		statusBar.backgroundTexture:SetTexture( r, g, b, 0.25 )
 	end
-end			
+end		
 
 -------------------------------------------------------------------------------------------------------------
 -- Combo Points Status Bar Updates.
@@ -2787,7 +2880,7 @@ function AJM:SettingsUpdateComboAll()
 	end
 end
 
-function AJM:UpdateComboStatus( characterName, playerCombo, playerMaxCombo )
+function AJM:UpdateComboStatus( characterName, playerCombo, playerMaxCombon, range )
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -2816,6 +2909,15 @@ function AJM:UpdateComboStatus( characterName, playerCombo, playerMaxCombo )
 	comboBarText.playerMaxCombo = playerMaxCombo
 	comboBar:SetMinMaxValues( 0, tonumber( playerMaxCombo ) )
 	comboBar:SetValue( tonumber( playerCombo ) )
+	if 	UnitInParty(Ambiguate( characterName, "none" ) ) == true then
+		if range == false then
+			comboBar:SetAlpha( 0.5 )
+		else
+			comboBar:SetAlpha( 1 )
+		end
+	else
+		comboBar:SetAlpha( 1 )
+	end	
 	local text = ""
 	
 	if AJM.db.comboStatusShowValues == true then
@@ -2907,12 +3009,31 @@ function AJM:OnEnable()
 	AJM:ScheduleTimer( "SendReputationStatusUpdateCommand", 5 )
 	AJM:ScheduleTimer( "SendBagInformationUpdateCommand", 5 )
 	AJM:ScheduleTimer( "SendIlvlInformationUpdateCommand", 5 )
+	--AJM:timerCount = ( 0 )
+    --AJM:testTimer = 
+	--self.timerCount = 0
+	AJM:ScheduleRepeatingTimer("RangeUpdateCommand", 5)
 end
 
 -- Called when the addon is disabled.
 function AJM:OnDisable()
 end
 
+function AJM:RangeUpdateCommand()
+	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
+		--AJM:Print("name", characterName )
+		local name = Ambiguate( characterName, "none" )
+		local range = UnitInRange( name )
+		AJM:UpdateHealthStatus( name, nil, nil, range, nil )
+		AJM:UpdatePowerStatus( name, nil, nil, range )
+		AJM:UpdateComboStatus( name, nil, nil, range )
+		AJM:UpdateReputationStatus( name, nil, nil, nil, nil, nil, range )
+		AJM:UpdateExperienceStatus( name, nil, nil, nil, range )
+		AJM:ProcessUpdateBagInformationMessage( name, nil, nil, range )		
+	end				
+end
+
+-- this is not needed as the range timer would do this.
 function AJM:PLAYER_ENTERING_WORLD( event, ... )
 	AJM:SendBagInformationUpdateCommand()
 	AJM:SendExperienceStatusUpdateCommand()
