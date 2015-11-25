@@ -2106,6 +2106,25 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------------
+-- Range Status Bar Updates.
+-------------------------------------------------------------------------------------------------------------
+
+function AJM:RangeUpdateCommand()
+	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
+		--AJM:Print("name", characterName )
+		local name = Ambiguate( characterName, "none" )
+		local range = UnitInRange( name )
+		AJM:UpdateHealthStatus( name, nil, nil, range, nil )
+		AJM:UpdatePowerStatus( name, nil, nil, range )
+		AJM:UpdateComboStatus( name, nil, nil, range )
+		AJM:UpdateReputationStatus( name, nil, nil, nil, nil, nil, range )
+		AJM:UpdateExperienceStatus( name, nil, nil, nil, range )
+		AJM:ProcessUpdateBagInformationMessage( name, nil, nil, nil, range )		
+	end				
+end
+
+
+-------------------------------------------------------------------------------------------------------------
 -- Bag Information Updates.
 -------------------------------------------------------------------------------------------------------------
 
@@ -2146,17 +2165,17 @@ function AJM:SendBagInformationUpdateCommand()
 	end
 end
 
-function AJM:ProcessUpdateBagInformationMessage( characterName, slotsFree, totalSlots, percent )
-	AJM:UpdateBagInformation( characterName, slotsFree, totalSlots, percent )
+function AJM:ProcessUpdateBagInformationMessage( characterName, slotsFree, totalSlots, percent, range )
+	AJM:UpdateBagInformation( characterName, slotsFree, totalSlots, percent, range )
 end
 
 function AJM:SettingsUpdateBagInformationAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateBagInformation( characterName, nil, nil, nil )
+		AJM:UpdateBagInformation( characterName, nil, nil, nil, nil )
 	end
 end
 
-function AJM:UpdateBagInformation( characterName, slotsFree, totalSlots, percent)
+function AJM:UpdateBagInformation( characterName, slotsFree, totalSlots, percent, range )
 	--AJM:Print("Data", characterName, slotsFree, totalSlots, percent )
 	if CanDisplayTeamList() == false then
 		return
@@ -2183,6 +2202,15 @@ function AJM:UpdateBagInformation( characterName, slotsFree, totalSlots, percent
 	bagInformationFrame.slotsFree = slotsFree
 	bagInformationFrame.totalSlots = totalSlots
 	bagInformationFrame.durability = percent
+	if 	UnitInParty(Ambiguate( characterName, "none" ) ) == true then
+		if range == false then
+			bagInformationFrame:SetAlpha( 0.5 )
+		else
+			bagInformationFrame:SetAlpha( 1 )
+		end
+	else
+		bagInformationFrame:SetAlpha( 1 )
+	end
 	local text = ""
 	--AJM:Print("test", percent)
 	--local durability = gsub(percent, "%.[^|]+", "")
@@ -2230,50 +2258,6 @@ function AJM:SendIlvlInformationUpdateCommand()
 	end
 end
 
---[[
-
-function AJM:ProcessUpdateIlvlInformationMessage( characterName, overall, equipped )
-	AJM:UpdateIlvlInformation( characterName, overall, equipped )
-end
-
-function AJM:SettingsUpdateIlvlInformationAll()
-	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateIlvlInformation( characterName, nil, nil )
-	end
-end
-
-function AJM:UpdateIlvlInformation( characterName, overall, equipped )
-	if CanDisplayTeamList() == false then
-		return
-	end
-	if AJM.db.showIlvlInformation == false then
-		return
-	end
-	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
-	local characterStatusBar = AJM.characterStatusBar[characterName]
-	if characterStatusBar == nil then
-		return
-	end
-	local ilvlInformationFrame = characterStatusBar["ilvlInformationFrame"]
-	local ilvlInformationFrameText = characterStatusBar["ilvlInformationFrameText"]
-	if overall == nil then
-		overall = ilvlInformationFrame.overall
-	end
-	if equipped == nil then
-		equipped = ilvlInformationFrame.equipped
-	end
-	ilvlInformationFrame.overall = overall
-	ilvlInformationFrame.equipped = equipped
-	local text = ""
-	if AJM.db.ShowEquippedOnly == true then
-		--text = tostring(equipped)
-		text = tostring (format("%.0f", equipped ))	
-	else
-		text = tostring(format("%.0f", equipped )).."/"..tostring(format("%.0f", overall ))
-	end
-	ilvlInformationFrameText:SetText( text )		
-end
---]]
 -------------------------------------------------------------------------------------------------------------
 -- Follow Status Bar Updates.
 -------------------------------------------------------------------------------------------------------------
@@ -2432,28 +2416,25 @@ end
 
 function AJM:SendExperienceStatusUpdateCommand()
 	if AJM.db.showTeamList == true and AJM.db.showExperienceStatus == true then
-		
 		-- Hide the xp bar at max level as its nolonger needed.
 		local uLevel = UnitLevel("player")
 		local maxLevel = GetMaxPlayerLevel()
 		if uLevel == maxLevel then
-		--AJM:Print("maxLevel", uLevel, maxLevel) --debug
-		AJM.db.showExperienceStatus = false
-		AJM.SettingsRefresh()
-		AJM:JambaSendSettings()
+			--AJM:Print("maxLevel", uLevel, maxLevel) --debug
+			AJM.db.showExperienceStatus = false
+			AJM.SettingsRefresh()
+			AJM:JambaSendSettings()
 		end
-		
 		local playerExperience = UnitXP( "player" )
 		local playerMaxExperience = UnitXPMax( "player" )
 		local playerMaxLevel = GetMaxPlayerLevel()	
 		local playerLevel = UnitLevel("player")
-		local range = UnitInRange("player")
 		local exhaustionStateID, exhaustionStateName, exhaustionStateMultiplier = GetRestState()
 			if AJM.db.showTeamListOnMasterOnly == true then
-				AJM:JambaSendCommandToMaster( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID, range)
+				AJM:JambaSendCommandToMaster( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID)
 			else
 				AJM:DebugMessage( "SendExperienceStatusUpdateCommand TO TEAM!" )
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID, range)
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID)
 			end
 	end
 end
@@ -2464,7 +2445,7 @@ end
 
 function AJM:SettingsUpdateExperienceAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateExperienceStatus( characterName, nil, nil, nil )
+		AJM:UpdateExperienceStatus( characterName, nil, nil, nil, nil )
 	end
 end
 
@@ -2553,13 +2534,13 @@ function AJM:SendReputationStatusUpdateCommand()
 	end
 end
 
-function AJM:ProcessUpdateReputationStatusMessage( characterName, reputationName, reputationStandingID, reputationBarMin, reputationBarMax, reputationBarValue )
-	AJM:UpdateReputationStatus( characterName, reputationName, reputationStandingID, reputationBarMin, reputationBarMax, reputationBarValue )
+function AJM:ProcessUpdateReputationStatusMessage( characterName, reputationName, reputationStandingID, reputationBarMin, reputationBarMax, reputationBarValue, range )
+	AJM:UpdateReputationStatus( characterName, reputationName, reputationStandingID, reputationBarMin, reputationBarMax, reputationBarValue, range )
 end
 
 function AJM:SettingsUpdateReputationAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateReputationStatus( characterName, nil, nil, nil, nil, nil )
+		AJM:UpdateReputationStatus( characterName, nil, nil, nil, nil, nil, nil )
 	end
 end
 
@@ -2663,7 +2644,6 @@ function AJM:SendHealthStatusUpdateCommand( unit, range )
 		local isDead = UnitIsDeadOrGhost( unit )
 		local characterName, characterRealm = UnitName( unit )
 		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
-		local range = UnitInRange( unit )
 		--AJM:Print("HeathStats", character, playerHealth, playerMaxHealth, range)
 		AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth, range, isDead )
 	end
@@ -2671,7 +2651,7 @@ end
 
 function AJM:SettingsUpdateHealthAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateHealthStatus( characterName, nil, nil, nil )
+		AJM:UpdateHealthStatus( characterName, nil, nil, nil, nil )
 	end
 end
 
@@ -2761,13 +2741,13 @@ function AJM:SendPowerStatusUpdateCommand( unit )
 		local characterName, characterRealm = UnitName( unit )
 		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
 		--AJM:Print("power", character, playerPower, playerMaxPower )
-		AJM:UpdatePowerStatus( character, playerPower, playerMaxPower, nil )
+		AJM:UpdatePowerStatus( character, playerPower, playerMaxPower)
 	end
 end
 
 function AJM:SettingsUpdatePowerAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdatePowerStatus( characterName, nil, nil )
+		AJM:UpdatePowerStatus( characterName, nil, nil, nil )
 	end
 end
 
@@ -2864,19 +2844,13 @@ function AJM:SendComboStatusUpdateCommand()
 	end
 end
 
-function AJM:ProcessUpdateComboStatusMessage( characterName, playerCombo, playerMaxCombo )
-	AJM:UpdateComboStatus( characterName, playerCombo , playerMaxCombo )
+function AJM:ProcessUpdateComboStatusMessage( characterName, playerCombo, playerMaxCombo, range )
+	AJM:UpdateComboStatus( characterName, playerCombo , playerMaxCombo, range )
 end
 
 function AJM:SettingsUpdateComboAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateComboStatus( characterName, nil, nil )
-	end
-end
-
-function AJM:SettingsUpdateComboAll()
-	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateComboStatus( characterName, nil, nil )
+		AJM:UpdateComboStatus( characterName, nil, nil, nil )
 	end
 end
 
@@ -3017,20 +2991,6 @@ end
 
 -- Called when the addon is disabled.
 function AJM:OnDisable()
-end
-
-function AJM:RangeUpdateCommand()
-	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		--AJM:Print("name", characterName )
-		local name = Ambiguate( characterName, "none" )
-		local range = UnitInRange( name )
-		AJM:UpdateHealthStatus( name, nil, nil, range, nil )
-		AJM:UpdatePowerStatus( name, nil, nil, range )
-		AJM:UpdateComboStatus( name, nil, nil, range )
-		AJM:UpdateReputationStatus( name, nil, nil, nil, nil, nil, range )
-		AJM:UpdateExperienceStatus( name, nil, nil, nil, range )
-		AJM:ProcessUpdateBagInformationMessage( name, nil, nil, range )		
-	end				
 end
 
 -- this is not needed as the range timer would do this.
