@@ -2419,12 +2419,14 @@ function AJM:SendExperienceStatusUpdateCommand()
 		-- Hide the xp bar at max level as its nolonger needed.
 		local uLevel = UnitLevel("player")
 		local maxLevel = GetMaxPlayerLevel()
+		--[[
 		if uLevel == maxLevel then
 			--AJM:Print("maxLevel", uLevel, maxLevel) --debug
 			AJM.db.showExperienceStatus = false
 			AJM.SettingsRefresh()
 			AJM:JambaSendSettings()
 		end
+		--]]
 		local playerExperience = UnitXP( "player" )
 		local playerMaxExperience = UnitXPMax( "player" )
 		local playerMaxLevel = GetMaxPlayerLevel()	
@@ -2689,7 +2691,8 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, r
 	healthBar:SetMinMaxValues( 0, tonumber( playerMaxHealth ) )
 	healthBar:SetValue( tonumber( playerHealth ) )
 	local text = ""
-	if isDead == true then
+	if UnitIsDeadOrGhost(Ambiguate( characterName, "none" ) ) == true then
+	--if isDead == true then
 		--AJM:Print("dead", characterName)
 		text = text..L["DEAD"]	
 	else

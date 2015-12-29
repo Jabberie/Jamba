@@ -2,7 +2,7 @@
 ## Title: JambaProc
 ## Notes: JambaProc
 ## Author: Ebony, Former Author: Jafula
-## Version: Beta-4.1.3b
+## Version: 4.2
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
