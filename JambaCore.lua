@@ -51,7 +51,7 @@ JambaPrivate.SettingsFrame.WidgetTree:SetLayout( "Fill" )
 function AJM:OnEnable()
 	if AJM.db.showStartupMessage4000 then
 		JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Release Notes / News"] )
-		JambaStartupMessageFrame:Show()
+		--JambaStartupMessageFrame:Show()
 		AJM.db.showStartupMessage4000 = false
 	end
 end
