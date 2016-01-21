@@ -1,6 +1,6 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
-Copyright 2008 - 2015 Michael "Jafula" Miller
+Copyright 2008 - 2016 Michael "Jafula" Miller
 License: The MIT License
 ]]--
 
@@ -57,6 +57,7 @@ end
 L["I Accepted Summon From: X To: Y"] = function( sender, location )
 	return string.format( "I Accepted Summon From: %s To: %s", sender, location )
 end
+
 L["I do not have enough money to repair all my items."] = true
 L["Repairing cost me: X"] = function( costString )
     return string.format( "Repairing cost me: %s", costString )
@@ -69,6 +70,10 @@ L["Inactive Message"] = true
 -- http://www.wowhead.com/spell=43681
 L["Inactive"] = true
 -- End special.
+L["Crowd Control Message"] = true
+L["Warn If Toon Gets Crowd Control"] = true
+L["I Am"] = true
+L[" "] = true
 L["Currency"] = true
 L["Honor Points"] = true
 L["HP"] = true

@@ -1,3 +1,22 @@
+Jamba Version: 4.2.1
+WoW Game Version: 6.2.3
+Release Date: 21/1/2016
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+- Updated all dates to the new year 2016
+
+*Jamba-Toon
+ - Added Message To Master when a Minion Gets crowd controled
+
+*Jamba-team-display
+	- Removed Durability from Display-Team (Will have its own Place soon™)
+
+*Jamba-Proc
+	- NoLonger is set to Default
+
+*Jamba-message
+	- Now only shows realm Name if not from the current Masters Realm
+	
+-----------------------
 Jamba Version: 4.2
 WoW Game Version: 6.2.3
 Release Date: 29/12/2015

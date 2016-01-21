@@ -1,6 +1,6 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
-Copyright 2008 - 2015 Michael "Jafula" Miller
+Copyright 2008 - 2016 Michael "Jafula" Miller
 
 
 License: The MIT License
@@ -821,13 +821,14 @@ local function DefaultWarningArea()
 end
 
 local function DisplayMessageDefaultChat( sender, message, suppressSender )
+	local senderName = Ambiguate(sender, "none")
 	local chatTimestamp = ""
 	if (CHAT_TIMESTAMP_FORMAT) then
 		chatTimestamp = BetterDate( CHAT_TIMESTAMP_FORMAT, time() )
 	end
 	local completeMessage = chatTimestamp
 	if suppressSender == false then
-		completeMessage = completeMessage.."|Hplayer:"..sender.."|h["..sender.."]|h"..L[": "]
+		completeMessage = completeMessage.."|Hplayer:"..sender.."|h["..senderName.."]|h"..L[": "]
 	end
 	completeMessage = completeMessage..message
 	DEFAULT_CHAT_FRAME:AddMessage( completeMessage )
@@ -870,8 +871,9 @@ end
 
 local function DisplayMessageRaidWarning( sender, message, suppressSender )
 	local completeMessage = ""
+	local senderName = Ambiguate(sender, "none")
 	if suppressSender == false then
-		completeMessage = completeMessage..sender..L[": "]
+		completeMessage = completeMessage..senderName..L[": "]
 	end
 	completeMessage = completeMessage..message
 	RaidNotice_AddMessage( RaidWarningFrame, completeMessage, ChatTypeInfo["RAID_WARNING"] )
@@ -880,8 +882,9 @@ end
 		
 local function DisplayMessageParrot( sender, message, areaOnScreenName, suppressSender )
 	local completeMessage = ""
+	local senderName = Ambiguate(sender, "none")
 	if suppressSender == false then
-		completeMessage = completeMessage..sender..L[": "]
+		completeMessage = completeMessage..senderName..L[": "]
 	end
 	completeMessage = completeMessage..message
 	if Parrot ~= nil then
@@ -894,8 +897,9 @@ end
 
 local function DisplayMessageMikSBT( sender, message, areaOnScreenName, suppressSender )
 	local completeMessage = ""
+	local senderName = Ambiguate(sender, "none")
 	if suppressSender == false then
-		completeMessage = completeMessage..sender..L[": "]
+		completeMessage = completeMessage..senderName..L[": "]
 	end
 	completeMessage = completeMessage..message
 	if MikSBT ~= nil then

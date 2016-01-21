@@ -1,6 +1,6 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
-Copyright 2008 - 2015 Michael "Jafula" Miller
+Copyright 2008 - 2016 Michael "Jafula" Miller
 License: The MIT License
 ]]--
 
@@ -72,7 +72,9 @@ AJM.settings = {
 		warnWhenManaDropsAmount = "30",
 		warnManaDropsMessage = L["Low Mana!"],
 		warnBagsFull = true,
-		bagsFullMessage = L["Bags Full!"],
+		bagsFullMessage = L["Bags Full!"],	
+		warnCC = true,
+		CcMessage = L["I Am"],
 		warningArea = JambaApi.DefaultWarningArea(),
 		autoAcceptResurrectRequest = true,
 		autoDenyDuels = true,
@@ -840,7 +842,25 @@ local function SettingsCreateWarnings( top )
 		L["Inactive Message"]
 	)	
 	AJM.settingsControlWarnings.editBoxAfkMessage:SetCallback( "OnEnterPressed", AJM.EditBoxChangedAfkMessage )
-	movingTop = movingTop - editBoxHeight
+	movingTop = movingTop - editBoxHeight		
+	-- Ebony CC
+	AJM.settingsControlWarnings.checkBoxWarnCC = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControlWarnings, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Warn If Toon Gets Crowd Control"],
+		AJM.SettingsToggleWarnCC
+	)	
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControlWarnings.editBoxCCMessage = JambaHelperSettings:CreateEditBox( AJM.settingsControlWarnings,
+		headingWidth,
+		left,
+		movingTop,
+		L["Crowd Control Message"]
+	)
+	AJM.settingsControlWarnings.editBoxCCMessage:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCCMessage )
+	movingTop = movingTop - editBoxHeight	
 	AJM.settingsControlWarnings.dropdownWarningArea = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControlWarnings, 
 		headingWidth, 
@@ -924,6 +944,8 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlWarnings.editBoxBagsFullMessage:SetText( AJM.db.bagsFullMessage )
 	AJM.settingsControlWarnings.checkBoxWarnAfk:SetValue( AJM.db.warnAfk )
 	AJM.settingsControlWarnings.editBoxAfkMessage:SetText( AJM.db.afkMessage )
+	AJM.settingsControlWarnings.checkBoxWarnCC:SetValue( AJM.db.warnCC )
+	AJM.settingsControlWarnings.editBoxCCMessage:SetText( AJM.db.CcMessage ) 
 	AJM.settingsControlWarnings.dropdownWarningArea:SetValue( AJM.db.warningArea )
 	AJM.settingsControlRequests.checkBoxAutoAcceptResurrectRequest:SetValue( AJM.db.autoAcceptResurrectRequest )
 	AJM.settingsControlRequests.checkBoxAutoDenyDuels:SetValue( AJM.db.autoDenyDuels )
@@ -943,6 +965,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlMerchant.checkBoxAutoRepairUseGuildFunds:SetDisabled( not AJM.db.autoRepair )
 	AJM.settingsControlWarnings.editBoxBagsFullMessage:SetDisabled( not AJM.db.warnBagsFull )
 	AJM.settingsControlWarnings.editBoxAfkMessage:SetDisabled( not AJM.db.warnAfk )
+	AJM.settingsControlWarnings.editBoxCCMessage:SetDisabled( not AJM.db.warnCC )
 	AJM.settingsControlCurrency.checkBoxCurrencyGold:SetValue( AJM.db.currGold )
 	AJM.settingsControlCurrency.checkBoxCurrencyGoldInGuildBank:SetValue( AJM.db.currGoldInGuildBank )
 	AJM.settingsControlCurrency.checkBoxCurrencyGoldInGuildBank:SetDisabled( not AJM.db.currGold )
@@ -1049,6 +1072,16 @@ end
 
 function AJM:EditBoxChangedAfkMessage( event, text )
 	AJM.db.afkMessage = text
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleWarnCC( event, checked )
+	AJM.db.warnCC = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:EditBoxChangedCCMessage( event, text )
+	AJM.db.CcMessage = text
 	AJM:SettingsRefresh()
 end
 
@@ -1347,6 +1380,10 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "DUEL_REQUESTED" )
 	AJM:RegisterEvent( "GUILD_INVITE_REQUEST" )
 	AJM:RegisterEvent( "ITEM_PUSH" )
+	--test
+	--AJM:RegisterEvent("LOSS_OF_CONTROL_UPDATE")
+	AJM:RegisterEvent("LOSS_OF_CONTROL_ADDED")
+	
 	--TODO: this might need chaning like in jamba-display as does not work very well with a lot of RED UI updates. (EG spamBAR?)
 	AJM:RegisterEvent( "UI_ERROR_MESSAGE", "ITEM_PUSH" )
 	AJM:RegisterEvent( "UNIT_AURA" )
@@ -1383,7 +1420,9 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.warnBagsFull = settings.warnBagsFull
 		AJM.db.bagsFullMessage = settings.bagsFullMessage
 		AJM.db.warnAfk = settings.warnAfk
-		AJM.db.afkMessage = settings.afkMessage		
+		AJM.db.afkMessage = settings.afkMessage	
+		AJM.db.warnCC = settings.warnCC
+		AJM.db.CcMessage = settings.CcMessage			
 		AJM.db.autoAcceptResurrectRequest = settings.autoAcceptResurrectRequest
 		AJM.db.autoDenyDuels = settings.autoDenyDuels
 		--ebonnysum
@@ -1627,20 +1666,33 @@ function AJM:ITEM_PUSH( event, ... )
 		if UnitIsDead( "player" ) then
 			return
 		end
-		local numberFreeSlots, numberTotalSlots = LibBagUtils:CountSlots( "BAGS", 0 )
+	local numberFreeSlots, numberTotalSlots = LibBagUtils:CountSlots( "BAGS", 0 )
 		if numberFreeSlots == 0 then
 			if AJM.previousFreeBagSlotsCount ~= numberFreeSlots then
 				AJM:JambaSendMessageToTeam( AJM.db.warningArea, AJM.db.bagsFullMessage, false )
 			end
 		end
-		AJM.previousFreeBagSlotsCount = numberFreeSlots
+	AJM.previousFreeBagSlotsCount = numberFreeSlots
 	end
 end
+
 
 function AJM:UNIT_AURA( event, ... )
 	if AJM.db.warnAfk == true then
 		if JambaUtilities:DoesThisCharacterHaveBuff( L["Inactive"] ) == true then
 			AJM:JambaSendMessageToTeam( AJM.db.warningArea, AJM.db.afkMessage, false )
+		end
+	end
+end
+
+--Ebony CCed
+function AJM:LOSS_OF_CONTROL_ADDED( event, ... )
+	if AJM.db.warnCC == true then
+		local eventIndex = C_LossOfControl.GetNumEvents()
+		if eventIndex > 0 then
+		local locType, spellID, text, iconTexture, startTime, timeRemaining, duration, lockoutSchool, priority, displayType = C_LossOfControl.GetEventInfo(eventIndex)	
+			--AJM:Print("LOSS OF CONTROL", eventIndex, text) -- Ebony testing
+			AJM:JambaSendMessageToTeam( AJM.db.warningArea, AJM.db.CcMessage..L[" "]..text, false )
 		end
 	end
 end

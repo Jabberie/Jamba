@@ -1,6 +1,6 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
-Copyright 2008 - 2015 Michael "Jafula" Miller
+Copyright 2008 - 2016 Michael "Jafula" Miller
 License: The MIT License
 ]]--
 
@@ -31,7 +31,7 @@ AJM.moduleDisplayName = L["Proc"]
 -- Settings - the values to store and their defaults for the settings database.
 AJM.settings = {
 	profile = {
-		procEnabled = true,
+		procEnabled = false,
 		procEnabledOnMasterOnly = true,
 		procTimerBarHeight = 22,
 		procTimerBarWidth = 350,
