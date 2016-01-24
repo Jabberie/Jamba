@@ -20,6 +20,10 @@ local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
 local Media = LibStub("LibSharedMedia-3.0")
 
+-- Built in Sounds
+Media:Register("sound", "Jamba: RaidWarning", "Sound\\interface\\RaidWarning.ogg")
+
+ 
 -- Constants and Locale for this module.
 AJM.moduleName = "Jamba-Message"
 AJM.settingsDatabaseName = "JambaMessageProfileDB"
@@ -183,6 +187,7 @@ AJM.settings = {
 				["type"] = 8,
 				["name"] = L["Default Warning"],
 				["tag"] = JambaPrivate.Tag.MasterTag(),
+				["soundToPlay"] = "Jamba: RaidWarning",
 			},
 			{
 				["type"] = 12,
@@ -877,7 +882,8 @@ local function DisplayMessageRaidWarning( sender, message, suppressSender )
 	end
 	completeMessage = completeMessage..message
 	RaidNotice_AddMessage( RaidWarningFrame, completeMessage, ChatTypeInfo["RAID_WARNING"] )
-	PlaySound( "RaidWarning" )
+	-- This is now registerd though Shared Media so it can be truned off if the user choices. *ebony
+	--PlaySound( "RaidWarning" )
 end
 		
 local function DisplayMessageParrot( sender, message, areaOnScreenName, suppressSender )

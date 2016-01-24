@@ -15,6 +15,8 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Pu
 
 *Jamba-message
 	- Now only shows realm Name if not from the current Masters Realm
+	- You can now turn of the Raid warring Sound under Avd:message > raid warring and change the sound to None!
+	- Changed the API for Raid warring sound to play under SharedMediaLib and not always to play the sound.
 	
 -----------------------
 Jamba Version: 4.2
