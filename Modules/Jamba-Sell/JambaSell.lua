@@ -153,7 +153,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
 		-- Tell the team?
-		AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 

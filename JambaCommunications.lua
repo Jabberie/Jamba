@@ -21,6 +21,7 @@ local L = LibStub( "AceLocale-3.0" ):GetLocale( "Jamba-Core" )
 -- Get libraries.
 local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 local AceSerializer = LibStub:GetLibrary( "AceSerializer-3.0" )
+
 local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
 
 -- JambaCommunications is not a module, but the same naming convention for these values is convenient.
@@ -141,12 +142,14 @@ end
 
 -- Creates a command to send.
 local function CreateCommandToSend( moduleName, commandName, ... )
+	--AJM:Print("Create", moduleName, commandName)
 	-- Start the message with the module name and a seperator.
 	local message = moduleName..AJM.COMMAND_SEPERATOR
 	-- Add the command  name and a seperator.
 	message = message..commandName..AJM.COMMAND_SEPERATOR
 	-- Add any arguments to the message (serialized and seperated).
 	local numberArguments = select( "#", ... )
+	
 	for iterateArguments = 1, numberArguments do
 		local argument = select( iterateArguments, ... )
 		message = message..AceSerializer:Serialize( argument )
@@ -155,6 +158,7 @@ local function CreateCommandToSend( moduleName, commandName, ... )
 		end
 	end
 	-- Return the command to send.
+	--AJM:Print("Create", moduleName, commandName, iterateArguments)
 	return message	
 end
 
@@ -202,10 +206,12 @@ end
 --]]
 
 local function CommandAll( moduleName, commandName, ... )
-    AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
+   -- AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
+	--AJM:Print( "Command All: ", moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	local channel
+	-- toon has to be in a group		
 	if UnitInBattleground( "player" ) then
 	AJM:DebugMessage( "PvP_INSTANCE")
 		channel = "INSTANCE_CHAT"
@@ -213,45 +219,59 @@ local function CommandAll( moduleName, commandName, ... )
 		AJM:DebugMessage( "Group")
 		local isInstance, instanceType = IsInInstance()
 		local name, Type, difficulty, difficultyName, maxPlayers, playerDifficulty, isDynamicInstance = GetInstanceInfo()
-		--isInstance and
 		if isInstance or instanceType == "raid" or IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
 			if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
 				channel = "INSTANCE_CHAT"
 			else
-				channel = "raid"
+				if IsInRaid() then	
+					channel = "RAID"
+				else
+					channel = "PARTY"
+				end				
 			end	
 		else
-			channel = "raid"
+			if IsInRaid() then	
+				channel = "RAID"
+			else
+				channel = "PARTY"
+			end
 		end	
 	end	
 	--AJM:Print( "CHANNEL", channel)
 	if channel then
-		AJM:DebugMessage("Sending command to group.", message, "channel", channel, nil)
+	AJM:DebugMessage("Sending command to group.", message, "channel", channel, nil)
+		--AJM:Print("Sending command to group.", message, "channel", channel, nil)
+			--AJM.COMMUNICATION_GROUP,
 			AJM:SendCommMessage(
 			AJM.COMMAND_PREFIX,
 			message,
-			--AJM.COMMUNICATION_GROUP,
 			channel,
 			nil,
 			AJM.COMMUNICATION_PRIORITY_ALERT
-			)	
+			)
+			--AJM:Print("testChennel", AJM.COMMAND_PREFIX, channel, AJM.COMMUNICATION_PRIORITY_ALERT)	
+			--return
 	end
+	if channel == nil then
 	--if the unit is not in the party then it unlikely did not get the party message,
-	for characterName, characterOrder in JambaPrivate.Team.TeamList() do		
-		if UnitInParty( Ambiguate( characterName, "none" ) ) == false then
-			AJM:DebugMessage( "Toon not in party:", characterName)
-			if IsCharacterOnline( characterName ) == true then
-				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
-					AJM:SendCommMessage(
-					AJM.COMMAND_PREFIX,
-					message,
-					AJM.COMMUNICATION_WHISPER,
-					characterName,
-					AJM.COMMUNICATION_PRIORITY_ALERT
-					)
-			end	
-		end
-	end		
+		for characterName, characterOrder in JambaPrivate.Team.TeamList() do		
+			AJM:Print( "Toon not in party:", characterName)
+			if UnitInParty( Ambiguate( characterName, "none" ) ) == false then
+				AJM:DebugMessage( "Toon not in party:", characterName)
+				if IsCharacterOnline( characterName ) == true then
+					AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+						AJM:SendCommMessage(
+						AJM.COMMAND_PREFIX,
+						message,
+						AJM.COMMUNICATION_WHISPER,
+						characterName,
+						AJM.COMMUNICATION_PRIORITY_ALERT
+						)
+						--AJM:Print("testWis", AJM.COMMAND_PREFIX, AJM.COMMUNICATION_WHISPER, characterName , AJM.COMMUNICATION_PRIORITY_ALERT)
+				end	
+			end
+		end	
+	end	
 end
 
 
@@ -357,6 +377,7 @@ end
 function AJM:CommandReceived( prefix, message, distribution, sender )
     local characterName = JambaUtilities:AddRealmToNameIfMissing( sender )
 	AJM:DebugMessage( "Command received: ", prefix, message, distribution, sender )
+	--AJM:Print( "Command received: ", prefix, message, distribution, sender )
 	-- Check if the command is for Jamba Communications.
 	if prefix == AJM.COMMAND_PREFIX then
 		--checks the char is in the team if not everyone can change settings and we do not want that
@@ -408,6 +429,7 @@ end
 -- Send settings to all members of the current team.
 local function SendSettings( moduleName, settings )
 	-- Send a push settings command to all.
+	--AJM:Print("test", moduleName, AJM.COMMAND_INTERNAL_SEND_SETTINGS, settings )
 	CommandAll( moduleName, AJM.COMMAND_INTERNAL_SEND_SETTINGS, settings )
 end
 
@@ -662,8 +684,13 @@ end
 --   AJM.COMMUNICATION_PRIORITY_ALERT
 local function SendChatMessage( text, chatDestination, characterOrChannelName, priority )
 	-- Message small enough to send?
+	AJM:Print("test", text, chatDestination, characterOrChannelName, priority)
+	
 	if text:len() <= 255 then
+		--AJM:Print("test TURE!!!!! TOBIG" )
 		ChatThrottleLib:SendChatMessage( priority, AJM.MESSAGE_PREFIX, text, chatDestination, nil, characterOrChannelName, nil )
+	
+	
 	else
 		-- No, message is too big, split into smaller messages, taking UTF8 characters into account.	
 		local bytesAvailable = string.utf8len(text1)

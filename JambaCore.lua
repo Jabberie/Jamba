@@ -312,7 +312,9 @@ end
 
 -- Settings are received, pass them to the relevant module.
 local function OnSettingsReceived( sender, moduleName, settings )
+	
 	sender = JambaUtilities:AddRealmToNameIfMissing( sender )
+	--AJM:Print("onsettings", sender, moduleName )
 	-- Get the address of the module.
 	local moduleAddress = AJM.registeredModulesByName[moduleName]	
 	-- Pass the module its settings.
@@ -566,7 +568,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Copyright 2008-2014 Michael 'Jafula' Miller, Now managed By Ebony"]
+		L["Copyright 2008-2016 Michael 'Jafula' Miller, Now managed By Ebony"]
 	)	
 	movingTop = movingTop - labelContinueHeight
 	

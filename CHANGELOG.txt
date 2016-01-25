@@ -2,7 +2,11 @@ Jamba Version: 4.2.1
 WoW Game Version: 6.2.3
 Release Date: 21/1/2016
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+
 - Updated all dates to the new year 2016
+
+*jamba-communication
+ - Fixed "push all settings" again agian.
 
 *Jamba-Toon
  - Added Message To Master when a Minion Gets crowd controled
@@ -12,11 +16,14 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Pu
 
 *Jamba-Proc
 	- NoLonger is set to Default
+	
+Jamba-Sell
+	- does not spam master with settings received.
 
 *Jamba-message
 	- Now only shows realm Name if not from the current Masters Realm
 	- You can now turn of the Raid warring Sound under Avd:message > raid warring and change the sound to None!
-	- Changed the API for Raid warring sound to play under SharedMediaLib and not always to play the sound.
+	- Added Raid warring sound to play under SharedMediaLib.
 	
 -----------------------
 Jamba Version: 4.2
