@@ -255,7 +255,7 @@ local function CommandAll( moduleName, commandName, ... )
 	if channel == nil then
 	--if the unit is not in the party then it unlikely did not get the party message,
 		for characterName, characterOrder in JambaPrivate.Team.TeamList() do		
-			AJM:Print( "Toon not in party:", characterName)
+			--AJM:Print( "Toon not in party:", characterName)
 			if UnitInParty( Ambiguate( characterName, "none" ) ) == false then
 				AJM:DebugMessage( "Toon not in party:", characterName)
 				if IsCharacterOnline( characterName ) == true then
