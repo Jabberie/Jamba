@@ -252,25 +252,23 @@ local function CommandAll( moduleName, commandName, ... )
 			--AJM:Print("testChennel", AJM.COMMAND_PREFIX, channel, AJM.COMMUNICATION_PRIORITY_ALERT)	
 			--return
 	end
-	if channel == nil then
 	--if the unit is not in the party then it unlikely did not get the party message,
-		for characterName, characterOrder in JambaPrivate.Team.TeamList() do		
-			--AJM:Print( "Toon not in party:", characterName)
-			if UnitInParty( Ambiguate( characterName, "none" ) ) == false then
-				AJM:DebugMessage( "Toon not in party:", characterName)
-				if IsCharacterOnline( characterName ) == true then
-					AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
-						AJM:SendCommMessage(
-						AJM.COMMAND_PREFIX,
-						message,
-						AJM.COMMUNICATION_WHISPER,
-						characterName,
-						AJM.COMMUNICATION_PRIORITY_ALERT
-						)
-						--AJM:Print("testWis", AJM.COMMAND_PREFIX, AJM.COMMUNICATION_WHISPER, characterName , AJM.COMMUNICATION_PRIORITY_ALERT)
-				end	
-			end
-		end	
+	for characterName, characterOrder in JambaPrivate.Team.TeamList() do		
+		--AJM:Print( "Toon not in party:", characterName)
+		if UnitInParty( Ambiguate( characterName, "none" ) ) == false then
+			AJM:DebugMessage( "Toon not in party:", characterName)
+			if IsCharacterOnline( characterName ) == true then
+				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+					AJM:SendCommMessage(
+					AJM.COMMAND_PREFIX,
+					message,
+					AJM.COMMUNICATION_WHISPER,
+					characterName,
+					AJM.COMMUNICATION_PRIORITY_ALERT
+					)
+					--AJM:Print("testWis", AJM.COMMAND_PREFIX, AJM.COMMUNICATION_WHISPER, characterName , AJM.COMMUNICATION_PRIORITY_ALERT)
+			end	
+		end
 	end	
 end
 
