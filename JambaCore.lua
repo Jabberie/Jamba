@@ -39,7 +39,7 @@ local AceGUI = LibStub("AceGUI-3.0")
 -- Create frame for Jamba Settings.
 JambaPrivate.SettingsFrame = {}
 JambaPrivate.SettingsFrame.Widget = AceGUI:Create( "JambaWindow" )
-JambaPrivate.SettingsFrame.Widget:SetTitle( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Jafula's Awesome Multi-Boxer Assistant"] )
+JambaPrivate.SettingsFrame.Widget:SetTitle( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["A Awesome Multi-Boxer Assistant"] )
 JambaPrivate.SettingsFrame.Widget:SetLayout( "Fill" )
 JambaPrivate.SettingsFrame.WidgetTree = AceGUI:Create( "TreeGroup" )
 JambaPrivate.SettingsFrame.TreeGroupStatus = { treesizable = false, groups = {} }

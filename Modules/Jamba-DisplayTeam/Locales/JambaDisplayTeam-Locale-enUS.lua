@@ -66,3 +66,14 @@ L["Stack Text"] = true
 L["DEAD"] = true
 L["BgS"] = true
 L["Dura"] = true
+
+--new stuff
+L["Toon Information"] = true
+L["Player Level:"] = true
+L["Item Level:"] = true
+L["Bag Space:"] = true
+L["Durability:"] = true
+L["Gold:"] = true
+L["Has New Mail From:"] = true
+L["Currency:"] = true
+L["Unknown Sender"] = true
