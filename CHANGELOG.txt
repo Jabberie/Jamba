@@ -1,9 +1,9 @@
-Jamba Version: 4.3
+Jamba Version: Beta-4.3b
 WoW Game Version: 6.2.3
-Release Date: 14/2/2016
-Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade
+Release Date: 16/2/2016
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade, Curr
 
-*jamba-Core SomeBackEnd Work for Legion/7.0.x
+*jamba-Core Some Back End Work for Legion/7.0.x
 
 *Jamba-Display-Team
 	-Added a NewTooltip when you hover over Follow bar to show
@@ -20,6 +20,13 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Pu
 			You can download this as a separate Download.
 			See infomation at http://www.dual-boxing.com/threads/52151-Addon-Jamba-4-0-An-assistant-for-Multiboxers-Release-for-WoW-6?p=402394&viewfull=1#post402394 		
 
+*Jamba-Toon
+	-Removed Jamba-Currency From the toon module to its own module
+			
+* New Module Jamba-Curr
+	- All Currency Information
+	- Pending changes to go here -Ebony....
+	
 
 			
 -----------------------

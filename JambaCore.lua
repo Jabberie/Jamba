@@ -507,8 +507,7 @@ function AJM:OnInitialize()
 	-- Register the chat command.
 	AJM:RegisterChatCommand( AJM.chatCommand, "JambaChatCommand" )
 	-- Attempt to load modules, if they are disabled, they won't be loaded.
-	-- TODO: This kinda defeats the purpose of the module system if we have to update core each time a module is added
-    -- TODO: Also, did the load on demand stuff actually work?
+	-- TODO: This kinda defeats the purpose of the module system if we have to update core each time a module is added.
     AJM:LoadJambaModule( "Jamba-AdvancedLoot" )
 	AJM:LoadJambaModule( "Jamba-DisplayTeam" )
 	AJM:LoadJambaModule( "Jamba-Follow" )
@@ -526,6 +525,7 @@ function AJM:OnInitialize()
 	AJM:LoadJambaModule( "Jamba-Toon" )
 	AJM:LoadJambaModule( "Jamba-Trade" )
 	AJM:LoadJambaModule( "Jamba-Video" )
+	AJM:LoadJambaModule( "Jamba-Curr" )
 end
 
 function AJM:LoadJambaModule( moduleName )
