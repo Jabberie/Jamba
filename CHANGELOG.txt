@@ -1,4 +1,4 @@
-Jamba Version: Beta-4.3b
+﻿Jamba Version: Beta-4.3c
 WoW Game Version: 6.2.3
 Release Date: 16/2/2016
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade, Curr
@@ -14,8 +14,19 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase
 		- Gold of the minion.
 		- Mail if the minion has mail and who it is from (last 3)
 		- Currency You can pick the currency from the ingame currency by showing on BackPack
-	- Removed Display BagSpace see the tooltip.. 	
-		
+	
+	- Removed Display BagSpace see the tooltip..
+
+NEW! ((Beta)) -- TODO Add New Classess support there powerbar	
+	- Renamed "Combo PointBar" to "Alternate PowerBar"
+		- Added Support for Other classess Alternate Power
+			-Warlocks
+				-Burning Embers
+				-Shoul Shards
+				-Demonic Fury
+			-Paladin
+				-Holy Power
+				
 * Removed Jamba-Proc 
 			You can download this as a separate Download.
 			See infomation at http://www.dual-boxing.com/threads/52151-Addon-Jamba-4-0-An-assistant-for-Multiboxers-Release-for-WoW-6?p=402394&viewfull=1#post402394 		
@@ -25,7 +36,7 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase
 			
 * New Module Jamba-Curr
 	- All Currency Information
-	- Pending changes to go here -Ebony....
+	- Pending changes to go here -Ebony....	
 	
 
 			

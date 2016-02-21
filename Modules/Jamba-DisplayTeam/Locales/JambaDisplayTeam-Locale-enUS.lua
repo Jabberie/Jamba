@@ -42,7 +42,7 @@ L["Follow Status Bar"] = true
 L["Experience Bar"] = true
 L["Health Bar"] = true
 L["Power Bar"] = true
-L["Combo Point Bar"] = true
+L["Alternate PowerBar"] = true
 L["Jamba Team"] = true
 L["Hide Team Display"] = true
 L["Hide the display team panel."] = true
@@ -64,8 +64,7 @@ L["Show Item Level"] = true
 L["Equipped iLvl Only"] = true
 L["Stack Text"] = true
 L["DEAD"] = true
-L["BgS"] = true
-L["Dura"] = true
+
 
 --new stuff
 L["Toon Information"] = true

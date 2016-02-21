@@ -1489,7 +1489,7 @@ local function SettingsCreateDisplayOptions( top )
 	AJM.settingsControl.displayOptionsPowerStatusHeightSlider:SetCallback( "OnValueChanged", AJM.SettingsChangePowerStatusHeight )
 	movingTop = movingTop - sliderHeight - sectionSpacing
 	-- Create Combo Point status.
-	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Combo Point Bar"], movingTop, true )
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Alternate PowerBar"], movingTop, true )
 	movingTop = movingTop - headingHeight
 	AJM.settingsControl.displayOptionsCheckBoxShowComboStatus = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
@@ -3017,7 +3017,29 @@ end
 
 function AJM:UNIT_COMBO_POINTS( event, ... )
 	--AJM:Print("hello")
-	AJM:SendComboStatusUpdateCommand()	
+	--AJM:SendComboStatusUpdateCommand()	
+end
+
+function AJM:UNIT_POWER_FREQUENT( event, Unit, powerType, ... )
+	--TODO there got to be a better way to clean this code up Checking to see if its the event we need and then send the command to the update if it is.	
+	--AJM:Print("EventTest", Unit, powerType) 
+	if Unit == "player" then
+		--AJM:Print("player", Unit, powerType)
+		if( event and powerType == "BURNING_EMBERS" ) then
+			AJM:SendComboStatusUpdateCommand()
+		elseif( event and powerType == "COMBO_POINTS" ) then
+			AJM:SendComboStatusUpdateCommand()
+		--TODO Remove in legion.
+		elseif( event and powerType == "DEMONIC_FURY" ) then
+			AJM:SendComboStatusUpdateCommand()
+		elseif( event and powerType == "SOUL_SHARDS" ) then
+			AJM:SendComboStatusUpdateCommand()
+		elseif( event and powerType == "HOLY_POWER" ) then
+			AJM:SendComboStatusUpdateCommand()		
+		else
+			return
+		end
+	end	
 end
 
 
@@ -3026,21 +3048,53 @@ end
 --end
 
 function AJM:SendComboStatusUpdateCommand()
+	--AJM:Print("test")
 	if AJM.db.showTeamList == true and AJM.db.showComboStatus == true then
-		if select(2, UnitClass("player")) ~= "DRUID" and select(2, UnitClass("player")) ~= "ROGUE" == true then
+		--if select(2, UnitClass("player")) ~= "DRUID" or and select(2, UnitClass("player")) ~= "WARLOCK" select(2, UnitClass("player")) ~= "ROGUE" == true then
+		--	return
+		--end	
+		-- get powerType from http://wowprogramming.com/docs/api_types#powerType as there no real API to get this infomation as of yet.
+		local Class = select(2, UnitClass("player"))
+		--AJM:Print("class", Class)
+		-- ComboPoints
+		if Class == "DRUID" then
+			PowerType = 4
+		-- Combo Points
+		elseif Class == "ROGUE" then
+			PowerType = 4
+		-- Warlock Destrunction burningEmbers TODO Other Warlock Specs
+		elseif Class == "WARLOCK" then
+			local Spec = GetSpecialization()
+			--Destrunction
+			if Spec == 3 then
+				PowerType = 14
+			--Demo Nolonger in legion so TODO Remove!
+			elseif Spec == 2 then
+				PowerType = 15
+			--SOUL SHARDS default warlock spell
+			else 
+				PowerType = 7
+			end
+		-- Paladin Holy Power
+		elseif Class == "PALADIN" then
+			PowerType = 9
+		else 
 			return
-		end	
+		end
 			
-		local playerCombo = UnitPower ( "player", 4)
-		local playerMaxCombo = UnitPowerMax( "player", 4)
-		--AJM:Print ("combo", playerCombo, playerMaxCombo)
+		local playerCombo = UnitPower ( "player", PowerType)
+		local playerMaxCombo = UnitPowerMax( "player", PowerType)
+		
+		--AJM:Print ("PowerType", PowerType, playerCombo, playerMaxCombo)
+		--AJM:Print("send")
 		if AJM.db.showTeamListOnMasterOnly == true then
+			AJM:DebugMessage( "SendComboStatusUpdateCommand TO Master!" )
 			AJM:JambaSendCommandToMaster( AJM.COMMAND_COMBO_STATUS_UPDATE, playerCombo, playerMaxCombo )
 		else
 			AJM:DebugMessage( "SendComboStatusUpdateCommand TO TEAM!" )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_COMBO_STATUS_UPDATE, playerCombo, playerMaxCombo )
 		end
-	end
+	end	
 end
 
 function AJM:ProcessUpdateComboStatusMessage( characterName, playerCombo, playerMaxCombo, range )
@@ -3053,7 +3107,7 @@ function AJM:SettingsUpdateComboAll()
 	end
 end
 
-function AJM:UpdateComboStatus( characterName, playerCombo, playerMaxCombon, range )
+function AJM:UpdateComboStatus( characterName, playerCombo, playerMaxCombo, range )
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -3104,22 +3158,32 @@ function AJM:UpdateComboStatus( characterName, playerCombo, playerMaxCombon, ran
 			text = tostring( floor( (playerCombo/playerMaxCombo)*100) )..L["%"]
 		end
 	end
-	comboBarText:SetText( text )		
+	comboBarText:SetText( text )
+	AJM:SetStatusBarColourForCombo( comboBar )	
 end
 
---[[
-function AJM:SetStatusBarColourForCombo( statusBar, unit )
-	local powerIndex, powerString, altR, altG, altB = UnitPowerType( unit )
-	if comboString ~= nil and comboString ~= "" then
-		local r = ComboBarColor[powerString].r
-		local g = ComboBarColor[powerString].g
-		local b = ComboBarColor[powerString].b
-		statusBar:SetStatusBarColor( r, g, b, 1 )
-		statusBar.backgroundTexture:SetTexture( r, g, b, 0.25 )
-	end
-	
+
+function AJM:SetStatusBarColourForCombo( comboBar )
+	local Class = select(2, UnitClass("player"))
+	if Class == "WARLOCK" then
+		local Spec = GetSpecialization()
+			if Spec == 3 then
+				--Orange
+				comboBar:SetStatusBarColor( 1.00, 0.50, 0.25, 1 )
+				comboBar.backgroundTexture:SetTexture ( 1.00, 0.50, 0.25, 0.25 )
+			else
+				-- Purple
+				comboBar:SetStatusBarColor( 0.58, 0.51, 0.79, 1 )
+				comboBar.backgroundTexture:SetTexture( 0.58, 0.51, 0.79, 0.25) 	
+			end
+	elseif  Class == "PALADIN" then
+			comboBar:SetStatusBarColor( 0.96, 0.55, 0.73, 1 )
+			comboBar.backgroundTexture:SetTexture( 0.96, 0.55, 0.73, 0.25) 	
+	else
+		return
+	end	
 end	
---]]
+
 		
 -------------------------------------------------------------------------------------------------------------
 -- Addon initialization, enabling and disabling.
@@ -3154,7 +3218,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "UNIT_POWER", "UNIT_POWER" )
 	AJM:RegisterEvent( "UNIT_MAXPOWER", "UNIT_POWER" )
 	--AJM:RegisterEvent( "PLAYER_EQUIPMENT_CHANGED" )
-	--AJM:RegisterEvent( "PLAYER_ENTERING_WORLD")
+	AJM:RegisterEvent( "PLAYER_ENTERING_WORLD")
 	AJM:RegisterEvent( "UNIT_DISPLAYPOWER" )
 	--AJM:RegisterEvent( "UNIT_LEVEL" )
 	--AJM:RegisterEvent( "ITEMLVL_PUSH" )
@@ -3162,6 +3226,7 @@ function AJM:OnEnable()
 --	AJM:RegisterEvent( "ITEM_PUSH" )
 	AJM:RegisterEvent( "CHAT_MSG_COMBAT_FACTION_CHANGE" )
 	AJM:RegisterEvent( "UNIT_COMBO_POINTS" )
+	AJM:RegisterEvent( "UNIT_POWER_FREQUENT")
 	--Updating Bag information -- Chaneged again 4.1  this event fires even for bank bags. When moving an item in your inventory, this fires multiple times: once each for the source and destination bag
 --	AJM:RegisterEvent( "BAG_UPDATE", "ITEM_PUSH" )
 	--Updates everytime jamba Reads the UI_ERROR_MESSAGE Are This is not very good for me using a spambar! Need's a better system.
@@ -3192,13 +3257,9 @@ end
 function AJM:OnDisable()
 end
 
--- this is not needed as the range timer would do this.
---[[function AJM:PLAYER_ENTERING_WORLD( event, ... )
-	AJM:SendBagInformationUpdateCommand()
-	AJM:SendExperienceStatusUpdateCommand()
-	AJM:SendIlvlInformationUpdateCommand()
-	AJM:SendReputationStatusUpdateCommand()
-end]]
+function AJM:PLAYER_ENTERING_WORLD( event, ... )
+	AJM:SendComboStatusUpdateCommand()
+end
 
 function AJM:OnMasterChanged( message, characterName )
 	AJM:SettingsRefresh()
