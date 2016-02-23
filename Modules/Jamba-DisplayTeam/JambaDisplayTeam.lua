@@ -3042,6 +3042,9 @@ function AJM:UNIT_POWER_FREQUENT( event, Unit, powerType, ... )
 	end	
 end
 
+function AJM:PLAYER_TALENT_UPDATE(event, ...)
+	AJM:SendComboStatusUpdateCommand()	
+end
 
 --function AJM:UNIT_DISPLAYCOMBO( event, unit, ... )
 --	AJM:SendComboStatusUpdateCommand( unit )
@@ -3227,6 +3230,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "CHAT_MSG_COMBAT_FACTION_CHANGE" )
 	AJM:RegisterEvent( "UNIT_COMBO_POINTS" )
 	AJM:RegisterEvent( "UNIT_POWER_FREQUENT")
+	AJM:RegisterEvent( "PLAYER_TALENT_UPDATE")
 	--Updating Bag information -- Chaneged again 4.1  this event fires even for bank bags. When moving an item in your inventory, this fires multiple times: once each for the source and destination bag
 --	AJM:RegisterEvent( "BAG_UPDATE", "ITEM_PUSH" )
 	--Updates everytime jamba Reads the UI_ERROR_MESSAGE Are This is not very good for me using a spambar! Need's a better system.
