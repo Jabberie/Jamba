@@ -19,7 +19,6 @@ L["Set On-Line"] = true
 L["Master Can not be Set OffLine"] = true
 --wip
 L["WIP: This Button Does absolutely nothing at all, Unless you untick Use team List Offline Button in Core:communications Under Advanced. Report bugs to to me -EBONY"] = true
---L["WIP: This Button DOES NOTHING, absolutely nothing at all"] = true
 L["Set the master character."] = true
 L["I Am Master"] = true
 L["Set this character to be the master character."] = true
@@ -78,3 +77,37 @@ L["Set All Team Members OnLine"] = true
 L["Set Team OnLine"] = true
 L["Set Offline"] = true
 L["Sets a member offline"] = true
+
+
+-- ebony tooltip work and Gui Changes.
+
+L["Move the character up a place in the team list"] = true
+L["Move the character down a place in the team list"] = true
+L["Adds a member to the team list\nYou can Use:\nCharacterName\nCharacterName-realm\n@Target\n@Mouseover"] = true
+L["Adds all Party members to the team list"] = true
+L["Removes Party members from the team list"] = true
+L["Set the selected member to be the master of the group"] = true
+L["Invites all Team members online to a party or raid.\nThis can be set as a keyBinding"] = true
+L["Asks all Team members to leave a party or raid.\nThis can be set as a keyBinding"] = true
+L["The master will be the set to the focus if a team member"] = true
+L["Master will always be the party leader."] = true
+L["Sets click-to-move on Minions"] = true
+L["Auto Accept invites from the team."] = true
+L["Auto Accept invites from your friends list."] = true
+L["Auto Accept invites from your Battlenet list."] = true
+L["Auto Accept invites from your Guild."] = true
+L["Automatically set the Loot Method to\nFree For All\nMaster Looter\nPrsonal Loot"] = true
+L["Decline invites from anyone else."] = true
+L["Friends Use the same loot as if they was a team member."] = true
+L["Minions Don't need loot."] = true
+L["Set to Group Loot "] = true
+L["Override: Set loot to Group Loot if stranger is in group."] = true
+L["Set the Loot Method to..."] = true
+L["Accept from BattleNet friends."] = true 
+L["Auto Accept invites from your Battlenet or RealID Friends list."] = true
+L["Auto Convert To Raid if team is over five character's"] = true
+L["Auto Convert To Raid"] = true
+L["Promote Master to party leader."] = true
+L["Set the Master to the Focus."] = true
+L["Focus is set to master."] = true
+L["The master will be the set from the focus if a team member"] = true
