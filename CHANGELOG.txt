@@ -4,6 +4,8 @@ Release Date: 16/2/2016
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade, Curr
 
 *jamba-Core Some Back End Work for Legion/7.0.x
+	* New tooltips on the options config to help make it easter to understand what some buttons to do and to clean up some of the long line text.
+	
 
 *Jamba-Display-Team
 	-Added a NewTooltip when you hover over Follow bar to show
@@ -14,9 +16,7 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase
 		- Gold of the minion.
 		- Mail if the minion has mail and who it is from (last 3)
 		- Currency You can pick the currency from the ingame currency by showing on BackPack
-	
-	- Removed Display BagSpace see the tooltip..
-
+	- Removed Display BagSpace see the tooltip..	
 NEW! ((Beta)) -- TODO Add New Classess support there powerbar	
 	- Renamed "Combo PointBar" to "Alternate PowerBar"
 		- Added Support for Other classess Alternate Power
@@ -37,6 +37,12 @@ NEW! ((Beta)) -- TODO Add New Classess support there powerbar
 * New Module Jamba-Curr
 	- All Currency Information
 	- Pending changes to go here -Ebony....	
+	
+*jamba-Team
+	- Added two new ways to add team members to the team with command line and GUI.
+		@target will add your current target to the team list
+		@mouseOver Will add your current MouseOver to the team list.
+	- cleaned up some loot code. and some offline code.
 	
 
 			

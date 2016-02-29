@@ -4,6 +4,10 @@
 ## Author: Ebony, Former Author: Jafula
 ## Version: 4.3
 ## SavedVariables: JambaCoreProfileDB, JambaCommunicationsProfileDB, JambaTeamProfileDB, JambaTagProfileDB, JambaMessageProfileDB
+## X-Curse-Packaged-Version: Beta-4.3c-1-gfc28dc2
+## X-Curse-Project-Name: Jamba
+## X-Curse-Project-ID: jamba
+## X-Curse-Repository-ID: wow/jamba/mainline
 JambaEmbeds.xml
 JambaUtilities.lua
 Locales\Locales.xml

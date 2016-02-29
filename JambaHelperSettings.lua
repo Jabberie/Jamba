@@ -217,6 +217,21 @@ function JambaHelperSettings:CreateBackdrop()
 end
 
 -------------------------------------------------------------------------------------------------------------
+-- ToolTip.
+-------------------------------------------------------------------------------------------------------------
+
+
+local function onControlEnter(widget, event, value)
+	GameTooltip:ClearLines()
+	GameTooltip:SetOwner(widget.frame, "ANCHOR_TOP")
+	GameTooltip:AddLine(widget.text and widget.text:GetText() or widget.label:GetText())
+	GameTooltip:AddLine(widget:GetUserData("tooltip"), 1, 1, 1, 1)
+	GameTooltip:Show()
+end
+
+local function onControlLeave() GameTooltip:Hide() end
+
+-------------------------------------------------------------------------------------------------------------
 -- Button.
 -------------------------------------------------------------------------------------------------------------
 
@@ -225,13 +240,17 @@ function JambaHelperSettings:GetButtonHeight()
 	return 24
 end
 
-function JambaHelperSettings:CreateButton( settingsControl, width, left, top, text, buttonCallback )
+function JambaHelperSettings:CreateButton( settingsControl, width, left, top, text, buttonCallback, toolTip )
 	local button = AceGUI:Create( "Button" )
 	button:SetText( text )
 	settingsControl.widgetSettings:AddChild( button )
 	button:SetWidth( width )
 	button:SetPoint( "TOPLEFT", settingsControl.widgetSettings.content, "TOPLEFT", left, top )
-	button:SetCallback( "OnClick", buttonCallback )
+	button:SetCallback( "OnClick", buttonCallback )	
+	--button:SetUserData("key", "keyword") -- needed/??
+	button:SetUserData("tooltip", toolTip)
+	button:SetCallback("OnEnter", onControlEnter)
+	button:SetCallback("OnLeave", onControlLeave)		
 	return button
 end
 
@@ -249,13 +268,16 @@ function JambaHelperSettings:GetRadioBoxHeight()
 	return 20
 end
 
-function JambaHelperSettings:CreateCheckBox( settingsControl, width, left, top, text, checkBoxCallback )
+function JambaHelperSettings:CreateCheckBox( settingsControl, width, left, top, text, checkBoxCallback, toolTip )
 	local button = AceGUI:Create( "CheckBox" )
 	button:SetLabel( text )
 	settingsControl.widgetSettings:AddChild( button )
 	button:SetWidth( width )
 	button:SetPoint( "TOPLEFT", settingsControl.widgetSettings.content, "TOPLEFT", left, top )
 	button:SetCallback( "OnValueChanged", checkBoxCallback )
+	button:SetUserData("tooltip", toolTip)
+	button:SetCallback("OnEnter", onControlEnter)
+	button:SetCallback("OnLeave", onControlLeave)
 	return button
 end
 
@@ -268,12 +290,15 @@ function JambaHelperSettings:GetEditBoxHeight()
 	return 44
 end
 
-function JambaHelperSettings:CreateEditBox( settingsControl, width, left, top, text )
+function JambaHelperSettings:CreateEditBox( settingsControl, width, left, top, text, toolTip )
 	local editBox = AceGUI:Create( "EditBox" )
 	editBox:SetLabel( text )
 	settingsControl.widgetSettings:AddChild( editBox )
 	editBox:SetWidth( width )
 	editBox:SetPoint( "TOPLEFT", settingsControl.widgetSettings.content, "TOPLEFT", left, top )
+	editBox:SetUserData("tooltip", toolTip)
+	editBox:SetCallback("OnEnter", onControlEnter)
+	editBox:SetCallback("OnLeave", onControlLeave)
 	return editBox
 end
 
@@ -281,13 +306,16 @@ end
 -- Multi EditBox.
 -------------------------------------------------------------------------------------------------------------
 
-function JambaHelperSettings:CreateMultiEditBox( settingsControl, width, left, top, text, lines )
+function JambaHelperSettings:CreateMultiEditBox( settingsControl, width, left, top, text, lines, toolTip )
 	local editBox = AceGUI:Create( "MultiLineEditBox" )
 	editBox:SetLabel( text )
 	settingsControl.widgetSettings:AddChild( editBox )
 	editBox:SetWidth( width )
 	editBox:SetPoint( "TOPLEFT", settingsControl.widgetSettings.content, "TOPLEFT", left, top )
 	editBox:SetNumLines( lines )
+	editBox:SetUserData("tooltip", toolTip)
+	editBox:SetCallback("OnEnter", onControlEnter)
+	editBox:SetCallback("OnLeave", onControlLeave)
 	return editBox
 end
 
@@ -318,12 +346,15 @@ function JambaHelperSettings:GetDropdownHeight()
 	return 44
 end
 
-function JambaHelperSettings:CreateDropdown( settingsControl, width, left, top, text )
+function JambaHelperSettings:CreateDropdown( settingsControl, width, left, top, text, toolTip )
 	local dropdown = AceGUI:Create( "Dropdown" )
 	dropdown:SetLabel( text )
 	settingsControl.widgetSettings:AddChild( dropdown )
 	dropdown:SetWidth( width )
 	dropdown:SetPoint( "TOPLEFT", settingsControl.widgetSettings.content, "TOPLEFT", left, top )
+	dropdown:SetUserData("tooltip", toolTip)
+	dropdown:SetCallback("OnEnter", onControlEnter)
+	dropdown:SetCallback("OnLeave", onControlLeave)
 	return dropdown
 end
 
