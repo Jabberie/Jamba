@@ -38,13 +38,16 @@ NEW! ((Beta)) -- TODO Add New Classess support there powerbar
 	- All Currency Information
 	- Pending changes to go here -Ebony....	
 	
-*jamba-Team
+* Jamba-Team
 	- Added two new ways to add team members to the team with command line and GUI.
 		@target will add your current target to the team list
 		@mouseOver Will add your current MouseOver to the team list.
 	- cleaned up some loot code. and some offline code.
 	
-
+* Jamba-Macro
+	- Tag Sould nolonger set the realm name if playing from the same realm. thanks to Sonof from d-b for the report.
+	
+	
 			
 -----------------------
 

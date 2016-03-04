@@ -1382,7 +1382,9 @@ function AJM:SubstituteVariablesAndTagsForValues( originalMacroText, variables )
 	for index, tag in JambaApi.AllTagsListIterator() do
 		local characterName = JambaApi.GetCharacterWithTag( tag )
 		if characterName ~= "" then
-			macroText = macroText:gsub( "#"..tag.."#", characterName )
+			-- 4.0 tag fix ebony realm name to add if from same server.
+			--macroText = macroText:gsub( "#"..tag.."#", characterName )
+			macroText = macroText:gsub( "#"..tag.."#", ( Ambiguate( characterName, "none" ) ) )
 		end
 	end
 	-- Substitute variables.	

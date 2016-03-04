@@ -109,5 +109,5 @@ L["Auto Convert To Raid if team is over five character's"] = true
 L["Auto Convert To Raid"] = true
 L["Promote Master to party leader."] = true
 L["Set the Master to the Focus."] = true
-L["Focus is set to master."] = true
-L["The master will be the set from the focus if a team member"] = true
+L["Focus will set master toon."] = true
+L["The master will be the set from the focus target if a team member \n\n Note: All team members must be setting the focus."] = true

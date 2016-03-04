@@ -350,9 +350,9 @@ local function SettingsCreateMasterControl( top )
 		headingWidth, 
 		column1Left, 
 		top - headingHeight, 
-		L["Focus is set to master."],
+		L["Focus will set master toon."],
 		AJM.SettingsFocusChangeToggle,
-		L["The master will be the set to the focus if a team member"]
+		L["The master will be the set from the focus target if a team member \n\n Note: All team members must be setting the focus."]
 	)	
 	AJM.settingsControl.masterControlCheckBoxMasterChange = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
@@ -1152,6 +1152,7 @@ function AJM:PLAYER_FOCUS_CHANGED()
 		-- Get the name of the focused unit.
 		local targetName, targetRealm = UnitName( "focus" )
 		local name = JambaUtilities:AddRealmToNameIfNotNil( targetName, targetRealm )
+		AJM:Print("test", name)
 		-- Attempt to set this target as the master if the target is in the team.
 		if IsCharacterInTeam( name ) == true then
 			if (name ~= nil) and (name:trim() ~= "") then
