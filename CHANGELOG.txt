@@ -44,6 +44,7 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase
 		- Now shows Currency Icon.
 		- Now shows the Currency Gold Icons on when showing gold/Sliver/Copper
 		- NoLonger Shows Currency for Offline minions.
+		- Should Now Order the character right That are Offline/Online.
 	-Added Help Information Tooltips.
 		
 * Jamba-Team

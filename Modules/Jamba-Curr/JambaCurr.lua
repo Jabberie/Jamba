@@ -184,6 +184,7 @@ AJM.COMMAND_HERE_IS_CURRENCY = "HereIsCurrency"
 -- Variables used by module.
 -------------------------------------------------------------------------------------------------------------
 
+
 -------------------------------------------------------------------------------------------------------------
 -- Settings Dialogs.
 -------------------------------------------------------------------------------------------------------------
@@ -789,11 +790,11 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxCurrencyLockWindow:SetValue( AJM.db.currencyLockWindow )
 	if AJM.currencyListFrameCreated == true then
 		AJM:CurrencyListSetColumnWidth()
-		AJM:CurrencyListSetHeight()
 		AJM:SettingsUpdateBorderStyle()
 		AJM:CurrencyUpdateWindowLock()
 		JambaToonCurrencyListFrame:SetScale( AJM.db.currencyScale )
 		AJM:UpdateHendingText()
+		AJM:CurrencyListSetHeight()
 	end
 end
 
@@ -1069,7 +1070,7 @@ function AJM:OnEnable()
 	--AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
 	if AJM.db.currOpenStartUpMaster == true then
 		if JambaApi.IsCharacterTheMaster( self.characterName ) == true then
-			AJM:ScheduleTimer( "JambaToonRequestCurrency", 5 )
+			AJM:ScheduleTimer( "JambaToonRequestCurrency", 20 )
 		end
 	end
 end
@@ -1401,12 +1402,12 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	updateButton:SetText( L["Update"] )		
 	frame.updateButton = updateButton
 	
-	AJM:CurrencyListSetHeight()
 	AJM:SettingsUpdateBorderStyle()
 	AJM:CurrencyUpdateWindowLock()
 	JambaToonCurrencyListFrame:Hide()
 	AJM.currencyListFrameCreated = true
 	AJM:UpdateHendingText()
+	AJM:CurrencyListSetHeight()
 end
 
 function AJM:UpdateHendingText()
@@ -1683,40 +1684,42 @@ function AJM:CurrencyListSetColumnWidth()
 				currencyFrameCharacterInfo.TypeSixText:Show()
 			else
 				currencyFrameCharacterInfo.TypeSixText:Hide()
-		end
---[[
-		if AJM.db.currTypeSeven == true then
-			currencyFrameCharacterInfo.TypeSevenText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.TypeSevenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.TypeSevenText:Show()
+			end		
+	--[[	
+			if AJM.db.currTypeSeven == true then
+				currencyFrameCharacterInfo.TypeSevenText:SetWidth( pointsWidth )
+				currencyFrameCharacterInfo.TypeSevenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + pointsWidth + spacingWidth
+				currencyFrameCharacterInfo.TypeSevenText:Show()
+			else
+				currencyFrameCharacterInfo.TypeSevenText:Hide()
+			end
+			if AJM.db.currTypeEight == true then
+				currencyFrameCharacterInfo.TypeEightText:SetWidth( pointsWidth )
+				currencyFrameCharacterInfo.TypeEightText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + pointsWidth + spacingWidth
+				currencyFrameCharacterInfo.TypeEightText:Show()
+			else
+				currencyFrameCharacterInfo.TypeEightText:Hide()
+			end		
+			if AJM.db.currTypeNine == true then
+				currencyFrameCharacterInfo.TypeNineText:SetWidth( pointsWidth )
+				currencyFrameCharacterInfo.TypeNineText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + pointsWidth + spacingWidth
+				currencyFrameCharacterInfo.TypeNineText:Show()
+			else
+				currencyFrameCharacterInfo.TypeNineText:Hide()
+			end
+			if AJM.db.currTypeTen == true then
+				currencyFrameCharacterInfo.TypeTenText:SetWidth( pointsWidth )
+				currencyFrameCharacterInfo.TypeTenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + pointsWidth + spacingWidth
+				currencyFrameCharacterInfo.TypeTenText:Show()
+			else
+				currencyFrameCharacterInfo.TypeTenText:Hide()
+			end ]]
 		else
-			currencyFrameCharacterInfo.TypeSevenText:Hide()
-		end
-		if AJM.db.currTypeEight == true then
-			currencyFrameCharacterInfo.TypeEightText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.TypeEightText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.TypeEightText:Show()
-		else
-			currencyFrameCharacterInfo.TypeEightText:Hide()
-		end		
-		if AJM.db.currTypeNine == true then
-			currencyFrameCharacterInfo.TypeNineText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.TypeNineText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.TypeNineText:Show()
-		else
-			currencyFrameCharacterInfo.TypeNineText:Hide()
-		end
-		if AJM.db.currTypeTen == true then
-			currencyFrameCharacterInfo.TypeTenText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.TypeTenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.TypeTenText:Show()
-		else
-			currencyFrameCharacterInfo.TypeTenText:Hide()
-		end ]]
+			
 		end
 	end	
 	-- Parent frame width and title.
@@ -1784,13 +1787,29 @@ function AJM:CurrencyListSetColumnWidth()
 	end
 end
 
+	
+
+
 function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	--AJM.Print("makelist", characterName)
+	--if JambaPrivate.Team.GetCharacterOnlineStatus (characterName) == true then
 	local left = 10
 	local spacing = 50
 	local width = 50
+	local top = 0
 	--local top = -35 + (-15 * JambaApi.GetPositionForCharacterName( characterName ))
-	local top = -35 + (-15 * JambaApi.GetPositionForCharacterNameOnline( characterName) )
+	--if JambaPrivate.Team.GetCharacterOnlineStatus (characterName) == true then
+		local height1 = -35 + ( -15 * JambaApi.GetPositionForCharacterName( characterName) )
+		local height2 = -35 + ( -15 * JambaApi.GetPositionForCharacterNameOnline( characterName) )
+		if height1 < height2 then
+			--AJM:Print("greater than ", characterName )
+			top = height2
+		elseif height1 > height2 then
+			top = height2
+		else
+			top = height2
+		end	
+	--AJM:Print("Top", top)
 	-- Create the table to hold the status bars for this character.	
 	AJM.currencyFrameCharacterInfo[characterName] = {}
 	-- Get the character info table.
@@ -1935,6 +1954,14 @@ function AJM:JambaToonRequestCurrency()
 	local a = 0.6
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
 		--AJM.Print("DoRequestCurrency", characterName)
+		-- Change Hight if a new member joins the team or leaves the team.
+		local height1 = currencyFrameCharacterInfo.characterRowTopPoint
+		local height2 = -35 + ( -15 * JambaApi.GetPositionForCharacterNameOnline( characterName) )
+			if height1 < height2 then
+				currencyFrameCharacterInfo.characterRowTopPoint = height2
+			elseif height1 > height2 then
+				currencyFrameCharacterInfo.characterRowTopPoint = height2
+			end	
 		if JambaApi.GetCharacterOnlineStatus ( characterName ) == false then
 			-- Hides currency for offline members.
 			--AJM.Print("offlineRemove", characterName )
@@ -1953,6 +1980,7 @@ function AJM:JambaToonRequestCurrency()
 			currencyFrameCharacterInfo.TypeTenText:Hide()
 			]]
 		else
+			currencyFrameCharacterInfo.characterNameText:Show()
 			currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
 			currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
 			currencyFrameCharacterInfo.TypeOneText:SetTextColor( r, g, b, a )
