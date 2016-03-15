@@ -27,7 +27,7 @@ local L = LibStub( "AceLocale-3.0" ):GetLocale( AJM.moduleName )
 AJM.parentDisplayName = L["Toon"]
 AJM.moduleDisplayName = L["Currency"]
 
--- Currency Identifiers.
+-- Currency Identifiers. Old stuff
 AJM.CDalaranJewelcraftingToken = 61
 AJM.CValor = 1191
 AJM.CChampionsSeal = 241
@@ -35,7 +35,7 @@ AJM.CIllustriousJewelcraftersToken = 361
 AJM.CConquestPoints = 390
 AJM.CTolBaradCommendation = 391
 AJM.CHonorPoints = 392
-AJM.CIronpawToken = 402
+AJM.CTypeNine = 402
 AJM.CLesserCharmOfGoodFortune = 738
 AJM.CElderCharmOfGoodFortune = 697
 AJM.CMoguRuneOfFate = 752
@@ -58,29 +58,49 @@ AJM.settings = {
 	profile = {
 		currGold = true,
 		currGoldInGuildBank = false,
-		currHonorPoints = true,
-		currConquestPoints = true,
-		--as there not used much now changed to false ebony
-		currTolBaradCommendation = false,
-		currChampionsSeal = false,
-		currIllustriousJewelcraftersToken = false,
-		currDalaranJewelcraftingToken = false,
-		currIronpawToken = false,
-		currValor = false,
-		currLesserCharmOfGoodFortune = false,
-		currElderCharmOfGoodFortune = false,
-		currMoguRuneOfFate = false,
-        currWarforgedSeal = false,
-        currBloodyCoin = false,
-        currTimelessCoin = false,
-		--ebony New WoD Currency
-		currGarrisonResources  = true,
-		currTemperedFate  = false,
-		currApexisCrystal  = false,
-		currDarkmoon = false,
-		currInevitableFate  = false,
-		currOil = false,		
-		currTimeWalker = false,
+		-- Currency default Shown
+		currTypeOne = true,
+		currTypeTwo = true,
+		currTypeThree = true,
+		currTypeFour = true,
+		currTypeFive = true,
+		currTypeSix = false,
+		currTypeSeven = false,
+		currTypeEight = false,
+		currTypeNine = false,
+		currTypeTen = false,
+		-- Currency default Id's http://www.wowhead.com/currencies
+		--Honor
+		CcurrTypeOne = 392,
+		CcurrTypeOneName = L["Currency One"],
+		--Conquest
+		CcurrTypeTwo = 390,
+		CcurrTypeTwoName = L["Currency Two"],
+		--Valor
+		CcurrTypeThree = 1191,
+		CcurrTypeThreeName = L["Currency Three"],
+		--Time Walker Coins
+		CcurrTypeFour = 1129,
+		CcurrTypeFourName = L["Currency Four"],
+		--Garrison Resources 
+		CcurrTypeFive = 824,
+		CcurrTypeFiveName = L["Currency Five"],
+		-- Apexis Crystal} 
+		CcurrTypeSix = 823,
+		CcurrTypeSixName = L["Currency Six"],
+	--[[	-- [PH]Time Walker Coins 
+		CcurrTypeSeven = 1166,
+		CcurrTypeSevenName = L["Currency Seven"],
+		--[PH]Oil
+		CcurrTypeEight = 1101,
+		CcurrTypeEightName = L["Currency Eight"],
+		--[PH] Honor
+		CcurrTypeNine = 392,
+		CcurrTypeNineName = L["Currency Nine"],
+		--[PH] Honor
+		CcurrTypeTen = 392,
+		CcurrTypeTenName = L["Currency Ten"],
+	]]	
 		currencyFrameAlpha = 1.0,
 		currencyFramePoint = "CENTER",
 		currencyFrameRelativePoint = "CENTER",
@@ -97,14 +117,14 @@ AJM.settings = {
 		currencyBorderStyle = L["Blizzard Tooltip"],
 		currencyBackgroundStyle = L["Blizzard Dialog Background"],
 		currencyScale = 1,
-		currencyNameWidth = 50,
-		currencyPointsWidth = 40,
+		currencyNameWidth = 60,
+		currencyPointsWidth = 50,
 		currencyGoldWidth = 90,
 		currencySpacingWidth = 3,
 		currencyLockWindow = false,
 		currOpenStartUpMaster = false,
 	},
-}
+} 
 
 -- Configuration.
 function AJM:GetConfiguration()
@@ -184,6 +204,9 @@ local function SettingsCreate()
 	JambaHelperSettings:CreateHelp( AJM.settingsControl, helpTable, AJM:GetConfiguration() )		
 end
 
+
+
+
 function AJM:SettingsCreateCurrency( top )
 	-- Get positions.
 	local checkBoxHeight = JambaHelperSettings:GetCheckBoxHeight()
@@ -193,17 +216,19 @@ function AJM:SettingsCreateCurrency( top )
 	local buttonHeight = JambaHelperSettings:GetButtonHeight()
 	local dropdownHeight = JambaHelperSettings:GetDropdownHeight()
 	local labelHeight = JambaHelperSettings:GetLabelHeight()
+	local continueLabelHeight = 18
 	local left = JambaHelperSettings:LeftOfSettings()
 	local headingHeight = JambaHelperSettings:HeadingHeight()
 	local headingWidth = JambaHelperSettings:HeadingWidth( true )
 	local horizontalSpacing = JambaHelperSettings:GetHorizontalSpacing()
+	local indent = horizontalSpacing * 12
 	local verticalSpacing = JambaHelperSettings:GetVerticalSpacing()
 	local halfWidth = (headingWidth - horizontalSpacing) / 2
-	local thirdWidth = (headingWidth - (horizontalSpacing * 2)) / 3
+	local thirdWidth = (headingWidth - (horizontalSpacing * 5)) / 5
 	local halfWidthSlider = (headingWidth - horizontalSpacing) / 2
 	local column2left = left + halfWidthSlider
 	local left2 = left + thirdWidth
-	local left3 = left + (thirdWidth * 2)
+	local left3 = left + (thirdWidth * 1)
 	local movingTop = top
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Currency Selection"], movingTop, false )
 	movingTop = movingTop - headingHeight
@@ -213,7 +238,8 @@ function AJM:SettingsCreateCurrency( top )
 		left, 
 		movingTop, 
 		L["Gold"],
-		AJM.SettingsToggleCurrencyGold
+		AJM.SettingsToggleCurrencyGold,
+		L["Shows the minions Gold"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControl.checkBoxCurrencyGoldInGuildBank = JambaHelperSettings:CreateCheckBox( 
@@ -222,206 +248,317 @@ function AJM:SettingsCreateCurrency( top )
 		left, 
 		movingTop, 
 		L["Include Gold In Guild Bank"],
-		AJM.SettingsToggleCurrencyGoldInGuildBank
-	)	
+		AJM.SettingsToggleCurrencyGoldInGuildBank,
+		L["Show Gold In Guild Bank\n\nThis does not update unless you visit the guildbank."]
+	)
+	
+	--Currency One
 	movingTop = movingTop - checkBoxHeight		
-	AJM.settingsControl.checkBoxCurrencyHonorPoints = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.checkBoxCurrencyTypeOne = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		halfWidth, 
 		left, 
 		movingTop, 
-		L["Honor Points"]..L[" ("]..L["HP"]..L[")"],
-		AJM.SettingsToggleCurrencyHonorPoints
-	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyConquestPoints = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		headingWidth, 
-		left, 
-		movingTop, 
-		L["Conquest Points"]..L[" ("]..L["CP"]..L[")"],
-		AJM.SettingsToggleCurrencyConquestPoints
+		L["Currency One"],
+		AJM.SettingsToggleCurrencyTypeOne,
+		L["Shows Currency on The Currency display window."]
 	)
-	movingTop = movingTop - checkBoxHeight	
-	AJM.settingsControl.checkBoxCurrencyValor = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.labelBoxCurrencyTypeOneName = JambaHelperSettings:CreateLabel( 
+		AJM.settingsControl,
+		halfWidth,
+		column2left,
+		movingTop,
+		L["CurrencyName"]
+	)	
+	AJM.settingsControl.labelBoxCurrencyTypeOneName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeOneName )
+	
+	movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.editBoxCurrencyTypeOneID = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl,
+		thirdWidth,
+		left + indent,
+		movingTop,
+		L["CurrencyID"],
+		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+	)	
+	AJM.settingsControl.editBoxCurrencyTypeOneID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeOneID )
+	
+	--Currency Two
+	movingTop = movingTop - editBoxHeight
+	AJM.settingsControl.checkBoxCurrencyTypeTwo = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		halfWidth, 
 		left, 
 		movingTop, 
-		L["Valor Points"]..L[" ("]..L["VP"]..L[")"],
-		AJM.SettingsToggleCurrencyValor
+		L["Currency Two"],
+		AJM.SettingsToggleCurrencyTypeTwo,
+		L["Shows Currency on The Currency display window."]
+	)
+
+	--movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.labelBoxCurrencyTypeTwoName = JambaHelperSettings:CreateLabel( 
+		AJM.settingsControl,
+		halfWidth,
+		column2left,
+		movingTop,
+		L["CurrencyName"]
+	)	
+	AJM.settingsControl.labelBoxCurrencyTypeTwoName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeTwoName )
+	movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.editBoxCurrencyTypeTwoID = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl,
+		thirdWidth,
+		left + indent,
+		movingTop,
+		L["CurrencyID"],
+		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+	)	
+	AJM.settingsControl.editBoxCurrencyTypeTwoID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeTwoID )	
+
+	--Currency Three
+	movingTop = movingTop - editBoxHeight	
+	AJM.settingsControl.checkBoxCurrencyTypeThree = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left, 
+		movingTop, 
+		L["Currency Three"],
+		AJM.SettingsToggleCurrencyTypeThree,
+		L["Shows Currency on The Currency display window."]
 	)		
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyTolBaradCommendation = JambaHelperSettings:CreateCheckBox( 
+	--movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.labelBoxCurrencyTypeThreeName = JambaHelperSettings:CreateLabel( 
+		AJM.settingsControl,
+		halfWidth,
+		column2left,
+		movingTop,
+		L["CurrencyName"]
+	)	
+	AJM.settingsControl.labelBoxCurrencyTypeThreeName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeThreeName )
+	movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.editBoxCurrencyTypeThreeID = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl,
+		thirdWidth,
+		left + indent,
+		movingTop,
+		L["CurrencyID"],
+		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+	)	
+	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeThreeID )	
+	--Currency Four
+	movingTop = movingTop - editBoxHeight
+	AJM.settingsControl.checkBoxCurrencyTypeFour = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		halfWidth, 
 		left, 
 		movingTop, 
-		L["Tol Barad Commendation"]..L[" ("]..L["TBC"]..L[")"],
-		AJM.SettingsToggleCurrencyTolBaradCommendation
+		L["Currency Four"],
+		AJM.SettingsToggleCurrencyTypeFour,
+		L["Shows Currency on The Currency display window."]
 	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyChampionsSeal = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.labelBoxCurrencyTypeFourName = JambaHelperSettings:CreateLabel( 
+		AJM.settingsControl,
+		halfWidth,
+		column2left,
+		movingTop,
+		L["CurrencyName"]
+	)	
+	AJM.settingsControl.labelBoxCurrencyTypeFourName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeFourName )
+	movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.editBoxCurrencyTypeFourID = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl,
+		thirdWidth,
+		left + indent,
+		movingTop,
+		L["CurrencyID"],
+		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+	)	
+	AJM.settingsControl.editBoxCurrencyTypeFourID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeFourID )	
+	--Currency Five
+	movingTop = movingTop - editBoxHeight
+	AJM.settingsControl.checkBoxCurrencyTypeFive = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		halfWidth, 
 		left, 
 		movingTop, 
-		L["Champion's Seal"]..L[" ("]..L["CS"]..L[")"],
-		AJM.SettingsToggleCurrencyChampionsSeal
+		L["Currency Five"],
+		AJM.SettingsToggleCurrencyTypeFive,
+		L["Shows Currency on The Currency display window."]
 	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyIllustriousJewelcraftersToken = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl.labelBoxCurrencyTypeFiveName = JambaHelperSettings:CreateLabel( 
+		AJM.settingsControl,
+		halfWidth,
+		column2left,
+		movingTop,
+		L["CurrencyName"]
+	)	
+	AJM.settingsControl.labelBoxCurrencyTypeFiveName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeFiveName )
+	movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.editBoxCurrencyTypeFiveID = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl,
+		thirdWidth,
+		left + indent,
+		movingTop,
+		L["CurrencyID"],
+		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+	)
+	AJM.settingsControl.editBoxCurrencyTypeFiveID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeFiveID )	
+	--Currency Six
+	movingTop = movingTop - editBoxHeight	
+	AJM.settingsControl.checkBoxCurrencyTypeSix = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		halfWidth, 
 		left, 
 		movingTop, 
-		L["Illustrious Jewelcrafter's Token"]..L[" ("]..L["IJT"]..L[")"],
-		AJM.SettingsToggleCurrencyIllustriousJewelcraftersToken
+		L["Currency Six"],
+		AJM.SettingsToggleCurrencyTypeSix,
+		L["Shows Currency on The Currency display window."]
 	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyDalaranJewelcraftingToken = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.labelBoxCurrencyTypeSixName = JambaHelperSettings:CreateLabel( 
+		AJM.settingsControl,
+		halfWidth,
+		column2left,
+		movingTop,
+		L["CurrencyName"]
+	)	
+	AJM.settingsControl.labelBoxCurrencyTypeSixName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeSixName )
+	movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.editBoxCurrencyTypeSixID = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl,
+		thirdWidth,
+		left + indent,
+		movingTop,
+		L["CurrencyID"],
+		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+	)
+	AJM.settingsControl.editBoxCurrencyTypeSixID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeSixID )		
+--[[ Extra Space if needed some point in time Ebony
+	--Currency Seven
+	movingTop = movingTop - editBoxHeight
+	AJM.settingsControl.checkBoxCurrencyTypeSeven = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		halfWidth, 
 		left, 
 		movingTop, 
-		L["Dalaran Jewelcrafting Token"]..L[" ("]..L["DJT"]..L[")"],
-		AJM.SettingsToggleCurrencyDalaranJewelcraftingToken
+		L["Currency Seven"],
+		L["Shows Currency on The Currency display window."],
+		AJM.SettingsToggleCurrencyTypeSeven
 	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyIronpawToken = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.labelBoxCurrencyTypeSevenName = JambaHelperSettings:CreateLabel( 
+		AJM.settingsControl,
+		halfWidth,
+		column2left,
+		movingTop,
+		L["CurrencyName"]
+	)	
+	AJM.settingsControl.labelBoxCurrencyTypeSevenName:SetCallback( "OnEnterPressed", AJM.LabeloxChangedCurrencyTypeSevenName )
+	movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.editBoxCurrencyTypeSevenID = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl,
+		thirdWidth,
+		left + indent,
+		movingTop,
+		L["CurrencyID"],
+		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+	)	
+	AJM.settingsControl.editBoxCurrencyTypeSevenID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeSevenID )
+	--Currency Eight
+	movingTop = movingTop - editBoxHeight
+	AJM.settingsControl.checkBoxCurrencyTypeEight = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		halfWidth, 
 		left, 
 		movingTop, 
-		L["Ironpaw Token"]..L[" ("]..L["IT"]..L[")"],
-		AJM.SettingsToggleCurrencyIronpawToken
+		L["Currency Eight"],
+		AJM.SettingsToggleCurrencyTypeEight,
+		L["Shows Currency on The Currency display window."]
 	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyLesserCharmOfGoodFortune = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.labelBoxCurrencyTypeEightName = JambaHelperSettings:CreateLabel( 
+		AJM.settingsControl,
+		halfWidth,
+		column2left,
+		movingTop,
+		L["CurrencyName"]
+	)	
+	AJM.settingsControl.labelBoxCurrencyTypeEightName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeEightName )
+	movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.editBoxCurrencyTypeEightID = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl,
+		thirdWidth,
+		left + indent,
+		movingTop,
+		L["CurrencyID"],
+		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+	)	
+	AJM.settingsControl.editBoxCurrencyTypeEightID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeEightID )
+	--Currency Nine
+	movingTop = movingTop - editBoxHeight
+	AJM.settingsControl.checkBoxCurrencyTypeNine = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		halfWidth, 
 		left, 
 		movingTop, 
-		L["Lesser Charm of Good Fortune"]..L[" ("]..L["LCGF"]..L[")"],
-		AJM.SettingsToggleCurrencyLesserCharmOfGoodFortune
+		L["Currency Nine"],
+		AJM.SettingsToggleCurrencyTypeNine,
+		L["Shows Currency on The Currency display window."]
 	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyElderCharmOfGoodFortune = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.labelBoxCurrencyTypeNineName = JambaHelperSettings:CreateLabel( 
+		AJM.settingsControl,
+		halfWidth,
+		column2left,
+		movingTop,
+		L["CurrencyName"]
+	)	
+	AJM.settingsControl.labelBoxCurrencyTypeNineName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeNineName )
+	movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.editBoxCurrencyTypeNineID = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl,
+		thirdWidth,
+		left + indent,
+		movingTop,
+		L["CurrencyID"],
+		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+	)	
+	AJM.settingsControl.editBoxCurrencyTypeNineID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeNineID )
+	-- Currency Ten
+	movingTop = movingTop - editBoxHeight
+	AJM.settingsControl.checkBoxCurrencyTypeTen = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		halfWidth, 
 		left, 
 		movingTop, 
-		L["Elder Charm of Good Fortune"]..L[" ("]..L["ECGF"]..L[")"],
-		AJM.SettingsToggleCurrencyElderCharmOfGoodFortune
+		L["Currency Ten"],
+		AJM.SettingsToggleCurrencyTypeTen,
+		L["Shows Currency on The Currency display window."]
+	)
+	AJM.settingsControl.labelBoxCurrencyTypeTenName = JambaHelperSettings:CreateLabel( 
+		AJM.settingsControl,
+		halfWidth,
+		column2left,
+		movingTop,
+		L["CurrencyName"]
 	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyMoguRuneOfFate = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		headingWidth, 
-		left, 
-		movingTop, 
-		L["Mogu Rune Of Fate"]..L[" ("]..L["MROF"]..L[")"],
-		AJM.SettingsToggleCurrencyMoguRuneOfFate
-	)	
-	movingTop = movingTop - checkBoxHeight
-    AJM.settingsControl.checkBoxCurrencyWarforgedSeal = JambaHelperSettings:CreateCheckBox(
+	AJM.settingsControl.labelBoxCurrencyTypeTenName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeTenName )
+	movingTop = movingTop - continueLabelHeight
+	AJM.settingsControl.editBoxCurrencyTypeTenID = JambaHelperSettings:CreateEditBox( 
 		AJM.settingsControl,
-		headingWidth,
-		left,
+		thirdWidth,
+		left + indent,
 		movingTop,
-		L["Warforged Seal"]..L[" ("]..L["WS"]..L[")"],
-		AJM.SettingsToggleCurrencyWarforgedSeal
+		L["CurrencyID"],
+		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
 	)
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyBloodyCoin = JambaHelperSettings:CreateCheckBox(
-		AJM.settingsControl,
-		headingWidth,
-		left,
-		movingTop,
-		L["Bloody Coin"]..L[" ("]..L["BC"]..L[")"],
-		AJM.SettingsToggleCurrencyBloodyCoin
-	)
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyTimelessCoin = JambaHelperSettings:CreateCheckBox(
-		AJM.settingsControl,
-		headingWidth,
-		left,
-		movingTop,
-		L["Timeless Coin"]..L[" ("]..L["TC"]..L[")"],
-		AJM.SettingsToggleCurrencyTimelessCoin
-	)
-	--ebony New WoD Currency
-		movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxCurrencyGarrisonResources = JambaHelperSettings:CreateCheckBox(
-		AJM.settingsControl,
-		headingWidth,
-		left,
-		movingTop,
-		L["Garrison Resources"]..L[" ("]..L["GR"]..L[")"],
-		AJM.SettingsToggleGarrisonResources
-	)
-		movingTop = movingTop - checkBoxHeight
-		AJM.settingsControl.checkBoxCurrencyTemperedFate = JambaHelperSettings:CreateCheckBox(
-		AJM.settingsControl,
-		headingWidth,
-		left,
-		movingTop,
-		L["Seal of Tempered Fate"]..L[" ("]..L["SoT"]..L[")"],
-		AJM.SettingsToggleTemperedFate
-	)
-		movingTop = movingTop - checkBoxHeight	
-		AJM.settingsControl.checkBoxCurrencyApexisCrystal = JambaHelperSettings:CreateCheckBox(
-		AJM.settingsControl,
-		headingWidth,
-		left,
-		movingTop,
-		L["Apexis Crystal"]..L[" ("]..L["AC"]..L[")"],
-		AJM.SettingsToggleCurrencyApexisCrystal
-	)
-		movingTop = movingTop - checkBoxHeight	
-		AJM.settingsControl.checkBoxCurrencyDarkmoon = JambaHelperSettings:CreateCheckBox(
-		AJM.settingsControl,
-		headingWidth,
-		left,
-		movingTop,
-		L["Darkmoon Prize Ticket"]..L[" ("]..L["DPT"]..L[")"],
-		AJM.SettingsToggleCurrencyDarkmoon
-	)
-		movingTop = movingTop - checkBoxHeight	
-		AJM.settingsControl.checkBoxCurrencyInevitableFate = JambaHelperSettings:CreateCheckBox(
-		AJM.settingsControl,
-		headingWidth,
-		left,
-		movingTop,
-		L["Seal of Inevitable Fate"]..L[" ("]..L["SoI"]..L[")"],
-		AJM.SettingsToggleCurrencyInevitableFate
-	)
-		movingTop = movingTop - checkBoxHeight	
-		AJM.settingsControl.checkBoxCurrencyOil = JambaHelperSettings:CreateCheckBox(
-		AJM.settingsControl,
-		headingWidth,
-		left,
-		movingTop,
-		L["OIL"]..L[" ("]..L["OIL"]..L[")"],
-		AJM.SettingsToggleCurrencyOil
-	)
-		movingTop = movingTop - checkBoxHeight	
-		AJM.settingsControl.checkBoxCurrencyTimeWalker = JambaHelperSettings:CreateCheckBox(
-		AJM.settingsControl,
-		headingWidth,
-		left,
-		movingTop,
-		L["Timewarped Badge"]..L[" ("]..L["TwB"]..L[")"],
-		AJM.SettingsToggleCurrencyTimeWalker
-	)	
-	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.editBoxCurrencyTypeTenID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeTenID )	
+]]	-- Other Stuff	
+	movingTop = movingTop - editBoxHeight
 	AJM.settingsControl.currencyButtonShowList = JambaHelperSettings:CreateButton( 
 		AJM.settingsControl, 
 		headingWidth, 
 		left, 
 		movingTop, 
 		L["Show Currency"], 
-		AJM.JambaToonRequestCurrency
+		AJM.JambaToonRequestCurrency,
+		L["Show Currency Window"]
 	)
 	movingTop = movingTop - buttonHeight
 	AJM.settingsControl.checkBoxCurrencyOpenStartUpMaster = JambaHelperSettings:CreateCheckBox( 
@@ -429,10 +566,11 @@ function AJM:SettingsCreateCurrency( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Open Currency List On Start Up (Master Only)"],
-		AJM.SettingsToggleCurrencyOpenStartUpMaster
+		L["Open Currency List On Start Up"],
+		AJM.SettingsToggleCurrencyOpenStartUpMaster,
+		L["Open Currency List On Start Up.\n\nThe Master Minion Only)"]
 	)	
-	movingTop = movingTop - checkBoxHeight	
+	movingTop = movingTop - checkBoxHeight
 	-- Create appearance & layout.
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Appearance & Layout"], movingTop, true )
 	movingTop = movingTop - headingHeight
@@ -441,8 +579,9 @@ function AJM:SettingsCreateCurrency( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Lock Currency List (enables mouse click-through)"],
-		AJM.SettingsToggleCurrencyLockWindow
+		L["Lock Currency List"],
+		AJM.SettingsToggleCurrencyLockWindow,
+		L["Lock Currency List\n\n(Enables Mouse Click-Through)"]
 	)	
 	movingTop = movingTop - checkBoxHeight		
 	AJM.settingsControl.currencyScaleSlider = JambaHelperSettings:CreateSlider( 
@@ -561,29 +700,81 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxCurrencyGold:SetValue( AJM.db.currGold )
 	AJM.settingsControl.checkBoxCurrencyGoldInGuildBank:SetValue( AJM.db.currGoldInGuildBank )
 	AJM.settingsControl.checkBoxCurrencyGoldInGuildBank:SetDisabled( not AJM.db.currGold )
-	AJM.settingsControl.checkBoxCurrencyHonorPoints:SetValue( AJM.db.currHonorPoints )
-	AJM.settingsControl.checkBoxCurrencyConquestPoints:SetValue( AJM.db.currConquestPoints )
-	AJM.settingsControl.checkBoxCurrencyValor:SetValue( AJM.db.currValor )	
-	AJM.settingsControl.checkBoxCurrencyTolBaradCommendation:SetValue( AJM.db.currTolBaradCommendation )
-	AJM.settingsControl.checkBoxCurrencyChampionsSeal:SetValue( AJM.db.currChampionsSeal )
-	AJM.settingsControl.checkBoxCurrencyIllustriousJewelcraftersToken:SetValue( AJM.db.currIllustriousJewelcraftersToken )
-	AJM.settingsControl.checkBoxCurrencyDalaranJewelcraftingToken:SetValue( AJM.db.currDalaranJewelcraftingToken )
-	AJM.settingsControl.checkBoxCurrencyIronpawToken:SetValue( AJM.db.currIronpawToken )
-	AJM.settingsControl.checkBoxCurrencyLesserCharmOfGoodFortune:SetValue( AJM.db.currLesserCharmOfGoodFortune )
-	AJM.settingsControl.checkBoxCurrencyElderCharmOfGoodFortune:SetValue( AJM.db.currElderCharmOfGoodFortune )
-	AJM.settingsControl.checkBoxCurrencyMoguRuneOfFate:SetValue( AJM.db.currMoguRuneOfFate )
-    AJM.settingsControl.checkBoxCurrencyWarforgedSeal:SetValue( AJM.db.currWarforgedSeal )
-    AJM.settingsControl.checkBoxCurrencyBloodyCoin:SetValue( AJM.db.currBloodyCoin )
-    AJM.settingsControl.checkBoxCurrencyTimelessCoin:SetValue( AJM.db.currTimelessCoin )
-	--ebony New WoD Currency
-	AJM.settingsControl.checkBoxCurrencyGarrisonResources:SetValue( AJM.db.currGarrisonResources )
-	AJM.settingsControl.checkBoxCurrencyTemperedFate:SetValue( AJM.db.currTemperedFate )
-	AJM.settingsControl.checkBoxCurrencyApexisCrystal:SetValue( AJM.db.currApexisCrystal )
-	AJM.settingsControl.checkBoxCurrencyDarkmoon:SetValue( AJM.db.currDarkmoon )
-	AJM.settingsControl.checkBoxCurrencyInevitableFate:SetValue( AJM.db.currInevitableFate )
-	AJM.settingsControl.checkBoxCurrencyOil:SetValue( AJM.db.currOil )
-	AJM.settingsControl.checkBoxCurrencyTimeWalker:SetValue( AJM.db.currTimeWalker )
-	--end
+	-- 
+	AJM.settingsControl.checkBoxCurrencyTypeOne:SetValue( AJM.db.currTypeOne )
+	AJM.settingsControl.editBoxCurrencyTypeOneID:SetText ( AJM.db.CcurrTypeOne )
+	AJM.settingsControl.labelBoxCurrencyTypeOneName:SetText ( AJM.db.CcurrTypeOneName )
+	
+	AJM.settingsControl.checkBoxCurrencyTypeTwo:SetValue( AJM.db.currTypeTwo )
+	AJM.settingsControl.editBoxCurrencyTypeTwoID:SetText ( AJM.db.CcurrTypeTwo )
+	AJM.settingsControl.labelBoxCurrencyTypeTwoName:SetText ( AJM.db.CcurrTypeTwoName )	
+	
+	AJM.settingsControl.checkBoxCurrencyTypeThree:SetValue( AJM.db.currTypeThree )
+	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetText ( AJM.db.CcurrTypeThree )
+	AJM.settingsControl.labelBoxCurrencyTypeThreeName:SetText ( AJM.db.CcurrTypeThreeName )	
+	
+	AJM.settingsControl.checkBoxCurrencyTypeFour:SetValue( AJM.db.currTypeFour )	
+	AJM.settingsControl.editBoxCurrencyTypeFourID:SetText ( AJM.db.CcurrTypeFour )
+	AJM.settingsControl.labelBoxCurrencyTypeFourName:SetText ( AJM.db.CcurrTypeFourName )
+	
+	AJM.settingsControl.checkBoxCurrencyTypeFive:SetValue( AJM.db.currTypeFive )
+	AJM.settingsControl.editBoxCurrencyTypeFiveID:SetText ( AJM.db.CcurrTypeFive )
+	AJM.settingsControl.labelBoxCurrencyTypeFiveName:SetText ( AJM.db.CcurrTypeFiveName )	
+		
+	AJM.settingsControl.checkBoxCurrencyTypeSix:SetValue( AJM.db.currTypeSix )
+	AJM.settingsControl.editBoxCurrencyTypeSixID:SetText ( AJM.db.CcurrTypeSix )
+	AJM.settingsControl.labelBoxCurrencyTypeSixName:SetText ( AJM.db.CcurrTypeSixName )	
+	
+--[[ Extra If needed for Some other Use Ebony	
+	AJM.settingsControl.checkBoxCurrencyTypeSeven:SetValue( AJM.db.currTypeSeven )
+	AJM.settingsControl.editBoxCurrencyTypeSevenID:SetText ( AJM.db.CcurrTypeSeven )
+	AJM.settingsControl.labelBoxCurrencyTypeSevenName:SetText ( AJM.db.CcurrTypeSevenName )	
+
+	AJM.settingsControl.checkBoxCurrencyTypeEight:SetValue( AJM.db.currTypeEight )
+	AJM.settingsControl.editBoxCurrencyTypeEightID:SetText ( AJM.db.CcurrTypeEight )
+	AJM.settingsControl.labelBoxCurrencyTypeEightName:SetText ( AJM.db.CcurrTypeEightName )		
+
+	AJM.settingsControl.checkBoxCurrencyTypeNine:SetValue( AJM.db.currTypeNine )
+	AJM.settingsControl.editBoxCurrencyTypeNineID:SetText ( AJM.db.CcurrTypeNine )
+	AJM.settingsControl.labelBoxCurrencyTypeNineName:SetText ( AJM.db.CcurrTypeNineName )	
+
+	AJM.settingsControl.checkBoxCurrencyTypeTen:SetValue( AJM.db.currTypeTen )
+	AJM.settingsControl.editBoxCurrencyTypeTenID:SetText ( AJM.db.CcurrTypeTen )
+	AJM.settingsControl.labelBoxCurrencyTypeTenName:SetText ( AJM.db.CcurrTypeTenName )	
+]]	
+	--state
+	AJM.settingsControl.editBoxCurrencyTypeOneID:SetDisabled ( not AJM.db.currTypeOne )
+	AJM.settingsControl.labelBoxCurrencyTypeOneName:SetDisabled ( not AJM.db.currTypeOne )
+	
+	AJM.settingsControl.editBoxCurrencyTypeTwoID:SetDisabled ( not AJM.db.currTypeTwo )
+	AJM.settingsControl.labelBoxCurrencyTypeTwoName:SetDisabled ( not AJM.db.currTypeTwo )
+	
+	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetDisabled ( not AJM.db.currTypeThree )
+	AJM.settingsControl.labelBoxCurrencyTypeThreeName:SetDisabled ( not AJM.db.currTypeThree )
+
+	AJM.settingsControl.editBoxCurrencyTypeFourID:SetDisabled ( not AJM.db.currTypeFour )
+	AJM.settingsControl.labelBoxCurrencyTypeFourName:SetDisabled ( not AJM.db.currTypeFour )
+
+	AJM.settingsControl.editBoxCurrencyTypeFiveID:SetDisabled ( not AJM.db.currTypeFive )
+	AJM.settingsControl.labelBoxCurrencyTypeFiveName:SetDisabled ( not AJM.db.currTypeFive )
+
+	AJM.settingsControl.editBoxCurrencyTypeSixID:SetDisabled ( not AJM.db.currTypeSix )
+	AJM.settingsControl.labelBoxCurrencyTypeSixName:SetDisabled ( not AJM.db.currTypeSix )
+
+--[[ Extra If needed for Some other Use Ebony	Need to change this [PH] Code EBONY	
+	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetDisabled ( not AJM.db.currTypeThree )
+	AJM.settingsControl.labelBoxCurrencyTypeThreeName:SetDisabled ( not AJM.db.currTypeThree )
+
+	AJM.settingsControl.editBoxCurrencyTypeFourID:SetDisabled ( not AJM.db.currTypeFour )
+	AJM.settingsControl.labelBoxCurrencyTypeFourName:SetDisabled ( not AJM.db.currTypeFour )
+
+	AJM.settingsControl.editBoxCurrencyTypeOneID:SetDisabled ( not AJM.db.currTypeFive )
+	AJM.settingsControl.labelBoxCurrencyTypeOneName:SetDisabled ( not AJM.db.currTypeFive )
+
+	AJM.settingsControl.editBoxCurrencyTypeSixID:SetDisabled ( not AJM.db.currTypeSix )
+	AJM.settingsControl.labelBoxCurrencyTypeSixName:SetDisabled ( not AJM.db.currTypeSix )
+]]	
+
 	AJM.settingsControl.checkBoxCurrencyOpenStartUpMaster:SetValue( AJM.db.currOpenStartUpMaster )
 	AJM.settingsControl.currencyTransparencySlider:SetValue( AJM.db.currencyFrameAlpha )
 	AJM.settingsControl.currencyScaleSlider:SetValue( AJM.db.currencyScale )
@@ -602,6 +793,7 @@ function AJM:SettingsRefresh()
 		AJM:SettingsUpdateBorderStyle()
 		AJM:CurrencyUpdateWindowLock()
 		JambaToonCurrencyListFrame:SetScale( AJM.db.currencyScale )
+		AJM:UpdateHendingText()
 	end
 end
 
@@ -619,112 +811,170 @@ function AJM:SettingsToggleCurrencyGoldInGuildBank( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyHonorPoints( event, checked )
-	AJM.db.currHonorPoints = checked
+function AJM:SettingsToggleCurrencyTypeOne( event, checked )
+	AJM.db.currTypeOne = checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyConquestPoints( event, checked )
-	AJM.db.currConquestPoints = checked
+function AJM:EditBoxChangedCurrencyTypeOneID( event, text )
+	AJM.db.CcurrTypeOne = text
+	AJM:JambaToonRequestCurrency()
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyValor( event, checked )
-	AJM.db.currValor = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyTolBaradCommendation( event, checked )
-	AJM.db.currTolBaradCommendation = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyChampionsSeal( event, checked )
-	AJM.db.currChampionsSeal = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyIllustriousJewelcraftersToken( event, checked )
-	AJM.db.currIllustriousJewelcraftersToken = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyDalaranJewelcraftingToken( event, checked )
-	AJM.db.currDalaranJewelcraftingToken = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyIronpawToken( event, checked )
-	AJM.db.currIronpawToken = checked
+function AJM:LabelBoxChangedCurrencyTypeOneName( event, text )
+	AJM.db.CcurrTypeOneName = text
 	AJM:SettingsRefresh()
 end
 
 
-function AJM:SettingsToggleCurrencyLesserCharmOfGoodFortune( event, checked )
-	AJM.db.currLesserCharmOfGoodFortune = checked
+function AJM:SettingsToggleCurrencyTypeTwo( event, checked )
+	AJM.db.currTypeTwo = checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyElderCharmOfGoodFortune( event, checked )
-	AJM.db.currElderCharmOfGoodFortune = checked
+function AJM:EditBoxChangedCurrencyTypeTwoID( event, text )
+	AJM.db.CcurrTypeTwo = text
+	AJM:JambaToonRequestCurrency()
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyMoguRuneOfFate( event, checked )
-	AJM.db.currMoguRuneOfFate = checked
+function AJM:LabelBoxChangedCurrencyTypeTwoName( event, text )
+	AJM.db.CcurrTypeTwoName = text
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyWarforgedSeal( event, checked )
-	AJM.db.currWarforgedSeal = checked
+
+function AJM:SettingsToggleCurrencyTypeThree( event, checked )
+	AJM.db.currTypeThree = checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyBloodyCoin( event, checked )
-	AJM.db.currBloodyCoin = checked
+function AJM:EditBoxChangedCurrencyTypeThreeID( event, text )
+	AJM.db.CcurrTypeThree = text
+	AJM:JambaToonRequestCurrency()
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyTimelessCoin( event, checked )
-	AJM.db.currTimelessCoin = checked
+function AJM:LabelBoxChangedCurrencyTypeThreeName( event, text )
+	AJM.db.CcurrTypeThreeName = text
 	AJM:SettingsRefresh()
 end
 
---ebony New WoD Currency 
-function AJM:SettingsToggleCurrencyGarrisonResources ( event, checked )
-	AJM.db.currGarrisonResources = checked
+function AJM:SettingsToggleCurrencyTypeFour( event, checked )
+	AJM.db.currTypeFour = checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyTemperedFate ( event, checked )
-	AJM.db.currTemperedFate = checked
+function AJM:EditBoxChangedCurrencyTypeFourID( event, text )
+	AJM.db.CcurrTypeFour = text
+	AJM:JambaToonRequestCurrency()
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyApexisCrystal ( event, checked )
-	AJM.db.currApexisCrystal = checked
+function AJM:LabelBoxChangedCurrencyTypeFourName( event, text )
+	AJM.db.CcurrTypeFourName = text
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyInevitableFate ( event, checked )
-	AJM.db.currInevitableFate = checked
+function AJM:SettingsToggleCurrencyTypeFive( event, checked )
+	AJM.db.currTypeFive = checked
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyOil ( event, checked )
-	AJM.db.currOil = checked
+function AJM:EditBoxChangedCurrencyTypeFiveID( event, text )
+	AJM.db.CcurrTypeFive = text
+	AJM:JambaToonRequestCurrency()
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyTimeWalker ( event, checked )
-	AJM.db.currTimeWalker = checked
+function AJM:LabelBoxChangedCurrencyTypeFiveName( event, text )
+	AJM.db.CcurrTypeFiveName = text
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyDarkmoon ( event, checked )
-	AJM.db.currDarkmoon = checked
+function AJM:SettingsToggleCurrencyTypeSix( event, checked )
+	AJM.db.currTypeSix = checked
 	AJM:SettingsRefresh()
 end
+
+function AJM:EditBoxChangedCurrencyTypeSixID( event, text )
+	AJM.db.CcurrTypeSix = text
+	AJM:JambaToonRequestCurrency()
+	AJM:SettingsRefresh()
+end
+
+function AJM:LabelBoxChangedCurrencyTypeSixName( event, text )
+	AJM.db.CcurrTypeSixName = text
+	AJM:SettingsRefresh()
+end
+
+--[[ Extra If needed for Some other Use Ebony
+function AJM:SettingsToggleCurrencyTypeSeven( event, checked )
+	AJM.db.currTypeSeven = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:EditBoxChangedCurrencyTypeSevenID( event, text )
+	AJM.db.CcurrTypeSeven = text
+	AJM:JambaToonRequestCurrency()
+	AJM:SettingsRefresh()
+end
+
+function AJM:LabelBoxChangedCurrencyTypeSevenName( event, text )
+	AJM.db.CcurrTypeSevenName = text
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleCurrencyTypeEight( event, checked )
+	AJM.db.currTypeEight = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:EditBoxChangedCurrencyTypeEightID( event, text )
+	AJM.db.CcurrTypeEight = text
+	AJM:JambaToonRequestCurrency()
+	AJM:SettingsRefresh()
+end
+
+function AJM:LabelBoxChangedCurrencyTypeEightName( event, text )
+	AJM.db.CcurrTypeEightName = text
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleCurrencyTypeNine( event, checked )
+	AJM.db.currTypeNine = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:EditBoxChangedCurrencyTypeNineID( event, text )
+	AJM.db.CcurrTypeEight = text
+	AJM:JambaToonRequestCurrency()
+	AJM:SettingsRefresh()
+end
+
+function AJM:LabelBoxChangedCurrencyTypeNineName( event, text )
+	AJM.db.CcurrTypeNineName = text
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleCurrencyTypeTen( event, checked )
+	AJM.db.currTypeTen = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:EditBoxChangedCurrencyTypeTenID( event, text )
+	AJM.db.CcurrTypeTen = text
+	AJM:JambaToonRequestCurrency()
+	AJM:SettingsRefresh()
+end
+
+function AJM:LabelBoxChangedCurrencyTypeTenName( event, text )
+	AJM.db.CcurrTypeTenName = text
+	AJM:SettingsRefresh()
+end
+]]
+
 
 function AJM:SettingsToggleCurrencyOpenStartUpMaster( event, checked )
 	AJM.db.currOpenStartUpMaster = checked
@@ -817,16 +1067,17 @@ end
 function AJM:OnEnable()
 	-- WoW events.
 	--AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
---[[	if AJM.db.currOpenStartUpMaster == true then
+	if AJM.db.currOpenStartUpMaster == true then
 		if JambaApi.IsCharacterTheMaster( self.characterName ) == true then
-			AJM:ScheduleTimer( "JambaToonRequestCurrency", 2 )
+			AJM:ScheduleTimer( "JambaToonRequestCurrency", 5 )
 		end
-	end]]
+	end
 end
 
 -- Called when the addon is disabled.
 function AJM:OnDisable()
 end
+
 
 -- Settings received.
 function AJM:JambaOnSettingsReceived( characterName, settings )	
@@ -834,29 +1085,49 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		-- Update the settings.
 		AJM.db.currGold = settings.currGold
 		AJM.db.currGoldInGuildBank = settings.currGoldInGuildBank
-		AJM.db.currHonorPoints = settings.currHonorPoints
-		AJM.db.currConquestPoints = settings.currConquestPoints
-		AJM.db.currValor = settings.currValor	
-		AJM.db.currTolBaradCommendation = settings.currTolBaradCommendation
-		AJM.db.currChampionsSeal = settings.currChampionsSeal
-		AJM.db.currIllustriousJewelcraftersToken = settings.currIllustriousJewelcraftersToken
-		AJM.db.currDalaranJewelcraftingToken = settings.currDalaranJewelcraftingToken
-		AJM.db.currIronpawToken = settings.currIronpawToken
-		AJM.db.currLesserCharmOfGoodFortune = settings.currLesserCharmOfGoodFortune
-		AJM.db.currElderCharmOfGoodFortune = settings.currElderCharmOfGoodFortune
-		AJM.db.currMoguRuneOfFate = settings.currMoguRuneOfFate
-        AJM.db.currWarforgedSeal = settings.currWarforgedSeal
-        AJM.db.currBloodyCoin = settings.currBloodyCoin
-        AJM.db.currTimelessCoin = settings.currTimelessCoin
-		--ebony New WoD Currency
-		AJM.db.currGarrisonResources = settings.currGarrisonResources
-		AJM.db.currTemperedFate = settings.currTemperedFate
-		AJM.db.currApexisCrystal = settings.currApexisCrystal
-		AJM.db.currDarkmoon = settings.currDarkmoon
-		AJM.db.currInevitableFate = settings.currInevitableFate
-		AJM.db.currOil = settings.currOil
-		AJM.db.currTimeWalker = settings.currTimeWalker
---		END		
+		--Changed Text
+		AJM.db.currTypeOne = settings.currTypeOne
+		AJM.db.CcurrTypeOne = settings.CcurrTypeOne
+		AJM.db.CcurrTypeOneName = settings.CcurrTypeOneName
+		
+		AJM.db.currTypeTwo = settings.currTypeTwo
+		AJM.db.CcurrTypeTwo = settings.CcurrTypeTwo
+		AJM.db.CcurrTypeTwoName = settings.CcurrTypeTwoName
+		
+		AJM.db.currTypeThree = settings.currTypeThree
+		AJM.db.CcurrTypeThree = settings.CcurrTypeThree
+		AJM.db.CcurrTypeThreeName = settings.CcurrTypeThreeName
+		
+		AJM.db.currTypeFour = settings.currTypeFour
+		AJM.db.CcurrTypeFour = settings.CcurrTypeFour
+		AJM.db.CcurrTypeFourName = settings.CcurrTypeFourName
+		
+		AJM.db.currTypeFive = settings.currTypeFive
+		AJM.db.CcurrTypeFive = settings.CcurrTypeFive
+		AJM.db.CcurrTypeFiveName = settings.CcurrTypeFiveName
+		
+		AJM.db.currTypeSix = settings.currTypeSix
+		AJM.db.CcurrTypeSix = settings.CcurrTypeSix
+		AJM.db.CcurrTypeSixName = settings.CcurrTypeSixName
+		
+		--[[ Extra If needed for Some other Use Ebony
+		AJM.db.currTypeSeven = settings.currTypeSeven
+		AJM.db.CcurrTypeSeven = settings.CcurrTypeSeven
+		AJM.db.CcurrTypeSevenName = settings.CcurrTypeSevenName
+		
+		AJM.db.currTypeEight = settings.currTypeEight
+		AJM.db.CcurrTypeEight = settings.CcurrTypeEight
+		AJM.db.CcurrTypeEightName = settings.CcurrTypeEightName
+		
+		AJM.db.currTypeNine = settings.currTypeNine
+		AJM.db.CcurrTypeNine = settings.CcurrTypeNine
+		AJM.db.CcurrTypeNineName = settings.CcurrTypeNineName
+		
+		AJM.db.currTypeTen = settings.currTypeTen
+		AJM.db.CcurrTypeTen = settings.CcurrTypeTen
+		AJM.db.CcurrTypeTenName = settings.CcurrTypeTenName
+		]]
+		
 		AJM.db.currOpenStartUpMaster = settings.currOpenStartUpMaster
 		AJM.db.currencyScale = settings.currencyScale
 		AJM.db.currencyFrameAlpha = settings.currencyFrameAlpha
@@ -962,223 +1233,111 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	frameGoldText:SetJustifyH( "CENTER" )
 	frame.GoldText = frameGoldText
 	left = left + spacing	
-	-- Set the HonorPoints font string.
-	local frameHonorPoints = AJM.globalCurrencyFramePrefix.."TitleHonorPoints"
-	local frameHonorPointsText = parentFrame:CreateFontString( frameHonorPoints.."Text", "OVERLAY", "GameFontNormal" )
-	frameHonorPointsText:SetText( L["HP"] )
-	frameHonorPointsText:SetTextColor( r, g, b, a )
-	frameHonorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameHonorPointsText:SetWidth( width )
-	frameHonorPointsText:SetJustifyH( "CENTER" )
-	frame.HonorPointsText = frameHonorPointsText
+	-- Set the TypeOne font string.
+	local frameTypeOne = AJM.globalCurrencyFramePrefix.."TitleTypeOne"
+	local frameTypeOneText = parentFrame:CreateFontString( frameTypeOne.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeOneText:SetText( L["CurrOne"] )
+	frameTypeOneText:SetTextColor( r, g, b, a )
+	frameTypeOneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeOneText:SetWidth( width )
+	frameTypeOneText:SetJustifyH( "CENTER" )
+	frame.TypeOneText = frameTypeOneText
 	left = left + spacing
-	-- Set the ConquestPoints font string.
-	local frameConquestPoints = AJM.globalCurrencyFramePrefix.."TitleConquestPoints"
-	local frameConquestPointsText = parentFrame:CreateFontString( frameConquestPoints.."Text", "OVERLAY", "GameFontNormal" )
-	frameConquestPointsText:SetText( L["CP"] )
-	frameConquestPointsText:SetTextColor( r, g, b, a )
-	frameConquestPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameConquestPointsText:SetWidth( width )
-	frameConquestPointsText:SetJustifyH( "CENTER" )
-	frame.ConquestPointsText = frameConquestPointsText
+	-- Set the TypeTwo font string.
+	local frameTypeTwo = AJM.globalCurrencyFramePrefix.."TitleTypeTwo"
+	local frameTypeTwoText = parentFrame:CreateFontString( frameTypeTwo.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeTwoText:SetText( L["CurrTwo"] )
+	frameTypeTwoText:SetTextColor( r, g, b, a )
+	frameTypeTwoText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeTwoText:SetWidth( width )
+	frameTypeTwoText:SetJustifyH( "CENTER" )
+	frame.TypeTwoText = frameTypeTwoText
 	left = left + spacing
-	-- Set the Valor font string.
-	local frameValor = AJM.globalCurrencyFramePrefix.."Valor"
-	local frameValorText = parentFrame:CreateFontString( frameValor.."Text", "OVERLAY", "GameFontNormal" )
-	frameValorText:SetText( L["VP"] )
-	frameValorText:SetTextColor( r, g, b, a )
-	frameValorText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameValorText:SetWidth( width )
-	frameValorText:SetJustifyH( "CENTER" )
-	frame.ValorText = frameValorText
+	-- Set the TypeThree font string.
+	local frameTypeThree = AJM.globalCurrencyFramePrefix.."TitleTypeThree"
+	local frameTypeThreeText = parentFrame:CreateFontString( frameTypeThree.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeThreeText:SetText( L["CurrThree"] )
+	frameTypeThreeText:SetTextColor( r, g, b, a )
+	frameTypeThreeText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeThreeText:SetWidth( width )
+	frameTypeThreeText:SetJustifyH( "CENTER" )
+	frame.TypeThreeText = frameTypeThreeText
 	left = left + spacing	
-	-- Set the TolBaradCommendation font string.
-	local frameTolBaradCommendation = AJM.globalCurrencyFramePrefix.."TitleTolBaradCommendation"
-	local frameTolBaradCommendationText = parentFrame:CreateFontString( frameTolBaradCommendation.."Text", "OVERLAY", "GameFontNormal" )
-	frameTolBaradCommendationText:SetText( L["TBC"] )
-	frameTolBaradCommendationText:SetTextColor( r, g, b, a )
-	frameTolBaradCommendationText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTolBaradCommendationText:SetWidth( width )
-	frameTolBaradCommendationText:SetJustifyH( "CENTER" )
-	frame.TolBaradCommendationText = frameTolBaradCommendationText
+	-- Set the TypeFour font string.
+	local frameTypeFour = AJM.globalCurrencyFramePrefix.."TitleTypeFour"
+	local frameTypeFourText = parentFrame:CreateFontString( frameTypeFour.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeFourText:SetText( L["CurrFour"] )
+	frameTypeFourText:SetTextColor( r, g, b, a )
+	frameTypeFourText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeFourText:SetWidth( width )
+	frameTypeFourText:SetJustifyH( "CENTER" )
+	frame.TypeFourText = frameTypeFourText
 	left = left + spacing
-	-- Set the ChampionsSeal font string.
-	local frameChampionsSeal = AJM.globalCurrencyFramePrefix.."TitleChampionsSeal"
-	local frameChampionsSealText = parentFrame:CreateFontString( frameChampionsSeal.."Text", "OVERLAY", "GameFontNormal" )
-	frameChampionsSealText:SetText( L["CS"] )
-	frameChampionsSealText:SetTextColor( r, g, b, a )
-	frameChampionsSealText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameChampionsSealText:SetWidth( width )
-	frameChampionsSealText:SetJustifyH( "CENTER" )
-	frame.ChampionsSealText = frameChampionsSealText
+	-- Set the TypeFive font string.
+	local frameTypeFive = AJM.globalCurrencyFramePrefix.."TitleTypeFive"
+	local frameTypeFiveText = parentFrame:CreateFontString( frameTypeFive.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeFiveText:SetText( L["CurrFive"] )
+	frameTypeFiveText:SetTextColor( r, g, b, a )
+	frameTypeFiveText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeFiveText:SetWidth( width )
+	frameTypeFiveText:SetJustifyH( "CENTER" )
+	frame.TypeFiveText = frameTypeFiveText
 	left = left + spacing
-	-- Set the IllustriousJewelcraftersToken font string.
-	local frameIllustriousJewelcraftersToken = AJM.globalCurrencyFramePrefix.."TitleIllustriousJewelcraftersToken"
-	local frameIllustriousJewelcraftersTokenText = parentFrame:CreateFontString( frameIllustriousJewelcraftersToken.."Text", "OVERLAY", "GameFontNormal" )
-	frameIllustriousJewelcraftersTokenText:SetText( L["IJT"] )
-	frameIllustriousJewelcraftersTokenText:SetTextColor( r, g, b, a )
-	frameIllustriousJewelcraftersTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameIllustriousJewelcraftersTokenText:SetWidth( width )
-	frameIllustriousJewelcraftersTokenText:SetJustifyH( "CENTER" )
-	frame.IllustriousJewelcraftersTokenText = frameIllustriousJewelcraftersTokenText
+	-- Set the TypeSix font string.
+	local frameTypeSix = AJM.globalCurrencyFramePrefix.."TitleTypeSix"
+	local frameTypeSixText = parentFrame:CreateFontString( frameTypeSix.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeSixText:SetText( L["CurrSix"] )
+	frameTypeSixText:SetTextColor( r, g, b, a )
+	frameTypeSixText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeSixText:SetWidth( width )
+	frameTypeSixText:SetJustifyH( "CENTER" )
+	frame.TypeSixText = frameTypeSixText
 	left = left + spacing
-	-- Set the DalaranJewelcraftingToken font string.
-	local frameDalaranJewelcraftingToken = AJM.globalCurrencyFramePrefix.."TitleDalaranJewelcraftingToken"
-	local frameDalaranJewelcraftingTokenText = parentFrame:CreateFontString( frameDalaranJewelcraftingToken.."Text", "OVERLAY", "GameFontNormal" )
-	frameDalaranJewelcraftingTokenText:SetText( L["DJT"] )
-	frameDalaranJewelcraftingTokenText:SetTextColor( r, g, b, a )
-	frameDalaranJewelcraftingTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameDalaranJewelcraftingTokenText:SetWidth( width )
-	frameDalaranJewelcraftingTokenText:SetJustifyH( "CENTER" )
-	frame.DalaranJewelcraftingTokenText = frameDalaranJewelcraftingTokenText
+	--[[ Extra If Ever Neeeded for some Reason <Ebony>
+	-- Set the TypeSeven font string.
+	local frameTypeSeven = AJM.globalCurrencyFramePrefix.."TitleTypeSeven"
+	local frameTypeSevenText = parentFrame:CreateFontString( frameTypeSeven.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeSevenText:SetText( L["CurrSeven"] )
+	frameTypeSevenText:SetTextColor( r, g, b, a )
+	frameTypeSevenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeSevenText:SetWidth( width )
+	frameTypeSevenText:SetJustifyH( "CENTER" )
+	frame.TypeSevenText = frameTypeSevenText
 	left = left + spacing
-	-- Set the IronpawToken font string.
-	local frameIronpawToken = AJM.globalCurrencyFramePrefix.."TitleIronpawToken"
-	local frameIronpawTokenText = parentFrame:CreateFontString( frameIronpawToken.."Text", "OVERLAY", "GameFontNormal" )
-	frameIronpawTokenText:SetText( L["IT"] )
-	frameIronpawTokenText:SetTextColor( r, g, b, a )
-	frameIronpawTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameIronpawTokenText:SetWidth( width )
-	frameIronpawTokenText:SetJustifyH( "CENTER" )
-	frame.IronpawTokenText = frameIronpawTokenText
+	-- Set the Eight font string.
+	local frameTypeEight = AJM.globalCurrencyFramePrefix.."TiteTypeEight"
+	local frameTypeEightText = parentFrame:CreateFontString( frameTypeEight.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeEightText:SetText( L["CurrEight"] )
+	frameTypeEightText:SetTextColor( r, g, b, a )
+	frameTypeEightText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeEightText:SetWidth( width )
+	frameTypeEightText:SetJustifyH( "CENTER" )
+	frame.TypeEightText = frameTypeEightText
 	left = left + spacing
-	-- Set the LesserCharmOfGoodFortune font string.
-	local frameLesserCharmOfGoodFortune = AJM.globalCurrencyFramePrefix.."TitleLesserCharmOfGoodFortune"
-	local frameLesserCharmOfGoodFortuneText = parentFrame:CreateFontString( frameLesserCharmOfGoodFortune.."Text", "OVERLAY", "GameFontNormal" )
-	frameLesserCharmOfGoodFortuneText:SetText( L["LCGF"] )
-	frameLesserCharmOfGoodFortuneText:SetTextColor( r, g, b, a )
-	frameLesserCharmOfGoodFortuneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameLesserCharmOfGoodFortuneText:SetWidth( width )
-	frameLesserCharmOfGoodFortuneText:SetJustifyH( "CENTER" )
-	frame.LesserCharmOfGoodFortuneText = frameLesserCharmOfGoodFortuneText
+	-- Set the Nine font string.
+	local frameTypeNine = AJM.globalCurrencyFramePrefix.."TitleTypeEight"
+	local frameTypeNineText = parentFrame:CreateFontString( frameTypeEight.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeNineText:SetText( L["CurrNine"] )
+	frameTypeNineText:SetTextColor( r, g, b, a )
+	frameTypeNineText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeNineText:SetWidth( width )
+	frameTypeNineText:SetJustifyH( "CENTER" )
+	frame.TypeNineText = frameTypeNineText
 	left = left + spacing
-	-- Set the ElderCharmOfGoodFortune font string.
-	local frameElderCharmOfGoodFortune = AJM.globalCurrencyFramePrefix.."TitleElderCharmOfGoodFortune"
-	local frameElderCharmOfGoodFortuneText = parentFrame:CreateFontString( frameElderCharmOfGoodFortune.."Text", "OVERLAY", "GameFontNormal" )
-	frameElderCharmOfGoodFortuneText:SetText( L["ECGF"] )
-	frameElderCharmOfGoodFortuneText:SetTextColor( r, g, b, a )
-	frameElderCharmOfGoodFortuneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameElderCharmOfGoodFortuneText:SetWidth( width )
-	frameElderCharmOfGoodFortuneText:SetJustifyH( "CENTER" )
-	frame.ElderCharmOfGoodFortuneText = frameElderCharmOfGoodFortuneText
+	-- Set the Ten font string.
+	local frameTypeTen = AJM.globalCurrencyFramePrefix.."TitleTypeTen"
+	local frameTypeTenText = parentFrame:CreateFontString( frameTypeTen.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeTenText:SetText( L["CurrTen"] )
+	frameTypeTenText:SetTextColor( r, g, b, a )
+	frameTypeTenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeTenText:SetWidth( width )
+	frameTypeTenText:SetJustifyH( "CENTER" )
+	frame.TypeTenText = frameTypeTenText
 	left = left + spacing
-	-- Set the MoguRuneOfFate font string.
-	local frameMoguRuneOfFate = AJM.globalCurrencyFramePrefix.."TitleMoguRuneOfFate"
-	local frameMoguRuneOfFateText = parentFrame:CreateFontString( frameMoguRuneOfFate.."Text", "OVERLAY", "GameFontNormal" )
-	frameMoguRuneOfFateText:SetText( L["MROF"] )
-	frameMoguRuneOfFateText:SetTextColor( r, g, b, a )
-	frameMoguRuneOfFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameMoguRuneOfFateText:SetWidth( width )
-	frameMoguRuneOfFateText:SetJustifyH( "CENTER" )
-	frame.MoguRuneOfFateText = frameMoguRuneOfFateText
-	left = left + spacing
-    -- Set the WarforgedSeal font string.
-	local frameWarforgedSeal = AJM.globalCurrencyFramePrefix.."TitleWarforgedSeal"
-	local frameWarforgedSealText = parentFrame:CreateFontString( frameWarforgedSeal.."Text", "OVERLAY", "GameFontNormal" )
-	frameWarforgedSealText:SetText( L["WS"] )
-	frameWarforgedSealText:SetTextColor( r, g, b, a )
-	frameWarforgedSealText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameWarforgedSealText:SetWidth( width )
-	frameWarforgedSealText:SetJustifyH( "CENTER" )
-	frame.WarforgedSealText = frameWarforgedSealText
-	left = left + spacing
-    -- Set the BloodyCoin font string.
-	local frameBloodyCoin = AJM.globalCurrencyFramePrefix.."TitleBloodyCoin"
-	local frameBloodyCoinText = parentFrame:CreateFontString( frameBloodyCoin.."Text", "OVERLAY", "GameFontNormal" )
-	frameBloodyCoinText:SetText( L["BC"] )
-	frameBloodyCoinText:SetTextColor( r, g, b, a )
-	frameBloodyCoinText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameBloodyCoinText:SetWidth( width )
-	frameBloodyCoinText:SetJustifyH( "CENTER" )
-	frame.BloodyCoinText = frameBloodyCoinText
-	left = left + spacing
-	-- Set the TimelessCoin font string.
-	local frameTimelessCoin = AJM.globalCurrencyFramePrefix.."TitleTimelessCoin"
-	local frameTimelessCoinText = parentFrame:CreateFontString( frameTimelessCoin.."Text", "OVERLAY", "GameFontNormal" )
-	frameTimelessCoinText:SetText( L["TC"] )
-	frameTimelessCoinText:SetTextColor( r, g, b, a )
-	frameTimelessCoinText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTimelessCoinText:SetWidth( width )
-	frameTimelessCoinText:SetJustifyH( "CENTER" )
-	frame.TimelessCoinText = frameTimelessCoinText
-	left = left + spacing
-	--ebony New WoD Currency
-	-- Set the GarrisonResources font string.
-	local frameGarrisonResources = AJM.globalCurrencyFramePrefix.."TitleGarrisonResources"
-	local frameGarrisonResourcesText = parentFrame:CreateFontString( frameGarrisonResources .."Text", "OVERLAY", "GameFontNormal" )
-	frameGarrisonResourcesText:SetText( L["GR"] )
-	frameGarrisonResourcesText:SetTextColor( r, g, b, a )
-	frameGarrisonResourcesText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameGarrisonResourcesText:SetWidth( width )
-	frameGarrisonResourcesText:SetJustifyH( "CENTER" )
-	frame.GarrisonResourcesText = frameGarrisonResourcesText
-	left = left + spacing
-		-- Set the Tempered Fate font string.
-	local frameTemperedFate = AJM.globalCurrencyFramePrefix.."TitleTemperedFate"
-	local frameTemperedFateText = parentFrame:CreateFontString( frameTemperedFate .."Text", "OVERLAY", "GameFontNormal" )
-	frameTemperedFateText:SetText( L["SoT"] )
-	frameTemperedFateText:SetTextColor( r, g, b, a )
-	frameTemperedFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTemperedFateText:SetWidth( width )
-	frameTemperedFateText:SetJustifyH( "CENTER" )
-	frame.TemperedFateText = frameTemperedFateText
-	left = left + spacing
-		-- Set the Apexis Crystal font string.
-	local frameApexisCrystal = AJM.globalCurrencyFramePrefix.."TitleApexisCrystal"
-	local frameApexisCrystalText = parentFrame:CreateFontString( frameApexisCrystal .."Text", "OVERLAY", "GameFontNormal" )
-	frameApexisCrystalText:SetText( L["AC"] )
-	frameApexisCrystalText:SetTextColor( r, g, b, a )
-	frameApexisCrystalText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameApexisCrystalText:SetWidth( width )
-	frameApexisCrystalText:SetJustifyH( "CENTER" )
-	frame.ApexisCrystalText = frameApexisCrystalText
-	left = left + spacing
-	-- Set the Darkmoon Prize font string.
-	local frameDarkmoon = AJM.globalCurrencyFramePrefix.."TitleDarkmoon"
-	local frameDarkmoonText = parentFrame:CreateFontString( frameDarkmoon .."Text", "OVERLAY", "GameFontNormal" )
-	frameDarkmoonText:SetText( L["DPT"] )
-	frameDarkmoonText:SetTextColor( r, g, b, a )
-	frameDarkmoonText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameDarkmoonText:SetWidth( width )
-	frameDarkmoonText:SetJustifyH( "CENTER" )
-	frame.DarkmoonText = frameDarkmoonText
-	left = left + spacing
-	-- Set the Oil font string.
-	local frameOil = AJM.globalCurrencyFramePrefix.."TitleOil"
-	local frameOilText = parentFrame:CreateFontString( frameOil .."Text", "OVERLAY", "GameFontNormal" )
-	frameOilText:SetText( L["OIL"] )
-	frameOilText:SetTextColor( r, g, b, a )
-	frameOilText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameOilText:SetWidth( width )
-	frameOilText:SetJustifyH( "CENTER" )
-	frame.OilText = frameOilText
-	left = left + spacing
-	-- Set the InevitableFate Prize font string.
-	local frameInevitableFate = AJM.globalCurrencyFramePrefix.."TitleInevitableFate"
-	local frameInevitableFateText = parentFrame:CreateFontString( frameInevitableFate .."Text", "OVERLAY", "GameFontNormal" )
-	frameInevitableFateText:SetText( L["SoI"] )
-	frameInevitableFateText:SetTextColor( r, g, b, a )
-	frameInevitableFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameInevitableFateText:SetWidth( width )
-	frameInevitableFateText:SetJustifyH( "CENTER" )
-	frame.InevitableFateText = frameInevitableFateText
-	left = left + spacing
-	-- Set the Time Walker font string.
-	local frameTimeWalker = AJM.globalCurrencyFramePrefix.."TitleTimewalker"
-	local frameTimeWalkerText = parentFrame:CreateFontString( frameTimeWalker .."Text", "OVERLAY", "GameFontNormal" )
-	frameTimeWalkerText:SetText( L["SoI"] )
-	frameTimeWalkerText:SetTextColor( r, g, b, a )
-	frameTimeWalkerText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTimeWalkerText:SetWidth( width )
-	frameTimeWalkerText:SetJustifyH( "CENTER" )
-	frame.TimeWalkerText = frameTimeWalkerText
-	left = left + spacing
-	
+	]]
 	-- Set the Total Gold font string.
 	left = 10
 	top = -50
-	
-	
 	local frameTotalGoldTitle = AJM.globalCurrencyFramePrefix.."TitleTotalGold"
 	local frameTotalGoldTitleText = parentFrame:CreateFontString( frameTotalGoldTitle.."Text", "OVERLAY", "GameFontNormal" )
 	frameTotalGoldTitleText:SetText( L["Total"] )
@@ -1247,6 +1406,64 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	AJM:CurrencyUpdateWindowLock()
 	JambaToonCurrencyListFrame:Hide()
 	AJM.currencyListFrameCreated = true
+	AJM:UpdateHendingText()
+end
+
+function AJM:UpdateHendingText()
+	local parentFrame = JambaToonCurrencyListFrame
+	-- Type One
+	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeOne )
+	if name then
+	Name = string.gsub(name, "%l+%s*", "" ) 
+		local iconTextureString = strconcat(" |T"..icon..":20|t")
+		local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
+		AJM.db.CcurrTypeOneName = iconTextureStringFull
+		parentFrame.TypeOneText:SetText( iconTextureString )
+	else 
+		return
+	end
+	-- Type Two
+	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeTwo )
+	Name = string.gsub(name, "%l+%s*", "" ) 
+	local iconTextureString = strconcat(" |T"..icon..":20|t")
+	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
+	AJM.db.CcurrTypeTwoName = iconTextureStringFull
+	parentFrame.TypeTwoText:SetText( iconTextureString )
+	-- Type Two
+	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeTwo )
+	Name = string.gsub(name, "%l+%s*", "" ) 
+	local iconTextureString = strconcat(" |T"..icon..":20|t")
+	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
+	AJM.db.CcurrTypeTwoName = iconTextureStringFull
+	parentFrame.TypeTwoText:SetText( iconTextureString )
+	-- Type Three
+	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeThree )
+	Name = string.gsub(name, "%l+%s*", "" ) 
+	local iconTextureString = strconcat(" |T"..icon..":20|t")
+	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
+	AJM.db.CcurrTypeThreeName = iconTextureStringFull
+	parentFrame.TypeThreeText:SetText( iconTextureString )	
+	-- Type Four
+	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeFour )
+	Name = string.gsub(name, "%l+%s*", "" ) 
+	local iconTextureString = strconcat(" |T"..icon..":20|t")
+	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
+	AJM.db.CcurrTypeFourName = iconTextureStringFull
+	parentFrame.TypeFourText:SetText( iconTextureString ) 	
+	-- Type Five
+	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeFive )
+	Name = string.gsub(name, "%l+%s*", "" ) 
+	local iconTextureString = strconcat(" |T"..icon..":20|t")
+	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
+	AJM.db.CcurrTypeFiveName = iconTextureStringFull
+	parentFrame.TypeFiveText:SetText( iconTextureString )
+	-- Type six
+	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeSix )
+	Name = string.gsub(name, "%l+%s*", "" ) 
+	local iconTextureString = strconcat(" |T"..icon..":20|t")
+	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
+	AJM.db.CcurrTypeSixName = iconTextureStringFull
+	parentFrame.TypeSixText:SetText( iconTextureString )
 end
 
 function AJM:CurrencyUpdateWindowLock()
@@ -1312,386 +1529,196 @@ function AJM:CurrencyListSetColumnWidth()
 		parentFrame.GoldText:Hide()
 		haveGold = 0
 	end
-	if AJM.db.currHonorPoints == true then
-		parentFrame.HonorPointsText:SetWidth( pointsWidth )
-		parentFrame.HonorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+	if AJM.db.currTypeOne == true then
+		parentFrame.TypeOneText:SetWidth( pointsWidth )
+		parentFrame.TypeOneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.HonorPointsText:Show()
+		parentFrame.TypeOneText:Show()
 	else
-		parentFrame.HonorPointsText:Hide()
+		parentFrame.TypeOneText:Hide()
 	end
-	if AJM.db.currConquestPoints == true then
-		parentFrame.ConquestPointsText:SetWidth( pointsWidth )
-		parentFrame.ConquestPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+	if AJM.db.currTypeTwo == true then
+		parentFrame.TypeTwoText:SetWidth( pointsWidth )
+		parentFrame.TypeTwoText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.ConquestPointsText:Show()
+		parentFrame.TypeTwoText:Show()
 	else
-		parentFrame.ConquestPointsText:Hide()
+		parentFrame.TypeTwoText:Hide()
 	end
-	if AJM.db.currValor == true then
-		parentFrame.ValorText:SetWidth( pointsWidth )
-		parentFrame.ValorText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+	if AJM.db.currTypeThree == true then
+		parentFrame.TypeThreeText:SetWidth( pointsWidth )
+		parentFrame.TypeThreeText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.ValorText:Show()
+		parentFrame.TypeThreeText:Show()
 	else
-		parentFrame.ValorText:Hide()
+		parentFrame.TypeThreeText:Hide()
 	end	
-	if AJM.db.currTolBaradCommendation == true then
-		parentFrame.TolBaradCommendationText:SetWidth( pointsWidth )
-		parentFrame.TolBaradCommendationText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+	if AJM.db.currTypeFour == true then
+		parentFrame.TypeFourText:SetWidth( pointsWidth )
+		parentFrame.TypeFourText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.TolBaradCommendationText:Show()
+		parentFrame.TypeFourText:Show()
 	else
-		parentFrame.TolBaradCommendationText:Hide()
+		parentFrame.TypeFourText:Hide()
 	end
-	if AJM.db.currChampionsSeal == true then
-		parentFrame.ChampionsSealText:SetWidth( pointsWidth )
-		parentFrame.ChampionsSealText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+	if AJM.db.currTypeFive == true then
+		parentFrame.TypeFiveText:SetWidth( pointsWidth )
+		parentFrame.TypeFiveText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.ChampionsSealText:Show()
+		parentFrame.TypeFiveText:Show()
 	else
-		parentFrame.ChampionsSealText:Hide()
+		parentFrame.TypeFiveText:Hide()
 	end
-	if AJM.db.currIllustriousJewelcraftersToken == true then
-		parentFrame.IllustriousJewelcraftersTokenText:SetWidth( pointsWidth )
-		parentFrame.IllustriousJewelcraftersTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+		if AJM.db.currTypeSix == true then
+		parentFrame.TypeSixText:SetWidth( pointsWidth )
+		parentFrame.TypeSixText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.IllustriousJewelcraftersTokenText:Show()
+		parentFrame.TypeSixText:Show()
 	else
-		parentFrame.IllustriousJewelcraftersTokenText:Hide()
+		parentFrame.TypeSixText:Hide()
 	end
-	if AJM.db.currDalaranJewelcraftingToken == true then
-		parentFrame.DalaranJewelcraftingTokenText:SetWidth( pointsWidth )
-		parentFrame.DalaranJewelcraftingTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+--[[ Extra Space if needed
+	if AJM.db.currTypeSeven == true then
+		parentFrame.TypeSevenText:SetWidth( pointsWidth )
+		parentFrame.TypeSevenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.DalaranJewelcraftingTokenText:Show()
+		parentFrame.TypeSevenText:Show()
 	else
-		parentFrame.DalaranJewelcraftingTokenText:Hide()
+		parentFrame.TypeSevenText:Hide()
 	end
-	if AJM.db.currIronpawToken == true then
-		parentFrame.IronpawTokenText:SetWidth( pointsWidth )
-		parentFrame.IronpawTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+	if AJM.db.currTypeEight == true then
+		parentFrame.TypeEightText:SetWidth( pointsWidth )
+		parentFrame.TypeEightText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.IronpawTokenText:Show()
+		parentFrame.TypeEightText:Show()
 	else
-		parentFrame.IronpawTokenText:Hide()
+		parentFrame.TypeEightText:Hide()
 	end
-	if AJM.db.currLesserCharmOfGoodFortune == true then
-		parentFrame.LesserCharmOfGoodFortuneText:SetWidth( pointsWidth )
-		parentFrame.LesserCharmOfGoodFortuneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+	if AJM.db.currTypeNine == true then
+		parentFrame.TypeNineText:SetWidth( pointsWidth )
+		parentFrame.TypeNineText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.LesserCharmOfGoodFortuneText:Show()
+		parentFrame.TypeNineText:Show()
 	else
-		parentFrame.LesserCharmOfGoodFortuneText:Hide()
+		parentFrame.TypeNineText:Hide()
 	end
-	if AJM.db.currElderCharmOfGoodFortune == true then
-		parentFrame.ElderCharmOfGoodFortuneText:SetWidth( pointsWidth )
-		parentFrame.ElderCharmOfGoodFortuneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
+	if AJM.db.currTypeTen == true then
+		parentFrame.TypeTenText:SetWidth( pointsWidth )
+		parentFrame.TypeTenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.ElderCharmOfGoodFortuneText:Show()
+		parentFrame.TypeTenText:Show()
 	else
-		parentFrame.ElderCharmOfGoodFortuneText:Hide()
-	end
-	if AJM.db.currMoguRuneOfFate == true then
-		parentFrame.MoguRuneOfFateText:SetWidth( pointsWidth )
-		parentFrame.MoguRuneOfFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.MoguRuneOfFateText:Show()
-	else
-		parentFrame.MoguRuneOfFateText:Hide()
-    end
-    if AJM.db.currWarforgedSeal == true then
-		parentFrame.WarforgedSealText:SetWidth( pointsWidth )
-		parentFrame.WarforgedSealText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.WarforgedSealText:Show()
-	else
-		parentFrame.WarforgedSealText:Hide()
-    end
-	if AJM.db.currBloodyCoin == true then
-		parentFrame.BloodyCoinText:SetWidth( pointsWidth )
-		parentFrame.BloodyCoinText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.BloodyCoinText:Show()
-	else
-		parentFrame.BloodyCoinText:Hide()
-    end
-	if AJM.db.currTimelessCoin == true then
-		parentFrame.TimelessCoinText:SetWidth( pointsWidth )
-		parentFrame.TimelessCoinText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.TimelessCoinText:Show()
-	else
-		parentFrame.TimelessCoinText:Hide()
-	end
-	--ebony New WoD Currency
-	if AJM.db.currGarrisonResources == true then
-		parentFrame.GarrisonResourcesText:SetWidth( pointsWidth )
-		parentFrame.GarrisonResourcesText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.GarrisonResourcesText:Show()
-	else
-		parentFrame.GarrisonResourcesText:Hide()
-	end
-		if AJM.db.currTemperedFate == true then
-		parentFrame.TemperedFateText:SetWidth( pointsWidth )
-		parentFrame.TemperedFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.TemperedFateText:Show()
-	else
-		parentFrame.TemperedFateText:Hide()
-	end
-		if AJM.db.currApexisCrystal == true then
-		parentFrame.ApexisCrystalText:SetWidth( pointsWidth )
-		parentFrame.ApexisCrystalText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.ApexisCrystalText:Show()
-	else
-		parentFrame.ApexisCrystalText:Hide()
-	end
-		if AJM.db.currDarkmoon == true then
-		parentFrame.DarkmoonText:SetWidth( pointsWidth )
-		parentFrame.DarkmoonText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.DarkmoonText:Show()
-	else
-		parentFrame.DarkmoonText:Hide()
-	end
-		if AJM.db.currInevitableFate == true then
-		parentFrame.InevitableFateText:SetWidth( pointsWidth )
-		parentFrame.InevitableFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.InevitableFateText:Show()
-	else
-		parentFrame.InevitableFateText:Hide()
-	end
-		if AJM.db.currOil == true then
-		parentFrame.OilText:SetWidth( pointsWidth )
-		parentFrame.OilText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.OilText:Show()
-	else
-		parentFrame.OilText:Hide()
-	end	
-		if AJM.db.currTimeWalker == true then
-		parentFrame.TimeWalkerText:SetWidth( pointsWidth )
-		parentFrame.TimeWalkerText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.TimeWalkerText:Show()
-	else
-		parentFrame.TimeWalkerText:Hide()
-	end		
-	
+		parentFrame.TypeTenText:Hide()
+	end ]]	
 	-- Character rows.
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
-		--if JambaPrivate.Team.GetCharacterOnlineStatus (characterName) == false then
-		--AJM.Print("offline", characterName)
-		--	currencyFrameCharacterInfo.characterNameText:hide()
-		--end
-		local left = frameHorizontalSpacing
-		local characterRowTopPoint = currencyFrameCharacterInfo.characterRowTopPoint
-		currencyFrameCharacterInfo.characterNameText:SetWidth( nameWidth )
-		currencyFrameCharacterInfo.characterNameText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-		left = left + nameWidth + spacingWidth
-		if AJM.db.currGold == true then
-			currencyFrameCharacterInfo.GoldText:SetWidth( goldWidth )
-			currencyFrameCharacterInfo.GoldText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + goldWidth + (spacingWidth * 3)
-			currencyFrameCharacterInfo.GoldText:Show()
-		else
-			currencyFrameCharacterInfo.GoldText:Hide()
+		if JambaPrivate.Team.GetCharacterOnlineStatus (characterName) == true then
+			local left = frameHorizontalSpacing
+			local characterRowTopPoint = currencyFrameCharacterInfo.characterRowTopPoint
+				currencyFrameCharacterInfo.characterNameText:SetWidth( nameWidth )
+				currencyFrameCharacterInfo.characterNameText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + nameWidth + spacingWidth
+			if AJM.db.currGold == true then
+				currencyFrameCharacterInfo.GoldText:SetWidth( goldWidth )
+				currencyFrameCharacterInfo.GoldText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + goldWidth + (spacingWidth * 3)
+				currencyFrameCharacterInfo.GoldText:Show()
+			else
+				currencyFrameCharacterInfo.GoldText:Hide()
+			end
+			if AJM.db.currTypeOne == true then
+				currencyFrameCharacterInfo.TypeOneText:SetWidth( pointsWidth )
+				currencyFrameCharacterInfo.TypeOneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + pointsWidth + spacingWidth
+				currencyFrameCharacterInfo.TypeOneText:Show()
+			else
+				currencyFrameCharacterInfo.TypeOneText:Hide()
+			end
+			if AJM.db.currTypeTwo == true then
+				currencyFrameCharacterInfo.TypeTwoText:SetWidth( pointsWidth )
+				currencyFrameCharacterInfo.TypeTwoText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + pointsWidth + spacingWidth
+				currencyFrameCharacterInfo.TypeTwoText:Show()
+			else
+				currencyFrameCharacterInfo.TypeTwoText:Hide()
+			end
+			if AJM.db.currTypeThree == true then
+				currencyFrameCharacterInfo.TypeThreeText:SetWidth( pointsWidth )
+				currencyFrameCharacterInfo.TypeThreeText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + pointsWidth + spacingWidth
+				currencyFrameCharacterInfo.TypeThreeText:Show()
+			else
+				currencyFrameCharacterInfo.TypeThreeText:Hide()
+			end		
+			if AJM.db.currTypeFour == true then
+				currencyFrameCharacterInfo.TypeFourText:SetWidth( pointsWidth )
+				currencyFrameCharacterInfo.TypeFourText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + pointsWidth + spacingWidth
+				currencyFrameCharacterInfo.TypeFourText:Show()
+			else
+				currencyFrameCharacterInfo.TypeFourText:Hide()
+			end
+			if AJM.db.currTypeFive == true then
+				currencyFrameCharacterInfo.TypeFiveText:SetWidth( pointsWidth )
+				currencyFrameCharacterInfo.TypeFiveText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + pointsWidth + spacingWidth
+				currencyFrameCharacterInfo.TypeFiveText:Show()
+			else
+				currencyFrameCharacterInfo.TypeFiveText:Hide()
+			end
+			if AJM.db.currTypeSix == true then
+				currencyFrameCharacterInfo.TypeSixText:SetWidth( pointsWidth )
+				currencyFrameCharacterInfo.TypeSixText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+				left = left + pointsWidth + spacingWidth
+				currencyFrameCharacterInfo.TypeSixText:Show()
+			else
+				currencyFrameCharacterInfo.TypeSixText:Hide()
 		end
-		if AJM.db.currHonorPoints == true then
-			currencyFrameCharacterInfo.HonorPointsText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.HonorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+--[[
+		if AJM.db.currTypeSeven == true then
+			currencyFrameCharacterInfo.TypeSevenText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.TypeSevenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
 			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.HonorPointsText:Show()
+			currencyFrameCharacterInfo.TypeSevenText:Show()
 		else
-			currencyFrameCharacterInfo.HonorPointsText:Hide()
+			currencyFrameCharacterInfo.TypeSevenText:Hide()
 		end
-		if AJM.db.currConquestPoints == true then
-			currencyFrameCharacterInfo.ConquestPointsText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.ConquestPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+		if AJM.db.currTypeEight == true then
+			currencyFrameCharacterInfo.TypeEightText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.TypeEightText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
 			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.ConquestPointsText:Show()
+			currencyFrameCharacterInfo.TypeEightText:Show()
 		else
-			currencyFrameCharacterInfo.ConquestPointsText:Hide()
-		end
-		if AJM.db.currValor == true then
-			currencyFrameCharacterInfo.ValorText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.ValorText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.ValorText:Show()
-		else
-			currencyFrameCharacterInfo.ValorText:Hide()
+			currencyFrameCharacterInfo.TypeEightText:Hide()
 		end		
-		if AJM.db.currTolBaradCommendation == true then
-			currencyFrameCharacterInfo.TolBaradCommendationText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.TolBaradCommendationText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+		if AJM.db.currTypeNine == true then
+			currencyFrameCharacterInfo.TypeNineText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.TypeNineText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
 			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.TolBaradCommendationText:Show()
+			currencyFrameCharacterInfo.TypeNineText:Show()
 		else
-			currencyFrameCharacterInfo.TolBaradCommendationText:Hide()
+			currencyFrameCharacterInfo.TypeNineText:Hide()
 		end
-		if AJM.db.currChampionsSeal == true then
-			currencyFrameCharacterInfo.ChampionsSealText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.ChampionsSealText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
+		if AJM.db.currTypeTen == true then
+			currencyFrameCharacterInfo.TypeTenText:SetWidth( pointsWidth )
+			currencyFrameCharacterInfo.TypeTenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
 			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.ChampionsSealText:Show()
+			currencyFrameCharacterInfo.TypeTenText:Show()
 		else
-			currencyFrameCharacterInfo.ChampionsSealText:Hide()
+			currencyFrameCharacterInfo.TypeTenText:Hide()
+		end ]]
 		end
-		if AJM.db.currIllustriousJewelcraftersToken == true then
-			currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText:Show()
-		else
-			currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText:Hide()
-		end
-		if AJM.db.currDalaranJewelcraftingToken == true then
-			currencyFrameCharacterInfo.DalaranJewelcraftingTokenText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.DalaranJewelcraftingTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.DalaranJewelcraftingTokenText:Show()
-		else
-			currencyFrameCharacterInfo.DalaranJewelcraftingTokenText:Hide()
-		end
-		if AJM.db.currIronpawToken == true then
-			currencyFrameCharacterInfo.IronpawTokenText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.IronpawTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.IronpawTokenText:Show()
-		else
-			currencyFrameCharacterInfo.IronpawTokenText:Hide()
-		end
-		if AJM.db.currLesserCharmOfGoodFortune == true then
-			currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:Show()
-		else
-			currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:Hide()
-		end
-		if AJM.db.currElderCharmOfGoodFortune == true then
-			currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText:Show()
-		else
-			currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText:Hide()
-		end
-		if AJM.db.currMoguRuneOfFate == true then
-			currencyFrameCharacterInfo.MoguRuneOfFateText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.MoguRuneOfFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.MoguRuneOfFateText:Show()
-		else
-			currencyFrameCharacterInfo.MoguRuneOfFateText:Hide()
-        end
-		if AJM.db.currWarforgedSeal == true then
-			currencyFrameCharacterInfo.WarforgedSealText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.WarforgedSealText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.WarforgedSealText:Show()
-		else
-			currencyFrameCharacterInfo.WarforgedSealText:Hide()
-        end
-		if AJM.db.currBloodyCoin == true then
-			currencyFrameCharacterInfo.BloodyCoinText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.BloodyCoinText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.BloodyCoinText:Show()
-		else
-			currencyFrameCharacterInfo.BloodyCoinText:Hide()
-        end
-		if AJM.db.currTimelessCoin == true then
-			currencyFrameCharacterInfo.TimelessCoinText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.TimelessCoinText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.TimelessCoinText:Show()
-		else
-			currencyFrameCharacterInfo.TimelessCoinText:Hide()
-		end
---ebony New WoD Currency
-		if AJM.db.currGarrisonResources == true then
-			currencyFrameCharacterInfo.GarrisonResourcesText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.GarrisonResourcesText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.GarrisonResourcesText:Show()
-		else
-			currencyFrameCharacterInfo.GarrisonResourcesText:Hide()
-		end
-		if AJM.db.currTemperedFate == true then
-			currencyFrameCharacterInfo.TemperedFateText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.TemperedFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.TemperedFateText:Show()
-		else
-			currencyFrameCharacterInfo.TemperedFateText:Hide()
-		end
-		if AJM.db.currApexisCrystal == true then
-			currencyFrameCharacterInfo.ApexisCrystalText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.ApexisCrystalText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.ApexisCrystalText:Show()
-		else
-			currencyFrameCharacterInfo.ApexisCrystalText:Hide()
-		end	
-		if AJM.db.currDarkmoon == true then
-			currencyFrameCharacterInfo.DarkmoonText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.DarkmoonText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.DarkmoonText:Show()
-		else
-			currencyFrameCharacterInfo.DarkmoonText:Hide()
-		end
-		if AJM.db.currInevitableFate == true then
-			currencyFrameCharacterInfo.InevitableFateText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.InevitableFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.InevitableFateText:Show()
-		else
-			currencyFrameCharacterInfo.InevitableFateText:Hide()
-		end
-		if AJM.db.currOil == true then
-			currencyFrameCharacterInfo.OilText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.OilText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.OilText:Show()
-		else
-			currencyFrameCharacterInfo.OilText:Hide()
-		end
-		if AJM.db.currTimeWalker == true then
-			currencyFrameCharacterInfo.TimeWalkerText:SetWidth( pointsWidth )
-			currencyFrameCharacterInfo.TimeWalkerText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-			left = left + pointsWidth + spacingWidth
-			currencyFrameCharacterInfo.TimeWalkerText:Show()
-		else
-			currencyFrameCharacterInfo.TimeWalkerText:Hide()
-		end		
-	end
+	end	
 	-- Parent frame width and title.
 	local finalParentWidth = frameHorizontalSpacing + nameWidth + spacingWidth + (haveGold * (goldWidth + (spacingWidth * 3))) + (numberOfPointsColumns * (pointsWidth + spacingWidth)) + frameHorizontalSpacing
 	if finalParentWidth < 95 then
@@ -1789,217 +1816,111 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	frameGoldText:SetJustifyH( "RIGHT" )
 	currencyFrameCharacterInfo.GoldText = frameGoldText
 	left = left + spacing	
-	-- Set the HonorPoints font string.
-	local frameHonorPoints = AJM.globalCurrencyFramePrefix.."HonorPoints"
-	local frameHonorPointsText = parentFrame:CreateFontString( frameHonorPoints.."Text", "OVERLAY", "GameFontNormal" )
-	frameHonorPointsText:SetText( "0" )
-	frameHonorPointsText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameHonorPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameHonorPointsText:SetWidth( width )
-	frameHonorPointsText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.HonorPointsText = frameHonorPointsText
+	-- Set the TypeOne font string.
+	local frameTypeOne = AJM.globalCurrencyFramePrefix.."TypeOne"
+	local frameTypeOneText = parentFrame:CreateFontString( frameTypeOne.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeOneText:SetText( "0" )
+	frameTypeOneText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTypeOneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeOneText:SetWidth( width )
+	frameTypeOneText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TypeOneText = frameTypeOneText
 	left = left + spacing
-	-- Set the ConquestPoints font string.
-	local frameConquestPoints = AJM.globalCurrencyFramePrefix.."ConquestPoints"
-	local frameConquestPointsText = parentFrame:CreateFontString( frameConquestPoints.."Text", "OVERLAY", "GameFontNormal" )
-	frameConquestPointsText:SetText( "0" )
-	frameConquestPointsText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameConquestPointsText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameConquestPointsText:SetWidth( width )
-	frameConquestPointsText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.ConquestPointsText = frameConquestPointsText
+	-- Set the TypeTwo font string.
+	local frameTypeTwo = AJM.globalCurrencyFramePrefix.."TypeTwo"
+	local frameTypeTwoText = parentFrame:CreateFontString( frameTypeTwo.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeTwoText:SetText( "0" )
+	frameTypeTwoText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTypeTwoText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeTwoText:SetWidth( width )
+	frameTypeTwoText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TypeTwoText = frameTypeTwoText
 	left = left + spacing
-		-- Set the Valor font string.
-	local frameValor = AJM.globalCurrencyFramePrefix.."Valor"
-	local frameValorText = parentFrame:CreateFontString( frameValor.."Text", "OVERLAY", "GameFontNormal" )
-	frameValorText:SetText( "0" )
-	frameValorText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameValorText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameValorText:SetWidth( width )
-	frameValorText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.ValorText = frameValorText
+		-- Set the TypeThree font string.
+	local frameTypeThree = AJM.globalCurrencyFramePrefix.."TypeThree"
+	local frameTypeThreeText = parentFrame:CreateFontString( frameTypeThree.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeThreeText:SetText( "0" )
+	frameTypeThreeText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTypeThreeText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeThreeText:SetWidth( width )
+	frameTypeThreeText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TypeThreeText = frameTypeThreeText
 	left = left + spacing
-	-- Set the TolBaradCommendation font string.
-	local frameTolBaradCommendation = AJM.globalCurrencyFramePrefix.."TolBaradCommendation"
-	local frameTolBaradCommendationText = parentFrame:CreateFontString( frameTolBaradCommendation.."Text", "OVERLAY", "GameFontNormal" )
-	frameTolBaradCommendationText:SetText( "0" )
-	frameTolBaradCommendationText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameTolBaradCommendationText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTolBaradCommendationText:SetWidth( width )
-	frameTolBaradCommendationText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.TolBaradCommendationText = frameTolBaradCommendationText
+	-- Set the TypeFour font string.
+	local frameTypeFour = AJM.globalCurrencyFramePrefix.."TypeFour"
+	local frameTypeFourText = parentFrame:CreateFontString( frameTypeFour.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeFourText:SetText( "0" )
+	frameTypeFourText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTypeFourText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeFourText:SetWidth( width )
+	frameTypeFourText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TypeFourText = frameTypeFourText
 	left = left + spacing
-	-- Set the ChampionsSeal font string.
-	local frameChampionsSeal = AJM.globalCurrencyFramePrefix.."ChampionsSeal"
-	local frameChampionsSealText = parentFrame:CreateFontString( frameChampionsSeal.."Text", "OVERLAY", "GameFontNormal" )
-	frameChampionsSealText:SetText( "0" )
-	frameChampionsSealText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameChampionsSealText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameChampionsSealText:SetWidth( width )
-	frameChampionsSealText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.ChampionsSealText = frameChampionsSealText
+	-- Set the TypeFive font string.
+	local frameTypeFive = AJM.globalCurrencyFramePrefix.."TypeFive"
+	local frameTypeFiveText = parentFrame:CreateFontString( frameTypeFive.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeFiveText:SetText( "0" )
+	frameTypeFiveText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTypeFiveText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeFiveText:SetWidth( width )
+	frameTypeFiveText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TypeFiveText = frameTypeFiveText
 	left = left + spacing
-	-- Set the IllustriousJewelcraftersToken font string.
-	local frameIllustriousJewelcraftersToken = AJM.globalCurrencyFramePrefix.."IllustriousJewelcraftersToken"
-	local frameIllustriousJewelcraftersTokenText = parentFrame:CreateFontString( frameIllustriousJewelcraftersToken.."Text", "OVERLAY", "GameFontNormal" )
-	frameIllustriousJewelcraftersTokenText:SetText( "0" )
-	frameIllustriousJewelcraftersTokenText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameIllustriousJewelcraftersTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameIllustriousJewelcraftersTokenText:SetWidth( width )
-	frameIllustriousJewelcraftersTokenText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText = frameIllustriousJewelcraftersTokenText
+	-- Set the TypeSix font string.
+	local frameTypeSix = AJM.globalCurrencyFramePrefix.."TypeSix"
+	local frameTypeSixText = parentFrame:CreateFontString( frameTypeSix.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeSixText:SetText( "0" )
+	frameTypeSixText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTypeSixText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeSixText:SetWidth( width )
+	frameTypeSixText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TypeSixText = frameTypeSixText
 	left = left + spacing
-	-- Set the DalaranJewelcraftingToken font string.
-	local frameDalaranJewelcraftingToken = AJM.globalCurrencyFramePrefix.."DalaranJewelcraftingToken"
-	local frameDalaranJewelcraftingTokenText = parentFrame:CreateFontString( frameDalaranJewelcraftingToken.."Text", "OVERLAY", "GameFontNormal" )
-	frameDalaranJewelcraftingTokenText:SetText( "0" )
-	frameDalaranJewelcraftingTokenText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameDalaranJewelcraftingTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameDalaranJewelcraftingTokenText:SetWidth( width )
-	frameDalaranJewelcraftingTokenText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.DalaranJewelcraftingTokenText = frameDalaranJewelcraftingTokenText
+--[[ More Space if needed
+	-- Set the TypeSeven font string.
+	local frameTypeSeven = AJM.globalCurrencyFramePrefix.."TypeSeven"
+	local frameTypeSevenText = parentFrame:CreateFontString( frameTypeSeven.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeSevenText:SetText( "0" )
+	frameTypeSevenText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTypeSevenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeSevenText:SetWidth( width )
+	frameTypeSevenText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TypeSevenText = frameTypeSevenText
 	left = left + spacing
-	-- Set the IronpawToken font string.
-	local frameIronpawToken = AJM.globalCurrencyFramePrefix.."IronpawToken"
-	local frameIronpawTokenText = parentFrame:CreateFontString( frameIronpawToken.."Text", "OVERLAY", "GameFontNormal" )
-	frameIronpawTokenText:SetText( "0" )
-	frameIronpawTokenText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameIronpawTokenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameIronpawTokenText:SetWidth( width )
-	frameIronpawTokenText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.IronpawTokenText = frameIronpawTokenText
+	-- Set the TypeEight font string.
+	local frameTypeEight = AJM.globalCurrencyFramePrefix.."TypeEight"
+	local frameTypeEightText = parentFrame:CreateFontString( frameTypeEight.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeEightText:SetText( "0" )
+	frameTypeEightText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTypeEightText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeEightText:SetWidth( width )
+	frameTypeEightText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TypeEightText = frameTypeEightText
 	left = left + spacing
-	-- Set the LesserCharmOfGoodFortune font string.
-	local frameLesserCharmOfGoodFortune = AJM.globalCurrencyFramePrefix.."LesserCharmOfGoodFortune"
-	local frameLesserCharmOfGoodFortuneText = parentFrame:CreateFontString( frameLesserCharmOfGoodFortune.."Text", "OVERLAY", "GameFontNormal" )
-	frameLesserCharmOfGoodFortuneText:SetText( "0" )
-	frameLesserCharmOfGoodFortuneText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameLesserCharmOfGoodFortuneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameLesserCharmOfGoodFortuneText:SetWidth( width )
-	frameLesserCharmOfGoodFortuneText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText = frameLesserCharmOfGoodFortuneText
+	-- Set the TypeNine font string.
+	local frameTypeNine = AJM.globalCurrencyFramePrefix.."TypeNine"
+	local frameTypeNineText = parentFrame:CreateFontString( frameTypeNine.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeNineText:SetText( "0" )
+	frameTypeNineText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTypeNineText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeNineText:SetWidth( width )
+	frameTypeNineText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TypeNineText = frameTypeNineText
 	left = left + spacing
-	-- Set the ElderCharmOfGoodFortune font string.
-	local frameElderCharmOfGoodFortune = AJM.globalCurrencyFramePrefix.."ElderCharmOfGoodFortune"
-	local frameElderCharmOfGoodFortuneText = parentFrame:CreateFontString( frameElderCharmOfGoodFortune.."Text", "OVERLAY", "GameFontNormal" )
-	frameElderCharmOfGoodFortuneText:SetText( "0" )
-	frameElderCharmOfGoodFortuneText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameElderCharmOfGoodFortuneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameElderCharmOfGoodFortuneText:SetWidth( width )
-	frameElderCharmOfGoodFortuneText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText = frameElderCharmOfGoodFortuneText
+	-- Set the TypeTen font string.
+	local frameTypeTen = AJM.globalCurrencyFramePrefix.."TypeTen"
+	local frameTypeTenText = parentFrame:CreateFontString( frameTypeTen.."Text", "OVERLAY", "GameFontNormal" )
+	frameTypeTenText:SetText( "0" )
+	frameTypeTenText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	frameTypeTenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
+	frameTypeTenText:SetWidth( width )
+	frameTypeTenText:SetJustifyH( "CENTER" )
+	currencyFrameCharacterInfo.TypeTenText = frameTypeTenText
 	left = left + spacing
-	-- Set the MoguRuneOfFate font string.
-	local frameMoguRuneOfFate = AJM.globalCurrencyFramePrefix.."MoguRuneOfFate"
-	local frameMoguRuneOfFateText = parentFrame:CreateFontString( frameMoguRuneOfFate.."Text", "OVERLAY", "GameFontNormal" )
-	frameMoguRuneOfFateText:SetText( "0" )
-	frameMoguRuneOfFateText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameMoguRuneOfFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameMoguRuneOfFateText:SetWidth( width )
-	frameMoguRuneOfFateText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.MoguRuneOfFateText = frameMoguRuneOfFateText
-	left = left + spacing
-    -- Set the WarforgedSeal font string.
-	local frameWarforgedSeal = AJM.globalCurrencyFramePrefix.."WarforgedSeal"
-	local frameWarforgedSealText = parentFrame:CreateFontString( frameWarforgedSeal.."Text", "OVERLAY", "GameFontNormal" )
-	frameWarforgedSealText:SetText( "0" )
-	frameWarforgedSealText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameWarforgedSealText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameWarforgedSealText:SetWidth( width )
-	frameWarforgedSealText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.WarforgedSealText = frameWarforgedSealText
-	left = left + spacing
-    -- Set the BloodyCoin font string.
-	local frameBloodyCoin = AJM.globalCurrencyFramePrefix.."BloodyCoin"
-	local frameBloodyCoinText = parentFrame:CreateFontString( frameBloodyCoin.."Text", "OVERLAY", "GameFontNormal" )
-	frameBloodyCoinText:SetText( "0" )
-	frameBloodyCoinText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameBloodyCoinText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameBloodyCoinText:SetWidth( width )
-	frameBloodyCoinText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.BloodyCoinText = frameBloodyCoinText
-	left = left + spacing
-	-- Set the TimelessCoin font string.
-	local frameTimelessCoin = AJM.globalCurrencyFramePrefix.."TimelessCoin"
-	local frameTimelessCoinText = parentFrame:CreateFontString( frameTimelessCoin.."Text", "OVERLAY", "GameFontNormal" )
-	frameTimelessCoinText:SetText( "0" )
-	frameTimelessCoinText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameTimelessCoinText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTimelessCoinText:SetWidth( width )
-	frameTimelessCoinText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.TimelessCoinText = frameTimelessCoinText
-	left = left + spacing
-	--ebony New WoD Currency
-	-- Set the GarrisonResources font string.
-	local frameGarrisonResources = AJM.globalCurrencyFramePrefix.."GarrisonResources"
-	local frameGarrisonResourcesText = parentFrame:CreateFontString( frameGarrisonResources .."Text", "OVERLAY", "GameFontNormal" )
-	frameGarrisonResourcesText:SetText( "0" )
-	frameGarrisonResourcesText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameGarrisonResourcesText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameGarrisonResourcesText:SetWidth( width )
-	frameGarrisonResourcesText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.GarrisonResourcesText = frameGarrisonResourcesText
-	left = left + spacing
-	-- Set the TemperedFate font string.
-	local frameTemperedFate = AJM.globalCurrencyFramePrefix.."TemperedFate"
-	local frameTemperedFateText = parentFrame:CreateFontString( frameTemperedFate .."Text", "OVERLAY", "GameFontNormal" )
-	frameTemperedFateText:SetText( "0" )
-	frameTemperedFateText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameTemperedFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTemperedFateText:SetWidth( width )
-	frameTemperedFateText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.TemperedFateText = frameTemperedFateText
-	left = left + spacing
-	-- Set the ApexisCrystal font string.
-	local frameApexisCrystal = AJM.globalCurrencyFramePrefix.."ApexisCrystal"
-	local frameApexisCrystalText = parentFrame:CreateFontString( frameApexisCrystal .."Text", "OVERLAY", "GameFontNormal" )
-	frameApexisCrystalText:SetText( "0" )
-	frameApexisCrystalText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameApexisCrystalText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameApexisCrystalText:SetWidth( width )
-	frameApexisCrystalText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.ApexisCrystalText = frameApexisCrystalText
-	left = left + spacing
-	-- Set the Darkmoon font string.
-	local frameDarkmoon = AJM.globalCurrencyFramePrefix.."Darkmoon"
-	local frameDarkmoonText = parentFrame:CreateFontString( frameDarkmoon .."Text", "OVERLAY", "GameFontNormal" )
-	frameDarkmoonText:SetText( "0" )
-	frameDarkmoonText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameDarkmoonText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameDarkmoonText:SetWidth( width )
-	frameDarkmoonText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.DarkmoonText = frameDarkmoonText
-	left = left + spacing
-		-- Set the InevitableFate font string.
-	local frameInevitableFate = AJM.globalCurrencyFramePrefix.."InevitableFate"
-	local frameInevitableFateText = parentFrame:CreateFontString( frameInevitableFate .."Text", "OVERLAY", "GameFontNormal" )
-	frameInevitableFateText:SetText( "0" )
-	frameInevitableFateText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameInevitableFateText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameInevitableFateText:SetWidth( width )
-	frameInevitableFateText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.InevitableFateText = frameInevitableFateText
-	left = left + spacing
-		-- Set the Oil font string.
-	local frameOil = AJM.globalCurrencyFramePrefix.."Oil"
-	local frameOilText = parentFrame:CreateFontString( frameOil .."Text", "OVERLAY", "GameFontNormal" )
-	frameOilText:SetText( "0" )
-	frameOilText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameOilText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameOilText:SetWidth( width )
-	frameOilText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.OilText = frameOilText
-	left = left + spacing
-		-- Set the TimeWalker font string.
-	local frameTimeWalker = AJM.globalCurrencyFramePrefix.."TimeWalker"
-	local frameTimeWalkerText = parentFrame:CreateFontString( frameTimeWalker .."Text", "OVERLAY", "GameFontNormal" )
-	frameTimeWalkerText:SetText( "0" )
-	frameTimeWalkerText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameTimeWalkerText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTimeWalkerText:SetWidth( width )
-	frameTimeWalkerText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.TimeWalkerText = frameTimeWalkerText
-	left = left + spacing	
+]]
+
+
+	--end
 end
 
 function AJM:JambaToonHideCurrency()
@@ -2007,45 +1928,44 @@ function AJM:JambaToonHideCurrency()
 end
 
 function AJM:JambaToonRequestCurrency()
-	--AJM.Print("DoRequestCurrency", characterName)
 	-- Colour red.
 	local r = 1.0
 	local g = 0.0
 	local b = 0.0
 	local a = 0.6
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
-		if JambaApi.GetCharacterOnlineStatus ( characterName ) == true then
-		--	AJM.Print("offlineRemove")
-		--	AJM.currencyFrameCharacterInfo[characterName] = nil
-		--	return
-		--else
-		currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.HonorPointsText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.ConquestPointsText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.ValorText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.TolBaradCommendationText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.ChampionsSealText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.DalaranJewelcraftingTokenText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.IronpawTokenText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.MoguRuneOfFateText:SetTextColor( r, g, b, a )
-        currencyFrameCharacterInfo.WarforgedSealText:SetTextColor( r, g, b, a )
-        currencyFrameCharacterInfo.BloodyCoinText:SetTextColor( r, g, b, a )
-        currencyFrameCharacterInfo.TimelessCoinText:SetTextColor( r, g, b, a )
-		--ebony New WoD Currency
-		currencyFrameCharacterInfo.GarrisonResourcesText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.TemperedFateText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.ApexisCrystalText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.DarkmoonText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.InevitableFateText:SetTextColor( r, g, b, a )
-		currencyFrameCharacterInfo.OilText:SetTextColor( r, g, b, a )
+		--AJM.Print("DoRequestCurrency", characterName)
+		if JambaApi.GetCharacterOnlineStatus ( characterName ) == false then
+			-- Hides currency for offline members.
+			--AJM.Print("offlineRemove", characterName )
+			currencyFrameCharacterInfo.characterNameText:Hide()
+			currencyFrameCharacterInfo.GoldText:Hide()
+			currencyFrameCharacterInfo.TypeOneText:Hide()
+			currencyFrameCharacterInfo.TypeTwoText:Hide()
+			currencyFrameCharacterInfo.TypeThreeText:Hide()
+			currencyFrameCharacterInfo.TypeFourText:Hide()
+			currencyFrameCharacterInfo.TypeFiveText:Hide()
+			currencyFrameCharacterInfo.TypeSixText:Hide()
+			--[[
+			currencyFrameCharacterInfo.TypeSevenText:Hide()
+			currencyFrameCharacterInfo.TypeEightText:Hide()
+			currencyFrameCharacterInfo.TypeNineText:Hide()
+			currencyFrameCharacterInfo.TypeTenText:Hide()
+			]]
 		else
-			--AJM.currencyFrameCharacterInfo[characterName] = nil
-			--table.wipe( AJM.currentCurrencyValues )
-			--AJM.currencyFrameCharacterInfo = {}
+			currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
+			currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
+			currencyFrameCharacterInfo.TypeOneText:SetTextColor( r, g, b, a )
+			currencyFrameCharacterInfo.TypeTwoText:SetTextColor( r, g, b, a )
+			currencyFrameCharacterInfo.TypeThreeText:SetTextColor( r, g, b, a )
+			currencyFrameCharacterInfo.TypeFourText:SetTextColor( r, g, b, a )
+			currencyFrameCharacterInfo.TypeFiveText:SetTextColor( r, g, b, a )
+			currencyFrameCharacterInfo.TypeSixText:SetTextColor( r, g, b, a )
+			--[[currencyFrameCharacterInfo.TypeSevenText:SetTextColor( r, g, b, a )
+			currencyFrameCharacterInfo.TypeEightText:SetTextColor( r, g, b, a )
+			currencyFrameCharacterInfo.TypeNineText:SetTextColor( r, g, b, a )
+			currencyFrameCharacterInfo.TypeTenText:SetTextColor( r, g, b, a )
+			]]
 		end
 	end
 	AJM.currencyTotalGold = 0
@@ -2059,39 +1979,33 @@ function AJM:JambaToonRequestCurrency()
 end
 
 function AJM:DoSendCurrency( characterName, dummyValue )
+	--AJM:Print("Test2")
+	if JambaApi.GetCharacterOnlineStatus ( characterName ) == true then
 	table.wipe( AJM.currentCurrencyValues )
 	AJM.currentCurrencyValues.currGold = GetMoney()
-	AJM.currentCurrencyValues.currHonorPoints = select( 2, GetCurrencyInfo( AJM.CHonorPoints ) )
-	AJM.currentCurrencyValues.currConquestPoints = select( 2, GetCurrencyInfo( AJM.CConquestPoints ) )
-	AJM.currentCurrencyValues.currValor = select( 2, GetCurrencyInfo( AJM.CValor ) )	
-	AJM.currentCurrencyValues.currTolBaradCommendation = select( 2, GetCurrencyInfo( AJM.CTolBaradCommendation ) )
-	AJM.currentCurrencyValues.currChampionsSeal = select( 2, GetCurrencyInfo(AJM.CChampionsSeal ) )
-	AJM.currentCurrencyValues.currIllustriousJewelcraftersToken = select( 2, GetCurrencyInfo( AJM.CIllustriousJewelcraftersToken ) )
-	AJM.currentCurrencyValues.currDalaranJewelcraftingToken = select( 2, GetCurrencyInfo( AJM.CDalaranJewelcraftingToken ) )
-	AJM.currentCurrencyValues.currIronpawToken = select( 2, GetCurrencyInfo( AJM.CIronpawToken ) )
-	AJM.currentCurrencyValues.currLesserCharmOfGoodFortune = select( 2, GetCurrencyInfo( AJM.CLesserCharmOfGoodFortune ) )
-	AJM.currentCurrencyValues.currElderCharmOfGoodFortune = select( 2, GetCurrencyInfo( AJM.CElderCharmOfGoodFortune ) )
-	AJM.currentCurrencyValues.currMoguRuneOfFate = select( 2, GetCurrencyInfo( AJM.CMoguRuneOfFate ) )
-    AJM.currentCurrencyValues.currWarforgedSeal = select( 2, GetCurrencyInfo( AJM.CWarforgedSeal ) )
-    AJM.currentCurrencyValues.currBloodyCoin = select( 2, GetCurrencyInfo( AJM.CBloodyCoin ) )
-    AJM.currentCurrencyValues.currTimelessCoin = select( 2, GetCurrencyInfo( AJM.CTimelessCoin ) )
-	--ebony New WoD Currency
-	AJM.currentCurrencyValues.currGarrisonResources = select( 2, GetCurrencyInfo( AJM.CGarrisonResources ) )
-	AJM.currentCurrencyValues.currTemperedFate = select( 2, GetCurrencyInfo( AJM.CTemperedFate ) )
-	AJM.currentCurrencyValues.currApexisCrystal = select( 2, GetCurrencyInfo( AJM.CApexisCrystal ) )
-	AJM.currentCurrencyValues.currDarkmoon = select( 2, GetCurrencyInfo( AJM.CDarkmoon ) )
-	AJM.currentCurrencyValues.currInevitableFate = select( 2, GetCurrencyInfo( AJM.CInevitableFate ) )
-	AJM.currentCurrencyValues.currOil = select( 2, GetCurrencyInfo( AJM.COil ) )	
-	AJM.currentCurrencyValues.currTimeWalker = select( 2, GetCurrencyInfo( AJM.CTimeWalker ) )
+	-- CurrencyValues
+	AJM.currentCurrencyValues.currTypeOne = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeOne ) )
+	AJM.currentCurrencyValues.currTypeTwo = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeTwo ) )
+	AJM.currentCurrencyValues.currTypeThree = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeThree ) )	
+	AJM.currentCurrencyValues.currTypeFour	= select( 2, GetCurrencyInfo( AJM.db.CcurrTypeFour ) )
+	AJM.currentCurrencyValues.currTypeFive = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeFive ) )
+	AJM.currentCurrencyValues.currTypeSix = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeSix ) )
+--	AJM.currentCurrencyValues.currTypeSeven = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeSeven ) )	
+--	AJM.currentCurrencyValues.currTypeEight = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeEight ) )
+--	AJM.currentCurrencyValues.currTypeNine = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeNine ) )
+--	AJM.currentCurrencyValues.currTypeTen = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeTen ) )
 	AJM:JambaSendCommandToToon( characterName, AJM.COMMAND_HERE_IS_CURRENCY, AJM.currentCurrencyValues )
+	else
+		return
+	end
 end
 
 function AJM:DoShowToonsCurrency( characterName, currencyValues )
-	--AJM.Print("DoShowCurrency", characterName)
-	--if JambaPrivate.Team.GetCharacterOnlineStatus( characterName ) == true then
+	--AJM.Print("DoShowCurrency", characterName, currencyValues.currTypeOne )
 	local parentFrame = JambaToonCurrencyListFrame
 	-- Get (or create and get) the character information.
 	local currencyFrameCharacterInfo = AJM.currencyFrameCharacterInfo[characterName]
+		--AJM.Print("Frame", characterName)
 	if currencyFrameCharacterInfo == nil then
 		AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 		currencyFrameCharacterInfo = AJM.currencyFrameCharacterInfo[characterName]
@@ -2103,61 +2017,43 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	local a = 1.0
 	currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.HonorPointsText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.ConquestPointsText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.ValorText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TolBaradCommendationText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.ChampionsSealText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.DalaranJewelcraftingTokenText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.IronpawTokenText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.MoguRuneOfFateText:SetTextColor( r, g, b, a )
-    currencyFrameCharacterInfo.WarforgedSealText:SetTextColor( r, g, b, a )
-    currencyFrameCharacterInfo.BloodyCoinText:SetTextColor( r, g, b, a )
-    currencyFrameCharacterInfo.TimelessCoinText:SetTextColor( r, g, b, a )
-	--ebony New WoD Currency
-	currencyFrameCharacterInfo.GarrisonResourcesText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TemperedFateText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.ApexisCrystalText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.DarkmoonText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.InevitableFateText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.OilText:SetTextColor( r, g, b, a )	
-	-- Information.
-	currencyFrameCharacterInfo.GoldText:SetText( JambaUtilities:FormatMoneyString( currencyValues.currGold ) )
-	currencyFrameCharacterInfo.HonorPointsText:SetText( currencyValues.currHonorPoints )
-	currencyFrameCharacterInfo.ConquestPointsText:SetText( currencyValues.currConquestPoints )
-	currencyFrameCharacterInfo.ValorText:SetText( currencyValues.currValor )	
-	currencyFrameCharacterInfo.TolBaradCommendationText:SetText( currencyValues.currTolBaradCommendation )
-	currencyFrameCharacterInfo.ChampionsSealText:SetText( currencyValues.currChampionsSeal )
-	currencyFrameCharacterInfo.IllustriousJewelcraftersTokenText:SetText( currencyValues.currIllustriousJewelcraftersToken )
-	currencyFrameCharacterInfo.DalaranJewelcraftingTokenText:SetText( currencyValues.currDalaranJewelcraftingToken )
-	currencyFrameCharacterInfo.IronpawTokenText:SetText( currencyValues.currIronpawToken )
-	currencyFrameCharacterInfo.LesserCharmOfGoodFortuneText:SetText( currencyValues.currLesserCharmOfGoodFortune )
-	currencyFrameCharacterInfo.ElderCharmOfGoodFortuneText:SetText( currencyValues.currElderCharmOfGoodFortune )
-	currencyFrameCharacterInfo.MoguRuneOfFateText:SetText( currencyValues.currMoguRuneOfFate )
-    currencyFrameCharacterInfo.WarforgedSealText:SetText( currencyValues.currWarforgedSeal )
-    currencyFrameCharacterInfo.BloodyCoinText:SetText( currencyValues.currBloodyCoin )
-    currencyFrameCharacterInfo.TimelessCoinText:SetText( currencyValues.currTimelessCoin )
-	--ebony New WoD Currency
-	currencyFrameCharacterInfo.GarrisonResourcesText:SetText( currencyValues.currGarrisonResources )
-	currencyFrameCharacterInfo.TemperedFateText:SetText( currencyValues.currTemperedFate )
-	currencyFrameCharacterInfo.ApexisCrystalText:SetText( currencyValues.currApexisCrystal )
-	currencyFrameCharacterInfo.DarkmoonText:SetText( currencyValues.currDarkmoon )
-	currencyFrameCharacterInfo.InevitableFateText:SetText( currencyValues.currInevitableFate )
-	currencyFrameCharacterInfo.OilText:SetText( currencyValues.currOil )
-	currencyFrameCharacterInfo.TimeWalkerText:SetText( currencyValues.currTimeWalker )
+	currencyFrameCharacterInfo.TypeOneText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.TypeTwoText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.TypeThreeText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.TypeFourText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.TypeFiveText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.TypeSixText:SetTextColor( r, g, b, a )
+--[[	
+	currencyFrameCharacterInfo.TypeSevenText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.TypeEightText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.TypeNineText:SetTextColor( r, g, b, a )
+	currencyFrameCharacterInfo.TypeTenText:SetTextColor( r, g, b, a )
+]]
+	--currencyFrameCharacterInfo.GoldText:SetText( JambaUtilities:FormatMoneyString( currencyValues.currGold ) )
+	currencyFrameCharacterInfo.GoldText:SetText( GetCoinTextureString( currencyValues.currGold ) )
+	currencyFrameCharacterInfo.TypeOneText:SetText( currencyValues.currTypeOne )
+	currencyFrameCharacterInfo.TypeTwoText:SetText( currencyValues.currTypeTwo )
+	currencyFrameCharacterInfo.TypeThreeText:SetText( currencyValues.currTypeThree )	
+	currencyFrameCharacterInfo.TypeFourText:SetText( currencyValues.currTypeFour )
+	currencyFrameCharacterInfo.TypeFiveText:SetText( currencyValues.currTypeFive )
+	currencyFrameCharacterInfo.TypeSixText:SetText( currencyValues.currTypeSix )
+--[[	
+currencyFrameCharacterInfo.TypeSevenText:SetText( currencyValues.currTypeSeven )
+	currencyFrameCharacterInfo.TypeEightText:SetText( currencyValues.currTypeEight )
+	currencyFrameCharacterInfo.TypeNineText:SetText( currencyValues.currTypeNine )
+	currencyFrameCharacterInfo.TypeTenText:SetText( currencyValues.currTypeTen )
+]]
 	-- Total gold.
 	AJM.currencyTotalGold = AJM.currencyTotalGold + currencyValues.currGold
-	parentFrame.TotalGoldText:SetText( JambaUtilities:FormatMoneyString( AJM.currencyTotalGold ) )
+	--parentFrame.TotalGoldText:SetText( JambaUtilities:FormatMoneyString( AJM.currencyTotalGold ) )
+	parentFrame.TotalGoldText:SetText( GetCoinTextureString( AJM.currencyTotalGold ) )
 	if IsInGuild() then
-		parentFrame.TotalGoldGuildText:SetText( JambaUtilities:FormatMoneyString( GetGuildBankMoney() ) )
+		--parentFrame.TotalGoldGuildText:SetText( JambaUtilities:FormatMoneyString( GetGuildBankMoney() ) )
+		parentFrame.TotalGoldGuildText:SetText( GetCoinTextureString( GetGuildBankMoney() ) )
 	end
 	-- Update width of currency list.
 	AJM:CurrencyListSetColumnWidth()
 	JambaToonCurrencyListFrame:Show()
-	--end
 end
 
 -- A Jamba command has been received.

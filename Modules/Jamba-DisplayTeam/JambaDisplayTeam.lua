@@ -635,7 +635,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 		-- Durability
 			GameTooltip:AddLine(L["Durability:"]..L[" "]..L["("]..tostring(gsub(ilvlInformationFrame.durability, "%.[^|]+", "") )..L["%"]..L[")"],1,1,1,1)
 		-- Gold
-			GameTooltip:AddLine(L["Gold:"]..L[" "]..JambaUtilities:FormatMoneyString( ilvlInformationFrame.gold ),1,1,1,1)
+			GameTooltip:AddLine(L["Gold:"]..L[" "]..GetCoinTextureString( ilvlInformationFrame.gold ),1,1,1,1)
 		--AJM:Print("mail", ilvlInformationFrame.toolText, "Curr", ilvlInformationFrame.currText)
 		-- Shows if has Ingame Mail
 			if not (ilvlInformationFrame.toolText == "nothing") then
@@ -2400,17 +2400,17 @@ function AJM:SendIlvlInformationUpdateCommand()
 		local name, count, icon, currencyID = GetBackpackCurrencyInfo(1)
 			if ( name ) then
 				--AJM:Print("test", name, count)
-				currText = name.." "..count
+				currText = name.." ".." |T"..icon..":16|t".." "..count
 			end
 		local name, count, icon, currencyID = GetBackpackCurrencyInfo(2)
 			if ( name ) then
 				--AJM:Print("test2", name, count)
-				currText = currText.."\n"..name.." "..count
+				currText = currText.."\n"..name.." ".." |T"..icon..":16|t".." "..count
 			end
 		local name, count, icon, currencyID = GetBackpackCurrencyInfo(3)
 			if ( name ) then
 				--AJM:Print("test3", name, count)
-				currText = currText.."\n"..name.." "..count
+				currText = currText.."\n"..name.." ".." |T"..icon..":16|t".." "..count
 			end
 	
 		
