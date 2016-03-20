@@ -347,16 +347,16 @@ local function SettingsCreateMasterControl( top )
 	-- Create checkboxes.
 	AJM.settingsControl.masterControlCheckBoxFocusChange = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		checkBoxWidth, 
 		column1Left, 
 		top - headingHeight, 
 		L["Focus will set master toon."],
 		AJM.SettingsFocusChangeToggle,
-		L["The master will be the set from the focus target if a team member \n\n Note: All team members must be setting the focus."]
+		L["The master will be the set from the focus target if a team member \n\nNote: All team members must be setting the focus."]
 	)	
 	AJM.settingsControl.masterControlCheckBoxMasterChange = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		checkBoxWidth, 
 		column2Left, 
 		top - headingHeight,
 		L["Promote Master to party leader."],
@@ -365,7 +365,7 @@ local function SettingsCreateMasterControl( top )
 	)
 	AJM.settingsControl.masterControlCheckBoxMasterChangeClickToMove = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
+		checkBoxWidth, 
 		column1Left, 
 		top - headingHeight - checkBoxHeight, 
 		L["Sets click-to-move on Minions"],
