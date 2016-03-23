@@ -41,6 +41,7 @@ L["Change Channel"] = true
 L["Change the communications channel."] = true
 L["Jamba4"] = true
 L["Jamba"] = true
+L["A Awesome Multi-Boxer Assistant"] = true
 L["Jafula's Awesome Multi-Boxer Assistant"] = true
 L["Copyright 2008-2016 Michael 'Jafula' Miller, Now managed By Ebony"] = true
 L["Special thanks to Michael 'Jafula' Miller who made Jamba"] = true

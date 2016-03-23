@@ -39,7 +39,7 @@ local AceGUI = LibStub("AceGUI-3.0")
 -- Create frame for Jamba Settings.
 JambaPrivate.SettingsFrame = {}
 JambaPrivate.SettingsFrame.Widget = AceGUI:Create( "JambaWindow" )
-JambaPrivate.SettingsFrame.Widget:SetTitle( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Jafula's Awesome Multi-Boxer Assistant"] )
+JambaPrivate.SettingsFrame.Widget:SetTitle( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["A Awesome Multi-Boxer Assistant"] )
 JambaPrivate.SettingsFrame.Widget:SetLayout( "Fill" )
 JambaPrivate.SettingsFrame.WidgetTree = AceGUI:Create( "TreeGroup" )
 JambaPrivate.SettingsFrame.TreeGroupStatus = { treesizable = false, groups = {} }
@@ -507,8 +507,7 @@ function AJM:OnInitialize()
 	-- Register the chat command.
 	AJM:RegisterChatCommand( AJM.chatCommand, "JambaChatCommand" )
 	-- Attempt to load modules, if they are disabled, they won't be loaded.
-	-- TODO: This kinda defeats the purpose of the module system if we have to update core each time a module is added
-    -- TODO: Also, did the load on demand stuff actually work?
+	-- TODO: This kinda defeats the purpose of the module system if we have to update core each time a module is added.
     AJM:LoadJambaModule( "Jamba-AdvancedLoot" )
 	AJM:LoadJambaModule( "Jamba-DisplayTeam" )
 	AJM:LoadJambaModule( "Jamba-Follow" )
@@ -526,6 +525,7 @@ function AJM:OnInitialize()
 	AJM:LoadJambaModule( "Jamba-Toon" )
 	AJM:LoadJambaModule( "Jamba-Trade" )
 	AJM:LoadJambaModule( "Jamba-Video" )
+	AJM:LoadJambaModule( "Jamba-Curr" )
 end
 
 function AJM:LoadJambaModule( moduleName )
