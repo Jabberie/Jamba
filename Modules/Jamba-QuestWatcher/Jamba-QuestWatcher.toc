@@ -1,0 +1,14 @@
+## Interface: 60200
+## Title: JambaQuestWatcher
+## Notes: JambaQuestWatcher
+## Author: Ebony, Former Author: Jafula
+## Version: 4.2.2
+## X-Category: Interface Enhancements
+## X-Child-Of: Jamba
+## Dependencies: Jamba
+## SavedVariables: JambaQuestWatcherProfileDB
+## LoadOnDemand: 1
+Locales\Locales.xml
+JambaQuestWatcher.lua
+
+

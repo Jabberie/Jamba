@@ -1,0 +1,12 @@
+## Interface: 60200
+## Title: Jamba-AdvancedLoot
+## Notes: Jamba-AdvancedLoot
+## Author: Max Schilling
+## Version: 4.2.2
+## X-Category: Interface Enhancements
+## X-Child-Of: Jamba
+## Dependencies: Jamba
+## SavedVariables: JambaAdvancedLootProfileDB
+## LoadOnDemand: 1
+Locales\Locales.xml
+JambaAdvancedLoot.lua

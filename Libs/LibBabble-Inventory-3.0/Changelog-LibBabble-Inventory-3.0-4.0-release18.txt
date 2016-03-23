@@ -1,0 +1,19 @@
+------------------------------------------------------------------------
+r126 | nevcairiel | 2011-02-09 15:41:12 +0000 (Wed, 09 Feb 2011) | 1 line
+Changed paths:
+   A /tags/4.0-release18 (from /trunk:125)
+
+Weekly Tag - #18
+------------------------------------------------------------------------
+r125 | nevcairiel | 2011-02-09 15:40:51 +0000 (Wed, 09 Feb 2011) | 1 line
+Changed paths:
+   M /trunk/LibBabble-Inventory-3.0.lua
+
+Automated LibBabble re-generation from the localization system
+------------------------------------------------------------------------
+r123 | nevcairiel | 2011-01-29 10:31:33 +0000 (Sat, 29 Jan 2011) | 1 line
+Changed paths:
+   M /trunk/LibBabble-Inventory-3.0.lua
+
+Automated LibBabble re-generation from the localization system
+------------------------------------------------------------------------

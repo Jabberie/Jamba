@@ -1,0 +1,9 @@
+## Interface: 50400
+## LoadOnDemand: 1
+## Title: Lib: Babble-Inventory-3.0
+## Notes: A library to help with localization of item types and subtypes.
+## Notes-esES: Una libreria para ayudar con la traduccion de tipos y subtipos de objetos.
+## Author: ckknight
+
+LibStub\LibStub.lua
+lib.xml

@@ -1,0 +1,14 @@
+## Interface: 60200
+## Title: JambaFollow
+## Notes: JambaFollow
+## Author: Ebony, Former Author: Jafula
+## Version: 4.2.2
+## X-Category: Interface Enhancements
+## X-Child-Of: Jamba
+## Dependencies: Jamba
+## SavedVariables: JambaFollowProfileDB
+## LoadOnDemand: 1
+Locales\Locales.xml
+JambaFollow.lua
+
+

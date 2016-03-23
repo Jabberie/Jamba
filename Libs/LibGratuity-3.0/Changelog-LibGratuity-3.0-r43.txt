@@ -1,0 +1,16 @@
+------------------------------------------------------------------------
+r43 | Phanx | 2011-02-11 06:04:04 +0000 (Fri, 11 Feb 2011) | 2 lines
+Changed paths:
+   M /trunk/.pkgmeta
+   D /trunk/LibStub
+
+- Remove hard-embedded LibStub
+- Add LibStub to pkgmeta and disable no-embed packaging
+------------------------------------------------------------------------
+r42 | greltok | 2010-10-06 05:43:59 +0000 (Wed, 06 Oct 2010) | 1 line
+Changed paths:
+   M /trunk/LibGratuity-3.0.lua
+   M /trunk/LibGratuity-3.0.toc
+
+Fix for 4.0.
+------------------------------------------------------------------------

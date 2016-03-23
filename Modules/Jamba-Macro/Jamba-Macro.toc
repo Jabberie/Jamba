@@ -1,0 +1,12 @@
+## Interface: 60200
+## Title: Jamba-Macro
+## Notes: Jamba-Macro
+## Author: Ebony, Former Author: Jafula
+## Version: 4.2.2
+## X-Category: Interface Enhancements
+## X-Child-Of: Jamba
+## Dependencies: Jamba
+## SavedVariables: JambaMacroProfileDB
+## LoadOnDemand: 1
+Locales\Locales.xml
+JambaMacro.lua

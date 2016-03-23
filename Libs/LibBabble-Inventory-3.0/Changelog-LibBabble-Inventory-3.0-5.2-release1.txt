@@ -1,0 +1,14 @@
+------------------------------------------------------------------------
+r166 | nevcairiel | 2013-03-09 07:14:07 +0000 (Sat, 09 Mar 2013) | 1 line
+Changed paths:
+   A /tags/5.2-release1 (from /trunk:165)
+
+Weekly Tag - #1
+------------------------------------------------------------------------
+r165 | nevcairiel | 2013-03-09 07:13:26 +0000 (Sat, 09 Mar 2013) | 1 line
+Changed paths:
+   M /trunk/LibBabble-Inventory-3.0.lua
+   M /trunk/LibBabble-Inventory-3.0.toc
+
+Automated LibBabble re-generation from the localization system
+------------------------------------------------------------------------

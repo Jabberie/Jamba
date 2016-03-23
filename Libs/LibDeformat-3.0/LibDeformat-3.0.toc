@@ -1,0 +1,11 @@
+## Interface: 30300
+## Title: Lib: Deformat-3.0
+## Notes: A library to convert a post-formatted string back to its original arguments given its format string.
+## Author: ckknight
+## X-eMail: ckknight@gmail.com
+## X-Category: Library
+## X-License: MIT
+## LoadOnDemand: 1
+
+LibStub\LibStub.lua
+lib.xml

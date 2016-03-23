@@ -1,0 +1,20 @@
+------------------------------------------------------------------------
+r136 | nevcairiel | 2011-06-28 16:41:51 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   A /tags/4.2-release1 (from /trunk:135)
+
+Weekly Tag - #1
+------------------------------------------------------------------------
+r135 | nevcairiel | 2011-06-28 16:40:18 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/LibBabble-Inventory-3.0.lua
+   M /trunk/LibBabble-Inventory-3.0.toc
+
+Automated LibBabble re-generation from the localization system
+------------------------------------------------------------------------
+r133 | nevcairiel | 2011-06-13 14:47:47 +0000 (Mon, 13 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/LibBabble-Inventory-3.0.lua
+
+Automated LibBabble re-generation from the localization system
+------------------------------------------------------------------------

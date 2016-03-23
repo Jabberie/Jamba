@@ -1,0 +1,6 @@
+## Interface: 50400
+## Title: Lib: LibStub
+## Notes: Universal Library Stub
+## Credits: Kaelten, Cladhaire, ckknight, Mikk, Ammo, Nevcairiel
+
+LibStub.lua
