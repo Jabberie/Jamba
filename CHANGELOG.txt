@@ -1,11 +1,11 @@
-﻿Jamba Version: Beta-4.3i
+﻿Jamba Version: Beta-4.3j
 WoW Game Version: 6.2.3
 Release Date: TBA
-Beta Release Date: 23/4/2016
+Beta Release Date: 20/4/2016
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade, Curr
 
 *jamba-Core Some Back End Work for Legion/7.0.x
-	* New tooltips on the options config to help make it easter to understand what some buttons to do and to clean up some of the long line text.
+	* New tooltips on the options config to help make it easter to understand what some buttons to do and to clean up some of the long line texts.
 	
 
 *Jamba-Display-Team
@@ -58,7 +58,8 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase
 	- Tag Sould nolonger set the realm name if playing from the same realm. thanks to Sonof from dual-boxing for the bug report.	
 	
 * Jamba-Quest-Watcher
-	- Now Shows Scenario quests on the watcher.	
+	- Now Shows Scenario quests on the watcher.
+	--4.3j Should now work with progress quests again.	
 
 
 	

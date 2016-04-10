@@ -1244,8 +1244,9 @@ function AJM:JambaQuestWatcherUpdate( useCache )
 					local name = tostring("Bonus:")..(title)
 						--send command to team
 						--AJM:Print("BarQuest", questID, title, iterateObjectives, objectiveText, amountCompleted, objectiveFinished, isComplete)						AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_WATCH_OBJECTIVE_UPDATE, questID, name, iterateObjectives, objectiveText, amountCompleted, objectiveFinished, isComplete )
+						AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_WATCH_OBJECTIVE_UPDATE, questID, name, iterateObjectives, objectiveText, amountCompleted, objectiveFinished, isComplete )
 						if AJM.db.sendProgressChatMessages == true then
-						AJM:JambaSendMessageToTeam( AJM.db.messageArea, objectiveText.." "..amountCompleted, false )
+							AJM:JambaSendMessageToTeam( AJM.db.messageArea, objectiveText.." "..amountCompleted, false )
 						end
 					end					
 				-- for other bouns quests EG one time world pop up quests that don't have a npc. 
