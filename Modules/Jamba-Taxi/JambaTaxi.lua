@@ -291,8 +291,15 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 			-- If not already on a taxi...
 			if not UnitOnTaxi( "player" ) then
 				-- And if the taxi frame is open...
-				if TaxiFrame:IsVisible() then
-					TakeTaxi( characterName, ... )
+				-- 7.0.3 Added support for FlightMapFrame for legion flightMastrers. --ebony 
+				if TaxiFrame_ShouldShowOldStyle() == true then
+					if TaxiFrame:IsVisible() then
+						TakeTaxi( characterName, ... )
+					end
+				else
+					if FlightMapFrame:IsVisible() then
+						TakeTaxi( characterName, ... )
+					end	
 				end
 			end
 		end

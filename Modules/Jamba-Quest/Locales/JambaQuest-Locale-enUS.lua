@@ -1,5 +1,5 @@
 --[[
-Jamba - Jafula's Awesome Multi-Boxer Assistant
+Jamba -- Jafula's Awesome Multi-Boxer Assistant
 Copyright 2008 - 2016 Michael "Jafula" Miller
 License: The MIT License
 ]]--
@@ -74,29 +74,9 @@ end
 L["Automatically Accepted Escort Quest: A"] = function( questName )
 	return string.format( "Automatically Accepted Escort Quest: %s", questName )
 end
-L["I do not have the quest: A"] = function( questName )
-	return string.format( "I do not have the quest: %s", questName )
-end
-L["I have abandoned the quest: A"] = function( questName )
-	return string.format( "I have abandoned the quest: %s", questName )
-end
-L["Sharing Quest: A"] = function( questName )
-	return string.format( "Sharing Quest: %s", questName )
-end
-L["Abandon"] = true
-L["Select"] = true
+
 L["Jamba-Quest"] = true
-L["Share"] = true
-L["Track All"] = true
-L["Track None"] = true
-L["Toggle Track All"] = true
-L["Toggle Track"] = true
-L["Abandon All"] = true
-L["Share All"] = true
-L["(No Quest Selected)"] = true
-L["You must select a quest from the quest log in order to action it on your other characters."] = true
-L['Abandon "%s"?'] = true
-L["This will abandon ALL quests ON every toon!  Yes, this means you will end up with ZERO quests in your quest log!  Are you sure?"] = true
+
 L["Send Message Area"] = true
 L["Send Warning Area"] = true
 L["Set The Auto Select Functionality"] = true
@@ -108,3 +88,48 @@ L["Hold Shift To Override Auto Select/Auto Complete"] = true
 L["Toon Auto Selects Best Reward"] = true
 L["And Claims It As Well"] = true
 L["The reward information was not loaded from the server.  Close the quest window and open it again."] = true
+
+L["JAMBA_QUESTLOG_CONTEXT_DROPDOWNTEXT_AbandonAllToons"] = "Jamba Abandon On All Toons"
+L["JAMBA_QUESTLOG_CONTEXT_DROPDOWNTEXT_TrackAllToons"] = "Jamba Track On All Toons"
+L["JAMBA_QUESTLOG_CONTEXT_DROPDOWNTEXT_UnTrackAllToons"] = "Jamba UnTrack On All Toons"
+
+L["JAMBA_QUESTLOG_CONTEXT_ALERT_AbandonAllToons"] = "Abandon \"%s\" on all toons?"
+
+L["JAMBA_QUESTLOG_ALL_MOUSEOVER_AbandonAllButton"] = "Jamba Abandon All Quests"
+L["JAMBA_QUESTLOG_ALL_MOUSEOVER_ShareAllButton"] = "Jamba Share All Quests"
+L["JAMBA_QUESTLOG_ALL_MOUSEOVER_TrackAllButton"] = "Jamba Track All Quests"
+L["JAMBA_QUESTLOG_ALL_MOUSEOVER_UnTrackAllButton"] = "Jamba UnTrack All Quests"
+
+L["JAMBA_QUESTLOG_ALL_ALERT_AbandonAllButton"] = "This will abandon ALL quests ON every toon!  Yes, this means you will end up with ZERO quests in your quest log!  Are you sure?"
+L["JAMBA_QUESTLOG_ALL_ALERT_ShareAllButton"] = "Are you sure you want to share all quests on all toon?"
+L["JAMBA_QUESTLOG_ALL_ALERT_TrackAllButton"] = "Are you sure you want to track all quests on all toons?"
+L["JAMBA_QUESTLOG_ALL_ALERT_UnTrackAllButton"] = "Are you sure you want to untrack all quests on all toons?"
+
+L["JAMBA_QUESTLOG_HaveAbandonedQuest"] = function( questName )
+	return string.format( "I have abandoned the quest: %s", questName )
+end
+
+L["JAMBA_QUESTLOG_DoNotHaveQuest"] = function( questName )
+	return string.format( "I do not have the quest: %s", questName )
+end
+
+L["JAMBA_QUESTLOG_ALL_MESSAGE_CannotAbandonQuest"] = function( questName )
+	return string.format( "Cannot abandon quest: %s", questName )
+end
+
+L["JAMBA_QUESTLOG_ALL_MESSAGE_UnTrackAllButton"] = function( questName )
+	return string.format( "Untracking quest on all toons: %s", questName )
+end
+
+L["JAMBA_QUESTLOG_ALL_MESSAGE_TrackAllButton"] = function( questName )
+	return string.format( "Tracking quest on all toons: %s", questName )
+end
+
+L["JAMBA_QUESTLOG_ALL_MESSAGE_AbandonAllButton"] = function( questName )
+	return string.format( "Abandoning quest on all toons: %s", questName )
+end
+
+L["JAMBA_QUESTLOG_ALL_MESSAGE_ShareAllButton"] = function( questName )
+	return string.format( "Sharing quest to all toons: %s", questName )
+end
+

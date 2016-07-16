@@ -6,6 +6,10 @@
 ## Notes-frFR: Une bibliothèque d'aide à la localisation.
 ## Notes-esES: Una biblioteca para ayudar con las localizaciones.
 ## Author: ckknight
+## X-Curse-Packaged-Version: Beta-4.3i-1-g3e0e1d6
+## X-Curse-Project-Name: Jamba
+## X-Curse-Project-ID: jamba
+## X-Curse-Repository-ID: wow/jamba/mainline
 
 LibStub\LibStub.lua
 lib.xml

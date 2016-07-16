@@ -33,13 +33,13 @@ L["Combat"] = true
 L["Health / Mana"] = true
 L["Bag Space"] = true
 L["Bags Full!"] = true
-L["Warn If All Regular Bags Are Full"] = true
+L["Warn If Bags Are Full"] = true
 L["Bags Full Message"] = true	
-L["Warn If Hit First Time In Combat (Minion)"] = true
+L["Warn If Hit First Time"] = true
 L["Hit First Time Message"] = true
-L["Warn If Target Not Master On Combat (Minion)"] = true
+L["Warn If Target Not Master"] = true
 L["Warn Target Not Master Message"] = true
-L["Warn If Focus Not Master On Combat (Minion)"] = true
+L["Warn If Focus Not Master"] = true
 L["Warn Focus Not Master Message"] = true
 L["Warn If My Health Drops Below"] = true
 L["Health Amount - Percentage Allowed Before Warning"] = true
@@ -63,7 +63,7 @@ L["Repairing cost me: X"] = function( costString )
     return string.format( "Repairing cost me: %s", costString )
 end
 L["I am inactive!"] = true
-L["Warn If Toon Goes Inactive (PVP)"] = true
+L["Warn If Toon Goes Inactive"] = true
 L["Inactive Message"] = true
 -- Brgin special.
 -- This is the inactive buff - you need to make sure it is localized correctly.
@@ -74,3 +74,30 @@ L["Crowd Control Message"] = true
 L["Warn If Toon Gets Crowd Control"] = true
 L["I Am"] = true
 L[" "] = true
+L["Display Team Release Prompts"] = true
+L["Release Team?"] = true
+L["Release Team"] = true
+L["Recover All Team Corpses?"] = true
+L["I can not release to my Corpse for:"] = true
+L[" Seconds"] = true
+L["I Do not have a SoulStone"] = true
+
+--Jamba Help Tooltips
+L["Display Team Release Popups when the Team Dies"] = true
+L["Auto Repairs Toons Items When You Visit a Repair Merchant"] = true
+L["Trys to Auto Repair With Guild Bank Funds"] = true
+L["Pick a Message Area"] = true
+L["Auto Deny All Guild Invites"] = true
+L["Automatically Deny Duels From Players"] = true
+L["Automatically Accept Resurrect Request"] = true
+L["Display Team Release Popup Displays when the Team Dies"] = true
+L["Automatically Accept Summon Requests"] = true
+L["Warn If Hit First Time In Combat (Minion)"] = true
+L["Warn If Target Not Master On Combat (Minion)"] = true
+L["Warn If Focus Not Master On Combat (Minion)"] = true
+L["Warn If All Minions Health Drops Below"] = true
+L["Warn If all Minions Mana Drops Below"] = true
+L["Warn If All Regular Bags Are Full"] = true
+L["Warn If Toon Goes Inactive mosty for PVP"] = true
+L["Warn If any Minion Gets Crowd Control"] = true
+L["Automatically Deny All Guild Invites"] = true

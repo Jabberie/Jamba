@@ -284,7 +284,7 @@ function AJM:SettingsScrollRefresh()
 		AJM.settingsControl.list.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )		
 		AJM.settingsControl.list.rows[iterateDisplayRows].columns[3].textString:SetText( "" )
 		AJM.settingsControl.list.rows[iterateDisplayRows].columns[3].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )			
-		AJM.settingsControl.list.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControl.list.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControl.offset
 		if dataRowNumber <= AJM:GetItemsMaxPosition() then
@@ -295,7 +295,7 @@ function AJM:SettingsScrollRefresh()
 			AJM.settingsControl.list.rows[iterateDisplayRows].columns[3].textString:SetText( itemInformation.tag )
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControl.highlightRow then
-				AJM.settingsControl.list.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControl.list.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end

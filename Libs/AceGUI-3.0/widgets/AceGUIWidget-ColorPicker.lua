@@ -147,6 +147,7 @@ local function Constructor()
 	texture:SetWidth(16)
 	texture:SetHeight(16)
 	texture:SetTexture(1, 1, 1)
+	--texture:SetColorTexture(1, 1, 1)
 	texture:SetPoint("CENTER", colorSwatch)
 	texture:Show()
 

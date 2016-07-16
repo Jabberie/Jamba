@@ -51,6 +51,7 @@ AJM.settings = {
 		CcMessage = L["I Am"],
 		warningArea = JambaApi.DefaultWarningArea(),
 		autoAcceptResurrectRequest = true,
+		acceptDeathRequests = true,
 		autoDenyDuels = true,
 		autoAcceptSummonRequest = false,
 		autoDenyGuildInvites = false,
@@ -91,6 +92,11 @@ end
 -- Command this module sends.
 -------------------------------------------------------------------------------------------------------------
 
+AJM.COMMAND_TEAM_DEATH = "JambaToonTeamDeath"
+AJM.COMMAND_RECOVER_TEAM = "JambaToonRecoverTeam"
+AJM.COMMAND_SOUL_STONE = "JambaToonSoulStone"
+
+
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
 -------------------------------------------------------------------------------------------------------------
@@ -128,7 +134,8 @@ local function SettingsCreateMerchant( top )
 		left, 
 		movingTop, 
 		L["Auto Repair"],
-		AJM.SettingsToggleAutoRepair
+		AJM.SettingsToggleAutoRepair,
+		L["Auto Repairs Toons Items When You Visit a Repair Merchant"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlMerchant.checkBoxAutoRepairUseGuildFunds = JambaHelperSettings:CreateCheckBox( 
@@ -137,7 +144,8 @@ local function SettingsCreateMerchant( top )
 		left, 
 		movingTop, 
 		L["Auto Repair With Guild Funds"],
-		AJM.SettingsToggleAutoRepairUseGuildFunds
+		AJM.SettingsToggleAutoRepairUseGuildFunds,
+		L["Trys to Auto Repair With Guild Bank Funds"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlMerchant.dropdownMerchantArea = JambaHelperSettings:CreateDropdown( 
@@ -145,7 +153,8 @@ local function SettingsCreateMerchant( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Send Request Message Area"] 
+		L["Send Request Message Area"],
+		L["Pick a Message Area"]
 	)
 	AJM.settingsControlMerchant.dropdownMerchantArea:SetList( JambaApi.MessageAreaList() )
 	AJM.settingsControlMerchant.dropdownMerchantArea:SetCallback( "OnValueChanged", AJM.SettingsSetMerchantArea )
@@ -188,7 +197,8 @@ local function SettingsCreateRequests( top )
 		left, 
 		movingTop, 
 		L["Auto Deny Duels"],
-		AJM.SettingsToggleAutoDenyDuels
+		AJM.SettingsToggleAutoDenyDuels,
+		L["Automatically Deny Duels From Players"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlRequests.checkBoxAutoDenyGuildInvites = JambaHelperSettings:CreateCheckBox( 
@@ -197,7 +207,8 @@ local function SettingsCreateRequests( top )
 		left, 
 		movingTop, 
 		L["Auto Deny Guild Invites"],
-		AJM.SettingsToggleAutoDenyGuildInvites
+		AJM.SettingsToggleAutoDenyGuildInvites,
+		L["Automatically Deny All Guild Invites"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlRequests.checkBoxAutoAcceptResurrectRequest = JambaHelperSettings:CreateCheckBox( 
@@ -206,8 +217,20 @@ local function SettingsCreateRequests( top )
 		left, 
 		movingTop, 
 		L["Auto Accept Resurrect Request"],
-		AJM.SettingsToggleAutoAcceptResurrectRequests
+		AJM.SettingsToggleAutoAcceptResurrectRequests,
+		L["Automatically Accept Resurrect Request"]
 	)
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControlRequests.checkBoxAcceptDeathRequests = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControlRequests, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Display Team Release Prompts"],
+		AJM.SettingsToggleAcceptDeathRequests,
+		L["Display Team Release Popup Displays when the Team Dies"]
+	)	
+	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlRequests.checkBoxAutoAcceptSummonRequest = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControlRequests, 
@@ -215,7 +238,8 @@ local function SettingsCreateRequests( top )
 		left, 
 		movingTop, 
 		L["Auto Accept Summon Request"],
-		AJM.SettingsToggleAutoAcceptSummonRequest
+		AJM.SettingsToggleAutoAcceptSummonRequest,
+		L["Automatically Accept Summon Requests"]
 	)
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlRequests.dropdownRequestArea = JambaHelperSettings:CreateDropdown( 
@@ -223,7 +247,8 @@ local function SettingsCreateRequests( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Send Request Message Area"] 
+		L["Send Request Message Area"] ,
+		L["Pick a Message Area"]
 	)
 	AJM.settingsControlRequests.dropdownRequestArea:SetList( JambaApi.MessageAreaList() )
 	AJM.settingsControlRequests.dropdownRequestArea:SetCallback( "OnValueChanged", AJM.SettingsSetRequestArea )
@@ -255,8 +280,9 @@ local function SettingsCreateWarnings( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Warn If Hit First Time In Combat (Minion)"],
-		AJM.SettingsToggleWarnHitFirstTimeCombat
+		L["Warn If Hit First Time"],
+		AJM.SettingsToggleWarnHitFirstTimeCombat,
+		L["Warn If Hit First Time In Combat (Minion)"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlWarnings.editBoxHitFirstTimeMessage = JambaHelperSettings:CreateEditBox( AJM.settingsControlWarnings,
@@ -272,8 +298,9 @@ local function SettingsCreateWarnings( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Warn If Target Not Master On Combat (Minion)"],
-		AJM.SettingsToggleWarnTargetNotMasterEnterCombat
+		L["Warn If Target Not Master"],
+		AJM.SettingsToggleWarnTargetNotMasterEnterCombat,
+		L["Warn If Target Not Master On Combat (Minion)"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlWarnings.editBoxWarnTargetNotMasterMessage = JambaHelperSettings:CreateEditBox( AJM.settingsControlWarnings,
@@ -289,8 +316,9 @@ local function SettingsCreateWarnings( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Warn If Focus Not Master On Combat (Minion)"],
-		AJM.SettingsToggleWarnFocusNotMasterEnterCombat
+		L["Warn If Focus Not Master"],
+		AJM.SettingsToggleWarnFocusNotMasterEnterCombat,
+		L["Warn If Focus Not Master On Combat (Minion)"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlWarnings.editBoxWarnFocusNotMasterMessage = JambaHelperSettings:CreateEditBox( AJM.settingsControlWarnings,
@@ -309,7 +337,8 @@ local function SettingsCreateWarnings( top )
 		left, 
 		movingTop, 
 		L["Warn If My Health Drops Below"],
-		AJM.SettingsToggleWarnWhenHealthDropsBelowX
+		AJM.SettingsToggleWarnWhenHealthDropsBelowX,
+		L["Warn If All Minions Health Drops Below"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlWarnings.editBoxWarnWhenHealthDropsAmount = JambaHelperSettings:CreateEditBox( AJM.settingsControlWarnings,
@@ -334,7 +363,8 @@ local function SettingsCreateWarnings( top )
 		left, 
 		movingTop, 
 		L["Warn If My Mana Drops Below"],
-		AJM.SettingsToggleWarnWhenManaDropsBelowX
+		AJM.SettingsToggleWarnWhenManaDropsBelowX,
+		L["Warn If all Minions Mana Drops Below"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlWarnings.editBoxWarnWhenManaDropsAmount = JambaHelperSettings:CreateEditBox( AJM.settingsControlWarnings,
@@ -360,8 +390,9 @@ local function SettingsCreateWarnings( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Warn If All Regular Bags Are Full"],
-		AJM.SettingsToggleWarnBagsFull
+		L["Warn If Bags Are Full"],
+		AJM.SettingsToggleWarnBagsFull,
+		L["Warn If All Regular Bags Are Full"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlWarnings.editBoxBagsFullMessage = JambaHelperSettings:CreateEditBox( AJM.settingsControlWarnings,
@@ -379,8 +410,9 @@ local function SettingsCreateWarnings( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Warn If Toon Goes Inactive (PVP)"],
-		AJM.SettingsToggleWarnAfk
+		L["Warn If Toon Goes Inactive"],
+		AJM.SettingsToggleWarnAfk,
+		L["Warn If Toon Goes Inactive mosty for PVP"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlWarnings.editBoxAfkMessage = JambaHelperSettings:CreateEditBox( AJM.settingsControlWarnings,
@@ -398,7 +430,8 @@ local function SettingsCreateWarnings( top )
 		left, 
 		movingTop, 
 		L["Warn If Toon Gets Crowd Control"],
-		AJM.SettingsToggleWarnCC
+		AJM.SettingsToggleWarnCC,
+		L["Warn If any Minion Gets Crowd Control"]
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlWarnings.editBoxCCMessage = JambaHelperSettings:CreateEditBox( AJM.settingsControlWarnings,
@@ -487,6 +520,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlWarnings.editBoxCCMessage:SetText( AJM.db.CcMessage ) 
 	AJM.settingsControlWarnings.dropdownWarningArea:SetValue( AJM.db.warningArea )
 	AJM.settingsControlRequests.checkBoxAutoAcceptResurrectRequest:SetValue( AJM.db.autoAcceptResurrectRequest )
+	AJM.settingsControlRequests.checkBoxAcceptDeathRequests:SetValue( AJM.db.acceptDeathRequests )
 	AJM.settingsControlRequests.checkBoxAutoDenyDuels:SetValue( AJM.db.autoDenyDuels )
 	AJM.settingsControlRequests.checkBoxAutoAcceptSummonRequest:SetValue( AJM.db.autoAcceptSummonRequest )
 	AJM.settingsControlRequests.checkBoxAutoDenyGuildInvites:SetValue( AJM.db.autoDenyGuildInvites )
@@ -536,6 +570,12 @@ end
 
 function AJM:SettingsToggleAutoAcceptResurrectRequests( event, checked )
 	AJM.db.autoAcceptResurrectRequest = checked
+	AJM:SettingsRefresh()
+end
+
+
+function AJM:SettingsToggleAcceptDeathRequests( event, checked )
+	AJM.db.acceptDeathRequests = checked
 	AJM:SettingsRefresh()
 end
 
@@ -680,6 +720,12 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "MERCHANT_SHOW" )
 	AJM:RegisterEvent( "UNIT_MANA" )
 	AJM:RegisterEvent( "RESURRECT_REQUEST" )
+	AJM:RegisterEvent( "PLAYER_DEAD" )
+	AJM:RegisterEvent( "CORPSE_IN_RANGE" )
+	AJM:RegisterEvent( "CORPSE_IN_INSTANCE" )
+	AJM:RegisterEvent( "CORPSE_OUT_OF_RANGE" )	
+	AJM:RegisterEvent( "PLAYER_UNGHOST" )
+	AJM:RegisterEvent( "PLAYER_ALIVE" )
 	AJM:RegisterEvent( "CONFIRM_SUMMON")
 	AJM:RegisterEvent( "DUEL_REQUESTED" )
 	AJM:RegisterEvent( "GUILD_INVITE_REQUEST" )
@@ -721,6 +767,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.warnCC = settings.warnCC
 		AJM.db.CcMessage = settings.CcMessage			
 		AJM.db.autoAcceptResurrectRequest = settings.autoAcceptResurrectRequest
+		AJM.db.acceptDeathRequests = settings.acceptDeathRequests
 		AJM.db.autoDenyDuels = settings.autoDenyDuels
 		--ebonnysum
 		AJM.db.autoAcceptSummonRequest = settings.autoAcceptSummonRequest
@@ -770,6 +817,192 @@ function AJM:DUEL_REQUESTED( event, challenger, ... )
 	end
 end
 
+function AJM:PLAYER_UNGHOST(event, ...)
+		StaticPopup_Hide( "RECOVER_CORPSE" )
+		StaticPopup_Hide( "RECOVER_CORPSE_INSTANCE" )
+		StaticPopup_Hide( "XP_LOSS" )
+		StaticPopup_Hide( "RECOVER_TEAM")
+		StaticPopup_Hide(  "TEAMDEATH" )
+end
+
+function AJM:PLAYER_ALIVE(event, ...)
+		StaticPopup_Hide( "RECOVER_CORPSE" )
+		StaticPopup_Hide( "RECOVER_CORPSE_INSTANCE" )
+		StaticPopup_Hide( "XP_LOSS" )
+		StaticPopup_Hide( "RECOVER_TEAM" )
+		StaticPopup_Hide( "TEAMDEATH" )
+end
+
+
+function AJM:CORPSE_IN_RANGE(event, ...)
+	local teamMembers = JambaApi.GetTeamListMaximumOrderOnline()
+	if teamMembers > 1 and AJM.db.acceptDeathRequests == true then
+		StaticPopup_Show("RECOVER_TEAM")
+	end		
+end	
+	
+function AJM:CORPSE_IN_INSTANCE(event, ...)
+		StaticPopup_Show("RECOVER_CORPSE_INSTANCE")
+		StaticPopup_Hide("RECOVER_TEAM")
+end
+		
+function AJM:CORPSE_OUT_OF_RANGE(event, ...)
+		StaticPopup_Hide("RECOVER_CORPSE")
+		StaticPopup_Hide("RECOVER_CORPSE_INSTANCE")
+		StaticPopup_Hide("XP_LOSS")
+		StaticPopup_Hide("RECOVER_TEAM")
+end
+
+function AJM:PLAYER_DEAD( event, ...)
+	-- jamba Team Stuff.
+	local teamMembers = JambaApi.GetTeamListMaximumOrderOnline()
+	if teamMembers > 1 and AJM.db.acceptDeathRequests == true then
+		StaticPopup_Show( "TEAMDEATH" )	
+	end
+end
+-- Mosty taken from blizzard StaticPopup Code
+
+StaticPopupDialogs["TEAMDEATH"] = {
+	--local resTime = GetReleaseTimeRemaining(),
+	text = L["Release Team?"], --..resTime,
+	button1 = DEATH_RELEASE,
+	button2 = USE_SOULSTONE,
+	button3 = CANCEL,
+	OnShow = function(self)
+		self.timeleft = GetReleaseTimeRemaining()
+		local text = HasSoulstone()
+		if ( text ) then
+			self.button2:SetText(text)
+		end
+		if ( self.timeleft == -1 ) then
+			self.text:SetText(DEATH_RELEASE_NOTIMER)
+		end
+		self.button1:SetText(L["Release Team"])
+	end,
+	OnAccept = function(self)
+		--RepopMe();
+		AJM.teamDeath()
+		if ( CannotBeResurrected() ) then
+			return 1
+		end
+	end,
+	OnCancel = function(self, data, reason)
+		if ( reason == "override" ) then
+			return;
+		end
+		if ( reason == "timeout" ) then
+			return;
+		end
+		if ( reason == "clicked" ) then
+			if ( HasSoulstone() ) then
+				AJM.teamSS()
+			else
+				AJM.teamRes()
+			end
+			if ( CannotBeResurrected() ) then
+				return 1
+		end
+		end
+	end,
+	OnUpdate = function(self, elapsed)
+		if ( IsFalling() and not IsOutOfBounds()) then
+			self.button1:Disable()
+			self.button2:Disable()
+			self.button3:Disable()
+			return;
+		end
+
+		local b1_enabled = self.button1:IsEnabled()
+		self.button1:SetEnabled(not IsEncounterInProgress())
+
+		if ( b1_enabled ~= self.button1:IsEnabled() ) then
+			if ( b1_enabled ) then
+				self.text:SetText(CAN_NOT_RELEASE_IN_COMBAT)
+			else
+				self.text:SetText("");
+				StaticPopupDialogs[self.which].OnShow(self)
+			end
+			StaticPopup_Resize(dialog, which)
+		end
+		if( HasSoulstone() and CanUseSoulstone() ) then
+			self.button2:Enable()
+		else
+			self.button2:Disable()
+		end
+	end,
+	DisplayButton2 = function(self)
+		return HasSoulstone()
+	end,
+	timeout = 0,
+	whileDead = 1,
+	interruptCinematic = 1,
+	notClosableByLogout = 1,
+	noCancelOnReuse = 1,
+	cancels = "RECOVER_TEAM"
+}
+
+StaticPopupDialogs["RECOVER_TEAM"] = {
+	text = L["Recover All Team Corpses?"],
+	button1 = ACCEPT,
+	OnAccept = function(self)
+		AJM:relaseTeam();
+		return 1;
+	end,
+	timeout = 0,
+	whileDead = 1,
+	interruptCinematic = 1,
+	notClosableByLogout = 1
+};
+
+function AJM:relaseTeam()
+	--AJM:Print("going to release team WIP")
+	AJM:JambaSendCommandToTeam( AJM.COMMAND_RECOVER_TEAM )
+end
+
+function AJM:teamDeath()
+	--AJM:Print("going to res team WIP")
+	AJM:JambaSendCommandToTeam( AJM.COMMAND_TEAM_DEATH )
+end
+
+function AJM:teamSS()
+	--AJM:Print("going to res team WIP")
+	AJM:JambaSendCommandToTeam( AJM.COMMAND_SOUL_STONE )
+	--UseSoulstone()
+end
+
+function AJM:doRecoverTeam()
+	RetrieveCorpse()
+	if UnitIsGhost("player") then
+		local delay = GetCorpseRecoveryDelay()	  
+		if delay > 0 then
+			AJM:JambaSendMessageToTeam( AJM.db.requestArea, L["I can not release to my Corpse for:"]..L[" "]..delay..L[" Seconds"], false )
+			StaticPopup_Show("RECOVER_TEAM")
+		else	
+			RetrieveCorpse()
+			StaticPopup_Hide("RECOVER_TEAM")
+		end		
+	end
+end
+			
+function AJM:doTeamDeath()
+	if UnitIsDead("player") and not UnitIsGhost("player") then
+		RepopMe()
+		StaticPopup_Hide("TEAMDEATH")
+	end
+end
+
+function AJM:doSoulStone()
+	if UnitIsDead("player") and not UnitIsGhost("player") then
+		if HasSoulstone() then
+			UseSoulstone()
+			StaticPopup_Hide("TEAMDEATH")
+		else
+			AJM:JambaSendMessageToTeam( AJM.db.warningArea, L["I Do not have a SoulStone"], false )
+			RepopMe()
+		end	
+	end
+end
+
 function AJM:RESURRECT_REQUEST( event, ... )
 	if AJM.db.autoAcceptResurrectRequest == true then
 		AcceptResurrect()
@@ -779,6 +1012,8 @@ function AJM:RESURRECT_REQUEST( event, ... )
 		StaticPopup_Hide( "SKINNED" )
 		StaticPopup_Hide( "SKINNED_REPOP" )
 		StaticPopup_Hide( "DEATH" )
+		StaticPopup_Hide( "RECOVER_TEAM" )
+		StaticPopup_Hide( "TEAMDEATH" )
 	end
 end
 
@@ -946,5 +1181,19 @@ function AJM:LOSS_OF_CONTROL_ADDED( event, ... )
 			--AJM:Print("LOSS OF CONTROL", eventIndex, text) -- Ebony testing
 			AJM:JambaSendMessageToTeam( AJM.db.warningArea, AJM.db.CcMessage..L[" "]..text, false )
 		end
+	end
+end
+
+-- A Jamba command has been received.
+function AJM:JambaOnCommandReceived( characterName, commandName, ... )
+	--AJM:Print("Test", characterName, commandName)
+	if commandName == AJM.COMMAND_RECOVER_TEAM then
+		AJM:doRecoverTeam()
+	end
+	if commandName == AJM.COMMAND_TEAM_DEATH then
+		AJM:doTeamDeath()
+	end
+	if commandName == AJM.COMMAND_SOUL_STONE then
+		AJM:doSoulStone()
 	end
 end

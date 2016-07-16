@@ -70,8 +70,8 @@ AJM.settings = {
 		numberOfRows = 2,
 		messageArea = JambaApi.DefaultWarningArea(),
 		itemsAdvanced = {},
-		framePoint = "CENTER",
-		frameRelativePoint = "CENTER",
+		framePoint = "BOTTOMRIGHT",
+		frameRelativePoint = "BOTTOMRIGHT",
 		frameXOffset = 0,
 		frameYOffset = 0,
 		frameAlpha = 1.0,
@@ -383,50 +383,6 @@ function AJM:CreateJambaItemUseItemContainer( itemNumber, parentFrame )
 	itemContainer["container"] = containerButton	
 end
 
---TODO CLEAN UP NOLONGER NEEDED
---[[
-function AJM:CheckForQuestItemAndAddToBar()
-	local isQuest
-	local questId
-	local isActive
-	local iterateQuests
-	local numEntries
-	local numQuests
-	local questItemLink
-	local questItemIcon
-	local questItemCharges
-	-- Iterate all bags looming for quest item.
-	for bag, slot, link in LibBagUtils:Iterate( "BAGS" ) do
-		-- Don't check slots that have no items and don't check anything in the keyring bag (-2)
-		if link ~= nil and bag ~= -2 then
-			-- Starts a quest items.
-			-- Battlepet links break tooltips!
-			if string.find(link, "battlepet") then
-					return 
-				end
-			LibGratuity:SetHyperlink( link )
-			if LibGratuity:Find( ITEM_STARTS_QUEST ) then
-				AJM:AddAnItemToTheBarIfNotExists( link, true )
-			end
-			-- Useable quest items.
-			isQuest, questId, isActive = GetContainerItemQuestInfo(bag, slot)
-			if isQuest == true then
-				-- Quest item, but it is useable?  Check.
-				numEntries, numQuests = GetNumQuestLogEntries()
-				for iterateQuests = 1, numEntries, 1 do
-					questItemLink, questItemIcon, questItemCharges = GetQuestLogSpecialItemInfo( iterateQuests )
-					if questItemLink ~= nil then
-						if JambaUtilities:DoItemLinksContainTheSameItem( link, questItemLink ) == true then
-							AJM:AddAnItemToTheBarIfNotExists( link, false )				
-						end
-					end
-				end
-			end
-		end
-	end
-end
---]]
-
 --ebony test Using the wowapi and not the scanning of tooltips
 function AJM:CheckForQuestItemAndAddToBar()
 	for bag = 0,4,1 do 
@@ -492,13 +448,7 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest )
 	if alreadyExists == false then
 		for iterateItems = 1, AJM.db.numberOfItems, 1 do
 			itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
-			--TODO LOOK in if we need this i don't think we do.
-			--AJM:Print( "ITEMiD", itemLink)
-			--ebonyfassttest
-			--AJM:Print( "checking item is in players bag.")
 			--Checks the items we talking about is in the bags of the player.
-			--if AJM:IsInInventory( itemLink ) == true then
-				--AJM:Print( "is in bags")
 			if itemInfo.kind == "empty" then
 				AJM:AddItemToItemDatabase( iterateItems, "item", itemId )
 				AJM:JambaSendSettings()
@@ -507,7 +457,6 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest )
 					AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["New item that starts a quest found!"], false )
 				end
 				return
-			--end	
 			end
 		end
 	end

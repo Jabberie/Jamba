@@ -26,81 +26,69 @@ AJM.chatCommand = "jamba-curr"
 local L = LibStub( "AceLocale-3.0" ):GetLocale( AJM.moduleName )
 AJM.parentDisplayName = L["Toon"]
 AJM.moduleDisplayName = L["Currency"]
-
--- Currency Identifiers. Old stuff
-AJM.CDalaranJewelcraftingToken = 61
-AJM.CValor = 1191
-AJM.CChampionsSeal = 241
-AJM.CIllustriousJewelcraftersToken = 361
-AJM.CConquestPoints = 390
-AJM.CTolBaradCommendation = 391
-AJM.CHonorPoints = 392
-AJM.CTypeNine = 402
-AJM.CLesserCharmOfGoodFortune = 738
-AJM.CElderCharmOfGoodFortune = 697
-AJM.CMoguRuneOfFate = 752
-AJM.CWarforgedSeal = 776
-AJM.CBloodyCoin = 789
-AJM.CTimelessCoin = 777
---ebony New WoD Currency
-AJM.CGarrisonResources = 824
-AJM.CTemperedFate = 994
-AJM.CApexisCrystal = 823
-AJM.CDarkmoon = 515
-AJM.C = 824
-AJM.COil = 1101
-AJM.CInevitableFate = 1129
-AJM.CTimeWalker = 1166
 AJM.globalCurrencyFramePrefix = "JambaToonCurrencyListFrame"
+AJM.currTypes = {}
+AJM.simpleCurrList = {}
 
+-- Currency Identifiers. To add you own just add a new line at the bottom of this part
+-- http://www.wowhead.com/currencies
+-- Old Stuff
+--AJM.currTypes.DalaranJewelcraftingToken = 61
+AJM.currTypes.ChampionsSeal = 241
+--AJM.currTypes.IllustriousJewelcraftersToken = 361
+AJM.currTypes.TolBaradCommendation = 391
+AJM.currTypes.LesserCharmOfGoodFortune = 738
+AJM.currTypes.ElderCharmOfGoodFortune = 697
+AJM.currTypes.MoguRuneOfFate = 752
+AJM.currTypes.WarforgedSeal = 776
+AJM.currTypes.BloodyCoin = 789
+AJM.currTypes.TimelessCoin = 777
+--WoD Currency
+AJM.currTypes.GarrisonResources = 824
+AJM.currTypes.TemperedFate = 994
+AJM.currTypes.ApexisCrystal = 823
+AJM.currTypes.Darkmoon = 515
+AJM.currTypes.Oil = 1101
+AJM.currTypes.InevitableFate = 1129
+AJM.currTypes.TimeWalker = 1166
+AJM.currTypes.Valor = 1191
+--Legion Currency
+AJM.currTypes.OrderResources = 1220
+AJM.currTypes.AncientMana = 1155
+AJM.currTypes.NetherShard = 1226
+AJM.currTypes.SealofBrokenFate = 1273
+AJM.currTypes.ShadowyCoins = 1154
+AJM.currTypes.SightlessEye = 1149
+AJM.currTypes.TimeWornArtifact = 1268
+
+
+-------------------------------------- End of edit --------------------------------------------------------------
+
+function AJM:CurrencyIconAndName( id )
+	local fullName, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(id)
+	local currName = strconcat(" |T"..icon..":20|t", L[" "]..fullName)
+	return currName
+end	
+	
+	
 -- Settings - the values to store and their defaults for the settings database.
 AJM.settings = {
 	profile = {
 		currGold = true,
 		currGoldInGuildBank = false,
-		-- Currency default Shown
-		currTypeOne = true,
-		currTypeTwo = true,
-		currTypeThree = true,
-		currTypeFour = true,
-		currTypeFive = true,
-		currTypeSix = false,
-		currTypeSeven = false,
-		currTypeEight = false,
-		currTypeNine = false,
-		currTypeTen = false,
-		-- Currency default Id's http://www.wowhead.com/currencies
-		--Honor
-		CcurrTypeOne = 392,
-		CcurrTypeOneName = L["Currency One"],
-		--Conquest
-		CcurrTypeTwo = 390,
-		CcurrTypeTwoName = L["Currency Two"],
-		--Valor
-		CcurrTypeThree = 1191,
-		CcurrTypeThreeName = L["Currency Three"],
-		--Time Walker Coins
-		CcurrTypeFour = 1129,
-		CcurrTypeFourName = L["Currency Four"],
-		--Garrison Resources 
-		CcurrTypeFive = 824,
-		CcurrTypeFiveName = L["Currency Five"],
-		-- Apexis Crystal} 
-		CcurrTypeSix = 823,
-		CcurrTypeSixName = L["Currency Six"],
-	--[[	-- [PH]Time Walker Coins 
-		CcurrTypeSeven = 1166,
-		CcurrTypeSevenName = L["Currency Seven"],
-		--[PH]Oil
-		CcurrTypeEight = 1101,
-		CcurrTypeEightName = L["Currency Eight"],
-		--[PH] Honor
-		CcurrTypeNine = 392,
-		CcurrTypeNineName = L["Currency Nine"],
-		--[PH] Honor
-		CcurrTypeTen = 392,
-		CcurrTypeTenName = L["Currency Ten"],
-	]]	
+		-- Currency default's
+		CcurrTypeOne = AJM.currTypes.OrderResources,
+		CcurrTypeOneName = AJM:CurrencyIconAndName(AJM.currTypes.OrderResources),
+		CcurrTypeTwo = AJM.currTypes.AncientMana,
+		CcurrTypeTwoName = AJM:CurrencyIconAndName(AJM.currTypes.AncientMana),
+		CcurrTypeThree = AJM.currTypes.TimeWalker,
+		CcurrTypeThreeName = AJM:CurrencyIconAndName(AJM.currTypes.TimeWalker),
+		CcurrTypeFour = AJM.currTypes.SightlessEye,
+		CcurrTypeFourName = AJM:CurrencyIconAndName(AJM.currTypes.SightlessEye),
+		CcurrTypeFive = 0,
+		CcurrTypeFiveName = "",
+		CcurrTypeSix = 0,
+		CcurrTypeSixName = "",	
 		currencyFrameAlpha = 1.0,
 		currencyFramePoint = "CENTER",
 		currencyFrameRelativePoint = "CENTER",
@@ -116,10 +104,12 @@ AJM.settings = {
 		currencyFrameBorderColourA = 1.0,		
 		currencyBorderStyle = L["Blizzard Tooltip"],
 		currencyBackgroundStyle = L["Blizzard Dialog Background"],
+		currencyFontStyle = L["Arial Narrow"],
+		currencyFontSize = 12,		
 		currencyScale = 1,
 		currencyNameWidth = 60,
 		currencyPointsWidth = 50,
-		currencyGoldWidth = 90,
+		currencyGoldWidth = 140,
 		currencySpacingWidth = 3,
 		currencyLockWindow = false,
 		currOpenStartUpMaster = false,
@@ -136,19 +126,19 @@ function AJM:GetConfiguration()
 		get = "JambaConfigurationGetSetting",
 		set = "JambaConfigurationSetSetting",		
 		args = {
-			currency = {
+			show = {
 				type = "input",
 				name = L["Show Currency"],
 				desc = L["Show the current toon the currency values for all members in the team."],
-				usage = "/jamba-curr currency",
+				usage = "/jamba-curr show",
 				get = false,
 				set = "JambaToonRequestCurrency",
 			},
-			currencyhide = {
+			hide = {
 				type = "input",
 				name = L["Hide Currency"],
 				desc = L["Hide the currency values for all members in the team."],
-				usage = "/jamba-curr currencyhide",
+				usage = "/jamba-curr hide",
 				get = false,
 				set = "JambaToonHideCurrency",
 			},			
@@ -215,7 +205,7 @@ function AJM:SettingsCreateCurrency( top )
 	local mediaHeight = JambaHelperSettings:GetMediaHeight()	
 	local editBoxHeight = JambaHelperSettings:GetEditBoxHeight()
 	local buttonHeight = JambaHelperSettings:GetButtonHeight()
-	local dropdownHeight = JambaHelperSettings:GetDropdownHeight()
+	local dropdownHeight = JambaHelperSettings:GetDropdownHeight() + 10
 	local labelHeight = JambaHelperSettings:GetLabelHeight()
 	local continueLabelHeight = 18
 	local left = JambaHelperSettings:LeftOfSettings()
@@ -230,6 +220,7 @@ function AJM:SettingsCreateCurrency( top )
 	local column2left = left + halfWidthSlider
 	local left2 = left + thirdWidth
 	local left3 = left + (thirdWidth * 1)
+	local right = left + halfWidth + horizontalSpacing
 	local movingTop = top
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Currency Selection"], movingTop, false )
 	movingTop = movingTop - headingHeight
@@ -252,306 +243,68 @@ function AJM:SettingsCreateCurrency( top )
 		AJM.SettingsToggleCurrencyGoldInGuildBank,
 		L["Show Gold In Guild Bank\n\nThis does not update unless you visit the guildbank."]
 	)
-	
-	--Currency One
-	movingTop = movingTop - checkBoxHeight		
-	AJM.settingsControl.checkBoxCurrencyTypeOne = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		halfWidth, 
-		left, 
-		movingTop, 
-		L["Currency One"],
-		AJM.SettingsToggleCurrencyTypeOne,
-		L["Shows Currency on The Currency display window."]
-	)
-	AJM.settingsControl.labelBoxCurrencyTypeOneName = JambaHelperSettings:CreateLabel( 
+	--Currency One & Two	
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.editBoxCurrencyTypeOneID = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControl,
 		halfWidth,
-		column2left,
-		movingTop,
-		L["CurrencyName"]
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeOneName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeOneName )
-	
-	movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.editBoxCurrencyTypeOneID = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		thirdWidth,
 		left + indent,
 		movingTop,
-		L["CurrencyID"],
-		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+		L["Currency One"]
 	)	
-	AJM.settingsControl.editBoxCurrencyTypeOneID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeOneID )
-	
-	--Currency Two
-	movingTop = movingTop - editBoxHeight
-	AJM.settingsControl.checkBoxCurrencyTypeTwo = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		halfWidth, 
-		left, 
-		movingTop, 
-		L["Currency Two"],
-		AJM.SettingsToggleCurrencyTypeTwo,
-		L["Shows Currency on The Currency display window."]
-	)
-
-	--movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.labelBoxCurrencyTypeTwoName = JambaHelperSettings:CreateLabel( 
+	AJM.settingsControl.editBoxCurrencyTypeOneID:SetList( AJM.CurrDropDownBox() )
+	AJM.settingsControl.editBoxCurrencyTypeOneID:SetCallback( "OnValueChanged",  AJM.EditBoxChangedCurrencyTypeOneID)
+	AJM.settingsControl.editBoxCurrencyTypeTwoID = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControl,
 		halfWidth,
-		column2left,
+		right + indent,
 		movingTop,
-		L["CurrencyName"]
+		L["Currency Two"]
 	)	
-	AJM.settingsControl.labelBoxCurrencyTypeTwoName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeTwoName )
-	movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.editBoxCurrencyTypeTwoID = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		thirdWidth,
-		left + indent,
-		movingTop,
-		L["CurrencyID"],
-		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
-	)	
-	AJM.settingsControl.editBoxCurrencyTypeTwoID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeTwoID )	
-
-	--Currency Three
-	movingTop = movingTop - editBoxHeight	
-	AJM.settingsControl.checkBoxCurrencyTypeThree = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		halfWidth, 
-		left, 
-		movingTop, 
-		L["Currency Three"],
-		AJM.SettingsToggleCurrencyTypeThree,
-		L["Shows Currency on The Currency display window."]
-	)		
-	--movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.labelBoxCurrencyTypeThreeName = JambaHelperSettings:CreateLabel( 
+	AJM.settingsControl.editBoxCurrencyTypeTwoID:SetList( AJM.CurrDropDownBox() )
+	AJM.settingsControl.editBoxCurrencyTypeTwoID:SetCallback( "OnValueChanged",  AJM.EditBoxChangedCurrencyTypeTwoID)	
+	--Currency Three & Four
+	movingTop = movingTop - dropdownHeight	
+	AJM.settingsControl.editBoxCurrencyTypeThreeID = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControl,
 		halfWidth,
-		column2left,
-		movingTop,
-		L["CurrencyName"]
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeThreeName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeThreeName )
-	movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.editBoxCurrencyTypeThreeID = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		thirdWidth,
 		left + indent,
 		movingTop,
-		L["CurrencyID"],
-		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
+		L["Currency Three"]
 	)	
-	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeThreeID )	
-	--Currency Four
-	movingTop = movingTop - editBoxHeight
-	AJM.settingsControl.checkBoxCurrencyTypeFour = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		halfWidth, 
-		left, 
-		movingTop, 
-		L["Currency Four"],
-		AJM.SettingsToggleCurrencyTypeFour,
-		L["Shows Currency on The Currency display window."]
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeFourName = JambaHelperSettings:CreateLabel( 
+	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetList( AJM.CurrDropDownBox() )
+	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetCallback( "OnValueChanged",  AJM.EditBoxChangedCurrencyTypeThreeID)	
+	AJM.settingsControl.editBoxCurrencyTypeFourID = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControl,
 		halfWidth,
-		column2left,
+		right + indent,
 		movingTop,
-		L["CurrencyName"]
+		L["Currency Four"]
 	)	
-	AJM.settingsControl.labelBoxCurrencyTypeFourName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeFourName )
-	movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.editBoxCurrencyTypeFourID = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		thirdWidth,
-		left + indent,
-		movingTop,
-		L["CurrencyID"],
-		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
-	)	
-	AJM.settingsControl.editBoxCurrencyTypeFourID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeFourID )	
-	--Currency Five
-	movingTop = movingTop - editBoxHeight
-	AJM.settingsControl.checkBoxCurrencyTypeFive = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		halfWidth, 
-		left, 
-		movingTop, 
-		L["Currency Five"],
-		AJM.SettingsToggleCurrencyTypeFive,
-		L["Shows Currency on The Currency display window."]
-	)	
-		AJM.settingsControl.labelBoxCurrencyTypeFiveName = JambaHelperSettings:CreateLabel( 
+	AJM.settingsControl.editBoxCurrencyTypeFourID:SetList( AJM.CurrDropDownBox() )
+	AJM.settingsControl.editBoxCurrencyTypeFourID:SetCallback( "OnValueChanged",  AJM.EditBoxChangedCurrencyTypeFourID)
+	--Currency Five & Six
+	movingTop = movingTop - dropdownHeight 
+	AJM.settingsControl.editBoxCurrencyTypeFiveID = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControl,
 		halfWidth,
-		column2left,
-		movingTop,
-		L["CurrencyName"]
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeFiveName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeFiveName )
-	movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.editBoxCurrencyTypeFiveID = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		thirdWidth,
 		left + indent,
 		movingTop,
-		L["CurrencyID"],
-		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
-	)
-	AJM.settingsControl.editBoxCurrencyTypeFiveID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeFiveID )	
-	--Currency Six
-	movingTop = movingTop - editBoxHeight	
-	AJM.settingsControl.checkBoxCurrencyTypeSix = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		halfWidth, 
-		left, 
-		movingTop, 
-		L["Currency Six"],
-		AJM.SettingsToggleCurrencyTypeSix,
-		L["Shows Currency on The Currency display window."]
+		L["Currency Five"]
 	)	
-	AJM.settingsControl.labelBoxCurrencyTypeSixName = JambaHelperSettings:CreateLabel( 
+	AJM.settingsControl.editBoxCurrencyTypeFiveID:SetList( AJM.CurrDropDownBox() )
+	AJM.settingsControl.editBoxCurrencyTypeFiveID:SetCallback( "OnValueChanged",  AJM.EditBoxChangedCurrencyTypeFiveID)	
+	AJM.settingsControl.editBoxCurrencyTypeSixID = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControl,
 		halfWidth,
-		column2left,
+		right + indent,
 		movingTop,
-		L["CurrencyName"]
+		L["Currency Six"]
 	)	
-	AJM.settingsControl.labelBoxCurrencyTypeSixName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeSixName )
-	movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.editBoxCurrencyTypeSixID = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		thirdWidth,
-		left + indent,
-		movingTop,
-		L["CurrencyID"],
-		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
-	)
-	AJM.settingsControl.editBoxCurrencyTypeSixID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeSixID )		
---[[ Extra Space if needed some point in time Ebony
-	--Currency Seven
-	movingTop = movingTop - editBoxHeight
-	AJM.settingsControl.checkBoxCurrencyTypeSeven = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		halfWidth, 
-		left, 
-		movingTop, 
-		L["Currency Seven"],
-		L["Shows Currency on The Currency display window."],
-		AJM.SettingsToggleCurrencyTypeSeven
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeSevenName = JambaHelperSettings:CreateLabel( 
-		AJM.settingsControl,
-		halfWidth,
-		column2left,
-		movingTop,
-		L["CurrencyName"]
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeSevenName:SetCallback( "OnEnterPressed", AJM.LabeloxChangedCurrencyTypeSevenName )
-	movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.editBoxCurrencyTypeSevenID = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		thirdWidth,
-		left + indent,
-		movingTop,
-		L["CurrencyID"],
-		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
-	)	
-	AJM.settingsControl.editBoxCurrencyTypeSevenID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeSevenID )
-	--Currency Eight
-	movingTop = movingTop - editBoxHeight
-	AJM.settingsControl.checkBoxCurrencyTypeEight = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		halfWidth, 
-		left, 
-		movingTop, 
-		L["Currency Eight"],
-		AJM.SettingsToggleCurrencyTypeEight,
-		L["Shows Currency on The Currency display window."]
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeEightName = JambaHelperSettings:CreateLabel( 
-		AJM.settingsControl,
-		halfWidth,
-		column2left,
-		movingTop,
-		L["CurrencyName"]
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeEightName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeEightName )
-	movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.editBoxCurrencyTypeEightID = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		thirdWidth,
-		left + indent,
-		movingTop,
-		L["CurrencyID"],
-		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
-	)	
-	AJM.settingsControl.editBoxCurrencyTypeEightID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeEightID )
-	--Currency Nine
-	movingTop = movingTop - editBoxHeight
-	AJM.settingsControl.checkBoxCurrencyTypeNine = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		halfWidth, 
-		left, 
-		movingTop, 
-		L["Currency Nine"],
-		AJM.SettingsToggleCurrencyTypeNine,
-		L["Shows Currency on The Currency display window."]
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeNineName = JambaHelperSettings:CreateLabel( 
-		AJM.settingsControl,
-		halfWidth,
-		column2left,
-		movingTop,
-		L["CurrencyName"]
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeNineName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeNineName )
-	movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.editBoxCurrencyTypeNineID = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		thirdWidth,
-		left + indent,
-		movingTop,
-		L["CurrencyID"],
-		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
-	)	
-	AJM.settingsControl.editBoxCurrencyTypeNineID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeNineID )
-	-- Currency Ten
-	movingTop = movingTop - editBoxHeight
-	AJM.settingsControl.checkBoxCurrencyTypeTen = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		halfWidth, 
-		left, 
-		movingTop, 
-		L["Currency Ten"],
-		AJM.SettingsToggleCurrencyTypeTen,
-		L["Shows Currency on The Currency display window."]
-	)
-	AJM.settingsControl.labelBoxCurrencyTypeTenName = JambaHelperSettings:CreateLabel( 
-		AJM.settingsControl,
-		halfWidth,
-		column2left,
-		movingTop,
-		L["CurrencyName"]
-	)	
-	AJM.settingsControl.labelBoxCurrencyTypeTenName:SetCallback( "OnEnterPressed", AJM.LabelBoxChangedCurrencyTypeTenName )
-	movingTop = movingTop - continueLabelHeight
-	AJM.settingsControl.editBoxCurrencyTypeTenID = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		thirdWidth,
-		left + indent,
-		movingTop,
-		L["CurrencyID"],
-		L["You can change the Currency ID here.\n\nFor a list of ID's\nhttp://www.wowhead.com/currencies"]
-	)
-	AJM.settingsControl.editBoxCurrencyTypeTenID:SetCallback( "OnEnterPressed", AJM.EditBoxChangedCurrencyTypeTenID )	
-]]	-- Other Stuff	
-	movingTop = movingTop - editBoxHeight
+	AJM.settingsControl.editBoxCurrencyTypeSixID:SetList( AJM.CurrDropDownBox() )
+	AJM.settingsControl.editBoxCurrencyTypeSixID:SetCallback( "OnValueChanged",  AJM.EditBoxChangedCurrencyTypeSixID)
+	-- Other Stuff	
+	movingTop = movingTop - dropdownHeight
 	AJM.settingsControl.currencyButtonShowList = JambaHelperSettings:CreateButton( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -613,6 +366,7 @@ function AJM:SettingsCreateCurrency( top )
 		L["Border Style"]
 	)
 	AJM.settingsControl.currencyMediaBorder:SetCallback( "OnValueChanged", AJM.SettingsChangeBorderStyle )
+
 	AJM.settingsControl.currencyBorderColourPicker = JambaHelperSettings:CreateColourPicker(
 		AJM.settingsControl,
 		halfWidthSlider,
@@ -640,6 +394,25 @@ function AJM:SettingsCreateCurrency( top )
 	)
 	AJM.settingsControl.currencyBackgroundColourPicker:SetHasAlpha( true )
 	AJM.settingsControl.currencyBackgroundColourPicker:SetCallback( "OnValueConfirmed", AJM.SettingsBackgroundColourPickerChanged )
+	movingTop = movingTop - mediaHeight - verticalSpacing
+	--Font
+	AJM.settingsControl.currencyMediaFont = JambaHelperSettings:CreateMediaFont( 
+		AJM.settingsControl, 
+		halfWidthSlider, 
+		left, 
+		movingTop,
+		L["Font"]
+	)
+	AJM.settingsControl.currencyMediaFont:SetCallback( "OnValueChanged", AJM.SettingsChangeFontStyle )
+	AJM.settingsControl.currencyFontSize = JambaHelperSettings:CreateSlider( 
+		AJM.settingsControl, 
+		halfWidthSlider, 
+		column2left, 
+		movingTop, 
+		L["Font Size"]
+	)	
+	AJM.settingsControl.currencyFontSize:SetSliderValues( 8, 20 , 1 )
+	AJM.settingsControl.currencyFontSize:SetCallback( "OnValueChanged", AJM.SettingsChangeFontSize )
 	movingTop = movingTop - mediaHeight - verticalSpacing
 	AJM.settingsControl.currencySliderSpaceForName = JambaHelperSettings:CreateSlider( 
 		AJM.settingsControl, 
@@ -701,81 +474,19 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxCurrencyGold:SetValue( AJM.db.currGold )
 	AJM.settingsControl.checkBoxCurrencyGoldInGuildBank:SetValue( AJM.db.currGoldInGuildBank )
 	AJM.settingsControl.checkBoxCurrencyGoldInGuildBank:SetDisabled( not AJM.db.currGold )
-	-- 
-	AJM.settingsControl.checkBoxCurrencyTypeOne:SetValue( AJM.db.currTypeOne )
-	AJM.settingsControl.editBoxCurrencyTypeOneID:SetText ( AJM.db.CcurrTypeOne )
-	AJM.settingsControl.labelBoxCurrencyTypeOneName:SetText ( AJM.db.CcurrTypeOneName )
-	
-	AJM.settingsControl.checkBoxCurrencyTypeTwo:SetValue( AJM.db.currTypeTwo )
-	AJM.settingsControl.editBoxCurrencyTypeTwoID:SetText ( AJM.db.CcurrTypeTwo )
-	AJM.settingsControl.labelBoxCurrencyTypeTwoName:SetText ( AJM.db.CcurrTypeTwoName )	
-	
-	AJM.settingsControl.checkBoxCurrencyTypeThree:SetValue( AJM.db.currTypeThree )
-	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetText ( AJM.db.CcurrTypeThree )
-	AJM.settingsControl.labelBoxCurrencyTypeThreeName:SetText ( AJM.db.CcurrTypeThreeName )	
-	
-	AJM.settingsControl.checkBoxCurrencyTypeFour:SetValue( AJM.db.currTypeFour )	
-	AJM.settingsControl.editBoxCurrencyTypeFourID:SetText ( AJM.db.CcurrTypeFour )
-	AJM.settingsControl.labelBoxCurrencyTypeFourName:SetText ( AJM.db.CcurrTypeFourName )
-	
-	AJM.settingsControl.checkBoxCurrencyTypeFive:SetValue( AJM.db.currTypeFive )
-	AJM.settingsControl.editBoxCurrencyTypeFiveID:SetText ( AJM.db.CcurrTypeFive )
-	AJM.settingsControl.labelBoxCurrencyTypeFiveName:SetText ( AJM.db.CcurrTypeFiveName )	
-		
-	AJM.settingsControl.checkBoxCurrencyTypeSix:SetValue( AJM.db.currTypeSix )
-	AJM.settingsControl.editBoxCurrencyTypeSixID:SetText ( AJM.db.CcurrTypeSix )
-	AJM.settingsControl.labelBoxCurrencyTypeSixName:SetText ( AJM.db.CcurrTypeSixName )	
-	
---[[ Extra If needed for Some other Use Ebony	
-	AJM.settingsControl.checkBoxCurrencyTypeSeven:SetValue( AJM.db.currTypeSeven )
-	AJM.settingsControl.editBoxCurrencyTypeSevenID:SetText ( AJM.db.CcurrTypeSeven )
-	AJM.settingsControl.labelBoxCurrencyTypeSevenName:SetText ( AJM.db.CcurrTypeSevenName )	
 
-	AJM.settingsControl.checkBoxCurrencyTypeEight:SetValue( AJM.db.currTypeEight )
-	AJM.settingsControl.editBoxCurrencyTypeEightID:SetText ( AJM.db.CcurrTypeEight )
-	AJM.settingsControl.labelBoxCurrencyTypeEightName:SetText ( AJM.db.CcurrTypeEightName )		
+	AJM.settingsControl.editBoxCurrencyTypeOneID:SetValue( AJM.db.CcurrTypeOneName )
 
-	AJM.settingsControl.checkBoxCurrencyTypeNine:SetValue( AJM.db.currTypeNine )
-	AJM.settingsControl.editBoxCurrencyTypeNineID:SetText ( AJM.db.CcurrTypeNine )
-	AJM.settingsControl.labelBoxCurrencyTypeNineName:SetText ( AJM.db.CcurrTypeNineName )	
+	AJM.settingsControl.editBoxCurrencyTypeTwoID:SetValue ( AJM.db.CcurrTypeTwoName )	
 
-	AJM.settingsControl.checkBoxCurrencyTypeTen:SetValue( AJM.db.currTypeTen )
-	AJM.settingsControl.editBoxCurrencyTypeTenID:SetText ( AJM.db.CcurrTypeTen )
-	AJM.settingsControl.labelBoxCurrencyTypeTenName:SetText ( AJM.db.CcurrTypeTenName )	
-]]	
+	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetValue ( AJM.db.CcurrTypeThreeName )
+	
+	AJM.settingsControl.editBoxCurrencyTypeFourID:SetValue ( AJM.db.CcurrTypeFourName )
+
+	AJM.settingsControl.editBoxCurrencyTypeFiveID:SetValue ( AJM.db.CcurrTypeFiveName )	
+
+	AJM.settingsControl.editBoxCurrencyTypeSixID:SetValue ( AJM.db.CcurrTypeSixName )
 	--state
-	AJM.settingsControl.editBoxCurrencyTypeOneID:SetDisabled ( not AJM.db.currTypeOne )
-	AJM.settingsControl.labelBoxCurrencyTypeOneName:SetDisabled ( not AJM.db.currTypeOne )
-	
-	AJM.settingsControl.editBoxCurrencyTypeTwoID:SetDisabled ( not AJM.db.currTypeTwo )
-	AJM.settingsControl.labelBoxCurrencyTypeTwoName:SetDisabled ( not AJM.db.currTypeTwo )
-	
-	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetDisabled ( not AJM.db.currTypeThree )
-	AJM.settingsControl.labelBoxCurrencyTypeThreeName:SetDisabled ( not AJM.db.currTypeThree )
-
-	AJM.settingsControl.editBoxCurrencyTypeFourID:SetDisabled ( not AJM.db.currTypeFour )
-	AJM.settingsControl.labelBoxCurrencyTypeFourName:SetDisabled ( not AJM.db.currTypeFour )
-
-	AJM.settingsControl.editBoxCurrencyTypeFiveID:SetDisabled ( not AJM.db.currTypeFive )
-	AJM.settingsControl.labelBoxCurrencyTypeFiveName:SetDisabled ( not AJM.db.currTypeFive )
-
-	AJM.settingsControl.editBoxCurrencyTypeSixID:SetDisabled ( not AJM.db.currTypeSix )
-	AJM.settingsControl.labelBoxCurrencyTypeSixName:SetDisabled ( not AJM.db.currTypeSix )
-
---[[ Extra If needed for Some other Use Ebony	Need to change this [PH] Code EBONY	
-	AJM.settingsControl.editBoxCurrencyTypeThreeID:SetDisabled ( not AJM.db.currTypeThree )
-	AJM.settingsControl.labelBoxCurrencyTypeThreeName:SetDisabled ( not AJM.db.currTypeThree )
-
-	AJM.settingsControl.editBoxCurrencyTypeFourID:SetDisabled ( not AJM.db.currTypeFour )
-	AJM.settingsControl.labelBoxCurrencyTypeFourName:SetDisabled ( not AJM.db.currTypeFour )
-
-	AJM.settingsControl.editBoxCurrencyTypeOneID:SetDisabled ( not AJM.db.currTypeFive )
-	AJM.settingsControl.labelBoxCurrencyTypeOneName:SetDisabled ( not AJM.db.currTypeFive )
-
-	AJM.settingsControl.editBoxCurrencyTypeSixID:SetDisabled ( not AJM.db.currTypeSix )
-	AJM.settingsControl.labelBoxCurrencyTypeSixName:SetDisabled ( not AJM.db.currTypeSix )
-]]	
-
 	AJM.settingsControl.checkBoxCurrencyOpenStartUpMaster:SetValue( AJM.db.currOpenStartUpMaster )
 	AJM.settingsControl.currencyTransparencySlider:SetValue( AJM.db.currencyFrameAlpha )
 	AJM.settingsControl.currencyScaleSlider:SetValue( AJM.db.currencyScale )
@@ -783,6 +494,8 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.currencyMediaBackground:SetValue( AJM.db.currencyBackgroundStyle )
 	AJM.settingsControl.currencyBackgroundColourPicker:SetColor( AJM.db.currencyFrameBackgroundColourR, AJM.db.currencyFrameBackgroundColourG, AJM.db.currencyFrameBackgroundColourB, AJM.db.currencyFrameBackgroundColourA )
 	AJM.settingsControl.currencyBorderColourPicker:SetColor( AJM.db.currencyFrameBorderColourR, AJM.db.currencyFrameBorderColourG, AJM.db.currencyFrameBorderColourB, AJM.db.currencyFrameBorderColourA )
+	AJM.settingsControl.currencyMediaFont:SetValue( AJM.db.currencyFontStyle )
+	AJM.settingsControl.currencyFontSize:SetValue( AJM.db.currencyFontSize )
 	AJM.settingsControl.currencySliderSpaceForName:SetValue( AJM.db.currencyNameWidth )
 	AJM.settingsControl.currencySliderSpaceForGold:SetValue( AJM.db.currencyGoldWidth )
 	AJM.settingsControl.currencySliderSpaceForPoints:SetValue( AJM.db.currencyPointsWidth )
@@ -791,6 +504,7 @@ function AJM:SettingsRefresh()
 	if AJM.currencyListFrameCreated == true then
 		AJM:CurrencyListSetColumnWidth()
 		AJM:SettingsUpdateBorderStyle()
+		AJM:SettingsUpdateFontStyle()
 		AJM:CurrencyUpdateWindowLock()
 		JambaToonCurrencyListFrame:SetScale( AJM.db.currencyScale )
 		AJM:UpdateHendingText()
@@ -812,170 +526,60 @@ function AJM:SettingsToggleCurrencyGoldInGuildBank( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyTypeOne( event, checked )
-	AJM.db.currTypeOne = checked
-	AJM:SettingsRefresh()
-end
 
-function AJM:EditBoxChangedCurrencyTypeOneID( event, text )
-	AJM.db.CcurrTypeOne = text
-	AJM:JambaToonRequestCurrency()
-	AJM:SettingsRefresh()
-end
-
-function AJM:LabelBoxChangedCurrencyTypeOneName( event, text )
-	AJM.db.CcurrTypeOneName = text
-	AJM:SettingsRefresh()
+function AJM:EditBoxChangedCurrencyTypeOneID( event, value )
+	local currName, id = AJM:MatchCurrValue(value)
+		AJM.db.CcurrTypeOne = id
+		AJM.db.CcurrTypeOneName = currName
+		AJM:JambaToonRequestCurrency()
+		AJM:SettingsRefresh()
 end
 
 
-function AJM:SettingsToggleCurrencyTypeTwo( event, checked )
-	AJM.db.currTypeTwo = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:EditBoxChangedCurrencyTypeTwoID( event, text )
-	AJM.db.CcurrTypeTwo = text
-	AJM:JambaToonRequestCurrency()
-	AJM:SettingsRefresh()
-end
-
-function AJM:LabelBoxChangedCurrencyTypeTwoName( event, text )
-	AJM.db.CcurrTypeTwoName = text
-	AJM:SettingsRefresh()
+function AJM:EditBoxChangedCurrencyTypeTwoID( event, value )
+	local currName, id = AJM:MatchCurrValue(value)
+		AJM.db.CcurrTypeTwo = id
+		AJM.db.CcurrTypeTwoName = currName
+		AJM:JambaToonRequestCurrency()
+		AJM:SettingsRefresh()
 end
 
 
-function AJM:SettingsToggleCurrencyTypeThree( event, checked )
-	AJM.db.currTypeThree = checked
-	AJM:SettingsRefresh()
+function AJM:EditBoxChangedCurrencyTypeThreeID( event, value )
+	local currName, id = AJM:MatchCurrValue(value)
+		AJM.db.CcurrTypeThree = id
+		AJM.db.CcurrTypeThreeName = currName
+		AJM:JambaToonRequestCurrency()
+		AJM:SettingsRefresh()
 end
 
-function AJM:EditBoxChangedCurrencyTypeThreeID( event, text )
-	AJM.db.CcurrTypeThree = text
-	AJM:JambaToonRequestCurrency()
-	AJM:SettingsRefresh()
+
+function AJM:EditBoxChangedCurrencyTypeFourID( event, value )
+	local currName, id = AJM:MatchCurrValue(value)
+		AJM.db.CcurrTypeFour = id
+		AJM.db.CcurrTypeFourName = currName
+		AJM:JambaToonRequestCurrency()
+		AJM:SettingsRefresh()
 end
 
-function AJM:LabelBoxChangedCurrencyTypeThreeName( event, text )
-	AJM.db.CcurrTypeThreeName = text
-	AJM:SettingsRefresh()
+
+function AJM:EditBoxChangedCurrencyTypeFiveID( event, value )
+	local currName, id = AJM:MatchCurrValue(value)
+		AJM.db.CcurrTypeFive = id
+		AJM.db.CcurrTypeFiveName = currName
+		AJM:JambaToonRequestCurrency()
+		AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleCurrencyTypeFour( event, checked )
-	AJM.db.currTypeFour = checked
-	AJM:SettingsRefresh()
-end
 
-function AJM:EditBoxChangedCurrencyTypeFourID( event, text )
-	AJM.db.CcurrTypeFour = text
-	AJM:JambaToonRequestCurrency()
-	AJM:SettingsRefresh()
+function AJM:EditBoxChangedCurrencyTypeSixID( event, value )
+	--AJM:Print("test", value)
+	local currName, id = AJM:MatchCurrValue(value)
+		AJM.db.CcurrTypeSix = id
+		AJM.db.CcurrTypeSixName = currName
+		AJM:JambaToonRequestCurrency()
+		AJM:SettingsRefresh()
 end
-
-function AJM:LabelBoxChangedCurrencyTypeFourName( event, text )
-	AJM.db.CcurrTypeFourName = text
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyTypeFive( event, checked )
-	AJM.db.currTypeFive = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:EditBoxChangedCurrencyTypeFiveID( event, text )
-	AJM.db.CcurrTypeFive = text
-	AJM:JambaToonRequestCurrency()
-	AJM:SettingsRefresh()
-end
-
-function AJM:LabelBoxChangedCurrencyTypeFiveName( event, text )
-	AJM.db.CcurrTypeFiveName = text
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyTypeSix( event, checked )
-	AJM.db.currTypeSix = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:EditBoxChangedCurrencyTypeSixID( event, text )
-	AJM.db.CcurrTypeSix = text
-	AJM:JambaToonRequestCurrency()
-	AJM:SettingsRefresh()
-end
-
-function AJM:LabelBoxChangedCurrencyTypeSixName( event, text )
-	AJM.db.CcurrTypeSixName = text
-	AJM:SettingsRefresh()
-end
-
---[[ Extra If needed for Some other Use Ebony
-function AJM:SettingsToggleCurrencyTypeSeven( event, checked )
-	AJM.db.currTypeSeven = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:EditBoxChangedCurrencyTypeSevenID( event, text )
-	AJM.db.CcurrTypeSeven = text
-	AJM:JambaToonRequestCurrency()
-	AJM:SettingsRefresh()
-end
-
-function AJM:LabelBoxChangedCurrencyTypeSevenName( event, text )
-	AJM.db.CcurrTypeSevenName = text
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyTypeEight( event, checked )
-	AJM.db.currTypeEight = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:EditBoxChangedCurrencyTypeEightID( event, text )
-	AJM.db.CcurrTypeEight = text
-	AJM:JambaToonRequestCurrency()
-	AJM:SettingsRefresh()
-end
-
-function AJM:LabelBoxChangedCurrencyTypeEightName( event, text )
-	AJM.db.CcurrTypeEightName = text
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyTypeNine( event, checked )
-	AJM.db.currTypeNine = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:EditBoxChangedCurrencyTypeNineID( event, text )
-	AJM.db.CcurrTypeEight = text
-	AJM:JambaToonRequestCurrency()
-	AJM:SettingsRefresh()
-end
-
-function AJM:LabelBoxChangedCurrencyTypeNineName( event, text )
-	AJM.db.CcurrTypeNineName = text
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleCurrencyTypeTen( event, checked )
-	AJM.db.currTypeTen = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:EditBoxChangedCurrencyTypeTenID( event, text )
-	AJM.db.CcurrTypeTen = text
-	AJM:JambaToonRequestCurrency()
-	AJM:SettingsRefresh()
-end
-
-function AJM:LabelBoxChangedCurrencyTypeTenName( event, text )
-	AJM.db.CcurrTypeTenName = text
-	AJM:SettingsRefresh()
-end
-]]
-
 
 function AJM:SettingsToggleCurrencyOpenStartUpMaster( event, checked )
 	AJM.db.currOpenStartUpMaster = checked
@@ -1015,6 +619,16 @@ function AJM:SettingsBorderColourPickerChanged( event, r, g, b, a )
 	AJM.db.currencyFrameBorderColourG = g
 	AJM.db.currencyFrameBorderColourB = b
 	AJM.db.currencyFrameBorderColourA = a
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsChangeFontStyle( event, value )
+	AJM.db.currencyFontStyle = value
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsChangeFontSize( event, value )
+	AJM.db.currencyFontSize = value
 	AJM:SettingsRefresh()
 end
 
@@ -1079,56 +693,24 @@ end
 function AJM:OnDisable()
 end
 
-
 -- Settings received.
 function AJM:JambaOnSettingsReceived( characterName, settings )	
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
 		AJM.db.currGold = settings.currGold
 		AJM.db.currGoldInGuildBank = settings.currGoldInGuildBank
-		--Changed Text
-		AJM.db.currTypeOne = settings.currTypeOne
 		AJM.db.CcurrTypeOne = settings.CcurrTypeOne
 		AJM.db.CcurrTypeOneName = settings.CcurrTypeOneName
-		
-		AJM.db.currTypeTwo = settings.currTypeTwo
 		AJM.db.CcurrTypeTwo = settings.CcurrTypeTwo
 		AJM.db.CcurrTypeTwoName = settings.CcurrTypeTwoName
-		
-		AJM.db.currTypeThree = settings.currTypeThree
 		AJM.db.CcurrTypeThree = settings.CcurrTypeThree
 		AJM.db.CcurrTypeThreeName = settings.CcurrTypeThreeName
-		
-		AJM.db.currTypeFour = settings.currTypeFour
 		AJM.db.CcurrTypeFour = settings.CcurrTypeFour
 		AJM.db.CcurrTypeFourName = settings.CcurrTypeFourName
-		
-		AJM.db.currTypeFive = settings.currTypeFive
 		AJM.db.CcurrTypeFive = settings.CcurrTypeFive
 		AJM.db.CcurrTypeFiveName = settings.CcurrTypeFiveName
-		
-		AJM.db.currTypeSix = settings.currTypeSix
 		AJM.db.CcurrTypeSix = settings.CcurrTypeSix
 		AJM.db.CcurrTypeSixName = settings.CcurrTypeSixName
-		
-		--[[ Extra If needed for Some other Use Ebony
-		AJM.db.currTypeSeven = settings.currTypeSeven
-		AJM.db.CcurrTypeSeven = settings.CcurrTypeSeven
-		AJM.db.CcurrTypeSevenName = settings.CcurrTypeSevenName
-		
-		AJM.db.currTypeEight = settings.currTypeEight
-		AJM.db.CcurrTypeEight = settings.CcurrTypeEight
-		AJM.db.CcurrTypeEightName = settings.CcurrTypeEightName
-		
-		AJM.db.currTypeNine = settings.currTypeNine
-		AJM.db.CcurrTypeNine = settings.CcurrTypeNine
-		AJM.db.CcurrTypeNineName = settings.CcurrTypeNineName
-		
-		AJM.db.currTypeTen = settings.currTypeTen
-		AJM.db.CcurrTypeTen = settings.CcurrTypeTen
-		AJM.db.CcurrTypeTenName = settings.CcurrTypeTenName
-		]]
-		
 		AJM.db.currOpenStartUpMaster = settings.currOpenStartUpMaster
 		AJM.db.currencyScale = settings.currencyScale
 		AJM.db.currencyFrameAlpha = settings.currencyFrameAlpha
@@ -1144,6 +726,10 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.currencyFrameBorderColourG = settings.currencyFrameBorderColourG
 		AJM.db.currencyFrameBorderColourB = settings.currencyFrameBorderColourB
 		AJM.db.currencyFrameBorderColourA = settings.currencyFrameBorderColourA	
+		AJM.db.currencyMediaBorder = settings.currencyBorderStyle
+		AJM.db.currencyMediaBackground = settings.currencyBackgroundStyle
+		AJM.db.currencyFontSize = settings.currencyFontSize
+		AJM.db.currencyFontStyle = settings.currencyFontStyle
 		AJM.db.currencyNameWidth = settings.currencyNameWidth
 		AJM.db.currencyPointsWidth = settings.currencyPointsWidth
 		AJM.db.currencyGoldWidth = settings.currencyGoldWidth
@@ -1157,6 +743,29 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
+
+function AJM:CurrDropDownBox()
+	for name, id in pairs( AJM.currTypes ) do
+		local currName = AJM:CurrencyIconAndName( id )
+		AJM.simpleCurrList[currName] = currName		
+	end
+	AJM.simpleCurrList[""] = ""
+	table.sort( AJM.simpleCurrList )
+	return AJM.simpleCurrList
+end	
+
+
+function AJM:MatchCurrValue(value)
+	if value == "" then	
+		return "", 0
+	end
+	for name, id in pairs( AJM.currTypes ) do
+		local currName = AJM:CurrencyIconAndName( id )
+		if value == currName then
+			return currName, id
+		end	
+	end
+end 
 
 function AJM:CreateJambaToonCurrencyListFrame()
 	-- The frame.
@@ -1294,48 +903,6 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	frameTypeSixText:SetJustifyH( "CENTER" )
 	frame.TypeSixText = frameTypeSixText
 	left = left + spacing
-	--[[ Extra If Ever Neeeded for some Reason <Ebony>
-	-- Set the TypeSeven font string.
-	local frameTypeSeven = AJM.globalCurrencyFramePrefix.."TitleTypeSeven"
-	local frameTypeSevenText = parentFrame:CreateFontString( frameTypeSeven.."Text", "OVERLAY", "GameFontNormal" )
-	frameTypeSevenText:SetText( L["CurrSeven"] )
-	frameTypeSevenText:SetTextColor( r, g, b, a )
-	frameTypeSevenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTypeSevenText:SetWidth( width )
-	frameTypeSevenText:SetJustifyH( "CENTER" )
-	frame.TypeSevenText = frameTypeSevenText
-	left = left + spacing
-	-- Set the Eight font string.
-	local frameTypeEight = AJM.globalCurrencyFramePrefix.."TiteTypeEight"
-	local frameTypeEightText = parentFrame:CreateFontString( frameTypeEight.."Text", "OVERLAY", "GameFontNormal" )
-	frameTypeEightText:SetText( L["CurrEight"] )
-	frameTypeEightText:SetTextColor( r, g, b, a )
-	frameTypeEightText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTypeEightText:SetWidth( width )
-	frameTypeEightText:SetJustifyH( "CENTER" )
-	frame.TypeEightText = frameTypeEightText
-	left = left + spacing
-	-- Set the Nine font string.
-	local frameTypeNine = AJM.globalCurrencyFramePrefix.."TitleTypeEight"
-	local frameTypeNineText = parentFrame:CreateFontString( frameTypeEight.."Text", "OVERLAY", "GameFontNormal" )
-	frameTypeNineText:SetText( L["CurrNine"] )
-	frameTypeNineText:SetTextColor( r, g, b, a )
-	frameTypeNineText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTypeNineText:SetWidth( width )
-	frameTypeNineText:SetJustifyH( "CENTER" )
-	frame.TypeNineText = frameTypeNineText
-	left = left + spacing
-	-- Set the Ten font string.
-	local frameTypeTen = AJM.globalCurrencyFramePrefix.."TitleTypeTen"
-	local frameTypeTenText = parentFrame:CreateFontString( frameTypeTen.."Text", "OVERLAY", "GameFontNormal" )
-	frameTypeTenText:SetText( L["CurrTen"] )
-	frameTypeTenText:SetTextColor( r, g, b, a )
-	frameTypeTenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTypeTenText:SetWidth( width )
-	frameTypeTenText:SetJustifyH( "CENTER" )
-	frame.TypeTenText = frameTypeTenText
-	left = left + spacing
-	]]
 	-- Set the Total Gold font string.
 	left = 10
 	top = -50
@@ -1400,10 +967,12 @@ function AJM:CreateJambaToonCurrencyListFrame()
 	updateButton:SetHeight( 22 )
 	updateButton:SetWidth( 55 )
 	updateButton:SetText( L["Update"] )		
+	
 	frame.updateButton = updateButton
 	
 	AJM:SettingsUpdateBorderStyle()
 	AJM:CurrencyUpdateWindowLock()
+	AJM:SettingsUpdateFontStyle()
 	JambaToonCurrencyListFrame:Hide()
 	AJM.currencyListFrameCreated = true
 	AJM:UpdateHendingText()
@@ -1414,57 +983,28 @@ function AJM:UpdateHendingText()
 	local parentFrame = JambaToonCurrencyListFrame
 	-- Type One
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeOne )
-	if name then
-	Name = string.gsub(name, "%l+%s*", "" ) 
-		local iconTextureString = strconcat(" |T"..icon..":20|t")
-		local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
-		AJM.db.CcurrTypeOneName = iconTextureStringFull
+	local iconTextureString = strconcat(" |T"..icon..":20|t")
 		parentFrame.TypeOneText:SetText( iconTextureString )
-	else 
-		return
-	end
 	-- Type Two
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeTwo )
-	Name = string.gsub(name, "%l+%s*", "" ) 
 	local iconTextureString = strconcat(" |T"..icon..":20|t")
-	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
-	AJM.db.CcurrTypeTwoName = iconTextureStringFull
-	parentFrame.TypeTwoText:SetText( iconTextureString )
-	-- Type Two
-	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeTwo )
-	Name = string.gsub(name, "%l+%s*", "" ) 
-	local iconTextureString = strconcat(" |T"..icon..":20|t")
-	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
-	AJM.db.CcurrTypeTwoName = iconTextureStringFull
-	parentFrame.TypeTwoText:SetText( iconTextureString )
+		parentFrame.TypeTwoText:SetText( iconTextureString )
 	-- Type Three
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeThree )
-	Name = string.gsub(name, "%l+%s*", "" ) 
 	local iconTextureString = strconcat(" |T"..icon..":20|t")
-	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
-	AJM.db.CcurrTypeThreeName = iconTextureStringFull
-	parentFrame.TypeThreeText:SetText( iconTextureString )	
+		parentFrame.TypeThreeText:SetText( iconTextureString )	
 	-- Type Four
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeFour )
-	Name = string.gsub(name, "%l+%s*", "" ) 
 	local iconTextureString = strconcat(" |T"..icon..":20|t")
-	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
-	AJM.db.CcurrTypeFourName = iconTextureStringFull
-	parentFrame.TypeFourText:SetText( iconTextureString ) 	
+		parentFrame.TypeFourText:SetText( iconTextureString ) 	
 	-- Type Five
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeFive )
-	Name = string.gsub(name, "%l+%s*", "" ) 
 	local iconTextureString = strconcat(" |T"..icon..":20|t")
-	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
-	AJM.db.CcurrTypeFiveName = iconTextureStringFull
-	parentFrame.TypeFiveText:SetText( iconTextureString )
+		parentFrame.TypeFiveText:SetText( iconTextureString )
 	-- Type six
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeSix )
-	Name = string.gsub(name, "%l+%s*", "" ) 
 	local iconTextureString = strconcat(" |T"..icon..":20|t")
-	local iconTextureStringFull = strconcat(" |T"..icon..":20|t", L[" "]..name)
-	AJM.db.CcurrTypeSixName = iconTextureStringFull
-	parentFrame.TypeSixText:SetText( iconTextureString )
+		parentFrame.TypeSixText:SetText( iconTextureString )
 end
 
 function AJM:CurrencyUpdateWindowLock()
@@ -1489,6 +1029,32 @@ function AJM:SettingsUpdateBorderStyle()
 	frame:SetBackdropBorderColor( AJM.db.currencyFrameBorderColourR, AJM.db.currencyFrameBorderColourG, AJM.db.currencyFrameBorderColourB, AJM.db.currencyFrameBorderColourA )
 	frame:SetAlpha( AJM.db.currencyFrameAlpha )
 end
+
+function AJM:SettingsUpdateFontStyle()
+	local textFont = AJM.SharedMedia:Fetch( "font", AJM.db.currencyFontStyle )
+	local textSize = AJM.db.currencyFontSize
+	local frame = JambaToonCurrencyListFrame
+	frame.titleName:SetFont( textFont , textSize , "OUTLINE")
+	frame.characterNameText:SetFont( textFont , textSize , "OUTLINE")
+	frame.GoldText:SetFont( textFont , textSize , "OUTLINE")
+	frame.TotalGoldGuildTitleText:SetFont( textFont , textSize , "OUTLINE")
+	frame.TotalGoldGuildText:SetFont( textFont , textSize , "OUTLINE")
+	frame.TotalGoldText:SetFont( textFont , textSize , "OUTLINE")
+	frame.TotalGoldTitleText:SetFont( textFont , textSize , "OUTLINE")
+	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
+		--AJM:Print("test", characterName)
+		--currencyFrameCharacterInfo.characterNameText:SetFont( textFont , textSize , "OUTLINE")
+		currencyFrameCharacterInfo.characterNameText:SetFont( textFont , textSize , "OUTLINE")
+		currencyFrameCharacterInfo.GoldText:SetFont( textFont , textSize , "OUTLINE")
+		currencyFrameCharacterInfo.TypeOneText:SetFont( textFont , textSize , "OUTLINE")
+		currencyFrameCharacterInfo.TypeTwoText:SetFont( textFont , textSize , "OUTLINE")
+		currencyFrameCharacterInfo.TypeThreeText:SetFont( textFont , textSize , "OUTLINE")
+		currencyFrameCharacterInfo.TypeFourText:SetFont( textFont , textSize , "OUTLINE")
+		currencyFrameCharacterInfo.TypeFiveText:SetFont( textFont , textSize , "OUTLINE")
+		currencyFrameCharacterInfo.TypeSixText:SetFont( textFont , textSize , "OUTLINE")
+	end
+end
+
 
 function AJM:CurrencyListSetHeight()
 	local additionalLines = 0
@@ -1520,7 +1086,7 @@ function AJM:CurrencyListSetColumnWidth()
 	parentFrame.characterNameText:SetWidth( nameWidth )
 	parentFrame.characterNameText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 	left = left + nameWidth + spacingWidth
-	if AJM.db.currGold == true then
+ 	if AJM.db.currGold == true then
 		parentFrame.GoldText:SetWidth( goldWidth )
 		parentFrame.GoldText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + goldWidth + (spacingWidth * 3)
@@ -1530,97 +1096,60 @@ function AJM:CurrencyListSetColumnWidth()
 		parentFrame.GoldText:Hide()
 		haveGold = 0
 	end
-	if AJM.db.currTypeOne == true then
+	if AJM.db.CcurrTypeOneName == "" then
+		parentFrame.TypeOneText:Hide()
+	else	
 		parentFrame.TypeOneText:SetWidth( pointsWidth )
 		parentFrame.TypeOneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
 		parentFrame.TypeOneText:Show()
-	else
-		parentFrame.TypeOneText:Hide()
 	end
-	if AJM.db.currTypeTwo == true then
+	if AJM.db.CcurrTypeTwoName == "" then
+		parentFrame.TypeTwoText:Hide()
+	else	
 		parentFrame.TypeTwoText:SetWidth( pointsWidth )
 		parentFrame.TypeTwoText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
 		parentFrame.TypeTwoText:Show()
-	else
-		parentFrame.TypeTwoText:Hide()
 	end
-	if AJM.db.currTypeThree == true then
+	if AJM.db.CcurrTypeThreeName == "" then
+		parentFrame.TypeThreeText:Hide()
+	else	
 		parentFrame.TypeThreeText:SetWidth( pointsWidth )
 		parentFrame.TypeThreeText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
 		parentFrame.TypeThreeText:Show()
-	else
-		parentFrame.TypeThreeText:Hide()
 	end	
-	if AJM.db.currTypeFour == true then
+	if AJM.db.CcurrTypeFourName == "" then
+		parentFrame.TypeFourText:Hide()
+	else	
 		parentFrame.TypeFourText:SetWidth( pointsWidth )
 		parentFrame.TypeFourText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
 		parentFrame.TypeFourText:Show()
-	else
-		parentFrame.TypeFourText:Hide()
 	end
-	if AJM.db.currTypeFive == true then
+	if AJM.db.CcurrTypeFiveName == "" then
+		parentFrame.TypeFiveText:Hide()
+	else	
 		parentFrame.TypeFiveText:SetWidth( pointsWidth )
 		parentFrame.TypeFiveText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
 		parentFrame.TypeFiveText:Show()
-	else
-		parentFrame.TypeFiveText:Hide()
 	end
-		if AJM.db.currTypeSix == true then
+	if AJM.db.CcurrTypeSixName == "" then
+		parentFrame.TypeSixText:Hide()
+	else
 		parentFrame.TypeSixText:SetWidth( pointsWidth )
 		parentFrame.TypeSixText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
 		left = left + pointsWidth + spacingWidth
 		numberOfPointsColumns = numberOfPointsColumns + 1
 		parentFrame.TypeSixText:Show()
-	else
-		parentFrame.TypeSixText:Hide()
 	end
---[[ Extra Space if needed
-	if AJM.db.currTypeSeven == true then
-		parentFrame.TypeSevenText:SetWidth( pointsWidth )
-		parentFrame.TypeSevenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.TypeSevenText:Show()
-	else
-		parentFrame.TypeSevenText:Hide()
-	end
-	if AJM.db.currTypeEight == true then
-		parentFrame.TypeEightText:SetWidth( pointsWidth )
-		parentFrame.TypeEightText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.TypeEightText:Show()
-	else
-		parentFrame.TypeEightText:Hide()
-	end
-	if AJM.db.currTypeNine == true then
-		parentFrame.TypeNineText:SetWidth( pointsWidth )
-		parentFrame.TypeNineText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.TypeNineText:Show()
-	else
-		parentFrame.TypeNineText:Hide()
-	end
-	if AJM.db.currTypeTen == true then
-		parentFrame.TypeTenText:SetWidth( pointsWidth )
-		parentFrame.TypeTenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, headingRowTopPoint )
-		left = left + pointsWidth + spacingWidth
-		numberOfPointsColumns = numberOfPointsColumns + 1
-		parentFrame.TypeTenText:Show()
-	else
-		parentFrame.TypeTenText:Hide()
-	end ]]	
 	-- Character rows.
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
 		if JambaPrivate.Team.GetCharacterOnlineStatus (characterName) == true then
@@ -1637,89 +1166,55 @@ function AJM:CurrencyListSetColumnWidth()
 			else
 				currencyFrameCharacterInfo.GoldText:Hide()
 			end
-			if AJM.db.currTypeOne == true then
+			if AJM.db.CcurrTypeOneName == "" then
+				currencyFrameCharacterInfo.TypeOneText:Hide()
+			else
 				currencyFrameCharacterInfo.TypeOneText:SetWidth( pointsWidth )
 				currencyFrameCharacterInfo.TypeOneText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
 				left = left + pointsWidth + spacingWidth
 				currencyFrameCharacterInfo.TypeOneText:Show()
-			else
-				currencyFrameCharacterInfo.TypeOneText:Hide()
 			end
-			if AJM.db.currTypeTwo == true then
+			if AJM.db.CcurrTypeTwoName == "" then
+				currencyFrameCharacterInfo.TypeTwoText:Hide()
+			else
 				currencyFrameCharacterInfo.TypeTwoText:SetWidth( pointsWidth )
 				currencyFrameCharacterInfo.TypeTwoText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
 				left = left + pointsWidth + spacingWidth
 				currencyFrameCharacterInfo.TypeTwoText:Show()
-			else
-				currencyFrameCharacterInfo.TypeTwoText:Hide()
 			end
-			if AJM.db.currTypeThree == true then
+			if AJM.db.CcurrTypeThreeName == "" then
+				currencyFrameCharacterInfo.TypeThreeText:Hide()
+			else	
 				currencyFrameCharacterInfo.TypeThreeText:SetWidth( pointsWidth )
 				currencyFrameCharacterInfo.TypeThreeText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
 				left = left + pointsWidth + spacingWidth
 				currencyFrameCharacterInfo.TypeThreeText:Show()
-			else
-				currencyFrameCharacterInfo.TypeThreeText:Hide()
 			end		
-			if AJM.db.currTypeFour == true then
+			if AJM.db.CcurrTypeFourName == "" then
+				currencyFrameCharacterInfo.TypeFourText:Hide()
+			else
 				currencyFrameCharacterInfo.TypeFourText:SetWidth( pointsWidth )
 				currencyFrameCharacterInfo.TypeFourText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
 				left = left + pointsWidth + spacingWidth
 				currencyFrameCharacterInfo.TypeFourText:Show()
-			else
-				currencyFrameCharacterInfo.TypeFourText:Hide()
 			end
-			if AJM.db.currTypeFive == true then
+			if AJM.db.CcurrTypeFiveName == "" then
+				currencyFrameCharacterInfo.TypeFiveText:Hide()
+			else	
 				currencyFrameCharacterInfo.TypeFiveText:SetWidth( pointsWidth )
 				currencyFrameCharacterInfo.TypeFiveText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
 				left = left + pointsWidth + spacingWidth
 				currencyFrameCharacterInfo.TypeFiveText:Show()
-			else
-				currencyFrameCharacterInfo.TypeFiveText:Hide()
+	
 			end
-			if AJM.db.currTypeSix == true then
+			if AJM.db.CcurrTypeSixName == "" then
+				currencyFrameCharacterInfo.TypeSixText:Hide()
+			else
 				currencyFrameCharacterInfo.TypeSixText:SetWidth( pointsWidth )
 				currencyFrameCharacterInfo.TypeSixText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
 				left = left + pointsWidth + spacingWidth
 				currencyFrameCharacterInfo.TypeSixText:Show()
-			else
-				currencyFrameCharacterInfo.TypeSixText:Hide()
 			end		
-	--[[	
-			if AJM.db.currTypeSeven == true then
-				currencyFrameCharacterInfo.TypeSevenText:SetWidth( pointsWidth )
-				currencyFrameCharacterInfo.TypeSevenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-				left = left + pointsWidth + spacingWidth
-				currencyFrameCharacterInfo.TypeSevenText:Show()
-			else
-				currencyFrameCharacterInfo.TypeSevenText:Hide()
-			end
-			if AJM.db.currTypeEight == true then
-				currencyFrameCharacterInfo.TypeEightText:SetWidth( pointsWidth )
-				currencyFrameCharacterInfo.TypeEightText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-				left = left + pointsWidth + spacingWidth
-				currencyFrameCharacterInfo.TypeEightText:Show()
-			else
-				currencyFrameCharacterInfo.TypeEightText:Hide()
-			end		
-			if AJM.db.currTypeNine == true then
-				currencyFrameCharacterInfo.TypeNineText:SetWidth( pointsWidth )
-				currencyFrameCharacterInfo.TypeNineText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-				left = left + pointsWidth + spacingWidth
-				currencyFrameCharacterInfo.TypeNineText:Show()
-			else
-				currencyFrameCharacterInfo.TypeNineText:Hide()
-			end
-			if AJM.db.currTypeTen == true then
-				currencyFrameCharacterInfo.TypeTenText:SetWidth( pointsWidth )
-				currencyFrameCharacterInfo.TypeTenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, characterRowTopPoint )
-				left = left + pointsWidth + spacingWidth
-				currencyFrameCharacterInfo.TypeTenText:Show()
-			else
-				currencyFrameCharacterInfo.TypeTenText:Hide()
-			end ]]
-		else
-			
 		end
 	end	
 	-- Parent frame width and title.
@@ -1783,7 +1278,6 @@ function AJM:CurrencyListSetColumnWidth()
 		parentFrame.TotalGoldText:Hide()
 		parentFrame.TotalGoldGuildTitleText:Hide()
 		parentFrame.TotalGoldGuildText:Hide()	
-
 	end
 end
 
@@ -1798,7 +1292,7 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	local width = 50
 	local top = 0
 	--local top = -35 + (-15 * JambaApi.GetPositionForCharacterName( characterName ))
-	--if JambaPrivate.Team.GetCharacterOnlineStatus (characterName) == true then
+	-- WHAT THE HELL IS GOING ON HERE! Ebony!
 		local height1 = -35 + ( -15 * JambaApi.GetPositionForCharacterName( characterName) )
 		local height2 = -35 + ( -15 * JambaApi.GetPositionForCharacterNameOnline( characterName) )
 		if height1 < height2 then
@@ -1895,51 +1389,8 @@ function AJM:CreateJambaCurrencyFrameInfo( characterName, parentFrame )
 	frameTypeSixText:SetJustifyH( "CENTER" )
 	currencyFrameCharacterInfo.TypeSixText = frameTypeSixText
 	left = left + spacing
---[[ More Space if needed
-	-- Set the TypeSeven font string.
-	local frameTypeSeven = AJM.globalCurrencyFramePrefix.."TypeSeven"
-	local frameTypeSevenText = parentFrame:CreateFontString( frameTypeSeven.."Text", "OVERLAY", "GameFontNormal" )
-	frameTypeSevenText:SetText( "0" )
-	frameTypeSevenText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameTypeSevenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTypeSevenText:SetWidth( width )
-	frameTypeSevenText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.TypeSevenText = frameTypeSevenText
-	left = left + spacing
-	-- Set the TypeEight font string.
-	local frameTypeEight = AJM.globalCurrencyFramePrefix.."TypeEight"
-	local frameTypeEightText = parentFrame:CreateFontString( frameTypeEight.."Text", "OVERLAY", "GameFontNormal" )
-	frameTypeEightText:SetText( "0" )
-	frameTypeEightText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameTypeEightText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTypeEightText:SetWidth( width )
-	frameTypeEightText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.TypeEightText = frameTypeEightText
-	left = left + spacing
-	-- Set the TypeNine font string.
-	local frameTypeNine = AJM.globalCurrencyFramePrefix.."TypeNine"
-	local frameTypeNineText = parentFrame:CreateFontString( frameTypeNine.."Text", "OVERLAY", "GameFontNormal" )
-	frameTypeNineText:SetText( "0" )
-	frameTypeNineText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameTypeNineText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTypeNineText:SetWidth( width )
-	frameTypeNineText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.TypeNineText = frameTypeNineText
-	left = left + spacing
-	-- Set the TypeTen font string.
-	local frameTypeTen = AJM.globalCurrencyFramePrefix.."TypeTen"
-	local frameTypeTenText = parentFrame:CreateFontString( frameTypeTen.."Text", "OVERLAY", "GameFontNormal" )
-	frameTypeTenText:SetText( "0" )
-	frameTypeTenText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	frameTypeTenText:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", left, top )
-	frameTypeTenText:SetWidth( width )
-	frameTypeTenText:SetJustifyH( "CENTER" )
-	currencyFrameCharacterInfo.TypeTenText = frameTypeTenText
-	left = left + spacing
-]]
-
-
-	--end
+	
+	AJM:SettingsUpdateFontStyle()
 end
 
 function AJM:JambaToonHideCurrency()
@@ -1973,12 +1424,6 @@ function AJM:JambaToonRequestCurrency()
 			currencyFrameCharacterInfo.TypeFourText:Hide()
 			currencyFrameCharacterInfo.TypeFiveText:Hide()
 			currencyFrameCharacterInfo.TypeSixText:Hide()
-			--[[
-			currencyFrameCharacterInfo.TypeSevenText:Hide()
-			currencyFrameCharacterInfo.TypeEightText:Hide()
-			currencyFrameCharacterInfo.TypeNineText:Hide()
-			currencyFrameCharacterInfo.TypeTenText:Hide()
-			]]
 		else
 			currencyFrameCharacterInfo.characterNameText:Show()
 			currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
@@ -1989,11 +1434,6 @@ function AJM:JambaToonRequestCurrency()
 			currencyFrameCharacterInfo.TypeFourText:SetTextColor( r, g, b, a )
 			currencyFrameCharacterInfo.TypeFiveText:SetTextColor( r, g, b, a )
 			currencyFrameCharacterInfo.TypeSixText:SetTextColor( r, g, b, a )
-			--[[currencyFrameCharacterInfo.TypeSevenText:SetTextColor( r, g, b, a )
-			currencyFrameCharacterInfo.TypeEightText:SetTextColor( r, g, b, a )
-			currencyFrameCharacterInfo.TypeNineText:SetTextColor( r, g, b, a )
-			currencyFrameCharacterInfo.TypeTenText:SetTextColor( r, g, b, a )
-			]]
 		end
 	end
 	AJM.currencyTotalGold = 0
@@ -2018,10 +1458,6 @@ function AJM:DoSendCurrency( characterName, dummyValue )
 	AJM.currentCurrencyValues.currTypeFour	= select( 2, GetCurrencyInfo( AJM.db.CcurrTypeFour ) )
 	AJM.currentCurrencyValues.currTypeFive = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeFive ) )
 	AJM.currentCurrencyValues.currTypeSix = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeSix ) )
---	AJM.currentCurrencyValues.currTypeSeven = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeSeven ) )	
---	AJM.currentCurrencyValues.currTypeEight = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeEight ) )
---	AJM.currentCurrencyValues.currTypeNine = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeNine ) )
---	AJM.currentCurrencyValues.currTypeTen = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeTen ) )
 	AJM:JambaSendCommandToToon( characterName, AJM.COMMAND_HERE_IS_CURRENCY, AJM.currentCurrencyValues )
 	else
 		return
@@ -2051,12 +1487,7 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	currencyFrameCharacterInfo.TypeFourText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.TypeFiveText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.TypeSixText:SetTextColor( r, g, b, a )
---[[	
-	currencyFrameCharacterInfo.TypeSevenText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TypeEightText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TypeNineText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TypeTenText:SetTextColor( r, g, b, a )
-]]
+
 	--currencyFrameCharacterInfo.GoldText:SetText( JambaUtilities:FormatMoneyString( currencyValues.currGold ) )
 	currencyFrameCharacterInfo.GoldText:SetText( GetCoinTextureString( currencyValues.currGold ) )
 	currencyFrameCharacterInfo.TypeOneText:SetText( currencyValues.currTypeOne )
@@ -2065,12 +1496,6 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	currencyFrameCharacterInfo.TypeFourText:SetText( currencyValues.currTypeFour )
 	currencyFrameCharacterInfo.TypeFiveText:SetText( currencyValues.currTypeFive )
 	currencyFrameCharacterInfo.TypeSixText:SetText( currencyValues.currTypeSix )
---[[	
-currencyFrameCharacterInfo.TypeSevenText:SetText( currencyValues.currTypeSeven )
-	currencyFrameCharacterInfo.TypeEightText:SetText( currencyValues.currTypeEight )
-	currencyFrameCharacterInfo.TypeNineText:SetText( currencyValues.currTypeNine )
-	currencyFrameCharacterInfo.TypeTenText:SetText( currencyValues.currTypeTen )
-]]
 	-- Total gold.
 	AJM.currencyTotalGold = AJM.currencyTotalGold + currencyValues.currGold
 	--parentFrame.TotalGoldText:SetText( JambaUtilities:FormatMoneyString( AJM.currencyTotalGold ) )

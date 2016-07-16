@@ -35,7 +35,7 @@ L["Loot all cloth with"] = true
 L["Cloth Target"] = true
 L["Cloth"] = true
 L["Trade Goods"] = true
-
+L["Tradeskill"] = true
 L["Advanced Loot Items"] = true
 L["Character Name"] = true
 L["Remove"] = true

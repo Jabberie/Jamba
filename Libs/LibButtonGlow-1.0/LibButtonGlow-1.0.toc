@@ -12,6 +12,10 @@
 ## X-Curse-Project-Name: LibButtonGlow-1.0
 ## X-Curse-Project-ID: libbuttonglow-1-0
 ## X-Curse-Repository-ID: wow/libbuttonglow-1-0/mainline
+## X-Curse-Packaged-Version: Beta-4.3i-1-g3e0e1d6
+## X-Curse-Project-Name: Jamba
+## X-Curse-Project-ID: jamba
+## X-Curse-Repository-ID: wow/jamba/mainline
 
 LibStub\LibStub.lua
 

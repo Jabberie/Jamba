@@ -37,4 +37,4 @@ L[" (via "] = true
 L[")"] = true
 L["Update"] = true
 L["whispered you."] = true
-L["Do Not Forward RealID Whispers"]= true
+L["Do Not Forward RealID Whispers"] = true

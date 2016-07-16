@@ -620,7 +620,7 @@ function AJM:SettingsTeamListScrollRefresh()
 		-- Reset.
 		AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[1].textString:SetText( "" )
 		AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
-		AJM.settingsControl.teamList.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControl.teamList.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControl.teamListOffset
 		if dataRowNumber <= JambaPrivate.Team.GetTeamListMaximumOrder() then
@@ -629,7 +629,7 @@ function AJM:SettingsTeamListScrollRefresh()
 			AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[1].textString:SetText( characterName )
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControl.teamListHighlightRow then
-				AJM.settingsControl.teamList.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControl.teamList.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end
@@ -658,7 +658,7 @@ function AJM:SettingsTagListScrollRefresh()
 		-- Reset.
 		AJM.settingsControl.tagList.rows[iterateDisplayRows].columns[1].textString:SetText( "" )
 		AJM.settingsControl.tagList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
-		AJM.settingsControl.tagList.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControl.tagList.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControl.tagListOffset
 		if dataRowNumber <= GetTagListMaxPosition() then
@@ -671,7 +671,7 @@ function AJM:SettingsTagListScrollRefresh()
 			end
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControl.tagListHighlightRow then
-				AJM.settingsControl.tagList.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControl.tagList.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end

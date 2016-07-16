@@ -91,7 +91,6 @@ function JambaUtilities:AddRealmToNameIfNotNil( name, realm )
 	return fullName
 end
 
-
 -- Money constants.
 JambaUtilities.COLOUR_COPPER = "eda55f"
 JambaUtilities.COLOUR_SILVER = "c7c7cf"
@@ -188,3 +187,18 @@ function JambaUtilities:FixValueToRange( value, minValue, maxValue )
 	end	
 	return value
 end
+
+
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

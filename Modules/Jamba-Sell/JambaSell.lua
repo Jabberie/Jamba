@@ -473,7 +473,7 @@ function AJM:SettingsGreysScrollRefresh()
 		AJM.settingsControlGreys.greys.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
 		AJM.settingsControlGreys.greys.rows[iterateDisplayRows].columns[2].textString:SetText( "" )
 		AJM.settingsControlGreys.greys.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
-		AJM.settingsControlGreys.greys.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControlGreys.greys.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControlGreys.greysOffset
 		if dataRowNumber <= AJM:GetGreysMaxPosition() then
@@ -483,7 +483,7 @@ function AJM:SettingsGreysScrollRefresh()
 			AJM.settingsControlGreys.greys.rows[iterateDisplayRows].columns[2].textString:SetText( greysInformation.tag )
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControlGreys.greysHighlightRow then
-				AJM.settingsControlGreys.greys.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControlGreys.greys.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end
@@ -510,7 +510,7 @@ function AJM:SettingsOthersScrollRefresh()
 		AJM.settingsControlOthers.others.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
 		AJM.settingsControlOthers.others.rows[iterateDisplayRows].columns[2].textString:SetText( "" )
 		AJM.settingsControlOthers.others.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )		
-		AJM.settingsControlOthers.others.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControlOthers.others.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControlOthers.othersOffset
 		if dataRowNumber <= AJM:GetOthersMaxPosition() then
@@ -520,7 +520,7 @@ function AJM:SettingsOthersScrollRefresh()
 			AJM.settingsControlOthers.others.rows[iterateDisplayRows].columns[2].textString:SetText( othersInformation.tag )
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControlOthers.othersHighlightRow then
-				AJM.settingsControlOthers.others.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControlOthers.others.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end

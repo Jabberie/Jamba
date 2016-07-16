@@ -1,66 +1,129 @@
-﻿Jamba Version: Beta-4.3j
-WoW Game Version: 6.2.3
-Release Date: TBA
-Beta Release Date: 20/4/2016
-Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Trade, Curr
+﻿---------------------------
+ChangeLogs:
+---------------------------
+Jamba Version: 5.0.1
+WoW Game Version: 7.0.3
+Release Date: 19/07/2016
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade
 
-*jamba-Core Some Back End Work for Legion/7.0.x
-	* New tooltips on the options config to help make it easter to understand what some buttons to do and to clean up some of the long line texts.
-	
+Initial Legion Release.
 
-*Jamba-Display-Team
-	-Added a NewTooltip when you hover over Follow bar to show
-		- Level of minion If not level capped.
-		- ItemLevel of minion.
-		- Durability of the minion.
-		- Bag Space of the minion (this will phase out the old barspace bar to make room for artifact Weapon-XP)
-		- Gold of the minion.
-			- now shows Currency Icons > 4.3f
-		- Mail if the minion has mail and who it is from (last 3)
-		- Currency You can pick the currency from the ingame currency by showing on BackPack
-			- now shows Currency Icon > 4.3f
-	- Removed Display BagSpace see the tooltip..	
+*Jamba-Proc
+    -Removed 
+    -As it's not updated anymore and I don't feel i can do it any better than other addons out there. ( i feel my time can be spent better somewhere else on the project)
+    -You can download this as a separate Download.
+    -See information at http://www.dual-boxing.com/threads/52151-Addon-Jamba-4-0-An-assistant-for-Multiboxers-Release-for-WoW-6?p=402394&viewfull=1#post402394
 
-	- Renamed "Combo PointBar" to "Alternate PowerBar"
-		- Added Support for Other classess Alternate Power
-			-Warlocks
-				-Burning Embers
-				-Shoul Shards
-				-Demonic Fury
-			-Paladin
-				-Holy Power
-				
-* Removed Jamba-Proc 
-			You can download this as a separate Download.
-			See infomation at http://www.dual-boxing.com/threads/52151-Addon-Jamba-4-0-An-assistant-for-Multiboxers-Release-for-WoW-6?p=402394&viewfull=1#post402394 		
+*Jamba-Core 
+    - Some Back-End Work for Legion/7.0.x
+    - New tooltips on the options config to help make it easier to understand what some buttons to do and to clean up some of the long line texts.
+    - Changed Help to Commands - as it shows more of the command Line stuff.
+    - If a Module is not loaded on all characters then it no longer Lua-Error and tells the client what Module will need to be loaded.
+    - Updated LibActionButton
+    - Updated AceGUI-3.0-SharedMediaWidgets
+    - Updated settings Frame for config. Resize and close button. 
+    - added some News to the GUIConfig page.    
+    
+*Jamba-Team
+    - Added two new ways to add team members to the team with the command line and GUI.
+        @target will add your current target to the team list
+        @mouseOver Will add your current MouseOver to the team list.
+    - cleaned up some loot code. and some offline code.    
+    - Loot can olny be set to Group/FFA/Personal. ( Olny works in a Instances )
+    
 
-*Jamba-Toon
-	-Removed Jamba-Currency From the toon module to its own module
-			
-* New Module Jamba-Curr
-	- All Currency Information
-		- You can now Edit the Currency ID to show whatever Currency you like (no more waiting for updates on patchs/xpacs Has a default list)
-			-Config Show Currency Name and Icon.
-			-You can Have a max of 6 Currency's. (todo Might change on feedback)
-		- Now shows Currency Icon.
-		- Now shows the Currency Gold Icons on when showing gold/Sliver/Copper
-		- NoLonger Shows Currency for Offline minions.
-		- Should Now Order the character right That are Offline/Online.
-	-Added Help Information Tooltips.
+* Jamba-Quest-Tracker
+    -Renamed from Jamba Quest Watcher to Jamba Objective Tracker(To fit in line with blizzards own naming)
+        - Now Shows Scenario Objective on the watcher.
+        - Shows Bouns Scenario Objective.
+        - Fixed with Broken Shore QuestLines a % bar needed coding in.
+        - Only Show stage if there is more the one stage (so does not show in dungeons.)
+        - Added support to change the font And text size
+		- Now automatically sets the frame to the Right Hand Side of the UI.
 		
-* Jamba-Team
-	- Added two new ways to add team members to the team with command line and GUI.
-		@target will add your current target to the team list
-		@mouseOver Will add your current MouseOver to the team list.
-	- cleaned up some loot code. and some offline code.
-	
-* Jamba-Macro
-	- Tag Sould nolonger set the realm name if playing from the same realm. thanks to Sonof from dual-boxing for the bug report.	
-	
-* Jamba-Quest-Watcher
-	- Now Shows Scenario quests on the watcher.
-	--4.3j Should now work with progress quests again.	
+* Jamba-Quest 
+    - A big thanks to Schilm from dual-boxing.com to the new changes. little edited by me 
+	- Added buttons to blizzard Quest Rightclick Dropdown Menu to Track and un-track and to abandon all quests.
+    -New Bar Now part of the QuestMap Frame. with new buttons
+        -Abandon All
+            -Works just like it used to. It loops through all of your toons and abandons all the quests on each toon. 
+            -Now ignores quests that cannot be abandoned, such as the Account Wide quests Luxlunae mentioned.
+        -Share All
+            -Used to just loop through the current toons quests and just shared those, NOW loops through all toons and attempts to share all Quests from all toons.
+        -Track All
+            -Back from the abyss!!!
+            -Used to just loop through the current toons quests and just tracked those, NOW loops through all toons and attempts to track all Quests from all toons.
+        -Untrack All
+            -Back from the abyss!!!
+            -Used to just loop through the current toons quests and just untracked those, NOW loops through all toons and attempts to un-tracks all Quests from all toons.    
+        
+        
+*Jamba-Display-Team
+    - Values are now Abbreviated to smaller Numbers.
+    - No longer Shows max Value when showing Percentage
+    - Added support to change the font And text size
+    - Added a NewTooltip when you hover over Follow bar to show
+        - Level of minion If not level capped.
+        - ItemLevel of minion.
+        - Durability of the minion.
+        - Bag Space of the minion.
+        - Gold of the minion.
+        - Mail if the minion has mail and who it is from (Same as minimap)
+    - Tooltip should no longer show in combat.    
+    - Removed the old Display Bag Space Bar added to tooltips
+    - Renamed "Combo PointBar" to "Class Power Bar"
+        - Added Support for Other class Power
+            -Warlocks - Soul Shards
+            -Paladin - Holy Power
+            -DeathKight - Runes
+            -Mage - ARCANE CHARGES
+            -Monk - CHI
+    
+    - Removed the Old Reputation bar.
+    - Changes to the XP bar.
+        - Your can show up for four XP Bars For the 4 XP type each bar is on the same XP frame and makes each bar a little smaller.
+            - Xp, Players XP.
+            - Artifact XP, Show the players weapon Artifact XP.
+            - Show Honor XP, Show a bar for the new honor xp bar.
+            - Show Reputation, show a bar for Reputation
+    - Added new checks to fix The FollowDance when spamming follow key.
+    - You can now specify the number of characters per row up to 10.
+                
+*Jamba-Toon
+    - Removed Jamba-Currency From the toon module
+    - Added Team Release Prompts when you die to Release the spirits of all minions. And release back to the minions bodies.
+            
+* New Module Jamba-Curr
+    - All Currency Information
+    **- You can now add Currency IDs with one line in the config file if you need to.
+    - There is a now a DropDown Box to show the Currency's you like to show
+    - You can Have a max of 6 Currencies.
+    - Now shows Currency Icon Then The Three Letters of text.
+    - Now shows the Currency Gold Icons when showing gold/Sliver/Copper
+    - No Longer Shows Currency for Offline minions.
+    - Should Now Order minions That are Offline/Online correctly.
+    - Added support to change the font And text size.
+        
+* Jamba-Taxi
+    - Fixed a Frame Bug with The new flight maps in broken island (Legion Zones)        
+    
+* Jamba-AdvancedLoot
+    - Fixed a text bug that was not working with trade goods. (cloth)
+    - Personal-Loot OverRights The Advanced Loot list. 
 
+* Jamba-ItemUse
+    - You can now Use spells on the item bar without errors.     
+	- Now Automatically sets to the Bottom Right then the center of the UI.
+	
+* Jamba-Follow
+    - Made some backend checks to make sure follow has been really been broken. (spamming follow key should not spam "follow Borken")
+    - NoLonger warns if the player is on a taxi
+
+* Jamba-FTL
+    - Added an option to turn of the Messages in chat when updating FTL...
+    
+* Jamba-Message
+    - Moved in options to Chat from Advanced    
 
 	
 -----------------------

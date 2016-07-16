@@ -80,7 +80,7 @@ function JambaHelperSettings:CreateSettings( settingsControl, displayName, paren
 	local tabGroupWidgetSettings = AceGUI:Create( "TabGroup" )
 	-- Was 'Fill', which causes lockup, started at patch 4.1 (40100).  Similar to http://forums.wowace.com/showthread.php?t=17872
 	tabGroupWidgetSettings:SetLayout( "JambaFillAce3Fix" )	
-	tabGroupWidgetSettings:SetTabs( { {text=L["Options"], value="options"}, {text=L["Help"], value="help"} } )
+	tabGroupWidgetSettings:SetTabs( { {text=L["Options"], value="options"}, {text=L["Commands"], value="help"} } )
 	
 	containerWidgetSettings:AddChild( tabGroupWidgetSettings )
 	tabGroupWidgetSettings:AddChild( widgetSettings )
@@ -348,13 +348,14 @@ end
 
 function JambaHelperSettings:CreateDropdown( settingsControl, width, left, top, text, toolTip )
 	local dropdown = AceGUI:Create( "Dropdown" )
+	--dropdown:ClearAllPoints()
 	dropdown:SetLabel( text )
 	settingsControl.widgetSettings:AddChild( dropdown )
 	dropdown:SetWidth( width )
 	dropdown:SetPoint( "TOPLEFT", settingsControl.widgetSettings.content, "TOPLEFT", left, top )
-	dropdown:SetUserData("tooltip", toolTip)
-	dropdown:SetCallback("OnEnter", onControlEnter)
-	dropdown:SetCallback("OnLeave", onControlLeave)
+	--dropdown:SetUserData("tooltip", toolTip)
+	--dropdown:SetCallback("OnEnter", onControlEnter)
+	--dropdown:SetCallback("OnLeave", onControlLeave)
 	return dropdown
 end
 
@@ -502,7 +503,7 @@ function JambaHelperSettings:CreateMediaSound( settingsControl, width, left, top
 	local media = AceGUI:Create( "LSM30_Sound" )
 	media:SetLabel( text )
 	media:SetWidth( width )
-	media:SetPoint( "TOPLEFT", settingsControl.widgetSettings.content, "TOPLEFT", left, top )
+	media:SetPoint( "TOPLEFT", settingsControl.widgetSettings.content , "TOPLEFT", left, top )
 	media:SetList()
 	settingsControl.widgetSettings:AddChild( media )
 	return media

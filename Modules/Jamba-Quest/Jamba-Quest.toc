@@ -1,8 +1,8 @@
-## Interface: 60200
+## Interface: 70000
 ## Title: JambaQuest
 ## Notes: JambaQuest
-## Author: Ebony, Former Author: Jafula
-## Version: 4.3
+## Author: Ebony, DropDownchanges by Schilm, Former Author: Jafula 
+## Version: 5.0.1.1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

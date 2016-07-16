@@ -684,7 +684,7 @@ function AJM:AreTeamMembersInCombat()
 		if JambaApi.GetCharacterOnlineStatus( characterName ) == true then
 			-- Yes, is the character in combat?
 			--if UnitAffectingCombat( characterName ) then
-			-- Ebony This API does not like A realmName so better remove it if its from the server we playing on.
+			-- Ebony This API does not like A realmName so better remove it its from the server we playing on.
 			if UnitAffectingCombat( Ambiguate( characterName, "none" ) ) then
 			inCombat = true
 				break
@@ -754,23 +754,43 @@ function AJM:SetNoFollowBrokenWarningNextSecondBreak()
 	AJM.jambaExternalNoWarnNextSecondBreak = true	
 end
 
-function AJM:AUTOFOLLOW_BEGIN( event, target, ... )
-	AJM.currentFollowTarget = target
-	AJM.isFollowing = true	
+function AJM:AUTOFOLLOW_BEGIN( event, target, ... )	
+			AJM.currentFollowTarget = target
+			AJM.isFollowing = true	
 end
 
 function AJM:AUTOFOLLOW_END( event, ... )
+	AJM.isFollowing = false
+	AJM:ScheduleTimer( "AutoFollowEndUpdate", 1 )
+	--AJM:AutoFollowEndSend()
+end
+
+function AJM:AutoFollowEndUpdate()
+	local alpha = AutoFollowStatus:GetAlpha()
+	--AJM:Print("updatetest", test)
+	if alpha < 1 then
+		--AJM:Print("canSend")
+		AJM:AutoFollowEndSend()
+	end
+end
+
+
+function AJM:AutoFollowEndSend()
 	-- Argument 1 has the reason follow ended, this does not come back from the event parameters.
 	-- arg1 is gone in 4.01 which makes this functionality kinda useless.  Shame.
-	AJM.isFollowing = false
 	-- If warn if auto follow breaks is on...
 	local canWarn = false
+	local canWarnMsg = nil
 	if AJM.db.warnWhenFollowBreaks == true then
 		if AJM.jambaSetFollowTarget == false then
 			canWarn = true			
 		end
 	end
-	-- Do not warn if in combat?
+	-- Do not warn if not Taxi
+	if UnitOnTaxi(AJM.currentFollowTarget) == true or UnitOnTaxi("player") == true then
+		canWarn = false
+	end	
+	--Do not warn if in combat?
 	if AJM.db.doNotWarnFollowBreakInCombat == true and AJM.outOfCombat == false then
 		canWarn = false
 	end
@@ -784,19 +804,22 @@ function AJM:AUTOFOLLOW_END( event, ... )
 			canWarn = false
 		end
 	end
+	-- Ebony says this system does not work right. so is not checking to see if blizzard code says follow is borken, (or kinda anyway)
 	-- If the first do not warn flag is set, check the second do not warn flag.
-	if AJM.jambaExternalNoWarnNextBreak == false then
-		if AJM.jambaExternalNoWarnNextSecondBreak == true then
-			canWarn = false		
-			AJM.jambaExternalNoWarnNextSecondBreak = false
+--[[	if AJM.jambaExternalNoWarnNextBreak == false then
+			if AJM.jambaExternalNoWarnNextSecondBreak == true then
+				canWarn = false		
+				AJM.jambaExternalNoWarnNextSecondBreak = false
+			end	
 		end	
-	end	
+	-- ebony says i DON'T even know what the hell this is doing??? so it can go
 	-- Is another Jamba module supressing this warning?
 	if AJM.jambaExternalNoWarnNextBreak == true then
 		canWarn = false		
+		canWarnMsg = "jambaExternalNoWarnNextBreak"
 		AJM.jambaExternalNoWarnNextBreak = false
-	end
-	-- Check to see if range warning is in effect.
+	end ]]
+	-- Check to see if range warning is in effect. This olny works in a party it seems!!
 	if AJM.db.onlyWarnIfOutOfFollowRange == true then
 		if CheckInteractDistance( AJM.currentFollowTarget, 4 ) then
 			canWarn = false

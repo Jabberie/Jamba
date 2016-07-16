@@ -1,8 +1,8 @@
-## Interface: 60200
+## Interface: 70000
 ## Title: JambaTalk
 ## Notes: JambaTalk
 ## Author: Ebony, Former Author: Jafula
-## Version: 4.3
+## Version: 5.0.1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

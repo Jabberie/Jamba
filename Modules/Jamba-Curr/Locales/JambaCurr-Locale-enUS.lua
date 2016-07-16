@@ -23,20 +23,13 @@ L["Currency Three"] = true
 L["Currency Four"] = true
 L["Currency Five"] = true
 L["Currency Six"] = true
-L["Currency Seven"] = true
-L["Currency Eight"] = true
-L["Currency Nine"] = true
-L["Currency Ten"] = true
+
 L["CurrOne"] = true
 L["CurrTwo"] = true
 L["CurrThree"] = true
 L["CurrFour"] = true
 L["CurrFive"] = true
 L["CurrSix"] = true
-L["CurrSeven"] = true
-L["CurrEight"] = true
-L["CurrNine"] = true
-L["Currency Ten"] = true
 L["Show Currency"] = true
 L["Show the current toon the currency values for all members in the team."] = true
 L["Blizzard Tooltip"] = true
@@ -58,6 +51,9 @@ L["Border Colour"] = true
 L["Background"] = true
 L["Background Colour"] = true
 L["Appearance & Layout"] = true
+L["Arial Narrow"] = true
+L["Font"] = true
+L["Font Size"] = true
 L["Space For Name"] = true
 L["Space For Gold"] = true
 L["Space For Points"] = true
@@ -67,6 +63,8 @@ L["Open Currency List On Start Up"] = true
 L["Hide Currency"] = true
 L["Hide the currency values for all members in the team."] = true
 L[" "] = true --space character
+
+
 
 
 --Help Tooltips

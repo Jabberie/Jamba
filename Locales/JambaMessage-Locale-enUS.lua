@@ -6,8 +6,8 @@ License: The MIT License
 
 local L = LibStub("AceLocale-3.0"):NewLocale( "Jamba-Message", "enUS", true )
 L["Slash Commands"] = true
-L["Advanced"] = true
-L["Core: Message Display"] = true
+L["Chat"] = true
+L["Message Display"] = true
 L["Push Settings"] = true
 L["Push the message settings to all characters in the team."] = true
 L["Settings received from A."] = function( characterName )

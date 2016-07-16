@@ -39,7 +39,11 @@ local AceGUI = LibStub("AceGUI-3.0")
 -- Create frame for Jamba Settings.
 JambaPrivate.SettingsFrame = {}
 JambaPrivate.SettingsFrame.Widget = AceGUI:Create( "JambaWindow" )
-JambaPrivate.SettingsFrame.Widget:SetTitle( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["A Awesome Multi-Boxer Assistant"] )
+--JambaPrivate.SettingsFrame.Widget = AceGUI:Create( "Frame" )
+JambaPrivate.SettingsFrame.Widget:SetTitle( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version") )
+JambaPrivate.SettingsFrame.Widget:SetStatusText(L["The Awesome Multi-Boxer Assistant"])
+JambaPrivate.SettingsFrame.Widget:SetWidth(800)
+JambaPrivate.SettingsFrame.Widget:SetHeight(650)
 JambaPrivate.SettingsFrame.Widget:SetLayout( "Fill" )
 JambaPrivate.SettingsFrame.WidgetTree = AceGUI:Create( "TreeGroup" )
 JambaPrivate.SettingsFrame.TreeGroupStatus = { treesizable = false, groups = {} }
@@ -50,7 +54,7 @@ JambaPrivate.SettingsFrame.WidgetTree:SetLayout( "Fill" )
 
 function AJM:OnEnable()
 	if AJM.db.showStartupMessage4000 then
-		JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Release Notes / News"] )
+		JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Full Change Log"] )
 		--JambaStartupMessageFrame:Show()
 		AJM.db.showStartupMessage4000 = false
 	end
@@ -58,6 +62,11 @@ end
 
 function AJM:OnDisable()
 end
+
+function AJM:ShowChangeLog()
+	JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Full Change Log"] )
+	JambaStartupMessageFrame:Show()
+end	
 
 local function JambaSettingsTreeSort( a, b )
 	local aText = ""
@@ -312,13 +321,18 @@ end
 
 -- Settings are received, pass them to the relevant module.
 local function OnSettingsReceived( sender, moduleName, settings )
-	
 	sender = JambaUtilities:AddRealmToNameIfMissing( sender )
 	--AJM:Print("onsettings", sender, moduleName )
 	-- Get the address of the module.
 	local moduleAddress = AJM.registeredModulesByName[moduleName]	
-	-- Pass the module its settings.
-	moduleAddress:JambaOnSettingsReceived( sender, settings )
+	-- can not receive a message from a Module not Loaded so ignore it. Better tell them its not loaded --ebony.
+	if moduleAddress == nil then 
+		AJM:Print(L["Module Not Loaded:"], moduleName)
+		return
+	else
+	-- loaded? Pass the module its settings.
+		moduleAddress:JambaOnSettingsReceived( sender, settings )
+	end	
 end
 
 function AJM:SendSettingsAllModules()
@@ -328,6 +342,7 @@ function AJM:SendSettingsAllModules()
 		moduleAddress:JambaSendSettings()
 	end
 end
+
 
 -------------------------------------------------------------------------------------------------------------
 -- Commands sending and receiving.
@@ -526,6 +541,7 @@ function AJM:OnInitialize()
 	AJM:LoadJambaModule( "Jamba-Trade" )
 	AJM:LoadJambaModule( "Jamba-Video" )
 	AJM:LoadJambaModule( "Jamba-Curr" )
+	AJM:LoadJambaModule( "Jamba-Mount" )
 end
 
 function AJM:LoadJambaModule( moduleName )
@@ -539,7 +555,7 @@ end
 
 function AJM:CoreSettingsCreateInfo( top )
 	-- Get positions and dimensions.
-	local buttonPushAllSettingsWidth = 300
+	local buttonPushAllSettingsWidth = 200
 	local buttonHeight = JambaHelperSettings:GetButtonHeight()
 	local checkBoxHeight = JambaHelperSettings:GetCheckBoxHeight()
 	local radioBoxHeight = JambaHelperSettings:GetRadioBoxHeight()
@@ -555,144 +571,180 @@ function AJM:CoreSettingsCreateInfo( top )
 	local indentSpecial = indentContinueLabel + 9
 	local checkBoxThirdWidth = (headingWidth - indentContinueLabel) / 3
 	local column1Left = left
+	local column2Left = column1Left + checkBoxThirdWidth + horizontalSpacing
 	local column1LeftIndent = left + indentContinueLabel
 	local column2LeftIndent = column1LeftIndent + checkBoxThirdWidth + horizontalSpacing
 	local column3LeftIndent = column2LeftIndent + checkBoxThirdWidth + horizontalSpacing
 	local movingTop = top
-
-	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Jafula's Awesome Multi-Boxer Assistant"], movingTop, false )
+	--Main Heading
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["The Awesome Multi-Boxer Assistant"], movingTop, false )
 	movingTop = movingTop - headingHeight
-	
 	AJM.settingsControl.labelInformation1 = JambaHelperSettings:CreateContinueLabel( 
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Copyright 2008-2016 Michael 'Jafula' Miller, Now managed By Ebony"]
+		L["Current Project Manager - Jennifer 'Ebony'"]
 	)	
-	movingTop = movingTop - labelContinueHeight
-	
-	AJM.settingsControl.labelInformation2 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["Made For MultiBoxing"]
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation3 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		""
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation4 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["For user manuals and documentation please visit:"]
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation5 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["Other useful websites:"]
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation6 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["http://dual-boxing.com/"]
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation7 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		""
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation8 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		""
-	)	
-	movingTop = movingTop - labelContinueHeight
-
-	AJM.settingsControl.labelInformation9 = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		""
-	)	
-	movingTop = movingTop - labelContinueHeight
-
+	movingTop = movingTop + movingTop * 2
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Release Notes / News: "]..GetAddOnMetadata("jamba", "version") , movingTop, false )
+	movingTop = movingTop - headingHeight
 	AJM.settingsControl.labelInformation10 = JambaHelperSettings:CreateContinueLabel( 
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		""
+		L["Text1"]
+	)
+	movingTop = movingTop - labelContinueHeight
+	AJM.settingsControl.labelInformation11 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["Text2"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-
 	AJM.settingsControl.labelInformation12 = JambaHelperSettings:CreateContinueLabel( 
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Special thanks to Michael 'Jafula' Miller who made Jamba"]
+		L["Text3"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	
-	AJM.settingsControl.labelInformation13 = JambaHelperSettings:CreateContinueLabel( 
+	AJM.settingsControl.labelInformation13	= JambaHelperSettings:CreateContinueLabel( 
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Special thanks to olipcs on dual-boxing.com for writing the FTL Helper module."]
+		L["Text4"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-
 	AJM.settingsControl.labelInformation14 = JambaHelperSettings:CreateContinueLabel( 
 		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Advanced Loot by schilm (Max Schilling) - modified by Tehtsuo and Jafula."]
+		L["Text5"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	
-	-- Extra space.
+	AJM.settingsControl.labelInformation15 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["Text6"]
+	)	
 	movingTop = movingTop - labelContinueHeight
-	
+	AJM.settingsControl.labelInformation16 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["Text7"]
+	)	
+	movingTop = movingTop - labelContinueHeight
+	AJM.settingsControl.labelInformation17 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["Text8"]
+	)	
+	movingTop = movingTop - labelContinueHeight
+	AJM.settingsControl.labelInformation18 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["Text9"]
+	)	
+	movingTop = movingTop - labelContinueHeight
+	AJM.settingsControl.labelInformation19 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["Text10"]
+	)	
+	--movingTop = movingTop - labelContinueHeight
+	movingTop = movingTop - buttonHeight * 3
 	AJM.settingsControl.buttonPushSettingsForAllModules = JambaHelperSettings:CreateButton(	
 		AJM.settingsControl, 
 		buttonPushAllSettingsWidth, 
-		column1Left, 
+		column2Left, 
 		movingTop, 
-		L["Push Settings For All The Modules"],
-		AJM.SendSettingsAllModules
+		L["Full ChangeLog"],
+		AJM.ShowChangeLog,
+		L["Shows the Full changelog\nOpens a new Frame."]
 	)
-	movingTop = movingTop - buttonHeight
+	-- Special thanks Heading
 	
+	movingTop = movingTop - buttonHeight 
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Special thanks:"], movingTop, false )	
+	movingTop = movingTop - headingHeight
+	AJM.settingsControl.labelInformation20 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["To Michael 'Jafula' Miller who made Jamba"]
+	)	
+	movingTop = movingTop - labelContinueHeight
+	AJM.settingsControl.labelInformation21 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["To Olipcs on dual-boxing.com for writing the FTL Helper module."]
+		
+	)	
+	movingTop = movingTop - labelContinueHeight
+	AJM.settingsControl.labelInformation22 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["To Schilm (Max Schilling) for Advanced Loot and Jamba-Quest for 4.3"]
+	)
+	-- Useful websites Heading
+	movingTop = movingTop - labelContinueHeight * 2
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Useful websites:"], movingTop, false )	
+	movingTop = movingTop - headingHeight
+	AJM.settingsControl.labelInformation30 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column2Left, 
+		movingTop,
+		L["www.twitter.com/jenn_ebony"]
+		
+	)		
+	movingTop = movingTop - labelContinueHeight
+	AJM.settingsControl.labelInformation21 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column2Left, 
+		movingTop,
+		L["www.dual-boxing.com"]
+	)
+	movingTop = movingTop - labelContinueHeight
+	AJM.settingsControl.labelInformation22 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column2Left, 
+		movingTop,
+		L["www.isboxer.com"]
+	)	
+	--CopyRight heading
+	movingTop = movingTop - labelContinueHeight * 4
+	AJM.settingsControl.labelInformation30 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["Copyright 2008-2016 Michael 'Jafula' Miller, Released Under The MIT License"]
+	)
 	return movingTop	
 end
 

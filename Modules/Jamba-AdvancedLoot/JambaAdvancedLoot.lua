@@ -391,7 +391,7 @@ function AJM:SettingsScrollRefresh()
 		AJM.settingsControl.list.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
 		AJM.settingsControl.list.rows[iterateDisplayRows].columns[2].textString:SetText( "" )
 		AJM.settingsControl.list.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )			
-		AJM.settingsControl.list.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControl.list.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControl.advancedLootOffset
 		if dataRowNumber <= AJM:GetItemsMaxPosition() then
@@ -401,7 +401,7 @@ function AJM:SettingsScrollRefresh()
 			AJM.settingsControl.list.rows[iterateDisplayRows].columns[2].textString:SetText( itemInformation.characterName )
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControl.advancedLootHighlightRow then
-				AJM.settingsControl.list.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControl.list.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end
@@ -740,18 +740,28 @@ function AJM:DoAdvancedLoot()
 		for slot = 1, numloot do
 		
 			lootThisSlot = false
-
+			
+			-- Ebony's Change for personal Loot as players can always loot always Loot Items and other characters can not loot the item so AVD Loot is kinda pointless. 
+			-- personal Loot is always on in the outside world from legion so always loot items.
+			local isInstance, instanceType = IsInInstance()
+			--local method = GetLootMethod()
+				if isInstance == true then	
+					lootThisSlot = false
+					--safeToLoot = true
+				else
+					lootThisSlot = true
+					safeToLoot = true
+				end
+				
 			local _, icon, name, quantity, quality, locked, isQuestItem, questId, isActive = pcall(GetLootSlotInfo, slot)
 		
-			if icon then
+			if icon and lootThisSlot == false then
 			
 				local is_item = (GetLootSlotType(slot) == LOOT_SLOT_ITEM)
 				if is_item then
 						
 					local link = GetLootSlotLink(slot)
-				
-					local itemName, sLink, iRarity, iLevel, iMinLevel, sType, sSubType, iStackCount = GetItemInfo(link);						
-					
+					local itemName, sLink, iRarity, iLevel, iMinLevel, sType, sSubType, iStackCount = GetItemInfo(link);							
 					-- Check for items specified in config
 					local advancedLootCharacterName = AJM:GetAdvancedLootCharacterName(link);
 					if advancedLootCharacterName ~= nil then
@@ -771,7 +781,7 @@ function AJM:DoAdvancedLoot()
 							else
 								AJM:AlertAboutLoot(itemName, AJM.db.lootBindPickupEpic)
 								safeToLoot = false
-							end										
+							end
 						end
 						if iRarity == 3 and AJM.db.lootBindPickupRare ~= nil and AJM.db.lootBindPickupRare ~= "" then
 							if AJM.db.lootBindPickupRare == AJM.characterName then
@@ -820,7 +830,8 @@ function AJM:DoAdvancedLoot()
 					end
 					
 					-- Check for Cloth Matches
-					if sType == L["Trade Goods"] and sSubType == L["Cloth"] and AJM.db.lootCloth ~= nil and AJM.db.lootCloth ~= "" then
+				--	if sType == L["Trade Goods"] and sSubType == L["Cloth"] and AJM.db.lootCloth ~= nil and AJM.db.lootCloth ~= "" then
+					if sType == L["Tradeskill"] and sSubType == L["Cloth"] and AJM.db.lootCloth ~= nil and AJM.db.lootCloth ~= "" then	
 						if AJM.db.lootCloth == AJM.characterName then
 							lootThisSlot = true
 						else
@@ -829,7 +840,8 @@ function AJM:DoAdvancedLoot()
 						end										
 					end
 				end
-		
+
+				
 				-- If this character is set to loot the item in this slot, then loot the slot.
 				if lootThisSlot == true then
 					LootSlot(slot)
@@ -841,6 +853,7 @@ function AJM:DoAdvancedLoot()
 		numloot = GetNumLootItems()
 		if safeToLoot then
 			for slot = 1, numloot do
+				--AJM:Print("testloot1241", numloot)
 				LootSlot(slot)
 			end
 		end

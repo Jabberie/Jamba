@@ -42,6 +42,7 @@ AJM.settings = {
 	  dontUseLeftRight = false,
 	  onlyUseUsedModifiers = true,
 	  onlyUseOnlineToons = false,
+	  dontShowMsgs = false,
 	  assistString = "",
 	  targetString = "",
       followString = "",
@@ -100,21 +101,27 @@ end
 -- Updates The AssistButton with an FTL String (called when the AJM.COMMAND_UPDATE_FTL_BUTTON is received)
 local function UpdateFTLAssistButton( astring )
   assistButton:SetAttribute("macrotext", astring)
-  AJM:Print("Updating JambaFTLAssist-Button with:" .. astring)		
+  if AJM.db.dontShowMsgs == false then
+	AJM:Print("Updating JambaFTLAssist-Button with:" .. astring)		
+  end
   AJM.db.assistString = astring
 end
 
 -- Updates The FollowButton with an FTL String (called when the AJM.COMMAND_UPDATE_FTL_BUTTON is received)
 local function UpdateFTLFollowButton( fstring )
    followButton:SetAttribute("macrotext", fstring)
-   AJM:Print("Updating JambaFTLFollow-Button with:" .. fstring)
+   if AJM.db.dontShowMsgs == false then
+	AJM:Print("Updating JambaFTLFollow-Button with:" .. fstring)
+   end
    AJM.db.followString = fstring
 end
 
 -- Updates The AssistButton with an FTL String (called when the AJM.COMMAND_UPDATE_FTL_BUTTON is received)
 local function UpdateFTLTargetButton( tstring )
   targetButton:SetAttribute("macrotext", tstring)
-  AJM:Print("Updating JambaFTLTarget-Button with:" .. tstring)		
+  if AJM.db.dontShowMsgs == false then
+	AJM:Print("Updating JambaFTLTarget-Button with:" .. tstring)		
+  end
   AJM.db.targetString = tstring
 end
 
@@ -278,7 +285,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.dontUseLeftRight = settings.dontUseLeftRight
 		AJM.db.onlyUseUsedModifiers = settings.onlyUseUsedModifiers
 		AJM.db.onlyUseOnlineToons = settings.onlyUseOnlineToons
-        AJM.db.assistString = settings.assistString
+        AJM.db.dontShowMsgs = settings.dontShowMsgs
+		AJM.db.assistString = settings.assistString
         AJM.db.targetString = settings.targetString			
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
@@ -301,7 +309,8 @@ function AJM:SettingsRefresh()
      AJM.settingsControl.checkBoxDontUseLeftRight:SetValue( AJM.db.dontUseLeftRight )
      AJM.settingsControl.checkBoxonlyUseUsedModifiers:SetValue( AJM.db.onlyUseUsedModifiers )
      AJM.settingsControl.checkBoxonlyUseOnlineToons:SetValue( AJM.db.onlyUseOnlineToons )       
-     local characterName = JambaApi.GetCharacterNameAtOrderPosition( AJM.settingsControl.teamListHighlightRow )
+     AJM.settingsControl.checkBoxDontShowMsgs:SetValue( AJM.db.dontShowMsgs )
+	 local characterName = JambaApi.GetCharacterNameAtOrderPosition( AJM.settingsControl.teamListHighlightRow )
      if AJM.db.CharListWithModifiers[characterName] == nil then
         createNewFTLListEntry( characterName )     
      end     
@@ -420,6 +429,15 @@ function SettingsCreateFTLControl( top )
 		L["Only use Toons which are online"],
 		AJM.SettingsToggleonlyUseOnlineToons
 	)		 
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.checkBoxDontShowMsgs   = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["Don't Show Update Messages"],
+		AJM.SettingsToggleDontShowMsgs
+	)		 
 	movingTop = movingTop - checkBoxHeight		
     AJM.settingsControl.teamListButtonUpdateFTL = JambaHelperSettings:CreateButton(
 		AJM.settingsControl,  
@@ -522,7 +540,7 @@ function AJM:SettingsTeamListScrollRefresh()
 		AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[2].textString:SetText( "" )
 		AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
 		AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
-		AJM.settingsControl.teamList.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControl.teamList.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControl.teamListOffset
 		if dataRowNumber <= JambaApi.GetTeamListMaximumOrder() then
@@ -534,7 +552,7 @@ function AJM:SettingsTeamListScrollRefresh()
 			AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[2].textString:SetText( characterType )			
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControl.teamListHighlightRow then
-				AJM.settingsControl.teamList.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControl.teamList.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end	
@@ -560,6 +578,11 @@ end
 
 function AJM:SettingsToggleonlyUseOnlineToons( event, checked )	  
     AJM.db.onlyUseOnlineToons  = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleDontShowMsgs( event, checked )
+	AJM.db.dontShowMsgs = checked
 	AJM:SettingsRefresh()
 end
 
@@ -608,8 +631,10 @@ end
 
 function AJM:CreateUpdateFTLButton(event)    
     local ftlstring = createFTLString()
-    AJM:Print("FTL-String is:" .. ftlstring)
-    AJM:JambaSendCommandToTeam( AJM.COMMAND_UPDATE_FTL_BUTTON, ftlstring )
+    if AJM.db.dontShowMsgs == false then
+		AJM:Print("FTL-String is:" .. ftlstring)
+    end
+	AJM:JambaSendCommandToTeam( AJM.COMMAND_UPDATE_FTL_BUTTON, ftlstring )
     -- UpdateFTLButton( ftlstring )  (is done by SendCommandToTeam)  		
 end
 
@@ -620,8 +645,9 @@ end
 -- A Jamba command has been received.
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )	
     if commandName == AJM.COMMAND_UPDATE_FTL_BUTTON then
-           AJM:Print("Update recieved")
-    	   UpdateFTLButton( ... )
+			-- Debug
+			--AJM:Print("Update recieved")
+		   UpdateFTLButton( ... )
 	end
 end
 

@@ -3,17 +3,27 @@ Jamba4 - Jafula's Awesome Multi-Boxer Assistant
 Copyright 2008 - 2016 Michael "Jafula" Miller
 License: The MIT License
 
+Changed to a Newer Ace3 By Ebony
 
 ]]--
 
 --[[
 File modified from AceGUI Window container.  Used under Ace3 modified BSD licence.
+
+Really the olny thing changed is to lower the setframestata for InitializePopupDialogs.
+
 ]]--
 
-local AceGUI = LibStub("AceGUI-3.0")
+--[[-----------------------------------------------------------------------------
+Frame Container
+-------------------------------------------------------------------------------]]
+local Type, Version = "JambaWindow", 2
+local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
+if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 
 -- Lua APIs
 local pairs, assert, type = pairs, assert, type
+local wipe = table.wipe
 
 -- WoW APIs
 local PlaySound = PlaySound
@@ -21,120 +31,83 @@ local CreateFrame, UIParent = CreateFrame, UIParent
 
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
 -- List them here for Mikk's FindGlobals script
--- GLOBALS: GameFontNormal
+-- GLOBALS: CLOSE
 
-----------------
--- Main Frame --
-----------------
---[[
-	Events :
-		OnClose
+--[[-----------------------------------------------------------------------------
+Scripts
+-------------------------------------------------------------------------------]]
+local function Button_OnClick(frame)
+	PlaySound("gsTitleOptionExit")
+	frame.obj:Hide()
+end
 
-]]
-do
-	local Type = "JambaWindow"
-	local Version = 1
+local function Frame_OnClose(frame)
+	frame.obj:Fire("OnClose")
+end
 
-	local function frameOnClose(this)
-		this.obj:Fire("OnClose")
-	end
-	
-	local function closeOnClick(this)
-		PlaySound("gsTitleOptionExit")
-		this.obj:Hide()
-	end
-	
-	local function frameOnMouseDown(this)
-		AceGUI:ClearFocus()
-	end
-	
-	local function titleOnMouseDown(this)
-		this:GetParent():StartMoving()
-		AceGUI:ClearFocus()
-	end
-	
-	local function frameOnMouseUp(this)
-		local frame = this:GetParent()
-		frame:StopMovingOrSizing()
-		local self = frame.obj
-		local status = self.status or self.localstatus
-		status.width = frame:GetWidth()
-		status.height = frame:GetHeight()
-		status.top = frame:GetTop()
-		status.left = frame:GetLeft()
-	end
-	
-	local function sizerseOnMouseDown(this)
-		this:GetParent():StartSizing("BOTTOMRIGHT")
-		AceGUI:ClearFocus()
-	end
-	
-	local function sizersOnMouseDown(this)
-		this:GetParent():StartSizing("BOTTOM")
-		AceGUI:ClearFocus()
-	end
-	
-	local function sizereOnMouseDown(this)
-		this:GetParent():StartSizing("RIGHT")
-		AceGUI:ClearFocus()
-	end
-	
-	local function sizerOnMouseUp(this)
-		this:GetParent():StopMovingOrSizing()
-	end
+local function Frame_OnMouseDown(frame)
+	AceGUI:ClearFocus()
+end
 
-	local function SetTitle(self,title)
-		self.titletext:SetText(title)
-	end
-	
-	local function SetStatusText(self,text)
-		-- self.statustext:SetText(text)
-	end
-	
-	local function Hide(self)
-		self.frame:Hide()
-	end
-	
-	local function Show(self)
-		self.frame:Show()
-	end
-	
-	local function OnAcquire(self)
+local function Title_OnMouseDown(frame)
+	frame:GetParent():StartMoving()
+	AceGUI:ClearFocus()
+end
+
+local function MoverSizer_OnMouseUp(mover)
+	local frame = mover:GetParent()
+	frame:StopMovingOrSizing()
+	local self = frame.obj
+	local status = self.status or self.localstatus
+	status.width = frame:GetWidth()
+	status.height = frame:GetHeight()
+	status.top = frame:GetTop()
+	status.left = frame:GetLeft()
+end
+
+local function SizerSE_OnMouseDown(frame)
+	frame:GetParent():StartSizing("BOTTOMRIGHT")
+	AceGUI:ClearFocus()
+end
+
+local function SizerS_OnMouseDown(frame)
+	frame:GetParent():StartSizing("BOTTOM")
+	AceGUI:ClearFocus()
+end
+
+local function SizerE_OnMouseDown(frame)
+	frame:GetParent():StartSizing("RIGHT")
+	AceGUI:ClearFocus()
+end
+
+local function StatusBar_OnEnter(frame)
+	frame.obj:Fire("OnEnterStatusBar")
+end
+
+local function StatusBar_OnLeave(frame)
+	frame.obj:Fire("OnLeaveStatusBar")
+end
+
+--[[-----------------------------------------------------------------------------
+Methods
+-------------------------------------------------------------------------------]]
+local methods = {
+	["OnAcquire"] = function(self)
 		self.frame:SetParent(UIParent)
-		self.frame:SetFrameStrata("LOW")
+		self.frame:SetFrameStrata("HIGH")
+		self:SetTitle()
+		self:SetStatusText()
 		self:ApplyStatus()
-		--self:EnableResize(true)
 		self:Show()
-	end
-	
-	local function OnRelease(self)
+        self:EnableResize(true)
+	end,
+
+	["OnRelease"] = function(self)
 		self.status = nil
-		for k in pairs(self.localstatus) do
-			self.localstatus[k] = nil
-		end
-	end
-	
-	-- called to set an external table to store status in
-	local function SetStatusTable(self, status)
-		assert(type(status) == "table")
-		self.status = status
-		self:ApplyStatus()
-	end
-	
-	local function ApplyStatus(self)
-		local status = self.status or self.localstatus
-		local frame = self.frame
-		self:SetWidth(status.width or 760)
-		self:SetHeight(status.height or 660)
-		if status.top and status.left then
-			frame:SetPoint("TOP",UIParent,"BOTTOM",0,status.top)
-			frame:SetPoint("LEFT",UIParent,"LEFT",status.left,0)
-		else
-			frame:SetPoint("CENTER",UIParent,"CENTER")
-		end
-	end
-	
-	local function OnWidthSet(self, width)
+		wipe(self.localstatus)
+	end,
+
+	["OnWidthSet"] = function(self, width)
 		local content = self.content
 		local contentwidth = width - 34
 		if contentwidth < 0 then
@@ -142,10 +115,9 @@ do
 		end
 		content:SetWidth(contentwidth)
 		content.width = contentwidth
-	end
-	
-	
-	local function OnHeightSet(self, height)
+	end,
+
+	["OnHeightSet"] = function(self, height)
 		local content = self.content
 		local contentheight = height - 57
 		if contentheight < 0 then
@@ -153,191 +125,204 @@ do
 		end
 		content:SetHeight(contentheight)
 		content.height = contentheight
-	end
-	
-	--local function EnableResize(self, state)
-	--	local func = state and "Show" or "Hide"
-	--	self.sizer_se[func](self.sizer_se)
-	--	self.sizer_s[func](self.sizer_s)
-	--	self.sizer_e[func](self.sizer_e)
-	--end
-	
-	local function Constructor()
-		local frame = CreateFrame("Frame","JambaSettingsWindowsFrame",UIParent)
-		local self = {}
-		self.type = Type
-		
-		self.Hide = Hide
-		self.Show = Show
-		self.SetTitle =  SetTitle
-		self.OnRelease = OnRelease
-		self.OnAcquire = OnAcquire
-		self.SetStatusText = SetStatusText
-		self.SetStatusTable = SetStatusTable
-		self.ApplyStatus = ApplyStatus
-		self.OnWidthSet = OnWidthSet
-		self.OnHeightSet = OnHeightSet
-		--self.EnableResize = EnableResize
-		
-		self.localstatus = {}
-		
-		self.frame = frame
-		frame.obj = self
-		frame:SetWidth(760)
-		frame:SetHeight(660)
-		frame:SetPoint("CENTER",UIParent,"CENTER",0,0)
-		frame:EnableMouse(true)
-		frame:SetMovable(true)
-		frame:SetResizable(true)
-		frame:SetFrameStrata("LOW")
-		frame:SetScript("OnMouseDown", frameOnMouseDown)
-		
-		frame:SetScript("OnHide",frameOnClose)
-		frame:SetMinResize(240,240)
-		frame:SetToplevel(true)
+	end,
 
-		local titlebg = frame:CreateTexture(nil, "BACKGROUND")
-		titlebg:SetTexture([[Interface\PaperDollInfoFrame\UI-GearManager-Title-Background]])
-		titlebg:SetPoint("TOPLEFT", 9, -6)
-		titlebg:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -28, -24)
-		
-		local dialogbg = frame:CreateTexture(nil, "BACKGROUND")
-		dialogbg:SetTexture([[Interface\Tooltips\UI-Tooltip-Background]])
-		dialogbg:SetPoint("TOPLEFT", 8, -24)
-		dialogbg:SetPoint("BOTTOMRIGHT", -6, 8)
-		dialogbg:SetVertexColor(0, 0, 0, .75)
-		
-		local topleft = frame:CreateTexture(nil, "BORDER")
-		topleft:SetTexture([[Interface\PaperDollInfoFrame\UI-GearManager-Border]])
-		topleft:SetWidth(64)
-		topleft:SetHeight(64)
-		topleft:SetPoint("TOPLEFT")
-		topleft:SetTexCoord(0.501953125, 0.625, 0, 1)
-		
-		local topright = frame:CreateTexture(nil, "BORDER")
-		topright:SetTexture([[Interface\PaperDollInfoFrame\UI-GearManager-Border]])
-		topright:SetWidth(64)
-		topright:SetHeight(64)
-		topright:SetPoint("TOPRIGHT")
-		topright:SetTexCoord(0.625, 0.75, 0, 1)
-		
-		local top = frame:CreateTexture(nil, "BORDER")
-		top:SetTexture([[Interface\PaperDollInfoFrame\UI-GearManager-Border]])
-		top:SetHeight(64)
-		top:SetPoint("TOPLEFT", topleft, "TOPRIGHT")
-		top:SetPoint("TOPRIGHT", topright, "TOPLEFT")
-		top:SetTexCoord(0.25, 0.369140625, 0, 1)
-		
-		local bottomleft = frame:CreateTexture(nil, "BORDER")
-		bottomleft:SetTexture([[Interface\PaperDollInfoFrame\UI-GearManager-Border]])
-		bottomleft:SetWidth(64)
-		bottomleft:SetHeight(64)
-		bottomleft:SetPoint("BOTTOMLEFT")
-		bottomleft:SetTexCoord(0.751953125, 0.875, 0, 1)
-		
-		local bottomright = frame:CreateTexture(nil, "BORDER")
-		bottomright:SetTexture([[Interface\PaperDollInfoFrame\UI-GearManager-Border]])
-		bottomright:SetWidth(64)
-		bottomright:SetHeight(64)
-		bottomright:SetPoint("BOTTOMRIGHT")
-		bottomright:SetTexCoord(0.875, 1, 0, 1)
-		
-		local bottom = frame:CreateTexture(nil, "BORDER")
-		bottom:SetTexture([[Interface\PaperDollInfoFrame\UI-GearManager-Border]])
-		bottom:SetHeight(64)
-		bottom:SetPoint("BOTTOMLEFT", bottomleft, "BOTTOMRIGHT")
-		bottom:SetPoint("BOTTOMRIGHT", bottomright, "BOTTOMLEFT")
-		bottom:SetTexCoord(0.376953125, 0.498046875, 0, 1)
-		
-		local left = frame:CreateTexture(nil, "BORDER")
-		left:SetTexture([[Interface\PaperDollInfoFrame\UI-GearManager-Border]])
-		left:SetWidth(64)
-		left:SetPoint("TOPLEFT", topleft, "BOTTOMLEFT")
-		left:SetPoint("BOTTOMLEFT", bottomleft, "TOPLEFT")
-		left:SetTexCoord(0.001953125, 0.125, 0, 1)
-		
-		local right = frame:CreateTexture(nil, "BORDER")
-		right:SetTexture([[Interface\PaperDollInfoFrame\UI-GearManager-Border]])
-		right:SetWidth(64)
-		right:SetPoint("TOPRIGHT", topright, "BOTTOMRIGHT")
-		right:SetPoint("BOTTOMRIGHT", bottomright, "TOPRIGHT")
-		right:SetTexCoord(0.1171875, 0.2421875, 0, 1)
-		
-		local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-		close:SetPoint("TOPRIGHT", 2, 1)
-		close:SetScript("OnClick", closeOnClick)
-		self.closebutton = close
-		close.obj = self
-		
-		local titletext = frame:CreateFontString(nil, "ARTWORK")
-		titletext:SetFontObject(GameFontNormal)
-		titletext:SetPoint("TOPLEFT", 12, -8)
-		titletext:SetPoint("TOPRIGHT", -32, -8)
-		self.titletext = titletext
-		
-		local title = CreateFrame("Button", nil, frame)
-		title:SetPoint("TOPLEFT", titlebg)
-		title:SetPoint("BOTTOMRIGHT", titlebg)
-		title:EnableMouse()
-		title:SetScript("OnMouseDown",titleOnMouseDown)
-		title:SetScript("OnMouseUp", frameOnMouseUp)
-		self.title = title
-		
-		--local sizer_se = CreateFrame("Frame",nil,frame)
-		--sizer_se:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",0,0)
-		--sizer_se:SetWidth(25)
-		--sizer_se:SetHeight(25)
-		--sizer_se:EnableMouse()
-		--sizer_se:SetScript("OnMouseDown",sizerseOnMouseDown)
-		--sizer_se:SetScript("OnMouseUp", sizerOnMouseUp)
-		--self.sizer_se = sizer_se
-		--
-		--local line1 = sizer_se:CreateTexture(nil, "BACKGROUND")
-		--self.line1 = line1
-		--line1:SetWidth(14)
-		--line1:SetHeight(14)
-		--line1:SetPoint("BOTTOMRIGHT", -8, 8)
-		--line1:SetTexture("Interface\\Tooltips\\UI-Tooltip-Border")
-		--local x = 0.1 * 14/17
-		--line1:SetTexCoord(0.05 - x, 0.5, 0.05, 0.5 + x, 0.05, 0.5 - x, 0.5 + x, 0.5)
-		--
-		--local line2 = sizer_se:CreateTexture(nil, "BACKGROUND")
-		--self.line2 = line2
-		--line2:SetWidth(8)
-		--line2:SetHeight(8)
-		--line2:SetPoint("BOTTOMRIGHT", -8, 8)
-		--line2:SetTexture("Interface\\Tooltips\\UI-Tooltip-Border")
-		--local x = 0.1 * 8/17
-		--line2:SetTexCoord(0.05 - x, 0.5, 0.05, 0.5 + x, 0.05, 0.5 - x, 0.5 + x, 0.5)
-		--
-		--local sizer_s = CreateFrame("Frame",nil,frame)
-		--sizer_s:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",-25,0)
-		--sizer_s:SetPoint("BOTTOMLEFT",frame,"BOTTOMLEFT",0,0)
-		--sizer_s:SetHeight(25)
-		--sizer_s:EnableMouse()
-		--sizer_s:SetScript("OnMouseDown",sizersOnMouseDown)
-		--sizer_s:SetScript("OnMouseUp", sizerOnMouseUp)
-		--self.sizer_s = sizer_s
-		--
-		--local sizer_e = CreateFrame("Frame",nil,frame)
-		--sizer_e:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",0,25)
-		--sizer_e:SetPoint("TOPRIGHT",frame,"TOPRIGHT",0,0)
-		--sizer_e:SetWidth(25)
-		--sizer_e:EnableMouse()
-		--sizer_e:SetScript("OnMouseDown",sizereOnMouseDown)
-		--sizer_e:SetScript("OnMouseUp", sizerOnMouseUp)
-		--self.sizer_e = sizer_e
-	
-		--Container Support
-		local content = CreateFrame("Frame",nil,frame)
-		self.content = content
-		content.obj = self
-		content:SetPoint("TOPLEFT",frame,"TOPLEFT",12,-32)
-		content:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",-12,13)
-		
-		AceGUI:RegisterAsContainer(self)
-		return self	
+	["SetTitle"] = function(self, title)
+		self.titletext:SetText(title)
+		self.titlebg:SetWidth((self.titletext:GetWidth() or 0) + 10)
+	end,
+
+	["SetStatusText"] = function(self, text)
+		self.statustext:SetText(text)
+	end,
+
+	["Hide"] = function(self)
+		self.frame:Hide()
+	end,
+
+	["Show"] = function(self)
+		self.frame:Show()
+	end,
+
+	["EnableResize"] = function(self, state)
+		local func = state and "Show" or "Hide"
+		self.sizer_se[func](self.sizer_se)
+		self.sizer_s[func](self.sizer_s)
+		self.sizer_e[func](self.sizer_e)
+	end,
+
+	-- called to set an external table to store status in
+	["SetStatusTable"] = function(self, status)
+		assert(type(status) == "table")
+		self.status = status
+		self:ApplyStatus()
+	end,
+
+	["ApplyStatus"] = function(self)
+		local status = self.status or self.localstatus
+		local frame = self.frame
+		self:SetWidth(status.width or 700)
+		self:SetHeight(status.height or 500)
+		frame:ClearAllPoints()
+		if status.top and status.left then
+			frame:SetPoint("TOP", UIParent, "BOTTOM", 0, status.top)
+			frame:SetPoint("LEFT", UIParent, "LEFT", status.left, 0)
+		else
+			frame:SetPoint("CENTER")
+		end
 	end
-	
-	AceGUI:RegisterWidgetType(Type,Constructor,Version)
+}
+
+--[[-----------------------------------------------------------------------------
+Constructor
+-------------------------------------------------------------------------------]]
+local FrameBackdrop = {
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+	tile = true, tileSize = 32, edgeSize = 32,
+	insets = { left = 8, right = 8, top = 8, bottom = 8 }
+}
+
+local PaneBackdrop  = {
+	bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile = true, tileSize = 16, edgeSize = 16,
+	insets = { left = 3, right = 3, top = 5, bottom = 3 }
+}
+
+local function Constructor()
+	local frame = CreateFrame("Frame", nil, UIParent)
+	frame:Hide()
+
+	frame:EnableMouse(true)
+	frame:SetMovable(true)
+	frame:SetResizable(true)
+	--frame:SetFrameStrata("FULLSCREEN_DIALOG")
+	frame:SetFrameStrata("HIGH")
+	frame:SetBackdrop(FrameBackdrop)
+	frame:SetBackdropColor(0, 0, 0, 1)
+	frame:SetMinResize(400, 200)
+	frame:SetToplevel(true)
+	frame:SetScript("OnHide", Frame_OnClose)
+	frame:SetScript("OnMouseDown", Frame_OnMouseDown)
+
+	local closebutton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	closebutton:SetScript("OnClick", Button_OnClick)
+	closebutton:SetPoint("BOTTOMRIGHT", -27, 17)
+	closebutton:SetHeight(20)
+	closebutton:SetWidth(100)
+	closebutton:SetText(CLOSE)
+
+	local statusbg = CreateFrame("Button", nil, frame)
+	statusbg:SetPoint("BOTTOMLEFT", 15, 15)
+	statusbg:SetPoint("BOTTOMRIGHT", -132, 15)
+	statusbg:SetHeight(24)
+	statusbg:SetBackdrop(PaneBackdrop)
+	statusbg:SetBackdropColor(0.1,0.1,0.1)
+	statusbg:SetBackdropBorderColor(0.4,0.4,0.4)
+	statusbg:SetScript("OnEnter", StatusBar_OnEnter)
+	statusbg:SetScript("OnLeave", StatusBar_OnLeave)
+
+	local statustext = statusbg:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	statustext:SetPoint("TOPLEFT", 7, -2)
+	statustext:SetPoint("BOTTOMRIGHT", -7, 2)
+	statustext:SetHeight(20)
+	statustext:SetJustifyH("LEFT")
+	statustext:SetText("")
+
+	local titlebg = frame:CreateTexture(nil, "OVERLAY")
+	titlebg:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
+	titlebg:SetTexCoord(0.31, 0.67, 0, 0.63)
+	titlebg:SetPoint("TOP", 0, 12)
+	titlebg:SetWidth(100)
+	titlebg:SetHeight(40)
+
+	local title = CreateFrame("Frame", nil, frame)
+	title:EnableMouse(true)
+	title:SetScript("OnMouseDown", Title_OnMouseDown)
+	title:SetScript("OnMouseUp", MoverSizer_OnMouseUp)
+	title:SetAllPoints(titlebg)
+
+	local titletext = title:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	titletext:SetPoint("TOP", titlebg, "TOP", 0, -14)
+
+	local titlebg_l = frame:CreateTexture(nil, "OVERLAY")
+	titlebg_l:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
+	titlebg_l:SetTexCoord(0.21, 0.31, 0, 0.63)
+	titlebg_l:SetPoint("RIGHT", titlebg, "LEFT")
+	titlebg_l:SetWidth(30)
+	titlebg_l:SetHeight(40)
+
+	local titlebg_r = frame:CreateTexture(nil, "OVERLAY")
+	titlebg_r:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
+	titlebg_r:SetTexCoord(0.67, 0.77, 0, 0.63)
+	titlebg_r:SetPoint("LEFT", titlebg, "RIGHT")
+	titlebg_r:SetWidth(30)
+	titlebg_r:SetHeight(40)
+
+	local sizer_se = CreateFrame("Frame", nil, frame)
+	sizer_se:SetPoint("BOTTOMRIGHT")
+	sizer_se:SetWidth(25)
+	sizer_se:SetHeight(25)
+	sizer_se:EnableMouse()
+	sizer_se:SetScript("OnMouseDown",SizerSE_OnMouseDown)
+	sizer_se:SetScript("OnMouseUp", MoverSizer_OnMouseUp)
+
+	local line1 = sizer_se:CreateTexture(nil, "BACKGROUND")
+	line1:SetWidth(14)
+	line1:SetHeight(14)
+	line1:SetPoint("BOTTOMRIGHT", -8, 8)
+	line1:SetTexture("Interface\\Tooltips\\UI-Tooltip-Border")
+	local x = 0.1 * 14/17
+	line1:SetTexCoord(0.05 - x, 0.5, 0.05, 0.5 + x, 0.05, 0.5 - x, 0.5 + x, 0.5)
+
+	local line2 = sizer_se:CreateTexture(nil, "BACKGROUND")
+	line2:SetWidth(8)
+	line2:SetHeight(8)
+	line2:SetPoint("BOTTOMRIGHT", -8, 8)
+	line2:SetTexture("Interface\\Tooltips\\UI-Tooltip-Border")
+	local x = 0.1 * 8/17
+	line2:SetTexCoord(0.05 - x, 0.5, 0.05, 0.5 + x, 0.05, 0.5 - x, 0.5 + x, 0.5)
+
+	local sizer_s = CreateFrame("Frame", nil, frame)
+	sizer_s:SetPoint("BOTTOMRIGHT", -25, 0)
+	sizer_s:SetPoint("BOTTOMLEFT")
+	sizer_s:SetHeight(25)
+	sizer_s:EnableMouse(true)
+	sizer_s:SetScript("OnMouseDown", SizerS_OnMouseDown)
+	sizer_s:SetScript("OnMouseUp", MoverSizer_OnMouseUp)
+
+	local sizer_e = CreateFrame("Frame", nil, frame)
+	sizer_e:SetPoint("BOTTOMRIGHT", 0, 25)
+	sizer_e:SetPoint("TOPRIGHT")
+	sizer_e:SetWidth(25)
+	sizer_e:EnableMouse(true)
+	sizer_e:SetScript("OnMouseDown", SizerE_OnMouseDown)
+	sizer_e:SetScript("OnMouseUp", MoverSizer_OnMouseUp)
+
+	--Container Support
+	local content = CreateFrame("Frame", nil, frame)
+	content:SetPoint("TOPLEFT", 17, -27)
+	content:SetPoint("BOTTOMRIGHT", -17, 40)
+
+	local widget = {
+		localstatus = {},
+		titletext   = titletext,
+		statustext  = statustext,
+		titlebg     = titlebg,
+		sizer_se    = sizer_se,
+		sizer_s     = sizer_s,
+		sizer_e     = sizer_e,
+		content     = content,
+		frame       = frame,
+		type        = Type
+	}
+	for method, func in pairs(methods) do
+		widget[method] = func
+	end
+	closebutton.obj, statusbg.obj = widget, widget
+
+	return AceGUI:RegisterAsContainer(widget)
 end
+
+AceGUI:RegisterWidgetType(Type, Constructor, Version)

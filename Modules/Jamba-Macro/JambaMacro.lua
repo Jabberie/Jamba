@@ -885,7 +885,7 @@ function AJM:SettingsMacroControlScrollRefresh()
 		AJM.settingsControl.macroControl.rows[iterateDisplayRows].columns[3].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
 		AJM.settingsControl.macroControl.rows[iterateDisplayRows].columns[4].textString:SetText( "" )
 		AJM.settingsControl.macroControl.rows[iterateDisplayRows].columns[4].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
-		AJM.settingsControl.macroControl.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControl.macroControl.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControl.macroControlOffset
 		if dataRowNumber <= AJM:GetMacroSetsMaxPosition() then
@@ -903,7 +903,7 @@ function AJM:SettingsMacroControlScrollRefresh()
 			end
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControl.macroControlHighlightRow then
-				AJM.settingsControl.macroControl.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControl.macroControl.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end
@@ -929,7 +929,7 @@ function AJM:SettingsVariableSetsScrollRefresh()
 		-- Reset.
 		AJM.settingsControlVariables.variableSets.rows[iterateDisplayRows].columns[1].textString:SetText( "" )
 		AJM.settingsControlVariables.variableSets.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
-		AJM.settingsControlVariables.variableSets.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControlVariables.variableSets.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControlVariables.variableSetsOffset
 		if dataRowNumber <= AJM:GetVariableSetsMaxPosition() then
@@ -938,7 +938,7 @@ function AJM:SettingsVariableSetsScrollRefresh()
 			AJM.settingsControlVariables.variableSets.rows[iterateDisplayRows].columns[1].textString:SetText( variableSetsInformation.name )
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControlVariables.variableSetsHighlightRow then
-				AJM.settingsControlVariables.variableSets.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControlVariables.variableSets.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end
@@ -970,7 +970,7 @@ function AJM:SettingsVariablesScrollRefresh()
 		AJM.settingsControlVariables.variables.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
 		AJM.settingsControlVariables.variables.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
 		AJM.settingsControlVariables.variables.rows[iterateDisplayRows].columns[3].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
-		AJM.settingsControlVariables.variables.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControlVariables.variables.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControlVariables.variablesOffset
 		if dataRowNumber <= AJM:GetVariablesMaxPosition() then
@@ -981,7 +981,7 @@ function AJM:SettingsVariablesScrollRefresh()
 			AJM.settingsControlVariables.variables.rows[iterateDisplayRows].columns[3].textString:SetText( variablesInformation.value )
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControlVariables.variablesHighlightRow then
-				AJM.settingsControlVariables.variables.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControlVariables.variables.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end
@@ -1015,7 +1015,7 @@ function AJM:SettingsMacroSetsScrollRefresh()
 		-- Reset.
 		AJM.settingsControlMacros.macroSets.rows[iterateDisplayRows].columns[1].textString:SetText( "" )
 		AJM.settingsControlMacros.macroSets.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
-		AJM.settingsControlMacros.macroSets.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControlMacros.macroSets.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControlMacros.macroSetsOffset
 		if dataRowNumber <= AJM:GetMacroSetsMaxPosition() then
@@ -1024,7 +1024,7 @@ function AJM:SettingsMacroSetsScrollRefresh()
 			AJM.settingsControlMacros.macroSets.rows[iterateDisplayRows].columns[1].textString:SetText( macroSetsInformation.name )
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControlMacros.macroSetsHighlightRow then
-				AJM.settingsControlMacros.macroSets.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControlMacros.macroSets.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end
@@ -1054,7 +1054,7 @@ function AJM:SettingsMacrosScrollRefresh()
 		AJM.settingsControlMacros.macros.rows[iterateDisplayRows].columns[2].textString:SetText( "" )
 		AJM.settingsControlMacros.macros.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
 		AJM.settingsControlMacros.macros.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 1.0, 1.0, 1.0 )
-		AJM.settingsControlMacros.macros.rows[iterateDisplayRows].highlight:SetTexture( 0.0, 0.0, 0.0, 0.0 )
+		AJM.settingsControlMacros.macros.rows[iterateDisplayRows].highlight:SetColorTexture( 0.0, 0.0, 0.0, 0.0 )
 		-- Get data.
 		local dataRowNumber = iterateDisplayRows + AJM.settingsControlMacros.macrosOffset
 		if dataRowNumber <= AJM:GetMacrosMaxPosition() then
@@ -1064,7 +1064,7 @@ function AJM:SettingsMacrosScrollRefresh()
 			AJM.settingsControlMacros.macros.rows[iterateDisplayRows].columns[2].textString:SetText( macrosInformation.key )
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControlMacros.macrosHighlightRow then
-				AJM.settingsControlMacros.macros.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
+				AJM.settingsControlMacros.macros.rows[iterateDisplayRows].highlight:SetColorTexture( 1.0, 1.0, 0.0, 0.5 )
 			end
 		end
 	end

@@ -1,39 +1,173 @@
 <html><body>
-<h1>Jamba Release Notes / News</h1>
+<h1 align="center">|cffee4400 Welcome to Jamba 5.0 for Patch 7.0.3 Legion! |r</h1>
 <br/>
-<h1>Whats New:</h1>
+<h2 align="center">|cffee1110 Jamba-Proc |r</h2>
 <br/>
-<h2>Cross Realm Support Added</h2>
-<p>* Jamba 4.0+  cross realm &amp; connected realms character support added.</p>
-<p>* Character names now must be in name-server format, .e.g. Ebony-Outland</p><br/>
-<h3>Notes:</h3>
-<p>CR = Connected Realms - EG You can trade/join guild ETC. Jamba will function as though your team is on the same realm!</p>
-<p>CR = CrossRealm - Join a realm over CRZ tech. Note: Some modules in Jamba will not function or will not work correctly while in CRZ. This is due to limitations in Blizzard's API. You can talk over realms with addons, however YOU NEED TO BE IN PARTY WITH THE MEMBER FOR ANYTHING TO WORK!</p>
+<p>-Removed </p>
 <br/>
-<h2>Automated Offline System Added:</h2>
+<p>-As its not updated anymore and i don't feel i can do it any better then other addons out there. ( i feel my time can be spent better somewhere else on the project)</p>
 <br/>
-<p>* Jamba will now automatically set minions offline if the minion is not online. Jamba will dectect when the minion comes online and sets the status to online. You can now have a full list of characters and not have to worry about online/offline. Easy switching!</p>
+<p>-You can download this as a separate Download if you wish.</p>
 <br/>
-<h2>Jamba-QuestWatcher:</h2>
+<h2 align="center">|cffee1110 Jamba-Core |r</h2>
 <br/>
-<p>* Supports Bonus Objectives.</p>
+<p>- Some Back-End Work for Legion/7.0.x</p>
 <br/>
-<h2>Having Problems With Your Teams?</h2>
+<p>- New tooltips on the options config to help make it easier to understand what some buttons to do and to clean up some of the long line texts. </p>
 <br/>
-<p>* Remember to do the following fixes on every character in your team!</p>
-*
-If your team list is full of empty lines, please reset the current profile. Warning this will require you to configure everything again. You can
-reset the current profile with the following button: /jamba > Profiles > Core: Profiles > Reset Profile
-<p>* Make sure to add characters into your team list with their name, followed by a dash and the server the character is on. e.g. Ebony-servername</p>
+<p>- Changed Help to Commands - as it shows more of the command Line stuff.</p>
 <br/>
-<h2>ISBoxer Users</h2>
+<p>- If a Module is not loaded on all characters then it no longer Lua-Error and tells the client what Module will need to be loaded.</p>
 <br/>
-<p>* Please make sure your ISBoxer version is ISBoxer 41.10.1115.1 or higher.</p>
-<p>* When ISBoxer manages your Jamba Team for you, it will add the characters with the correct name format if you have filled out the server name in your ISBoxer character.</p>
-<p>*Jamba will remove any spaces Isboxers trys to add. No realm can have a space in the name.</p>
+<p>- Updated LibActionButton</p>
 <br/>
-<h2>Need Help?</h2>
+<p>- Updated AceGUI-3.0-SharedMediaWidgets</p>
 <br/>
-<p>Please post in this thread on dual-boxing.com: http://www.dual-boxing.com/threads/52151-Addon-Jamba-4-0-An-assistant-for-Multiboxers-Release-for-WoW-6<br/>
-</p>
+<p>- Updated settings Frame for config. Resize and close button.</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-Team |r</h2>
+<br/>
+<p>- Added two new ways to add team members to the team with the command line and GUI.</p>
+<br/>
+<p>---@target will add your current target to the team list</p>
+<br/>
+<p>---@mouseOver Will add your current MouseOver to the team list.</p>
+<br/>
+<p>- cleaned up some loot code. and some offline code.</p>
+<br/>
+<p>- Loot can olny be set to Group/FFA/Personal. ( Olny works in a Instances )</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-Quest-Tracker |r</h2>
+<br/>
+<p>-Renamed from Jamba Quest Watcher to Jamba Objective Tracker(To fit in line with blizzards own naming)</p>
+<br/>
+<p>- Now Shows Scenario Objective on the watcher.</p>
+<br/>
+<p>- Shows Bouns Scenario Objective.</p>
+<br/>
+<p>- Fixed with Broken Shore QuestLines a % bar needed coding in.</p>
+<p>- Only Show stage if there is more the one stage (so does not show in dungeons.)</p>
+<br/>
+<p>- Added support to change the font And text size</p>
+<br/>
+<p>- Now automatically sets the frame to the Right Hand Side of the UI.</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-Quest |r</h2>
+<br/>
+<p>- A big thanks to Schilm from dual-boxing.com to the new changes. little edited by me </p>
+<br/>
+<p>- Added buttons to blizzard Quest Rightclick Dropdown Menu to Track and un-track and to abandon all quests.</p>
+<br/>
+<p>-New Bar Now part of the QuestMap Frame. with new buttons</p>
+<br/>
+<p>--Abandon All</p>
+<p>-Works just like it used to. It loops through all of your toons and abandons all the quests on each toon.</p>
+<p>-Now ignores quests that cannot be abandoned, such as the Account Wide quests Luxlunae mentioned.</p>
+<br/>
+<p>--Share All</p>
+<p>-Used to just loop through the current toons quests and just shared those, NOW loops through all toons and attempts to share all Quests from all toons.</p>
+<br/>
+<p>--Track All</p>
+<p>-Back from the abyss!!!</p>
+<p>-Used to just loop through the current toons quests and just tracked those, NOW loops through all toons and attempts to track all Quests from all toons.</p>
+<br/>
+<p>--Untrack All</p>
+<p>-Back from the abyss!!!</p>
+<p>-Used to just loop through the current toons quests and just untracked those, NOW loops through all toons and attempts to un-tracks all Quests from all toons.</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-Display-Team |r</h2>
+<br/>
+<p>- Values are now Abbreviated to smaller Numbers.</p>
+<br/>
+<p>- No longer Shows max Value when showing Percentage</p>
+<br/>
+<p>- Added support to change the font And text size</p>
+<br/>
+<p>- Added a NewTooltip when you hover over Follow bar to show</p>
+<p>* Level of minion If not level capped.</p>
+<p>* ItemLevel of minion.</p>
+<p>* Durability of the minion.</p>
+<p>* Bag Space of the minion.</p>
+<p>* Gold of the minion.</p>
+<p>* Mail if the minion has mail and who it is from (Same as minimap)</p>
+<br/>
+<p>- Tooltip should no longer show in combat.</p>
+<br/>
+<p>- Removed the old Display Bag Space Bar added to tooltips</p>
+<br/>
+<p>- Renamed "Combo PointBar" to "Class Power Bar"</p>
+<br/>
+<p>- Added Support for Other class Power</p>
+<p>* Warlocks - Soul Shards</p>
+<p>* Paladin - Holy Power</p>
+<p>* DeathKight - Runes</p>
+<p>* Mage - ARCANE CHARGES</p>
+<p>* Monk - CHI</p>
+<br/>
+<p>- Removed the Old Reputation bar.</p>
+<br/>
+<p>- Changes to the XP bar.</p>
+<p>* Your can show up for four XP Bars For the 4 XP type each bar is on the same XP frame and makes each bar a little smaller.</p>
+<p>** Xp, Players XP.</p>
+<p>** Artifact XP, Show the players weapon Artifact XP.</p>
+<p>** Show Honor XP, Show a bar for the new honor xp bar.</p>
+<p>** Show Reputation, show a bar for Reputation</p>
+<br/>
+<p>- Added new checks to fix The FollowDance when spamming follow key.</p>
+<br/>
+<p>- You can now specify the number of characters per row up to 10.</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-Toon |r</h2>
+<br/>
+<p>- Removed Jamba-Currency From the toon module</p>
+<br/>
+<p>- Added Team Release Prompts when you die to Release the spirits of all minions. And release back to the minions bodies.</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-Curr |r</h2>
+<br/>
+<p>- All Currency Information</p>
+<br/>
+<p>- There is a now a DropDown Box to show the Currency's you like to show</p>
+<br/>
+<p>- You can Have a max of 6 Currencies.</p>
+<br/>
+<p>- Now shows Currency Icon Then The Three Letters of text.</p>
+<br/>
+<p>- Now shows the Currency Gold Icons when showing gold/Sliver/Copper</p>
+<br/>
+<p>- No Longer Shows Currency for Offline minions.</p>
+<br/>
+<p>- Should Now Order minions That are Offline/Online correctly.</p>
+<br/>
+<p>- Added support to change the font And text size.</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-Taxi |r</h2>
+<br/>
+<p>- Fixed a Frame Bug with The new flight maps in broken island (Legion Zones)</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-AdvancedLoot |r</h2>
+<br/>
+<p>- Fixed a text bug that was not working with trade goods. (cloth)</p>
+<br/>
+<p>- Personal-Loot OverRights The Advanced Loot list. </p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-ItemUse |r</h2>
+<br/>
+<p>- You can now Use spells on the item bar without errors.</p>
+<br/>
+<p>- Now Automatically sets to the Bottom Right then the center of the UI.</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-Follow |r</h2>
+<br/>
+<p>- Made some backend checks to make sure follow has been really been broken. (spamming follow key should not spam "follow Borken")</p>
+<p>- NoLonger warns if the player is on a taxi</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-FTL |r</h2>
+<br/>
+<p>- Added an option to turn of the Messages in chat when updating FTL...</p>
+<br/>
+<h2 align="center">|cffee1110 Jamba-Message |r</h2>
+<br/>
+<p>- Moved in options to Chat from Advanced</p> 
+
 </body></html>

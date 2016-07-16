@@ -39,3 +39,4 @@ L["Use selected Toon in FTL"] = true
 L["Update FTL-Button"] = true
 L["Updates the FTL-Button on all Team members"] = true
 L["Hint:Use the buttons by: /click JambaFTLAssist or /click JambaFTLTarget"] = true
+L["Don't Show Update Messages"] = true
