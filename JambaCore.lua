@@ -40,7 +40,7 @@ local AceGUI = LibStub("AceGUI-3.0")
 JambaPrivate.SettingsFrame = {}
 JambaPrivate.SettingsFrame.Widget = AceGUI:Create( "JambaWindow" )
 --JambaPrivate.SettingsFrame.Widget = AceGUI:Create( "Frame" )
-JambaPrivate.SettingsFrame.Widget:SetTitle( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version") )
+JambaPrivate.SettingsFrame.Widget:SetTitle( L["Jamba"].." "..L["Version"] )
 JambaPrivate.SettingsFrame.Widget:SetStatusText(L["The Awesome Multi-Boxer Assistant"])
 JambaPrivate.SettingsFrame.Widget:SetWidth(800)
 JambaPrivate.SettingsFrame.Widget:SetHeight(650)
