@@ -776,7 +776,11 @@ function AJM:ShowFollowTooltip( frame, followBar, characterName, canShow )
 				--AJM:Print("CanShow")
 					--followBarClick:SetScript("OnEnter", function(self)
 					GameTooltip:SetOwner(frame, "ANCHOR_TOP")
-					GameTooltip:AddLine(L["Toon Information"], 1, 0.82, 0, 1)	
+				if AJM.db.followStatusShowName == true then 	
+				GameTooltip:AddLine(L["Toon Information"], 1, 0.82, 0, 1)	
+				else
+				GameTooltip:AddLine(Ambiguate( characterName, "none" ), 1, 0.82, 0, 1)
+				end
 				--level of player if not max.
 				if followBar.CharacterLevel == followBar.MaxCharacterLevel then
 					GameTooltip:AddLine(L["Player Level:"]..L[" "]..L["("]..tostring (format("%.0f", followBar.CharacterLevel ))..L[")"],1,1,1,1)

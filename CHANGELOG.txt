@@ -3,6 +3,7 @@ ChangeLogs:
 ---------------------------
 Jamba Version: 5.0.1
 WoW Game Version: 7.0.3
+File Version: 7.0.3-5.0.1 
 Release Date: 19/07/2016
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade
 
@@ -70,7 +71,8 @@ Initial Legion Release.
         - Gold of the minion.
         - Mail if the minion has mail and who it is from (Same as minimap)
     - Tooltip should no longer show in combat.    
-    - Removed the old Display Bag Space Bar added to tooltips
+    - Tooltip now shows character name if name is hidden on the bar.
+	- Removed the old Display Bag Space Bar added to tooltips
     - Renamed "Combo PointBar" to "Class Power Bar"
         - Added Support for Other class Power
             -Warlocks - Soul Shards
