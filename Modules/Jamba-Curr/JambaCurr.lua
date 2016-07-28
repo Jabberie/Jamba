@@ -1488,8 +1488,8 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	currencyFrameCharacterInfo.TypeFiveText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.TypeSixText:SetTextColor( r, g, b, a )
 
-	--currencyFrameCharacterInfo.GoldText:SetText( JambaUtilities:FormatMoneyString( currencyValues.currGold ) )
-	currencyFrameCharacterInfo.GoldText:SetText( GetCoinTextureString( currencyValues.currGold ) )
+	currencyFrameCharacterInfo.GoldText:SetText( JambaUtilities:FormatMoneyString( currencyValues.currGold ) )
+	--currencyFrameCharacterInfo.GoldText:SetText( GetCoinTextureString( currencyValues.currGold ) )
 	currencyFrameCharacterInfo.TypeOneText:SetText( currencyValues.currTypeOne )
 	currencyFrameCharacterInfo.TypeTwoText:SetText( currencyValues.currTypeTwo )
 	currencyFrameCharacterInfo.TypeThreeText:SetText( currencyValues.currTypeThree )	
@@ -1498,11 +1498,11 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	currencyFrameCharacterInfo.TypeSixText:SetText( currencyValues.currTypeSix )
 	-- Total gold.
 	AJM.currencyTotalGold = AJM.currencyTotalGold + currencyValues.currGold
-	--parentFrame.TotalGoldText:SetText( JambaUtilities:FormatMoneyString( AJM.currencyTotalGold ) )
-	parentFrame.TotalGoldText:SetText( GetCoinTextureString( AJM.currencyTotalGold ) )
+	parentFrame.TotalGoldText:SetText( JambaUtilities:FormatMoneyString( AJM.currencyTotalGold ) )
+	--parentFrame.TotalGoldText:SetText( GetCoinTextureString( AJM.currencyTotalGold ) )
 	if IsInGuild() then
-		--parentFrame.TotalGoldGuildText:SetText( JambaUtilities:FormatMoneyString( GetGuildBankMoney() ) )
-		parentFrame.TotalGoldGuildText:SetText( GetCoinTextureString( GetGuildBankMoney() ) )
+		parentFrame.TotalGoldGuildText:SetText( JambaUtilities:FormatMoneyString( GetGuildBankMoney() ) )
+		--parentFrame.TotalGoldGuildText:SetText( GetCoinTextureString( GetGuildBankMoney() ) )
 	end
 	-- Update width of currency list.
 	AJM:CurrencyListSetColumnWidth()

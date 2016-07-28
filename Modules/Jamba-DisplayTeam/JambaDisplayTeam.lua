@@ -1939,7 +1939,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.borderStyle = settings.borderStyle
 		AJM.db.backgroundStyle = settings.backgroundStyle
 		AJM.db.fontStyle = settings.fontStyle
-		
+		AJM.db.fontSize = settings.fontSize
 		AJM.db.showCharacterPortrait = settings.showCharacterPortrait
 		AJM.db.characterPortraitWidth = settings.characterPortraitWidth
 		AJM.db.showFollowStatus = settings.showFollowStatus

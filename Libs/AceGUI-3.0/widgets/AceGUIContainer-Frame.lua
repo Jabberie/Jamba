@@ -284,21 +284,6 @@ local function Constructor()
 	sizer_e:SetScript("OnMouseUp", MoverSizer_OnMouseUp)
 
 	--Container Support
-	
-		local content = CreateFrame("Frame",nil,frame)
-		self.content = content
-		content.obj = self
-		content:SetPoint("TOPLEFT",frame,"TOPLEFT",12,-32)
-		content:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",-12,13)
-		
-		AceGUI:RegisterAsContainer(self)
-		return self	
-
-end
-	
-	
-	
---[[	
 	local content = CreateFrame("Frame", nil, frame)
 	content:SetPoint("TOPLEFT", 17, -27)
 	content:SetPoint("BOTTOMRIGHT", -17, 40)
@@ -322,5 +307,5 @@ end
 
 	return AceGUI:RegisterAsContainer(widget)
 end
---]]
+
 AceGUI:RegisterWidgetType(Type, Constructor, Version)
