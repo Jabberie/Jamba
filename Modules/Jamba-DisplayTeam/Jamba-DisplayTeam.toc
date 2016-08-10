@@ -2,7 +2,7 @@
 ## Title: Jamba-DisplayTeam
 ## Notes: Jamba-DisplayTeam
 ## Author: Ebony, Former Author: Jafula
-## Version: 7.0.3-5.0.2
+## Version: 7.0.3-5.0.3
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

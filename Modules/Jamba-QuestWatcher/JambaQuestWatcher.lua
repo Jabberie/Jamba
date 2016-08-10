@@ -1003,7 +1003,7 @@ function AJM:SCENARIO_UPDATE( event, ... )
 	if AJM.db.enableQuestWatcher == true then
 		--AJM:JambaQuestWatchListUpdateButtonClicked()
 		AJM:RemoveQuestsNotBeingWatched()
-		AJM:ScheduleTimer( "JambaQuestWatcherScenarioUpdate", 1, false )
+		AJM:ScheduleTimer( "JambaQuestWatcherScenarioUpdate", 1, true )
 	end
 end
 
@@ -1013,11 +1013,12 @@ function AJM:SCENARIO_CRITERIA_UPDATE( event, ... )
 	if AJM.db.enableQuestWatcher == true then
 		-- Wait a bit for the correct information to come through from the server...
 		--AJM:ScheduleTimer( "JambaQuestWatcherUpdate", 1, false )
-		AJM:ScheduleTimer( "JambaQuestWatcherScenarioUpdate", 1, false )	
+		AJM:ScheduleTimer( "JambaQuestWatcherScenarioUpdate", 1, true )	
 	end
 end
 
 function AJM:PLAYER_ENTERING_WORLD( event, ... )
+	--AJM:Print("test4")
 	if AJM.db.enableQuestWatcher == true then
 		AJM:RemoveQuestsNotBeingWatched()
 		AJM:ScheduleTimer( "JambaQuestWatcherScenarioUpdate", 1, false )
@@ -1231,7 +1232,7 @@ function AJM:JambaQuestWatcherScenarioUpdate( useCache )
 	-- Scenario information
 	local isInScenario = C_Scenario.IsInScenario()
 	if isInScenario == true then
-		local useCache = false
+		--local useCache = false
 		local scenarioName, currentStage, numStages, flags, _, _, _, xp, money = C_Scenario.GetInfo()
 		--AJM:Print("scenario", scenarioName, currentStage, numStages)
 			for StagesIndex = 1, currentStage do
