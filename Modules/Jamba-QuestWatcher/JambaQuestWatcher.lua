@@ -179,7 +179,10 @@ function AJM:OnEnable()
 	AJM:ScheduleTimer( "JambaQuestWatcherUpdate", 1, false )
 	AJM:ScheduleTimer( "JambaQuestWatcherScenarioUpdate", 1, false )
 	AJM:UpdateUnlockWatcherFrame()
-	AJM:UpdateHideBlizzardWatchFrame()
+	-- To Hide After elv changes. --ebony
+	AJM:ScheduleTimer( "UpdateHideBlizzardWatchFrame", 2 )
+	-- Remvoed me somtime 7.0.4
+	--AJM:UpdateHideBlizzardWatchFrame()
 	if AJM.db.enableQuestWatcher == true then
 		AJM:QuestWatcherQuestListScrollRefresh()
 	end

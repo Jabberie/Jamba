@@ -2,9 +2,21 @@
 ChangeLogs:
 ---------------------------
 
+Jamba Version: 5.0.4
+WoW Game Version: 7.0.3
+File Version: 7.0.3-5.0.4
+Release Date: 16/08/2016
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade
+
+
+*Jamba-Quest-Tracker
+ - Now Should always hide Blizzard's objective Tracker when using ElvUI Shadow & Light.
+
+---------------------------
+
 Jamba Version: 5.0.3
 WoW Game Version: 7.0.3
-File Version: 7.0.3-5.0.3
+File Version: 7.0.3-5.0.3 
 Release Date: 10/08/2016
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade
 
