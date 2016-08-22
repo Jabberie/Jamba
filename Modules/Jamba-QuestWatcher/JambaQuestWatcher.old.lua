@@ -693,8 +693,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
 		AJM:UpdateUnlockWatcherFrame()
-		--AJM:UpdateHideBlizzardWatchFrame()
-		AJM:ScheduleTimer( "UpdateHideBlizzardWatchFrame", 2 )
+		AJM:UpdateHideBlizzardWatchFrame()
 		-- Tell the player.
 		AJM:Print( L["Settings received from A."]( characterName ) )
 		-- Tell the team?
@@ -877,8 +876,7 @@ end
 
 function AJM:SettingsToggleHideBlizzardWatchFrame( event, checked )
 	AJM.db.hideBlizzardWatchFrame = checked
-	--AJM:UpdateHideBlizzardWatchFrame()
-	AJM:ScheduleTimer( "UpdateHideBlizzardWatchFrame", 2 )
+	AJM:UpdateHideBlizzardWatchFrame()
 	AJM:SettingsRefresh()
 end
 
@@ -949,8 +947,7 @@ function AJM:AddQuestWatch( questIndex )
 	if AJM.db.enableQuestWatcher == false then
 		return
 	end
-	--AJM:UpdateHideBlizzardWatchFrame()
-	AJM:ScheduleTimer( "UpdateHideBlizzardWatchFrame", 2 )
+	AJM:UpdateHideBlizzardWatchFrame()
 	AJM:JambaQuestWatcherUpdate( true )
 	AJM:JambaQuestWatcherScenarioUpdate( true )
 end
@@ -960,9 +957,8 @@ function AJM:RemoveQuestWatch( questIndex )
 		return
     end
     AJM:DebugMessage( "RemoveQuestWatch", questIndex )
-	--AJM:UpdateHideBlizzardWatchFrame()
-    AJM:ScheduleTimer( "UpdateHideBlizzardWatchFrame", 2 )
-	local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questIndex )
+	AJM:UpdateHideBlizzardWatchFrame()
+    local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questIndex )
     AJM:DebugMessage( "About to call RemoveQuestFromWatchList with value:", questID )
 	AJM:RemoveQuestFromWatchList( questID )
 end
