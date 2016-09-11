@@ -1154,7 +1154,7 @@ end
 
 
 function AJM:PARTY_INVITE_REQUEST( event, inviter, ... )
-	AJM:Print("Inviter", inviter)
+	--AJM:Print("Inviter", inviter)
 	-- Accept this invite, initially no.
 	local acceptInvite = false
 	-- Is character not in a group?

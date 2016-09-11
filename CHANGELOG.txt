@@ -5,12 +5,22 @@ ChangeLogs:
 Jamba Version: 5.0.4
 WoW Game Version: 7.0.3
 File Version: 7.0.3-5.0.4
-Release Date: 16/08/2016
+Release Date: 11/09/2016
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade
 
 
 *Jamba-Quest-Tracker
  - Now Should always hide Blizzard's objective Tracker when using ElvUI Shadow & Light.
+
+*Jamba-Trade
+ - No longer trade Excess Gold with players that are not team members.
+ - Now Shows the Gold in the Edit box when tradeing gold on minions. 
+
+*Jamba-Team
+ -Removed Some Debug code.
+
+
+
 
 ---------------------------
 

@@ -634,6 +634,7 @@ function AJM:TRADE_SHOW( event, ... )
 	end	
 end
 
+
 function AJM:TradeShowAdjustMoneyWithMaster()
 	if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
 		return
@@ -645,8 +646,22 @@ function AJM:TradeShowAdjustMoneyWithMaster()
 		return
 	end
 	if moneyToDepositOrWithdraw > 0 then
-		PickupPlayerMoney( moneyToDepositOrWithdraw )
-		AddTradeMoney()
+		for index, character in JambaApi.TeamListOrderedOnline() do
+			--AJM:Print("Team", character )
+			local teamCharacterName = ( Ambiguate( character, "none" ) )
+			local tradePlayersName = GetUnitName("NPC")
+			if tradePlayersName == teamCharacterName then
+				--AJM:Print("found", tradePlayersName, teamCharacterName )
+				--PickupPlayerMoney( moneyToDepositOrWithdraw )
+				--GetCursorMoney()
+				--AddTradeMoney()
+				MoneyInputFrame_SetCopper(TradePlayerInputMoneyFrame, moneyToDepositOrWithdraw)
+				break
+			else
+				AJM:Print(tradePlayersName, "is not Member of the team, Will not trade Gold.")
+			end
+		end
+		
 	end
 end
 
