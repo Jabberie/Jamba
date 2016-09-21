@@ -6,7 +6,7 @@ License: The MIT License
 
 local L = LibStub("AceLocale-3.0"):NewLocale( "Jamba-Core", "enUS", true )
 --Change ME when update version
-L["Version"] = "5.0"
+L["Version"] = "5.1"
 --End of Changeme
 L["Slash Commands"] = true
 L["Team"] = true
@@ -97,12 +97,12 @@ L["Text1"] = "Welcome to Legion 7.0.3!"
 L["Text2"] = "" 
 L["Text3"] = "Jamba Has Had a Lot of changes here is a few important ones to check out"
 L["Text4"] = ""
-L["Text5"] = "Display-team has some nice new changes!."
-L["Text6"] = "Honor/XP/Artifact/Rep are now on the same bar."
+L["Text5"] = "Artifact Power is now Auto added to to the item Use bar!"
+L["Text6"] = ""
 L["Text7"] = ""
-L["Text8"] = "QuestLog changes with a Dropdown-Menu."
-L["Text9"] = "Quest Watcher Been renamed and now Supports Most Objectives."
-L["Text10"] = "Now Easyer To UseCurrency!"
+L["Text8"] = ""
+L["Text9"] = ""
+L["Text10"] = ""
 
 
 

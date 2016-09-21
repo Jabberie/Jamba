@@ -66,3 +66,5 @@ L["New item that starts a quest found!"] = true
 L["Clear Item Bar"] = true
 L["Clear the item bar (remove all items)."] = true
 L["Item Bar Cleared"] = true
+L["Automatically Add Artifact Power Items To Bar"] = true
+L["New Artifact Power Item found!"] = true

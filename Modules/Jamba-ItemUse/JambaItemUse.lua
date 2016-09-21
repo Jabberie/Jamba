@@ -65,6 +65,7 @@ AJM.settings = {
 		itemUseVerticalSpacing = 3,
 		itemUseHorizontalSpacing = 2,
 		autoAddQuestItemsToBar = true,
+		autoAddArtifactItemsToBar = true,
 		itemBarsSynchronized = true,
 		numberOfItems = 10,
 		numberOfRows = 2,
@@ -279,8 +280,8 @@ function AJM:UpdateQuestItemsInBar()
 		local action = itemInfo.action
 		if kind == "item" then
 			local itemLink,_,_,_,_,questItem = GetItemInfo( action )
+			--AJM:Print("Checking Item...", itemLink, action)
 			if questItem == "Quest" then
-				--AJM:Print("Checking Item...", itemLink, action)
 				if AJM:IsInInventory( itemLink ) == false then
 				--AJM:Print("NOT IN BAGS", itemLink)
 					AJM.db.itemsAdvanced[iterateItems] = nil		
@@ -386,12 +387,12 @@ end
 --ebony test Using the wowapi and not the scanning of tooltips
 function AJM:CheckForQuestItemAndAddToBar()
 	for bag = 0,4,1 do 
-	for slot = 1,GetContainerNumSlots(bag),1 do 
-		local IsQuestItem,StartsQuest,_ = GetContainerItemQuestInfo(bag,slot)
-		local _,_,_,_,readable,_,itemLink = GetContainerItemInfo(bag,slot) -- readable???
-		if not IsQuestItem and StartsQuest then
-			local itemString = GetItemInfo(itemLink)
-				AJM:AddAnItemToTheBarIfNotExists( itemLink, true )
+		for slot = 1,GetContainerNumSlots(bag),1 do 
+			local IsQuestItem,StartsQuest,_ = GetContainerItemQuestInfo(bag,slot)
+			local _,_,_,_,readable,_,itemLink = GetContainerItemInfo(bag,slot) -- readable???
+				if not IsQuestItem and StartsQuest then
+					local itemString = GetItemInfo(itemLink)
+					AJM:AddAnItemToTheBarIfNotExists( itemLink, true)
 				end
 			end
 		end 
@@ -404,7 +405,7 @@ function AJM:CheckForQuestItemAndAddToBar()
 				local questname,rank = GetItemSpell(questItemLink) -- Only means to detect if the item is usable
 				if questname then
 					if JambaUtilities:DoItemLinksContainTheSameItem( questItemLink, questItemLink ) == true then
-						AJM:AddAnItemToTheBarIfNotExists( questItemLink, false )				
+						AJM:AddAnItemToTheBarIfNotExists( questItemLink, false)				
 					end				
 				end
 			end
@@ -412,6 +413,49 @@ function AJM:CheckForQuestItemAndAddToBar()
 	end
 end
 
+-- Adds artifact power items to item bar.
+function AJM:CheckForArtifactItemAndAddToBar()
+	for bag, slot, link in LibBagUtils:Iterate( "BAGS" ) do
+		if link ~= nil and bag ~= -2 then
+			LibGratuity:SetHyperlink( link )
+			if LibGratuity:Find( ARTIFACT_POWER ) then
+				--AJM:Print("artifactPowerItems", bag, slot, link)
+				AJM:AddAnItemToTheBarIfNotExists( link, false, true )
+			end	
+		end
+	end	
+end		
+
+--Removes artifact power after used.
+
+function AJM:UpdateArtifactItemsInBar()
+	local state = "0"
+	for iterateItems = 1, AJM.maximumNumberOfItems, 1 do
+		local itemContainer = AJM.itemContainer[iterateItems]
+		if itemContainer == nil then
+			AJM:CreateJambaItemUseItemContainer( iterateItems, parentFrame )
+			itemContainer = AJM.itemContainer[iterateItems]
+		end
+		local containerButton = itemContainer["container"]
+		local itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
+		local kind = itemInfo.kind
+		local action = itemInfo.action
+		if kind == "item" then
+			local name, itemLink,_,_,_,_,questItem = GetItemInfo( action )
+			--AJM:Print("Checking Item...", itemLink, action)
+			LibGratuity:SetHyperlink( itemLink )
+			if LibGratuity:Find( ARTIFACT_POWER ) then
+				--AJM:Print("Found Item...", itemLink)
+				if AJM:IsInInventory( name ) == false then
+					--AJM:Print("NOT IN BAGS", itemLink)
+					AJM.db.itemsAdvanced[iterateItems] = nil
+					AJM:UpdateItemsInBar()
+				end
+			end				
+		end
+	end	
+end	
+	
 --Checks the item is in the player players bag
 function AJM:IsInInventory(itemLink)
 	for bag = 0,4,1 do 
@@ -433,7 +477,7 @@ function AJM:IsInInventory(itemLink)
 end
 
 
-function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest )
+function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest, artifact )
 	local itemInfo
 	local barItemId
 	local iterateItems
@@ -453,10 +497,14 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest )
 				AJM:AddItemToItemDatabase( iterateItems, "item", itemId )
 				AJM:JambaSendSettings()
 				AJM:SettingsRefresh()	
-				if startsQuest == true then
-					AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["New item that starts a quest found!"], false )
-				end
+				if startsQuest or artifact == true then
+					if artifact == true then
+						AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["New Artifact Power Item found!"], false )
+					else
+						AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["New item that starts a quest found!"], false )
+					end
 				return
+				end
 			end
 		end
 	end
@@ -568,6 +616,15 @@ local function SettingsCreateOptions( top )
 		L["Automatically Add Quest Items To Bar"],
 		AJM.SettingsToggleAutoAddQuestItem
 	)
+	movingTop = movingTop - checkBoxHeight - verticalSpacing
+	AJM.settingsControl.displayOptionsCheckBoxAutoAddArtifactItem = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Automatically Add Artifact Power Items To Bar"],
+		AJM.SettingsToggleAutoAddArtifactItem
+	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing	
 	AJM.settingsControl.displayOptionsCheckBoxHideItemUseInCombat = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
@@ -720,6 +777,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.displayOptionsItemUseNumberOfItems:SetValue( AJM.db.numberOfItems )
 	AJM.settingsControl.displayOptionsItemUseNumberOfRows:SetValue( AJM.db.numberOfRows )
 	AJM.settingsControl.displayOptionsCheckBoxAutoAddQuestItem:SetValue( AJM.db.autoAddQuestItemsToBar )
+	AJM.settingsControl.displayOptionsCheckBoxAutoAddArtifactItem:SetValue( AJM.db.autoAddArtifactItemsToBar )
 	AJM.settingsControl.displayOptionsCheckBoxItemBarsSynchronized:SetValue( AJM.db.itemBarsSynchronized )
 	AJM.settingsControl.displayOptionsItemUseScaleSlider:SetValue( AJM.db.itemUseScale )
 	AJM.settingsControl.displayOptionsItemUseTransparencySlider:SetValue( AJM.db.frameAlpha )
@@ -737,6 +795,7 @@ function AJM:SettingsRefresh()
 		AJM.settingsControl.displayOptionsItemUseNumberOfItems:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsItemUseNumberOfRows:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsCheckBoxAutoAddQuestItem:SetDisabled( not AJM.db.showItemUse )
+		AJM.settingsControl.displayOptionsCheckBoxAutoAddArtifactItem:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsCheckBoxItemBarsSynchronized:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsItemUseScaleSlider:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsItemUseTransparencySlider:SetDisabled( not AJM.db.showItemUse )
@@ -777,6 +836,12 @@ end
 
 function AJM:SettingsToggleAutoAddQuestItem( event, checked )
 	AJM.db.autoAddQuestItemsToBar = checked
+	AJM:SettingsRefresh()
+end
+
+
+function AJM:SettingsToggleAutoAddArtifactItem( event, checked )
+	AJM.db.autoAddArtifactItemsToBar = checked
 	AJM:SettingsRefresh()
 end
 
@@ -866,6 +931,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "PLAYER_REGEN_DISABLED" )
 	AJM:RegisterEvent( "BAG_UPDATE" )
 	AJM:RegisterEvent( "ITEM_PUSH" )
+	AJM:RegisterEvent( "PLAYER_XP_UPDATE" )
 	AJM:RegisterEvent( "UNIT_QUEST_LOG_CHANGED", "QUEST_UPDATE" )
 	AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_Registered" )
     AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_SetGlobal" )	
@@ -900,6 +966,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.itemUseVerticalSpacing = settings.itemUseVerticalSpacing
 		AJM.db.itemUseHorizontalSpacing = settings.itemUseHorizontalSpacing
 		AJM.db.autoAddQuestItemsToBar = settings.autoAddQuestItemsToBar
+		AJM.db.autoAddArtifactItemsToBar = settings.autoAddArtifactItemsToBar
 		AJM.db.itemBarsSynchronized = settings.itemBarsSynchronized
 		AJM.db.numberOfItems = settings.numberOfItems
 		AJM.db.numberOfRows = settings.numberOfRows
@@ -957,9 +1024,16 @@ function AJM:PLAYER_REGEN_DISABLED()
 	end
 end
 
+function AJM:PLAYER_XP_UPDATE()
+	if not InCombatLockdown() then
+		AJM:ScheduleTimer( "UpdateArtifactItemsInBar", 1 )
+	end
+end	
+
 function AJM:BAG_UPDATE()
 	if not InCombatLockdown() then
 		AJM:UpdateItemsInBar()
+		AJM:ScheduleTimer( "UpdateArtifactItemsInBar", 1 )
 	end
 end
 
@@ -971,8 +1045,11 @@ end
 
 function AJM:ITEM_PUSH()
 	if AJM.db.autoAddQuestItemsToBar == true then
-		AJM:ScheduleTimer( "CheckForQuestItemAndAddToBar", 2 )
+		AJM:ScheduleTimer( "CheckForQuestItemAndAddToBar", 1 )
 	end
+	if AJM.db.autoAddArtifactItemsToBar == true then
+		AJM:ScheduleTimer( "CheckForArtifactItemAndAddToBar", 2 )
+	end	
 end
 
 function AJM:UPDATE_BINDINGS()

@@ -2,12 +2,16 @@
 ## Title: JambaItemUse
 ## Notes: JambaItemUse
 ## Author: Ebony, Former Author: Jafula
-## Version: 7.0.3-5.0.4
+## Version: 7.0.3-5.1.0
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
 ## SavedVariables: JambaItemUseProfileDB
 ## LoadOnDemand: 1
+## X-Curse-Packaged-Version: Release-7.0.3-5.1.0
+## X-Curse-Project-Name: Jamba
+## X-Curse-Project-ID: jamba
+## X-Curse-Repository-ID: wow/jamba/mainline
 Locales\Locales.xml
 JambaItemUse.lua
 

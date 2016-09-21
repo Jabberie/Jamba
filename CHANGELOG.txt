@@ -1,7 +1,18 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 5.1.0
+WoW Game Version: 7.0.3
+File Version: 7.0.3-5.1.0
+Release Date: 21/09/2016
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade
 
+*Jamba-Item-Use 
+	Now Adds and Removes. Artifact Power Items to the jamba Item_Use bar.
+	
+
+	
+---------------------------
 Jamba Version: 5.0.4
 WoW Game Version: 7.0.3
 File Version: 7.0.3-5.0.4
