@@ -405,6 +405,7 @@ function AJM:CheckForQuestItemAndAddToBar()
 				local questname,rank = GetItemSpell(questItemLink) -- Only means to detect if the item is usable
 				if questname then
 					if JambaUtilities:DoItemLinksContainTheSameItem( questItemLink, questItemLink ) == true then
+						--AJM:Print("addItem", questItemLink )
 						AJM:AddAnItemToTheBarIfNotExists( questItemLink, false)				
 					end				
 				end
@@ -420,7 +421,7 @@ function AJM:CheckForArtifactItemAndAddToBar()
 			LibGratuity:SetHyperlink( link )
 			if LibGratuity:Find( ARTIFACT_POWER ) then
 				--AJM:Print("artifactPowerItems", bag, slot, link)
-				AJM:AddAnItemToTheBarIfNotExists( link, false, true )
+				AJM:AddAnItemToTheBarIfNotExists( link, false )
 			end	
 		end
 	end	
@@ -449,7 +450,7 @@ function AJM:UpdateArtifactItemsInBar()
 				if AJM:IsInInventory( name ) == false then
 					--AJM:Print("NOT IN BAGS", itemLink)
 					AJM.db.itemsAdvanced[iterateItems] = nil
-					AJM:UpdateItemsInBar()
+					AJM:SettingsRefresh()
 				end
 			end				
 		end
@@ -477,7 +478,7 @@ function AJM:IsInInventory(itemLink)
 end
 
 
-function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest, artifact )
+function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest)
 	local itemInfo
 	local barItemId
 	local iterateItems
@@ -487,9 +488,12 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest, artifact )
 		itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
 		if itemInfo.kind == "item" and itemInfo.action == itemId then
 			alreadyExists = true
+			--AJM:Print("test", itemLink )
+			return
 		end
 	end
 	if alreadyExists == false then
+		AJM:Print("test2", itemLink )
 		for iterateItems = 1, AJM.db.numberOfItems, 1 do
 			itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
 			--Checks the items we talking about is in the bags of the player.
@@ -497,14 +501,10 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest, artifact )
 				AJM:AddItemToItemDatabase( iterateItems, "item", itemId )
 				AJM:JambaSendSettings()
 				AJM:SettingsRefresh()	
-				if startsQuest or artifact == true then
-					if artifact == true then
-						AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["New Artifact Power Item found!"], false )
-					else
+					if startsQuest then
 						AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["New item that starts a quest found!"], false )
 					end
 				return
-				end
 			end
 		end
 	end
@@ -1048,7 +1048,7 @@ function AJM:ITEM_PUSH()
 		AJM:ScheduleTimer( "CheckForQuestItemAndAddToBar", 1 )
 	end
 	if AJM.db.autoAddArtifactItemsToBar == true then
-		AJM:ScheduleTimer( "CheckForArtifactItemAndAddToBar", 2 )
+		AJM:ScheduleTimer( "CheckForArtifactItemAndAddToBar", 1 )
 	end	
 end
 

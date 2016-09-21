@@ -106,7 +106,15 @@ function AJM:GetConfiguration()
 				usage = "/jamba-team invite",
 				get = false,
 				set = "InviteTeamToParty",
-			},	
+			},
+			inviteTag = {
+				type = "input",
+				name = L["Invites"],
+				desc = L["Invite team members to a <tag> party."],
+				usage = "/jamba-team invite <tag>",
+				get = false,
+				set = "InviteTeamToPartys",
+			},				
 			disband = {
 				type = "input",
 				name = L["Disband"],
@@ -168,6 +176,7 @@ AJM.orderedCharactersOnline = {}
 -- Command this module sends.
 -------------------------------------------------------------------------------------------------------------
 
+AJM.COMMAND_TAG_PARTY = "JambaTeamTagGroup"
 -- Leave party command.
 AJM.COMMAND_LEAVE_PARTY = "JambaTeamLeaveGroup"
 -- Set master command.
@@ -175,6 +184,7 @@ AJM.COMMAND_SET_MASTER = "JambaTeamSetMaster"
 -- Set Minion OffLine
 AJM.COMMAND_SET_OFFLINE = "JambaTeamSetOffline"
 AJM.COMMAND_SET_ONLINE = "JambaTeamSetOnline"
+
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -1070,6 +1080,55 @@ function AJM.DoTeamPartyInvite()
 	end
 end
 
+function AJM:InviteTeamToPartys( info, tag )
+	-- Iterate each enabled member and invite them to a group.
+	if tag == nil then
+	return
+	end
+	if JambaPrivate.Tag.DoesCharacterHaveTag( AJM.characterName, tag ) == false then
+		--AJM:Print("IDONOTHAVETAG", tag)
+		for index, characterName in TeamListOrdered() do
+			--AJM:Print("NextChartohavetag", tag, characterName )
+			if JambaPrivate.Tag.DoesCharacterHaveTag( characterName, tag ) then
+				--AJM:Print("i have tag", tag, characterName )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_TAG_PARTY, characterName, tag )
+				break
+			end
+		end
+		return
+	else
+		AJM.inviteList = {}
+		AJM.inviteCount = 0
+		for index, characterName in TeamListOrdered() do
+			if GetCharacterOnlineStatus( characterName ) == true then
+				--AJM:Print("test", characterName, tag )
+				if JambaPrivate.Tag.DoesCharacterHaveTag( characterName, tag ) then
+					--AJM:Print("HasTag", characterName, tag )
+					-- As long as they are not the player doing the inviting.
+					if characterName ~= AJM.characterName then
+						AJM.inviteList[AJM.inviteCount] = characterName
+						AJM.inviteCount = AJM.inviteCount + 1
+					end
+				end
+			end
+		end
+	end
+	AJM.currentInviteCount = 0
+	AJM:ScheduleTimer( "DoTeamPartyInvite", 0.5 )
+end
+
+function AJM:TagParty(test, characterName, tag, ...)
+	--AJM:Print("test", characterName, tag )
+	if AJM.characterName == characterName then
+	 --AJM:Print("this msg is for me", characterName )
+		if JambaPrivate.Tag.DoesCharacterHaveTag( AJM.characterName, tag ) then
+			AJM:InviteTeamToPartys( nil, tag)
+		else 
+			return
+		end
+	 end
+end
+
 function AJM:PLAYER_FOCUS_CHANGED()
 	-- Change master on focus change option enabled?
 	if AJM.db.focusChangeSetMaster == true then
@@ -1698,6 +1757,11 @@ function AJM:JambaOnCommandReceived( sender, commandName, ... )
 			AJM.ReceivesetOnline( ... )
 		end
 	end
+	if commandName == AJM.COMMAND_TAG_PARTY then
+		if IsCharacterInTeam( sender ) == true then
+			AJM.TagParty( characterName, tag, ... )
+		end	
+	end	
 end
 
 -- Functions available from Jamba Team for other Jamba internal objects.
