@@ -159,6 +159,8 @@ AJM.COMMAND_TOONINFORMATION_UPDATE = "IlvlInfoUpd"
 AJM.COMMAND_REPUTATION_STATUS_UPDATE = "RepStsUpd"
 AJM.COMMAND_COMBO_STATUS_UPDATE = "CboStsUpd"
 AJM.COMMAND_REQUEST_INFO = "SendInfo"
+AJM.COMMAND_POWER_STATUS_UPDATE = "PowStsUpd"
+AJM.COMMAND_HEALTH_STATUS_UPDATE = "heaStsUpd"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -2312,14 +2314,17 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	if commandName == AJM.COMMAND_REPUTATION_STATUS_UPDATE then
 		AJM:ProcessUpdateReputationStatusMessage( characterName, ... )
 	end
---	if commandName == AJM.COMMAND_BAGINFORMATION_UPDATE then
---		AJM:ProcessUpdateBagInformationMessage( characterName, ... )
---	end	
 	if commandName == AJM.COMMAND_TOONINFORMATION_UPDATE then
 		AJM:ProcessUpdateToonInformationMessage ( characterName, ... )
 	end
 	if commandName == AJM.COMMAND_COMBO_STATUS_UPDATE then
 		AJM:ProcessUpdateComboStatusMessage( characterName, ... )
+	end	
+	if commandName == AJM.COMMAND_HEALTH_STATUS_UPDATE then
+		AJM:ProcessUpdateHealthStatusMessage( characterName, ... )
+	end
+	if commandName == AJM.COMMAND_POWER_STATUS_UPDATE then
+		AJM:ProcessUpdatePowerStatusMessage(characterName, ... )
 	end	
 	if commandName == AJM.COMMAND_REQUEST_INFO then
 		AJM.SendInfomationUpdateCommand()
@@ -2353,113 +2358,8 @@ function AJM:RangeUpdateCommand()
 	end				
 end
 
---[[
 -------------------------------------------------------------------------------------------------------------
--- Bag Information Updates.
--------------------------------------------------------------------------------------------------------------
-
-function AJM:ITEM_PUSH( event, ... )
-	AJM:SendBagInformationUpdateCommand()	
-end	
-
-function AJM:SendBagInformationUpdateCommand()
-	if AJM.db.showTeamList == true and AJM.db.showBagInformation == true then
-		if UnitIsGhost( "player" ) then
-			return
-		end
-		if UnitIsDead( "player" ) then
-			return
-		end		
-		local slotsFree, totalSlots = LibBagUtils:CountSlots( "BAGS", 0 )
-		local curTotal, maxTotal, broken = 0, 0, 0
-		
-		--for i = 1, 18 do
-		--	local curItemDurability, maxItemDurability = GetInventoryItemDurability(i)
-		--	if curItemDurability and maxItemDurability then
-		--	curTotal = curTotal + curItemDurability
-		--	maxTotal = maxTotal + maxItemDurability
-		--		if maxItemDurability > 0 and curItemDurability == 0 then
-		--			broken = broken + 1
-		--		end
-		--	end
-		--local percent = curTotal / maxTotal * 100
-		--return percent, broken
-		--end
-		--AJM:Print("Durability", percent, broken)
-		--if AJM.previousSlotsFree ~= slotsFree or AJM.previousTotalSlots ~= totalSlots then
-		if AJM.db.showTeamListOnMasterOnly == true then
-			AJM:JambaSendCommandToMaster( AJM.COMMAND_BAGINFORMATION_UPDATE, slotsFree, totalSlots )
-		else
-			AJM:JambaSendCommandToTeam( AJM.COMMAND_BAGINFORMATION_UPDATE, slotsFree, totalSlots )
-		end
-	end
-end
-
-function AJM:ProcessUpdateBagInformationMessage( characterName, slotsFree, totalSlots, range )
-	AJM:UpdateBagInformation( characterName, slotsFree, totalSlots, range )
-end
-
-function AJM:SettingsUpdateBagInformationAll()
-	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateBagInformation( characterName, nil, nil, nil, nil )
-	end
-end
-
-function AJM:UpdateBagInformation( characterName, slotsFree, totalSlots, range ) --percent, range )
---	AJM:Print("Data", characterName, slotsFree, totalSlots, percent )
-	if CanDisplayTeamList() == false then
-		return
-	end
-	if AJM.db.showBagInformation == false then
-		return
-	end
-	characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
-	local characterStatusBar = AJM.characterStatusBar[characterName]
-	if characterStatusBar == nil then
-		return
-	end
-	local bagInformationFrame = characterStatusBar["bagInformationFrame"]
-	local bagInformationFrameText = characterStatusBar["bagInformationFrameText"]
-	if slotsFree == nil then
-		slotsFree = bagInformationFrame.slotsFree
-	end
-	if totalSlots == nil then
-		totalSlots = bagInformationFrame.totalSlots
-	end
---	if percent == nil or percent == false then
---		percent = bagInformationFrame.durability
---	end	
-	bagInformationFrame.slotsFree = slotsFree
-	bagInformationFrame.totalSlots = totalSlots
---	bagInformationFrame.durability = percent
-	if 	UnitInParty(Ambiguate( characterName, "none" ) ) == true then
-		if range == false then
-			bagInformationFrame:SetAlpha( 0.5 )
-		else
-			bagInformationFrame:SetAlpha( 1 )
-		end
-	else
-		bagInformationFrame:SetAlpha( 1 )
-	end
-	
-	--AJM:Print("test", percent)
-	--local durability = gsub(percent, "%.[^|]+", "")
-	--AJM:Print("hello", durability)
-	--text = text..L["Dura"]..L[" "]..tostring(gsub(percent, "%.[^|]+", "") )..L["%"]
-	local text = ""
-	if AJM.db.showBagFreeSlotsOnly == true then
-		--text = text..("\n")..L["BgS"]..L[" "]..tostring(slotsFree)
-		text = tostring(slotsFree)
-	else
-		--text = text..("\n")..L["BgS"]..L[" "]..tostring((totalSlots - slotsFree)).."/"..tostring(totalSlots)
-		text = tostring((totalSlots - slotsFree)).."/"..tostring(totalSlots)
-	end
-	bagInformationFrameText:SetText( text )	
-	--AJM:Print("freespace", slotsFree, totalSlots) --Debug
-end
---]]
--------------------------------------------------------------------------------------------------------------
--- Ilvl Information Updates.
+-- ToolTip Information Updates.
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:JambaRequestUpdate()		
@@ -2596,7 +2496,6 @@ function AJM:SettingsUpdateToonInfomation( characterName, characterLevel, charac
 	followBar.TotalBagSpace = totalSlots
 	followBar.Mail = mailText
 	followBar.CurrText = currText
-	
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -3081,35 +2980,52 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:UNIT_HEALTH( event, unit, ... )
-	AJM:SendHealthStatusUpdateCommand( unit, nil )
-	--AJM:Print("test2", unit)	
+	--AJM:SendHealthStatusUpdateCommand( unit, nil )
+	--AJM:Print("test2", unit)
+	if unit == "player" then
+		--AJM:Print("sendtest")
+		AJM:SendHealthStatusUpdateCommand()
+	end	
 end
 
 function AJM:UNIT_MAXHEALTH( event, unit, ... )
-	AJM:SendHealthStatusUpdateCommand( unit, nil )	
+	--AJM:SendHealthStatusUpdateCommand( unit, nil )
+	if unit == "player" then
+		--AJM:Print("sendtest2")
+		AJM:SendHealthStatusUpdateCommand()
+	end	
 end
 
 
-function AJM:SendHealthStatusUpdateCommand( unit )
+function AJM:SendHealthStatusUpdateCommand() -- (unit)
 	if AJM.db.showTeamList == true and AJM.db.showHealthStatus == true then
-		local playerHealth = UnitHealth( unit )
-		local playerMaxHealth = UnitHealthMax( unit )
-		local isDead = UnitIsDeadOrGhost( unit )
-		local characterName, characterRealm = UnitName( unit )
-		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+		local playerHealth = UnitHealth( "player" ) -- ( unit )
+		local playerMaxHealth = UnitHealthMax( "player" )
+		-- to be cleaned up. jennifer
 		--AJM:Print("HeathStats", character, playerHealth, playerMaxHealth, range)
-		AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth, isDead )
+		--AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth, isDead )
+		if AJM.db.showTeamListOnMasterOnly == true then
+			--AJM:Print( "SendHealthStatusUpdateCommand TO Master!" )
+			AJM:JambaSendCommandToMaster( AJM.COMMAND_HEALTH_STATUS_UPDATE, playerHealth, playerMaxHealth )
+		else
+			--AJM:Print( "SendHealthStatusUpdateCommand TO Team!" )
+			AJM:JambaSendCommandToTeam( AJM.COMMAND_HEALTH_STATUS_UPDATE, playerHealth, playerMaxHealth )
+		end
 	end
+end
+
+function AJM:ProcessUpdateHealthStatusMessage( characterName, playerHealth, playerMaxHealth )
+	AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth)
 end
 
 function AJM:SettingsUpdateHealthAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateHealthStatus( characterName, nil, nil, nil, nil )
+		AJM:UpdateHealthStatus( characterName, nil, nil )
 	end
 end
 
-function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, isDead )
-	--AJM:Print("testUpdate", characterName, playerHealth, playerMaxHealth, isDead) 
+function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
+	--AJM:Print("testUpdate", characterName, playerHealth, playerMaxHealth) 
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -3187,27 +3103,45 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:UNIT_POWER( event, unit, ... )
-	AJM:SendPowerStatusUpdateCommand( unit )
-end
-
-function AJM:UNIT_DISPLAYPOWER( event, unit, ... )
-	AJM:SendPowerStatusUpdateCommand( unit )
-end
-
-function AJM:SendPowerStatusUpdateCommand( unit )
-	if AJM.db.showTeamList == true and AJM.db.showPowerStatus == true then
-		local playerPower = UnitPower( unit )
-		local playerMaxPower = UnitPowerMax( unit )
-		local characterName, characterRealm = UnitName( unit )
-		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
-		--AJM:Print("power", character, playerPower, playerMaxPower )
-		AJM:UpdatePowerStatus( character, playerPower, playerMaxPower)
+	--AJM:SendPowerStatusUpdateCommand( unit )
+	if unit == "player" then
+ 		AJM:SendPowerStatusUpdateCommand()
 	end
 end
 
+function AJM:UNIT_DISPLAYPOWER( event, unit, ... )
+	--AJM:SendPowerStatusUpdateCommand( unit )
+	if unit == "player" then
+		AJM:SendPowerStatusUpdateCommand()
+	end
+end
+
+function AJM:SendPowerStatusUpdateCommand() --( unit )
+	if AJM.db.showTeamList == true and AJM.db.showPowerStatus == true then
+		local playerPower = UnitPower( "player" )
+		local playerMaxPower = UnitPowerMax( "player" )
+		--local characterName, characterRealm = UnitName( unit )
+		--local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+		--AJM:Print("power", character, playerPower, playerMaxPower )
+		--AJM:UpdatePowerStatus( character, playerPower, playerMaxPower)
+		if AJM.db.showTeamListOnMasterOnly == true then
+			--AJM:Print( "SendPowerStatusUpdateCommand TO Master!" )
+			AJM:JambaSendCommandToMaster( AJM.COMMAND_POWER_STATUS_UPDATE, playerPower, playerMaxPower )
+		else
+			--AJM:Print( "SendPowerStatusUpdateCommand TO Team!" )
+			AJM:JambaSendCommandToTeam( AJM.COMMAND_POWER_STATUS_UPDATE, playerPower, playerMaxPower )
+		end		
+	end
+end
+
+function AJM:ProcessUpdatePowerStatusMessage( characterName, playerPower, playerMaxPower )
+	AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
+end
+
+
 function AJM:SettingsUpdatePowerAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdatePowerStatus( characterName, nil, nil, nil )
+		AJM:UpdatePowerStatus( characterName, nil, nil )
 	end
 end
 
@@ -3541,9 +3475,10 @@ function AJM:UpdateAll(event, ...)
 	AJM:ScheduleTimer( "SendReputationStatusUpdateCommand", 2 )
 	AJM:ScheduleTimer( "SendInfomationUpdateCommand", 2 )
 	AJM:ScheduleTimer( "SendComboStatusUpdateCommand", 2 )
+	AJM:ScheduleTimer( "SendHealthStatusUpdateCommand", 2 )
 	for index, characterName in JambaApi.TeamListOrderedOnline() do
 		unit = Ambiguate( characterName, "none" )
-		AJM:ScheduleTimer( "SendHealthStatusUpdateCommand", 2, unit )
+	--	AJM:ScheduleTimer( "SendHealthStatusUpdateCommand", 2, unit )
 		AJM:ScheduleTimer( "SendPowerStatusUpdateCommand", 2, unit )
 	end
 end
@@ -3552,12 +3487,6 @@ end
 function AJM:OnMasterChanged( message, characterName )
 	AJM:SettingsRefresh()
 end
---[[
-function AJM:UNIT_LEVEL( event, ... )
-	--AJM:SettingsUpdateFollowTextAll()
-	AJM:SendIlvlInformationUpdateCommand()
-end]]
-
 
 function AJM:PLAYER_REGEN_ENABLED( event, ... )
 	if AJM.db.hideTeamListInCombat == true then
@@ -3585,7 +3514,6 @@ end
 
 function AJM:OnCharactersChanged()
 	AJM:RefreshTeamListControls()
-	--AJM:SendIlvlInformationUpdateCommand()
 end
 
 

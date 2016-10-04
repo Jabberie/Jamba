@@ -4,14 +4,30 @@ ChangeLogs:
 Jamba Version: 5.1.0
 WoW Game Version: 7.0.3
 File Version: 7.0.3-5.1.0
-Release Date: 21/09/2016
+Release Date: TBA	
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade
 
 *Jamba-Item-Use 
-	Now Adds and Removes. Artifact Power Items to the jamba Item_Use bar.
+	- Now Adds and Removes. Artifact Power Items to the jamba Item_Use bar.
+	- Should now make sure the item is not in the minions bag before removing the quest/artifact item.* beta-c
+
+*jamba-team
+	- Added Jamba Tag Invite, /jamba-team inviteTag <tag> (for use to make two partys of five.)
+	- Should not convent to raid if using more then 5 players and using a small tag party* (Beta-c, bug fix)	
+
+*Jamba-team display
+	- Players Health and Power will update when not in a party!** WIP needs testing.
+	- ToolTip has Currency Back! To set Currency use the show BackPack setting in the Currency Tab.	
+	
+*Jamba-Mount* Beta-c
+	- New Module
+	- Mounts and dismounts with the team.
+	- WIP report Bugs!
+	
+*Jamba-Quest* Beta-C
+	- Now forwards quest Unignore and Ignore to the team.
 	
 
-	
 ---------------------------
 Jamba Version: 5.0.4
 WoW Game Version: 7.0.3

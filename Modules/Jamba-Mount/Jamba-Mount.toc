@@ -1,0 +1,14 @@
+## Interface: 70000
+## Title: Jamba-Mount
+## Notes: Jamba-Mount
+## Author: Ebony
+## Version: 4.3
+## X-Category: Interface Enhancements
+## X-Child-Of: Jamba
+## Dependencies: Jamba
+## SavedVariables: JambaMountProfileDB
+## LoadOnDemand: 1
+Locales\Locales.xml
+JambaMount.lua
+
+

@@ -282,10 +282,13 @@ function AJM:UpdateQuestItemsInBar()
 			local itemLink,_,_,_,_,questItem = GetItemInfo( action )
 			--AJM:Print("Checking Item...", itemLink, action)
 			if questItem == "Quest" then
-				if AJM:IsInInventory( itemLink ) == false then
-				--AJM:Print("NOT IN BAGS", itemLink)
-					AJM.db.itemsAdvanced[iterateItems] = nil		
-				end
+				if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
+					if AJM:IsInInventory( itemLink ) == false then
+					--AJM:Print("NOT IN BAGS", itemLink)
+						AJM.db.itemsAdvanced[iterateItems] = nil	
+						AJM:JambaSendSettings()						
+					end
+				end	
 			end
 		end
 	end	
@@ -447,10 +450,13 @@ function AJM:UpdateArtifactItemsInBar()
 			LibGratuity:SetHyperlink( itemLink )
 			if LibGratuity:Find( ARTIFACT_POWER ) then
 				--AJM:Print("Found Item...", itemLink)
-				if AJM:IsInInventory( name ) == false then
-					--AJM:Print("NOT IN BAGS", itemLink)
-					AJM.db.itemsAdvanced[iterateItems] = nil
-					AJM:SettingsRefresh()
+				if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
+					if AJM:IsInInventory( name ) == false then
+						--AJM:Print("NOT IN BAGS", itemLink)
+						AJM.db.itemsAdvanced[iterateItems] = nil
+						AJM:SettingsRefresh()
+						AJM:JambaSendSettings()
+					end
 				end
 			end				
 		end
@@ -493,7 +499,7 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest)
 		end
 	end
 	if alreadyExists == false then
-		AJM:Print("test2", itemLink )
+		--AJM:Print("test2", itemLink )
 		for iterateItems = 1, AJM.db.numberOfItems, 1 do
 			itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
 			--Checks the items we talking about is in the bags of the player.
