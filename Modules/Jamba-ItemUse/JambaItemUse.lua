@@ -393,10 +393,11 @@ function AJM:CheckForQuestItemAndAddToBar()
 		for slot = 1,GetContainerNumSlots(bag),1 do 
 			local IsQuestItem,StartsQuest,_ = GetContainerItemQuestInfo(bag,slot)
 			local _,_,_,_,readable,_,itemLink = GetContainerItemInfo(bag,slot) -- readable???
-				if not IsQuestItem and StartsQuest then
-					local itemString = GetItemInfo(itemLink)
-					AJM:AddAnItemToTheBarIfNotExists( itemLink, true)
-				end
+				-- Quests now auto get started since 7.1 kinda making this usless.
+				--if not IsQuestItem and StartsQuest then
+					--local itemString = GetItemInfo(itemLink)
+					--AJM:AddAnItemToTheBarIfNotExists( itemLink, true)
+				--end
 			end
 		end 
 	for iterateQuests=1,GetNumQuestLogEntries() do

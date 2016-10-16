@@ -51,6 +51,7 @@ AJM.settings = {
 		barsAreStackedVertically = true,
 		teamListHorizontal = true,
 		showListTitle = false,
+		olnyShowInParty = false,
 		showCharacterPortrait = true,
 		characterPortraitWidth = 80,
 		showFollowStatus = true,
@@ -81,10 +82,6 @@ AJM.settings = {
 		comboStatusHeight = 10,
 		comboStatusShowValues = true,
 		comboStatusShowPercentage = true,		
---		showBagInformation = true,
---		showBagFreeSlotsOnly = true,
---		bagInformationWidth = 80,
---		bagInformationHeight = 25,
 		showToolTipInfo = true,
 --		ShowEquippedOnly = false,
 		framePoint = "LEFT",
@@ -154,13 +151,10 @@ end
 
 AJM.COMMAND_FOLLOW_STATUS_UPDATE = "FlwStsUpd"
 AJM.COMMAND_EXPERIENCE_STATUS_UPDATE = "ExpStsUpd"
---AJM.COMMAND_BAGINFORMATION_UPDATE = "BagInfoUpd"
 AJM.COMMAND_TOONINFORMATION_UPDATE = "IlvlInfoUpd"
 AJM.COMMAND_REPUTATION_STATUS_UPDATE = "RepStsUpd"
 AJM.COMMAND_COMBO_STATUS_UPDATE = "CboStsUpd"
 AJM.COMMAND_REQUEST_INFO = "SendInfo"
-AJM.COMMAND_POWER_STATUS_UPDATE = "PowStsUpd"
-AJM.COMMAND_HEALTH_STATUS_UPDATE = "heaStsUpd"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -194,16 +188,11 @@ local function GetCharacterHeight()
 	local heightExperienceStatus = 0
 	local heightHealthStatus = 0
 	local heightPowerStatus = 0
-	local heightComboStatus = 0	
---	local heightBagInformation = 0	
+	local heightComboStatus = 0		
 	local heightAllBars = 0
 	if AJM.db.showCharacterPortrait == true then
 		heightPortrait = AJM.db.characterPortraitWidth + AJM.db.teamListVerticalSpacing
 	end
---	if AJM.db.showBagInformation == true then
---		heightBagInformation = AJM.db.bagInformationHeight + AJM.db.teamListVerticalSpacing
---		heightAllBars = heightAllBars + heightBagInformation
---	end	
 	if AJM.db.showFollowStatus == true then
 		heightFollowStatus = AJM.db.followStatusHeight + AJM.db.barVerticalSpacing
 		heightAllBars = heightAllBars + heightFollowStatus
@@ -246,10 +235,6 @@ local function GetCharacterWidth()
 	if AJM.db.showCharacterPortrait == true then
 		widthPortrait = AJM.db.characterPortraitWidth + AJM.db.teamListHorizontalSpacing
 	end
---	if AJM.db.showBagInformation == true then
---		widthBagInformation = AJM.db.bagInformationWidth + AJM.db.teamListHorizontalSpacing
---		widthAllBars = widthAllBars + widthBagInformation
---	end	
 	if AJM.db.showFollowStatus == true then
 		widthFollowStatus = AJM.db.followStatusWidth + AJM.db.barHorizontalSpacing
 		widthAllBars = widthAllBars + widthFollowStatus
@@ -411,10 +396,18 @@ function AJM:RefreshTeamListControlsShow()
 	for index, characterName in JambaApi.TeamListOrdered() do
 		characterName = JambaUtilities:AddRealmToNameIfMissing ( characterName )
 		-- Is the team member online?
-		if JambaApi.GetCharacterOnlineStatus( characterName ) == true then
-		-- Yes, the team member is online, draw their status bars.
-			AJM:UpdateJambaTeamStatusBar( characterName, AJM.totalMembersDisplayed )		
-			AJM.totalMembersDisplayed = AJM.totalMembersDisplayed + 1
+	if JambaApi.GetCharacterOnlineStatus( characterName ) == true then
+		-- Checks the player is the party to hide the bar if needed.
+			if AJM.db.olnyShowInParty == true then
+				if UnitClass(Ambiguate( characterName, "none" ) ) then
+				-- Yes, the team member is online, draw their status bars.
+					AJM:UpdateJambaTeamStatusBar( characterName, AJM.totalMembersDisplayed )		
+					AJM.totalMembersDisplayed = AJM.totalMembersDisplayed + 1
+				end
+			else
+					AJM:UpdateJambaTeamStatusBar( characterName, AJM.totalMembersDisplayed )		
+					AJM.totalMembersDisplayed = AJM.totalMembersDisplayed + 1			
+			end
 		end
 	end
 	UpdateJambaTeamListDimensions()	
@@ -506,24 +499,6 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	portraitButtonClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	characterStatusBar["portraitButton"] = portraitButton
 	characterStatusBar["portraitButtonClick"] = portraitButtonClick
---[[
-	-- Set the bag information.
-	local bagInformationFrameName = AJM.globalFramePrefix.."BagInformationFrame"
-	local bagInformationFrame = CreateFrame( "Frame", bagInformationFrameName, parentFrame )
-	local bagInformationFrameText = bagInformationFrame:CreateFontString( bagInformationFrameName.."Text", "OVERLAY", "GameFontNormal" )
-	bagInformationFrameText:SetText( "999/999" )
-	bagInformationFrame:SetAlpha( 1 )
-	--bagInformationFrameText:SetPoint( "CENTER", bagInformationFrame, "CENTER", 0, 0 )
-	bagInformationFrameText:SetAllPoints()
-	bagInformationFrameText:SetJustifyH( "CENTER" )
-	bagInformationFrameText:SetJustifyV( "MIDDLE" )
-	bagInformationFrameText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
-	bagInformationFrame.slotsFree = 999
-	bagInformationFrame.totalSlots = 999
-	--bagInformationFrame.durability = 100
-	characterStatusBar["bagInformationFrame"] = bagInformationFrame
-	characterStatusBar["bagInformationFrameText"] = bagInformationFrameText
---]]
 	-- Set the follow bar.
 	local followName = AJM.globalFramePrefix.."FollowBar"
 	local followBar = CreateFrame( "StatusBar", followName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
@@ -830,7 +805,6 @@ function AJM:HideJambaTeamStatusBar( characterName )
 	-- Hide the bars.
 	characterStatusBar["portraitButton"]:Hide()
 	characterStatusBar["portraitButtonClick"]:Hide()
---	characterStatusBar["bagInformationFrame"]:Hide()
 	characterStatusBar["followBar"]:Hide()
 	characterStatusBar["followBarClick"]:Hide()
 	characterStatusBar["experienceBar"]:Hide()
@@ -1266,16 +1240,26 @@ local function SettingsCreateDisplayOptions( top )
 	-- Create appearance & layout.
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Appearance & Layout"], movingTop, true )
 	movingTop = movingTop - headingHeight
-		AJM.settingsControl.displayOptionsCheckBoxShowListTitle = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.displayOptionsCheckBoxShowListTitle = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		halfWidthSlider, 
+		thirdWidth, 
 		left, 
 		movingTop, 
 		L["Show Title"],
 		AJM.SettingsToggleShowTeamListTitle,
 		L["Show Team List Title"]
 	)
+	AJM.settingsControl.displayOptionsCheckBoxOlnyShowInParty = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		thirdWidth, 
+		left2, 
+		movingTop, 
+		L["Olny Show in Party"],
+		AJM.SettingsToggleOlnyShowinParty,
+		L["Olny Show Display-Team\nIn Party or Raid"]
+	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing
+	
 	AJM.settingsControl.displayOptionsCharactersPerBar = JambaHelperSettings:CreateSlider( 
 		AJM.settingsControl, 
 		halfWidthSlider, 
@@ -1717,47 +1701,6 @@ local function SettingsCreateDisplayOptions( top )
 	AJM.settingsControl.displayOptionsComboStatusHeightSlider:SetSliderValues( 10, 100, 1 )
 	AJM.settingsControl.displayOptionsComboStatusHeightSlider:SetCallback( "OnValueChanged", AJM.SettingsChangeComboStatusHeight )
 	movingTop = movingTop - sliderHeight - sectionSpacing
---[[
-	-- Create bag information status.
-	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Bag Information"], movingTop, true )
-	movingTop = movingTop - headingHeight
-	AJM.settingsControl.displayOptionsCheckBoxShowBagInformation = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		thirdWidth, 
-		left, 
-		movingTop, 
-		L["Show"],
-		AJM.SettingsToggleShowBagInformation
-	)	
-	AJM.settingsControl.displayOptionsCheckBoxShowFreeBagSlotsOnly = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		thirdWidth + thirdWidth, 
-		left2, 
-		movingTop, 
-		L["Only Show Free Bag Slots"],
-		AJM.SettingsToggleShowFreeBagSlotsOnly
-	)
-	movingTop = movingTop - checkBoxHeight - verticalSpacing
-	AJM.settingsControl.displayOptionsBagInformationWidthSlider = JambaHelperSettings:CreateSlider( 
-		AJM.settingsControl, 
-		halfWidthSlider, 
-		left, 
-		movingTop, 
-		L["Width"]
-	)
-	AJM.settingsControl.displayOptionsBagInformationWidthSlider:SetSliderValues( 15, 300, 1 )
-	AJM.settingsControl.displayOptionsBagInformationWidthSlider:SetCallback( "OnValueChanged", AJM.SettingsChangeBagInformationWidth )
-	AJM.settingsControl.displayOptionsBagInformationHeightSlider = JambaHelperSettings:CreateSlider( 
-		AJM.settingsControl, 
-		halfWidthSlider, 
-		column2left, 
-		movingTop, 
-		L["Height"]
-	)
-	AJM.settingsControl.displayOptionsBagInformationHeightSlider:SetSliderValues( 15, 100, 1 )
-	AJM.settingsControl.displayOptionsBagInformationHeightSlider:SetCallback( "OnValueChanged", AJM.SettingsChangeBagInformationHeight )	
-	movingTop = movingTop - sliderHeight - verticalSpacing
---]]
 	return movingTop
 end
 
@@ -1798,6 +1741,7 @@ function AJM:SettingsRefresh()
 --	AJM.settingsControl.displayOptionsCheckBoxStackVertically:SetValue( AJM.db.barsAreStackedVertically )
 --	AJM.settingsControl.displayOptionsCheckBoxTeamHorizontal:SetValue( AJM.db.teamListHorizontal )
 	AJM.settingsControl.displayOptionsCheckBoxShowListTitle:SetValue( AJM.db.showListTitle )
+	AJM.settingsControl.displayOptionsCheckBoxOlnyShowInParty:SetValue( AJM.db.olnyShowInParty )
 	AJM.settingsControl.displayOptionsTeamListTransparencySlider:SetValue( AJM.db.frameAlpha )
 	AJM.settingsControl.displayOptionsTeamListScaleSlider:SetValue( AJM.db.teamListScale )
 	AJM.settingsControl.displayOptionsTeamListMediaStatus:SetValue( AJM.db.statusBarTexture ) 
@@ -1840,10 +1784,6 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.displayOptionsComboStatusHeightSlider:SetValue( AJM.db.comboStatusHeight )	
 	AJM.settingsControl.displayOptionsBackgroundColourPicker:SetColor( AJM.db.frameBackgroundColourR, AJM.db.frameBackgroundColourG, AJM.db.frameBackgroundColourB, AJM.db.frameBackgroundColourA )
 	AJM.settingsControl.displayOptionsBorderColourPicker:SetColor( AJM.db.frameBorderColourR, AJM.db.frameBorderColourG, AJM.db.frameBorderColourB, AJM.db.frameBorderColourA )
---	AJM.settingsControl.displayOptionsCheckBoxShowBagInformation:SetValue( AJM.db.showBagInformation )
---	AJM.settingsControl.displayOptionsCheckBoxShowFreeBagSlotsOnly:SetValue( AJM.db.showBagFreeSlotsOnly )
---	AJM.settingsControl.displayOptionsBagInformationWidthSlider:SetValue( AJM.db.bagInformationWidth )
---	AJM.settingsControl.displayOptionsBagInformationHeightSlider:SetValue( AJM.db.bagInformationHeight )
 --	AJM.settingsControl.displayOptionsCheckBoxShowEquippedOnly:SetValue( AJM.db.ShowEquippedOnly )	
 	-- State.
 	-- Trying to change state in combat lockdown causes taint. Let's not do that. Eventually it would be nice to have a "proper state driven team display",
@@ -1856,6 +1796,7 @@ function AJM:SettingsRefresh()
 		--AJM.settingsControl.displayOptionsCheckBoxStackVertically:SetDisabled( not AJM.db.showTeamList )
 		--AJM.settingsControl.displayOptionsCheckBoxTeamHorizontal:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxShowListTitle:SetDisabled( not AJM.db.showTeamList )
+		AJM.settingsControl.displayOptionsCheckBoxOlnyShowInParty:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsTeamListScaleSlider:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsTeamListTransparencySlider:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsTeamListMediaStatus:SetDisabled( not AJM.db.showTeamList )
@@ -1898,10 +1839,6 @@ function AJM:SettingsRefresh()
 		AJM.settingsControl.displayOptionsComboStatusHeightSlider:SetDisabled( not AJM.db.showTeamList or not AJM.db.showComboStatus)
 		AJM.settingsControl.displayOptionsBackgroundColourPicker:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsBorderColourPicker:SetDisabled( not AJM.db.showTeamList )
---		AJM.settingsControl.displayOptionsCheckBoxShowBagInformation:SetDisabled( not AJM.db.showTeamList )
---		AJM.settingsControl.displayOptionsCheckBoxShowFreeBagSlotsOnly:SetDisabled( not AJM.db.showTeamList or not AJM.db.ShowBagInformationn)
---		AJM.settingsControl.displayOptionsBagInformationWidthSlider:SetDisabled( not AJM.db.showTeamList or not AJM.db.ShowBagInformation)
---		AJM.settingsControl.displayOptionsBagInformationHeightSlider:SetDisabled( not AJM.db.showTeamList or not AJM.db.ShowBagInformation)
 		AJM.settingsControl.displayOptionsCheckBoxShowToolTipInfo:SetDisabled( not AJM.db.showTeamList or not AJM.db.showFollowStatus )
 --		AJM.settingsControl.displayOptionsCheckBoxShowEquippedOnly:SetDisabled( not AJM.db.showTeamList or not AJM.db.showFollowStatus )
 		if AJM.teamListCreated == true then
@@ -1916,8 +1853,6 @@ function AJM:SettingsRefresh()
 			AJM:SettingsUpdateHealthAll()
 			AJM:SettingsUpdatePowerAll()
 			AJM:SettingsUpdateComboAll()
-			--AJM:SettingsUpdateBagInformationAll()
-			--AJM:SettingsUpdateIlvlInformationAll()
 		end
 	else
 		AJM.updateSettingsAfterCombat = true
@@ -1936,6 +1871,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		--AJM.db.barsAreStackedVertically = settings.barsAreStackedVertically
 		--AJM.db.teamListHorizontal = settings.teamListHorizontal
 		AJM.db.showListTitle = settings.showListTitle
+		AJM.db.olnyShowInParty = settings.olnyShowInParty
 		AJM.db.teamListScale = settings.teamListScale
 		AJM.db.statusBarTexture = settings.statusBarTexture
 		AJM.db.borderStyle = settings.borderStyle
@@ -1949,7 +1885,6 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.followStatusHeight = settings.followStatusHeight
 		AJM.db.followStatusShowName = settings.followStatusShowName
 		AJM.db.showToolTipInfo = settings.showToolTipInfo	
---		AJM.db.followStatusShowLevel = settings.followStatusShowLevel
 		AJM.db.showExperienceStatus = settings.showExperienceStatus
 		AJM.db.showXpStatus = settings.showXpStatus
 		AJM.db.showArtifactStatus = settings.showArtifactStatus
@@ -1974,12 +1909,6 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.comboStatusHeight = settings.comboStatusHeight		
 		AJM.db.comboStatusShowValues = settings.comboStatusShowValues
 		AJM.db.comboStatusShowPercentage = settings.comboStatusShowPercentage
---		AJM.db.showBagInformation = settings.showBagInformation
---		AJM.db.showBagFreeSlotsOnly = settings.showBagFreeSlotsOnly
---		AJM.db.bagInformationWidth = settings.bagInformationWidth
---		AJM.db.bagInformationHeight = settings.bagInformationHeight
-		--EBS
-		
 --		AJM.db.ShowEquippedOnly = settings.ShowEquippedOnly	
 		AJM.db.frameAlpha = settings.frameAlpha
 		AJM.db.framePoint = settings.framePoint
@@ -2050,6 +1979,11 @@ end
 
 function AJM:SettingsToggleShowTeamListTitle( event, checked )
 	AJM.db.showListTitle = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleOlnyShowinParty( event, checked )
+	AJM.db.olnyShowInParty = checked
 	AJM:SettingsRefresh()
 end
 
@@ -2269,29 +2203,6 @@ function AJM:SettingsBorderColourPickerChanged( event, r, g, b, a )
 end
 
 --[[
-function AJM:SettingsToggleShowBagInformation( event, checked )
-	AJM.db.showBagInformation = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsToggleShowFreeBagSlotsOnly( event, checked )
-	AJM.db.showBagFreeSlotsOnly = checked
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsChangeBagInformationWidth( event, value )
-	AJM.db.bagInformationWidth = tonumber( value )
-	AJM:SettingsRefresh()
-end
-
-function AJM:SettingsChangeBagInformationHeight( event, value )
-	AJM.db.bagInformationHeight = tonumber( value )
-	AJM:SettingsRefresh()
-end
---]]
---ilvl
-
---[[
 function AJM:SettingsToggleShowEquippedOnly( event, checked )
 	AJM.db.ShowEquippedOnly = checked
 	AJM:SettingsRefresh()
@@ -2319,12 +2230,6 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	end
 	if commandName == AJM.COMMAND_COMBO_STATUS_UPDATE then
 		AJM:ProcessUpdateComboStatusMessage( characterName, ... )
-	end	
-	if commandName == AJM.COMMAND_HEALTH_STATUS_UPDATE then
-		AJM:ProcessUpdateHealthStatusMessage( characterName, ... )
-	end
-	if commandName == AJM.COMMAND_POWER_STATUS_UPDATE then
-		AJM:ProcessUpdatePowerStatusMessage(characterName, ... )
 	end	
 	if commandName == AJM.COMMAND_REQUEST_INFO then
 		AJM.SendInfomationUpdateCommand()
@@ -2980,42 +2885,25 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:UNIT_HEALTH( event, unit, ... )
-	--AJM:SendHealthStatusUpdateCommand( unit, nil )
+	AJM:SendHealthStatusUpdateCommand( unit )
 	--AJM:Print("test2", unit)
-	if unit == "player" then
-		--AJM:Print("sendtest")
-		AJM:SendHealthStatusUpdateCommand()
-	end	
 end
 
 function AJM:UNIT_MAXHEALTH( event, unit, ... )
-	--AJM:SendHealthStatusUpdateCommand( unit, nil )
-	if unit == "player" then
-		--AJM:Print("sendtest2")
-		AJM:SendHealthStatusUpdateCommand()
-	end	
+	--AJM:Print("sendtest2")
+	AJM:SendHealthStatusUpdateCommand( unit )
 end
 
 
-function AJM:SendHealthStatusUpdateCommand() -- (unit)
+function AJM:SendHealthStatusUpdateCommand(unit)
 	if AJM.db.showTeamList == true and AJM.db.showHealthStatus == true then
-		local playerHealth = UnitHealth( "player" ) -- ( unit )
-		local playerMaxHealth = UnitHealthMax( "player" )
-		-- to be cleaned up. jennifer
-		--AJM:Print("HeathStats", character, playerHealth, playerMaxHealth, range)
-		--AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth, isDead )
-		if AJM.db.showTeamListOnMasterOnly == true then
-			--AJM:Print( "SendHealthStatusUpdateCommand TO Master!" )
-			AJM:JambaSendCommandToMaster( AJM.COMMAND_HEALTH_STATUS_UPDATE, playerHealth, playerMaxHealth )
-		else
-			--AJM:Print( "SendHealthStatusUpdateCommand TO Team!" )
-			AJM:JambaSendCommandToTeam( AJM.COMMAND_HEALTH_STATUS_UPDATE, playerHealth, playerMaxHealth )
-		end
+		local playerHealth = UnitHealth( unit )
+		local playerMaxHealth = UnitHealthMax( unit )
+		local characterName, characterRealm = UnitName( unit )
+		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+		--AJM:Print("HeathStats", character, playerHealth, playerMaxHealth)
+		AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth)
 	end
-end
-
-function AJM:ProcessUpdateHealthStatusMessage( characterName, playerHealth, playerMaxHealth )
-	AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth)
 end
 
 function AJM:SettingsUpdateHealthAll()
@@ -3026,6 +2914,9 @@ end
 
 function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
 	--AJM:Print("testUpdate", characterName, playerHealth, playerMaxHealth) 
+		if characterName == nil then
+		return
+	end
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -3103,41 +2994,23 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:UNIT_POWER( event, unit, ... )
-	--AJM:SendPowerStatusUpdateCommand( unit )
-	if unit == "player" then
- 		AJM:SendPowerStatusUpdateCommand()
-	end
+	AJM:SendPowerStatusUpdateCommand( unit )
 end
 
 function AJM:UNIT_DISPLAYPOWER( event, unit, ... )
-	--AJM:SendPowerStatusUpdateCommand( unit )
-	if unit == "player" then
-		AJM:SendPowerStatusUpdateCommand()
-	end
+	AJM:SendPowerStatusUpdateCommand( unit )
 end
 
-function AJM:SendPowerStatusUpdateCommand() --( unit )
+function AJM:SendPowerStatusUpdateCommand( unit )
 	if AJM.db.showTeamList == true and AJM.db.showPowerStatus == true then
-		local playerPower = UnitPower( "player" )
-		local playerMaxPower = UnitPowerMax( "player" )
-		--local characterName, characterRealm = UnitName( unit )
-		--local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+		local playerPower = UnitPower( unit )
+		local playerMaxPower = UnitPowerMax( unit )
+		local characterName, characterRealm = UnitName( unit )
+		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
 		--AJM:Print("power", character, playerPower, playerMaxPower )
-		--AJM:UpdatePowerStatus( character, playerPower, playerMaxPower)
-		if AJM.db.showTeamListOnMasterOnly == true then
-			--AJM:Print( "SendPowerStatusUpdateCommand TO Master!" )
-			AJM:JambaSendCommandToMaster( AJM.COMMAND_POWER_STATUS_UPDATE, playerPower, playerMaxPower )
-		else
-			--AJM:Print( "SendPowerStatusUpdateCommand TO Team!" )
-			AJM:JambaSendCommandToTeam( AJM.COMMAND_POWER_STATUS_UPDATE, playerPower, playerMaxPower )
-		end		
+		AJM:UpdatePowerStatus( character, playerPower, playerMaxPower)
 	end
 end
-
-function AJM:ProcessUpdatePowerStatusMessage( characterName, playerPower, playerMaxPower )
-	AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower )
-end
-
 
 function AJM:SettingsUpdatePowerAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
@@ -3147,6 +3020,9 @@ end
 
 function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower)
 	--AJM:Print("testPOwer", characterName, playerPower, playerMaxPower )
+	if characterName == nil then
+		return
+	end
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -3442,6 +3318,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "HONOR_XP_UPDATE" )
 	AJM:RegisterEvent( "HONOR_LEVEL_UPDATE" )
 	AJM:RegisterEvent( "HONOR_PRESTIGE_UPDATE" )
+	AJM:RegisterEvent( "GROUP_ROSTER_UPDATE" )
 	AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_Registered" )
     AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_SetGlobal" )	
 	AJM:RegisterMessage( JambaApi.MESSAGE_TEAM_CHARACTER_ADDED, "OnCharactersChanged" )
@@ -3450,6 +3327,7 @@ function AJM:OnEnable()
 	AJM:RegisterMessage( JambaApi.MESSAGE_TEAM_MASTER_CHANGED, "OnMasterChanged" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_ONLINE, "OnCharactersChanged")
 	AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_OFFLINE, "OnCharactersChanged")
+	
 	AJM:SecureHook( "SetWatchedFactionIndex" )
 	AJM:ScheduleTimer( "RefreshTeamListControls", 3 )
 	AJM:ScheduleTimer( "SendExperienceStatusUpdateCommand", 5 )
@@ -3475,17 +3353,24 @@ function AJM:UpdateAll(event, ...)
 	AJM:ScheduleTimer( "SendReputationStatusUpdateCommand", 2 )
 	AJM:ScheduleTimer( "SendInfomationUpdateCommand", 2 )
 	AJM:ScheduleTimer( "SendComboStatusUpdateCommand", 2 )
-	AJM:ScheduleTimer( "SendHealthStatusUpdateCommand", 2 )
-	for index, characterName in JambaApi.TeamListOrderedOnline() do
-		unit = Ambiguate( characterName, "none" )
-	--	AJM:ScheduleTimer( "SendHealthStatusUpdateCommand", 2, unit )
-		AJM:ScheduleTimer( "SendPowerStatusUpdateCommand", 2, unit )
-	end
 end
 
 
 function AJM:OnMasterChanged( message, characterName )
 	AJM:SettingsRefresh()
+end
+
+function AJM:GROUP_ROSTER_UPDATE()
+	AJM:ScheduleTimer( "RefreshTeamListControls", 1 )
+	AJM:ScheduleTimer( "SendExperienceStatusUpdateCommand", 1 )
+	AJM:ScheduleTimer( "SendReputationStatusUpdateCommand", 1 )
+	AJM:ScheduleTimer( "SendInfomationUpdateCommand", 1 )
+	AJM:ScheduleTimer( "SendComboStatusUpdateCommand", 1 )
+	for index, characterName in JambaApi.TeamListOrderedOnline() do
+		unit = Ambiguate( characterName, "none" )
+		AJM:ScheduleTimer( "SendHealthStatusUpdateCommand", 2, unit )
+		AJM:ScheduleTimer( "SendPowerStatusUpdateCommand", 2, unit )
+	end
 end
 
 function AJM:PLAYER_REGEN_ENABLED( event, ... )

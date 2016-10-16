@@ -81,6 +81,9 @@ L["Currency:"] = true
 L["Unknown Sender"] = true
 L["Show ToolTip"] = true
 L["Characters Per Bar"] = true
+L["Olny Show in Party"] = true
+L["Olny Show Display-Team\nIn Party or Raid"] = true
+
 --Help System
 
 L["Show Team List"] = true
