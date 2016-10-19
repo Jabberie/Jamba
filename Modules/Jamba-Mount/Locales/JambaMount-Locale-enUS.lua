@@ -16,6 +16,7 @@ L["Push Settings"] = true
 L["Push the Mount settings to all characters in the team."] = true
 L["Mount with Team"] = true
 L["Dismount with Team"] = true
+L["Olny Dismount's from Master"] = true
 L["Olny Mount when in Range"] = true
 L["Message Area"]  = true
 L["Send Warning Area"]  = true

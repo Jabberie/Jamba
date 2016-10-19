@@ -30,7 +30,12 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase
 *Jamba-Mount* Beta-c
 	- New Module
 	- Mounts and dismounts with the team.
-	- WIP report Bugs!
+	- Holding Shift key down will stop the minions from mounting. - BetaE
+	- Added a Option for minions to dismount olny if the master dismounts. -BetaE
+	- Holding Shift key down will stop the minions dismounting
+
+*Jamba-follow Beta-E
+	- nolonger warns if a passenger in a vehicle.
 	
 *Jamba-Quest* Beta-C
 	- Now forwards quest Unignore and Ignore to the team.

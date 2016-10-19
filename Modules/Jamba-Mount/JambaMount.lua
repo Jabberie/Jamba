@@ -33,6 +33,7 @@ AJM.settings = {
 	profile = {
 		mountWithTeam = true,
 		dismountWithTeam = true,
+		dismountWithMaster = true,
 		mountInRange = false,
 		--mountName = nil,
 		--messageArea = JambaApi.DefaultMessageArea(),
@@ -155,6 +156,15 @@ function AJM:SettingsCreateMount( top )
 		AJM.SettingsToggleDisMountWithTeam
 	)	
 	movingTop = movingTop - headingHeight
+	AJM.settingsControl.checkBoxDismountWithMaster = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop,
+		L["Olny Dismount's from Master"],
+		AJM.SettingsToggleDisMountWithMaster
+	)	
+	movingTop = movingTop - headingHeight
 	AJM.settingsControl.checkBoxMountInRange = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -216,6 +226,11 @@ function AJM:SettingsToggleDisMountWithTeam( event, checked )
 	AJM:SettingsRefresh()
 end
 
+function AJM:SettingsToggleDisMountWithMaster( event, checked )
+	AJM.db.dismountWithMaster = checked
+	AJM:SettingsRefresh()
+end
+
 function AJM:SettingsToggleMountInRange( event, checked )
 	AJM.db.mountInRange = checked
 	AJM:SettingsRefresh()
@@ -227,6 +242,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		-- Update the settings.
 		AJM.db.mountWithTeam = settings.mountWithTeam
 		AJM.db.dismountWithTeam = settings.dismountWithTeam
+		AJM.db.dismountWithMaster = settings.dismountWithMaster
 		AJM.db.mountInRange = settings.mountInRange
 		AJM.db.messageArea = settings.messageArea
 		AJM.db.warningArea = settings.warningArea
@@ -249,9 +265,15 @@ end
 function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxMountWithTeam:SetValue( AJM.db.mountWithTeam )
 	AJM.settingsControl.checkBoxDismountWithTeam:SetValue( AJM.db.dismountWithTeam )
+	AJM.settingsControl.checkBoxDismountWithMaster:SetValue( AJM.db.dismountWithMaster )
 	AJM.settingsControl.checkBoxMountInRange:SetValue( AJM.db.mountInRange )
 	--AJM.settingsControl.dropdownMessageArea:SetValue( AJM.db.messageArea )
 	AJM.settingsControl.dropdownWarningArea:SetValue( AJM.db.warningArea )
+	-- Set state.
+	--AJM.settingsControl.checkBoxMountWithTeam:SetDisabled( not AJM.db.mountWithTeam )
+	AJM.settingsControl.checkBoxDismountWithTeam:SetDisabled( not AJM.db.mountWithTeam )
+	AJM.settingsControl.checkBoxDismountWithMaster:SetDisabled( not AJM.db.dismountWithTeam or not AJM.db.mountWithTeam )
+	AJM.settingsControl.checkBoxMountInRange:SetDisabled( not AJM.db.mountWithTeam )
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -268,9 +290,11 @@ function AJM:UNIT_SPELLCAST_START(event, unitID, spell, rank, lineID, spellID, .
 			--AJM:Print("Test", spell, creatureName)
 			if spell == creatureName then
 				--AJM:Print("SendtoTeam", "name", creatureName, "id", mountID)
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_ME, creatureName, mountID )
-				AJM.castingMount = creatureName
-				break	
+				if IsShiftKeyDown() == false then
+					AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_ME, creatureName, mountID )
+					AJM.castingMount = creatureName
+					break	
+				end	
 			end
 		end	
 	end
@@ -296,13 +320,26 @@ end
 
 function AJM:UNIT_AURA(event, unitID, ... )
 	--AJM:Print("tester", unitID, AJM.isMounted)
-	if unitID ~= "player" or AJM.isMounted == nil or AJM.db.mountWithTeam == false then
+	if unitID ~= "player" or AJM.isMounted == nil or AJM.db.dismountWithTeam == false then
         return
     end
 	if not UnitBuff( unitID, AJM.isMounted) then
 		--AJM:Print("I have Dismounted - Send to team!")
-		AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_DISMOUNT )
-		AJM:UnregisterEvent("UNIT_AURA")
+		if AJM.db.dismountWithMaster == true then
+			if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
+				if IsShiftKeyDown() == false then	
+					--AJM:Print("test")
+					AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_DISMOUNT )
+					AJM:UnregisterEvent("UNIT_AURA")
+				end		
+			else	
+				--AJM:Print("test1")
+				return
+			end
+		else
+			AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_DISMOUNT )
+			AJM:UnregisterEvent("UNIT_AURA")
+		end		
 	end
 end
 

@@ -794,6 +794,10 @@ function AJM:AutoFollowEndSend()
 	if AJM.db.doNotWarnFollowBreakInCombat == true and AJM.outOfCombat == false then
 		canWarn = false
 	end
+	--Do not warn if a passenger in a vehicle.
+	if UnitInVehicle("Player") == true and UnitControllingVehicle("player") == false then
+		canWarn = false
+	end
 	-- Do not warn if any other members in combat?
 	if AJM.db.doNotWarnFollowBreakMembersInCombat == true and AJM:AreTeamMembersInCombat() == true then
 		canWarn = false
