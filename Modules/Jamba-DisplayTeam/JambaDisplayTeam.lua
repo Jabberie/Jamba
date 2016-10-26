@@ -2890,12 +2890,15 @@ function AJM:UNIT_HEALTH( event, unit, ... )
 end
 
 function AJM:UNIT_MAXHEALTH( event, unit, ... )
-	--AJM:Print("sendtest2")
+	--AJM:Print("sendtest2", unit )
 	AJM:SendHealthStatusUpdateCommand( unit )
 end
 
 
 function AJM:SendHealthStatusUpdateCommand(unit)
+	if unit == nil then
+		return
+	end	
 	if AJM.db.showTeamList == true and AJM.db.showHealthStatus == true then
 		local playerHealth = UnitHealth( unit )
 		local playerMaxHealth = UnitHealthMax( unit )
