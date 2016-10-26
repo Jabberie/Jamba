@@ -1,8 +1,8 @@
-## Interface: 70000
+## Interface: 70100
 ## Title: Jamba-Macro
 ## Notes: Jamba-Macro
 ## Author: Ebony, Former Author: Jafula
-## Version: 7.0.3-5.1.0
+## Version: 7.1.0-5.1.0
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

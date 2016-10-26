@@ -61,7 +61,7 @@ AJM.settings = {
 		borderStyle = L["Blizzard Tooltip"],
 		backgroundStyle = L["Blizzard Dialog Background"],
 		itemUseScale = 1,
-		itemUseTitleHeight = 2,
+		itemUseTitleHeight = 25,
 		itemUseVerticalSpacing = 3,
 		itemUseHorizontalSpacing = 2,
 		autoAddQuestItemsToBar = true,
@@ -218,6 +218,14 @@ local function CreateJambaItemUseFrame()
 	frame:SetAlpha(AJM.db.frameAlpha)
 	-- Set the global frame reference for this frame.
 	JambaItemUseFrame = frame
+	-- Remove unsued items --test
+	local updateButton = CreateFrame( "Button", "ButtonUpdate", frame, "UIPanelButtonTemplate" )
+	updateButton:SetScript( "OnClick", function() AJM:UpdateArtifactItemsInBar() end )
+	updateButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", -4, -3 )
+	updateButton:SetHeight( 30 )
+	updateButton:SetWidth( 120 )
+	updateButton:SetText( L["Update Artifact"] )	
+	
 	AJM:SettingsUpdateBorderStyle()	
 	AJM.itemUseCreated = true
 end
@@ -389,6 +397,7 @@ end
 
 --ebony test Using the wowapi and not the scanning of tooltips
 function AJM:CheckForQuestItemAndAddToBar()
+	--[[
 	for bag = 0,4,1 do 
 		for slot = 1,GetContainerNumSlots(bag),1 do 
 			local IsQuestItem,StartsQuest,_ = GetContainerItemQuestInfo(bag,slot)
@@ -399,7 +408,8 @@ function AJM:CheckForQuestItemAndAddToBar()
 					--AJM:AddAnItemToTheBarIfNotExists( itemLink, true)
 				--end
 			end
-		end 
+		end
+	]]		
 	for iterateQuests=1,GetNumQuestLogEntries() do
 	local questLogTitleText,_,_,_,isHeader = GetQuestLogTitle(iterateQuests)
 		if not isHeader then
@@ -938,7 +948,6 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "PLAYER_REGEN_DISABLED" )
 	AJM:RegisterEvent( "BAG_UPDATE" )
 	AJM:RegisterEvent( "ITEM_PUSH" )
-	AJM:RegisterEvent( "PLAYER_XP_UPDATE" )
 	AJM:RegisterEvent( "UNIT_QUEST_LOG_CHANGED", "QUEST_UPDATE" )
 	AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_Registered" )
     AJM.SharedMedia.RegisterCallback( AJM, "LibSharedMedia_SetGlobal" )	
@@ -1031,16 +1040,10 @@ function AJM:PLAYER_REGEN_DISABLED()
 	end
 end
 
-function AJM:PLAYER_XP_UPDATE()
-	if not InCombatLockdown() then
-		AJM:ScheduleTimer( "UpdateArtifactItemsInBar", 1 )
-	end
-end	
-
 function AJM:BAG_UPDATE()
 	if not InCombatLockdown() then
 		AJM:UpdateItemsInBar()
-		AJM:ScheduleTimer( "UpdateArtifactItemsInBar", 1 )
+		--AJM:ScheduleTimer( "UpdateArtifactItemsInBar", 1 )
 	end
 end
 

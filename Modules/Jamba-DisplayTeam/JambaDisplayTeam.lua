@@ -3119,10 +3119,6 @@ function AJM:RUNE_POWER_UPDATE( event, ...)
 	AJM:SendComboStatusUpdateCommand()
 end
 
-function AJM:PLAYER_TALENT_UPDATE(event, ...)
-	AJM:SendComboStatusUpdateCommand()	
-end
-
 function AJM:SendComboStatusUpdateCommand()
 	--AJM:Print("test")
 	if AJM.db.showTeamList == true and AJM.db.showComboStatus == true then
@@ -3395,6 +3391,11 @@ function AJM:PLAYER_REGEN_DISABLED( event, ... )
 	if AJM.db.hideTeamListInCombat == true then
 		JambaDisplayTeamListFrame:Hide()
 	end
+end
+
+function AJM:PLAYER_TALENT_UPDATE(event, ...)
+	AJM:SendComboStatusUpdateCommand()
+	AJM:ScheduleTimer( "SendExperienceStatusUpdateCommand", 1 )
 end
 
 function AJM:OnCharactersChanged()

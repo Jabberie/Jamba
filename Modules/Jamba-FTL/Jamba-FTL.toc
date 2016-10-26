@@ -1,8 +1,8 @@
-## Interface: 70000
+## Interface: 70100
 ## Title: JambaFTL
 ## Notes: JambaFTL
 ## Author: olipcs (although most of the code is originaly from Jafula) (any changes added to support 4.0.5 from ebony!)
-## Version: 7.0.3-5.1.0
+## Version: 7.1.0-5.1.0
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

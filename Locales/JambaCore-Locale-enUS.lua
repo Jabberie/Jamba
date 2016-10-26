@@ -93,15 +93,15 @@ L["Full Change Log"] = true
 L["Full ChangeLog"] = true
 L["ChangeLog"] = true
 L["Shows the Full changelog\nOpens a new Frame."] = true
-L["Text1"] = "Welcome to Legion 7.0.3!" 
+L["Text1"] = "Welcome to Legion 7.1.0!" 
 L["Text2"] = "" 
-L["Text3"] = "Jamba Has Had a Lot of changes here is a few important ones to check out"
+L["Text3"] = "Jamba Has Had a few changes for 7.1 to check out"
 L["Text4"] = ""
-L["Text5"] = "Artifact Power is now Auto added to to the item Use bar!"
+L["Text5"] = "Jamba-Mount one button to mount all the team."
 L["Text6"] = ""
-L["Text7"] = ""
+L["Text7"] = "Artifact Power is now Auto added to to the item Use bar!"
 L["Text8"] = ""
-L["Text9"] = ""
+L["Text9"] = "You can not use jamba to invite groups with tags."
 L["Text10"] = ""
 
 

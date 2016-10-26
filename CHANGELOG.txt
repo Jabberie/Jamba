@@ -2,30 +2,31 @@
 ChangeLogs:
 ---------------------------
 Jamba Version: 5.1.0
-WoW Game Version: 7.0.3
-File Version: 7.0.3-5.1.0
-Release Date: TBA	
+WoW Game Version: 7.1.0
+File Version: 7.1.0-5.1.0
+Release Date: 26/10/2016	
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade
 
+*jamba-core
+	- Updated for patch 7.1
+
+
 *Jamba-Item-Use 
-	- Now Adds and Removes. Artifact Power Items to the jamba Item_Use bar.
-	- Should now make sure the item is not in the minions bag before removing the quest/artifact item.*beta-c
-	- Nolonger adds quest items that starts quests, Was changed to Auto-Pickup quests in WoW-7.0.3. *beta-d
+	- Now Adds Artifact Power Items to the jamba Item_Use bar.
+	- Added a Button to remove all artifact items, nolonger updates on its own*
+		* Developer note: This auto update was not working great with Clones not having the same item. 
+	- Nolonger adds quest items that starts quests, Quests was changed to Auto-Pickup quests in WoW-7.0.3.
 	
 
 *jamba-team
-	- Added Jamba Tag Invite, /jamba-team inviteTag <tag> (for use to make two partys of five.)
-	- Should not convent to raid if using more then 5 players and using a small tag party* (Beta-c, bug fix)	
-
-*Jamba-team display
-	------- Players Health and Power will update when not in a party!** WIP needs testing. --- Removed Beta-d*
-		Developers’ Note: Unfortunately the amount of data that is sent when players HP/Mana is updated to the 
-		communication channels is too much for the game to handle and therefore these changes will have to be undone
-		
-	- ToolTip has Currency Back! To set Currency use the show BackPack setting in the Currency Tab.	
-	- Added a New option to Olny show the Display-Team in when in a party/raid.
-	- Should now updated Team HP/Mana When you join a party. - Beta-d
+	- Added Jamba Tag Invite, /jamba-team inviteTag <tag> (for use to make two partys of five. or party of the same class etc.)
+	- Should not convent to raid if using more then 5 players and using a small tag party
 	
+*Jamba-team display
+	- ToolTip has Currency Back! To set Currency use the show BackPack setting in the Currency Tab.	
+	- Added a New option to olny show the Display-Team in when in a party/raid.
+	- Should now updated Team HP/Mana When you join a party.
+	- Should now updated Artifact XP power when you change spec.
 	
 *Jamba-Mount* Beta-c
 	- New Module
@@ -34,12 +35,11 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase
 	- Added a Option for minions to dismount olny if the master dismounts. -BetaE
 	- Holding Shift key down will stop the minions dismounting
 
-*Jamba-follow Beta-E
-	- nolonger warns if a passenger in a vehicle.
+*Jamba-follow
+	- nolonger warns if a passenger in a vehicle. (When you mount a 2 seater mount.)
 	
-*Jamba-Quest* Beta-C
+*Jamba-Quest*
 	- Now forwards quest Unignore and Ignore to the team.
-	
 
 ---------------------------
 Jamba Version: 5.0.4
