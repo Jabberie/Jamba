@@ -61,7 +61,7 @@ AJM.settings = {
 		borderStyle = L["Blizzard Tooltip"],
 		backgroundStyle = L["Blizzard Dialog Background"],
 		itemUseScale = 1,
-		itemUseTitleHeight = 25,
+		itemUseTitleHeight = 3,
 		itemUseVerticalSpacing = 3,
 		itemUseHorizontalSpacing = 2,
 		autoAddQuestItemsToBar = true,
@@ -206,7 +206,15 @@ local function CreateJambaItemUseFrame()
 			AJM.db.frameXOffset = xOffset
 			AJM.db.frameYOffset = yOffset
 		end	)	
-	frame:ClearAllPoints()
+	-- Artifact Remove Buttion
+		local updateButton = CreateFrame( "Button", "ButtonUpdate", frame, "UIPanelButtonTemplate" )
+		updateButton:SetScript( "OnClick", function() AJM:UpdateArtifactItemsInBar() end )
+		updateButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", -4, -3 )
+		updateButton:SetHeight( 30 )
+		updateButton:SetWidth( 120 )
+		updateButton:SetText( L["Update Artifact"] )	
+		ArtifactUpdateButton = updateButton
+		frame:ClearAllPoints()
 	frame:SetPoint( AJM.db.framePoint, UIParent, AJM.db.frameRelativePoint, AJM.db.frameXOffset, AJM.db.frameYOffset )
 	frame:SetBackdrop( {
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", 
@@ -219,16 +227,26 @@ local function CreateJambaItemUseFrame()
 	-- Set the global frame reference for this frame.
 	JambaItemUseFrame = frame
 	-- Remove unsued items --test
-	local updateButton = CreateFrame( "Button", "ButtonUpdate", frame, "UIPanelButtonTemplate" )
-	updateButton:SetScript( "OnClick", function() AJM:UpdateArtifactItemsInBar() end )
-	updateButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", -4, -3 )
-	updateButton:SetHeight( 30 )
-	updateButton:SetWidth( 120 )
-	updateButton:SetText( L["Update Artifact"] )	
-	
 	AJM:SettingsUpdateBorderStyle()	
 	AJM.itemUseCreated = true
+	AJM.UpdateHeight()
 end
+
+function AJM:UpdateHeight()
+	--local frame = JambaItemUseFrame
+	if AJM.db.autoAddArtifactItemsToBar == true then
+		AJM.db.itemUseTitleHeight = 2
+		local newHeight = AJM.db.itemUseTitleHeight + 25
+		ArtifactUpdateButton:Show()
+		return newHeight
+	else
+		AJM.db.itemUseTitleHeight = 2
+		oldHeight = AJM.db.itemUseTitleHeight
+		ArtifactUpdateButton:Hide()
+		return oldHeight
+	end	
+end
+
 
 function AJM:ShowItemUseCommand()
 	AJM.db.showItemUse = true
@@ -553,7 +571,8 @@ function AJM:RefreshItemUseControls()
 		row = math.floor((iterateItems - 1) / itemsPerRow)
 		rowLeftModifier = math.floor((iterateItems-1) % itemsPerRow)
 		positionLeft = 6 + (AJM.itemSize * rowLeftModifier) + (AJM.db.itemUseHorizontalSpacing * rowLeftModifier)
-		positionTop = -AJM.db.itemUseTitleHeight - (AJM.db.itemUseVerticalSpacing * 2) - (row * AJM.itemSize) - (row * AJM.db.itemUseVerticalSpacing)
+		local getHeight = AJM.UpdateHeight()
+		positionTop = -getHeight - (AJM.db.itemUseVerticalSpacing * 2) - (row * AJM.itemSize) - (row * AJM.db.itemUseVerticalSpacing)
 		containerButton:SetWidth( AJM.itemSize )
 		containerButton:SetHeight( AJM.itemSize )
 		containerButton:SetPoint( "TOPLEFT", parentFrame, "TOPLEFT", positionLeft, positionTop )
@@ -566,7 +585,8 @@ function AJM:UpdateJambaItemUseDimensions()
 	local frame = JambaItemUseFrame
 	local itemsPerRow = AJM.db.numberOfItems / AJM.db.numberOfRows
 	frame:SetWidth( 5 + (AJM.db.itemUseHorizontalSpacing * (3 + itemsPerRow-1)) + (AJM.itemSize * itemsPerRow) )
-	frame:SetHeight( AJM.db.itemUseTitleHeight + (AJM.itemSize * AJM.db.numberOfRows) + (AJM.db.itemUseVerticalSpacing * AJM.db.numberOfRows) + (AJM.db.itemUseVerticalSpacing * 3))
+	local getHeight = AJM.UpdateHeight()
+	frame:SetHeight( getHeight + (AJM.itemSize * AJM.db.numberOfRows) + (AJM.db.itemUseVerticalSpacing * AJM.db.numberOfRows) + (AJM.db.itemUseVerticalSpacing * 3))
 	frame:SetScale( AJM.db.itemUseScale )
 end
 
@@ -824,6 +844,7 @@ function AJM:SettingsRefresh()
 			AJM:SettingsUpdateBorderStyle()
 			AJM:SetItemUseVisibility()
 			AJM:UpdateItemsInBar()
+			AJM:UpdateHeight()
 		end
 	else
 		AJM.updateSettingsAfterCombat = true
