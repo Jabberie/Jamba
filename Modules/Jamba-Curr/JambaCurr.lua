@@ -60,7 +60,7 @@ AJM.currTypes.SealofBrokenFate = 1273
 AJM.currTypes.ShadowyCoins = 1154
 AJM.currTypes.SightlessEye = 1149
 AJM.currTypes.TimeWornArtifact = 1268
-
+AJM.currTypes.CuriousCoin = 1275
 
 -------------------------------------- End of edit --------------------------------------------------------------
 

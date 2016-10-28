@@ -461,13 +461,11 @@ function AJM:UpdateArtifactItemsInBar()
 			LibGratuity:SetHyperlink( itemLink )
 			if LibGratuity:Find( ARTIFACT_POWER ) then
 				--AJM:Print("Found Item...", itemLink)
-				if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
-					if AJM:IsInInventory( name ) == false then
-						--AJM:Print("NOT IN BAGS", itemLink)
-						AJM.db.itemsAdvanced[iterateItems] = nil
-						AJM:SettingsRefresh()
-						AJM:JambaSendSettings()
-					end
+				if AJM:IsInInventory( name ) == false then
+					--AJM:Print("NOT IN BAGS", itemLink)
+					AJM.db.itemsAdvanced[iterateItems] = nil
+					AJM:SettingsRefresh()
+					AJM:JambaSendSettings()
 				end
 			end				
 		end
@@ -1043,13 +1041,15 @@ end
 function AJM:BAG_UPDATE()
 	if not InCombatLockdown() then
 		AJM:UpdateItemsInBar()
+		AJM:UpdateQuestItemsInBar()
 		--AJM:ScheduleTimer( "UpdateArtifactItemsInBar", 1 )
 	end
 end
 
 function AJM:QUEST_UPDATE()
 	if not InCombatLockdown() then
-		AJM:UpdateQuestItemsInBar()	end
+		AJM:UpdateQuestItemsInBar()	
+	end
 end
 
 
