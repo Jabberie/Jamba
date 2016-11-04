@@ -1075,10 +1075,10 @@ end
 
 
 function AJM:ITEM_PUSH()
-	if AJM.db.autoAddQuestItemsToBar == true then
+	if AJM.db.autoAddQuestItemsToBar == true or AJM.db.showItemUse == false then 
 		AJM:ScheduleTimer( "CheckForQuestItemAndAddToBar", 1 )
 	end
-	if AJM.db.autoAddArtifactItemsToBar == true then
+	if AJM.db.autoAddArtifactItemsToBar == true or AJM.db.showItemUse == false then
 		AJM:ScheduleTimer( "CheckForArtifactItemAndAddToBar", 1 )
 	end	
 end
