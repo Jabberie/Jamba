@@ -16,9 +16,11 @@ local AJM = LibStub( "AceAddon-3.0" ):NewAddon(
 -- Get the Jamba Utilities Library.
 local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
-local LibBagUtils = LibStub:GetLibrary( "LibBagUtils-1.0" )
-local LibGratuity = LibStub( "LibGratuity-3.0" )
+--local LibBagUtils = LibStub:GetLibrary( "LibBagUtils-1.0" )
+--local LibGratuity = LibStub( "LibGratuity-3.0" )
 local LibActionButton = LibStub( "LibActionButtonJamba-1.0" )
+local tooltipName = "AJMScanner"
+local tooltipScanner = CreateFrame("GameTooltip", tooltipName, nil, "GameTooltipTemplate")
 AJM.SharedMedia = LibStub( "LibSharedMedia-3.0" )
 
 --  Constants and Locale for this module.
@@ -448,15 +450,22 @@ end
 
 -- Adds artifact power items to item bar.
 function AJM:CheckForArtifactItemAndAddToBar()
-	for bag, slot, link in LibBagUtils:Iterate( "BAGS" ) do
-		if link ~= nil and bag ~= -2 then
-			LibGratuity:SetHyperlink( link )
-			if LibGratuity:Find( ARTIFACT_POWER ) then
-				--AJM:Print("artifactPowerItems", bag, slot, link)
-				AJM:AddAnItemToTheBarIfNotExists( link, false )
-			end	
+	for bag = 0, NUM_BAG_SLOTS do
+		for slot = 1, GetContainerNumSlots(bag) do
+			local itemLink = GetContainerItemLink(bag, slot)
+			--AJM:Print("bagcheck", itemLink)
+			if itemLink and itemLink:match("item:%d") then
+				tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")
+				tooltipScanner:SetHyperlink(itemLink)
+				--AJM:Print("scanTooltip", itemLink)
+				local tooltipText = _G[tooltipName.."TextLeft2"]:GetText()
+				if tooltipText and tooltipText:match(ARTIFACT_POWER) then
+					--AJM:Print("artifactPowerFound", itemLink)
+					AJM:AddAnItemToTheBarIfNotExists( itemLink, false )
+				end
+			end
 		end
-	end	
+	end
 end		
 
 --Removes artifact power after used.
@@ -1075,12 +1084,15 @@ end
 
 
 function AJM:ITEM_PUSH()
-	if AJM.db.autoAddQuestItemsToBar == true or AJM.db.showItemUse == false then 
+	if AJM.db.showItemUse == false then
+		return
+	end
+	if AJM.db.autoAddQuestItemsToBar == true then
 		AJM:ScheduleTimer( "CheckForQuestItemAndAddToBar", 1 )
 	end
-	if AJM.db.autoAddArtifactItemsToBar == true or AJM.db.showItemUse == false then
+	if AJM.db.autoAddArtifactItemsToBar == true then
 		AJM:ScheduleTimer( "CheckForArtifactItemAndAddToBar", 1 )
-	end	
+	end
 end
 
 function AJM:UPDATE_BINDINGS()
