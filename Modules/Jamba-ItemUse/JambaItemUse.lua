@@ -68,6 +68,8 @@ AJM.settings = {
 		itemUseHorizontalSpacing = 2,
 		autoAddQuestItemsToBar = true,
 		autoAddArtifactItemsToBar = true,
+		autoAddSatchelsItemsToBar = true,
+		hideClearButton = false,
 		itemBarsSynchronized = true,
 		numberOfItems = 10,
 		numberOfRows = 2,
@@ -210,11 +212,13 @@ local function CreateJambaItemUseFrame()
 		end	)	
 	-- Artifact Remove Buttion
 		local updateButton = CreateFrame( "Button", "ButtonUpdate", frame, "UIPanelButtonTemplate" )
-		updateButton:SetScript( "OnClick", function() AJM:UpdateArtifactItemsInBar() end )
+		updateButton:SetScript( "OnClick", function() AJM:ClearButton() end )
 		updateButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", -4, -3 )
-		updateButton:SetHeight( 30 )
-		updateButton:SetWidth( 120 )
-		updateButton:SetText( L["Update Artifact"] )	
+		updateButton:SetHeight( 20 )
+		updateButton:SetWidth( 70 )
+		updateButton:SetText( L["Clear"] )	
+		updateButton:SetScript("OnEnter", function(self) AJM:ShowTooltip(updateButton, true) end)
+		updateButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 		ArtifactUpdateButton = updateButton
 		frame:ClearAllPoints()
 	frame:SetPoint( AJM.db.framePoint, UIParent, AJM.db.frameRelativePoint, AJM.db.frameXOffset, AJM.db.frameYOffset )
@@ -234,13 +238,25 @@ local function CreateJambaItemUseFrame()
 	AJM.UpdateHeight()
 end
 
-function AJM:UpdateHeight()
-	--local frame = JambaItemUseFrame
-	if AJM.db.autoAddArtifactItemsToBar == true then
+function AJM:ShowTooltip(frame, show)
+	if show then
+		GameTooltip:SetOwner(frame, "ANCHOR_TOP")
+		GameTooltip:SetPoint("TOPLEFT", icon, "TOPRIGHT", 16, 0)
+		GameTooltip:ClearLines()
+		GameTooltip:AddLine(L["Clears items no longer in your bags "], 1, 0.82, 0, 1)
+		GameTooltip:Show()
+	else
+	GameTooltip:Hide()
+	end
+end
+
+
+function AJM:UpdateHeight()											  
+	if AJM.db.hideClearButton == false then
 		AJM.db.itemUseTitleHeight = 2
-		local newHeight = AJM.db.itemUseTitleHeight + 25
+		local newHeight = AJM.db.itemUseTitleHeight + 20
 		ArtifactUpdateButton:Show()
-		return newHeight
+		return newHeight	
 	else
 		AJM.db.itemUseTitleHeight = 2
 		oldHeight = AJM.db.itemUseTitleHeight
@@ -448,6 +464,56 @@ function AJM:CheckForQuestItemAndAddToBar()
 	end
 end
 
+-- Add satchels to item bar.
+function AJM:CheckForSatchelsItemAndAddToBar()
+	for bag = 0, NUM_BAG_SLOTS do
+		for slot = 1, GetContainerNumSlots(bag) do
+		local texture, count, locked, quality, readable, lootable, link, isFiltered, hasNoValue, itemID = GetContainerItemInfo(bag, slot)
+		--AJM:Print("test", link, lootable)	
+			if link and lootable then
+				--AJM:Print("satchelsFound", link)
+				AJM:AddAnItemToTheBarIfNotExists( link, false )
+			end
+		end
+	end
+end	
+
+-- Removes unused items.
+
+function AJM:ClearButton()
+	local state = "0"
+	for iterateItems = 1, AJM.maximumNumberOfItems, 1 do
+		local itemContainer = AJM.itemContainer[iterateItems]
+		if itemContainer == nil then
+			AJM:CreateJambaItemUseItemContainer( iterateItems, parentFrame )
+			itemContainer = AJM.itemContainer[iterateItems]
+		end
+		local containerButton = itemContainer["container"]
+		local itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
+		local kind = itemInfo.kind
+		local action = itemInfo.action
+		if kind == "item" then
+			local name, itemLink,_,_,_,itemType,questItem = GetItemInfo( action )
+			if itemLink and itemLink:match("item:%d") then
+				tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")
+				tooltipScanner:SetHyperlink(itemLink)
+				--AJM:Print("scanTooltip", itemLink)
+				local tooltipText = _G[tooltipName.."TextLeft3"]:GetText()
+				--AJM:Print("tooltiptest", tooltipText, tooltipTextTwo)
+				if tooltipText == nil or tooltipText ~= "Unique" then
+					--AJM:Print("testWorks!", itemLink)
+					if AJM:IsInInventory( name ) == false then
+						--AJM:Print("NOT IN BAGS", itemLink)
+						AJM.db.itemsAdvanced[iterateItems] = nil
+						AJM:SettingsRefresh()
+						AJM:JambaSendSettings()
+					end		
+				end
+			end					
+		end
+	end	
+end
+
 -- Adds artifact power items to item bar.
 function AJM:CheckForArtifactItemAndAddToBar()
 	for bag = 0, NUM_BAG_SLOTS do
@@ -469,7 +535,7 @@ function AJM:CheckForArtifactItemAndAddToBar()
 end		
 
 --Removes artifact power after used.
-
+--[[
 function AJM:UpdateArtifactItemsInBar()
 	local state = "0"
 	for iterateItems = 1, AJM.maximumNumberOfItems, 1 do
@@ -484,20 +550,24 @@ function AJM:UpdateArtifactItemsInBar()
 		local action = itemInfo.action
 		if kind == "item" then
 			local name, itemLink,_,_,_,_,questItem = GetItemInfo( action )
-			--AJM:Print("Checking Item...", itemLink, action)
-			LibGratuity:SetHyperlink( itemLink )
-			if LibGratuity:Find( ARTIFACT_POWER ) then
-				--AJM:Print("Found Item...", itemLink)
-				if AJM:IsInInventory( name ) == false then
-					--AJM:Print("NOT IN BAGS", itemLink)
-					AJM.db.itemsAdvanced[iterateItems] = nil
-					AJM:SettingsRefresh()
-					AJM:JambaSendSettings()
-				end
+			if itemLink and itemLink:match("item:%d") then
+				tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")
+				tooltipScanner:SetHyperlink(itemLink)
+				--AJM:Print("scanTooltip", name, itemLink)
+				local tooltipText = _G[tooltipName.."TextLeft2"]:GetText()
+				if tooltipText and tooltipText:match(ARTIFACT_POWER) then
+					if AJM:IsInInventory( name ) == false then
+						--AJM:Print("NOT IN BAGS", itemLink)
+						AJM.db.itemsAdvanced[iterateItems] = nil
+						AJM:SettingsRefresh()
+						AJM:JambaSendSettings()
+					end	
+				end	
 			end				
 		end
 	end	
 end	
+--]]
 	
 --Checks the item is in the player players bag
 function AJM:IsInInventory(itemLink)
@@ -528,9 +598,10 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest)
 	local itemId = JambaUtilities:GetItemIdFromItemLink( itemLink )
 	for iterateItems = 1, AJM.db.numberOfItems, 1 do
 		itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
+			--AJM:Print("check", itemLink, itemInfo.action)
 		if itemInfo.kind == "item" and itemInfo.action == itemId then
 			alreadyExists = true
-			--AJM:Print("test", itemLink )
+		--	AJM:Print("test", itemLink )
 			return
 		end
 	end
@@ -668,6 +739,24 @@ local function SettingsCreateOptions( top )
 		movingTop, 
 		L["Automatically Add Artifact Power Items To Bar"],
 		AJM.SettingsToggleAutoAddArtifactItem
+	)	
+	movingTop = movingTop - checkBoxHeight - verticalSpacing
+	AJM.settingsControl.displayOptionsCheckBoxAutoAddSatchelsItem = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Automatically Add Satchel Items To Bar"],
+		AJM.SettingsToggleAutoAddSatchelsItem
+	)
+	movingTop = movingTop - checkBoxHeight - verticalSpacing
+	AJM.settingsControl.displayOptionsCheckBoxHideClearButton = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Hides the clear Button"],
+		AJM.SettingsToggleHideClearButton
 	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing	
 	AJM.settingsControl.displayOptionsCheckBoxHideItemUseInCombat = JambaHelperSettings:CreateCheckBox( 
@@ -822,6 +911,8 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.displayOptionsItemUseNumberOfRows:SetValue( AJM.db.numberOfRows )
 	AJM.settingsControl.displayOptionsCheckBoxAutoAddQuestItem:SetValue( AJM.db.autoAddQuestItemsToBar )
 	AJM.settingsControl.displayOptionsCheckBoxAutoAddArtifactItem:SetValue( AJM.db.autoAddArtifactItemsToBar )
+	AJM.settingsControl.displayOptionsCheckBoxAutoAddSatchelsItem:SetValue( AJM.db.autoAddSatchelsItemsToBar )
+	AJM.settingsControl.displayOptionsCheckBoxHideClearButton:SetValue( AJM.db.hideClearButton )
 	AJM.settingsControl.displayOptionsCheckBoxItemBarsSynchronized:SetValue( AJM.db.itemBarsSynchronized )
 	AJM.settingsControl.displayOptionsItemUseScaleSlider:SetValue( AJM.db.itemUseScale )
 	AJM.settingsControl.displayOptionsItemUseTransparencySlider:SetValue( AJM.db.frameAlpha )
@@ -840,6 +931,8 @@ function AJM:SettingsRefresh()
 		AJM.settingsControl.displayOptionsItemUseNumberOfRows:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsCheckBoxAutoAddQuestItem:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsCheckBoxAutoAddArtifactItem:SetDisabled( not AJM.db.showItemUse )
+		AJM.settingsControl.displayOptionsCheckBoxAutoAddSatchelsItem:SetDisabled( not AJM.db.showItemUse )
+		AJM.settingsControl.displayOptionsCheckBoxHideClearButton:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsCheckBoxItemBarsSynchronized:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsItemUseScaleSlider:SetDisabled( not AJM.db.showItemUse )
 		AJM.settingsControl.displayOptionsItemUseTransparencySlider:SetDisabled( not AJM.db.showItemUse )
@@ -884,9 +977,18 @@ function AJM:SettingsToggleAutoAddQuestItem( event, checked )
 	AJM:SettingsRefresh()
 end
 
-
 function AJM:SettingsToggleAutoAddArtifactItem( event, checked )
 	AJM.db.autoAddArtifactItemsToBar = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleAutoAddSatchelsItem( event, checked )
+	AJM.db.autoAddSatchelsItemsToBar = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleHideClearButton(event, checked )
+	AJM.db.hideClearButton = checked
 	AJM:SettingsRefresh()
 end
 
@@ -1011,6 +1113,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.itemUseHorizontalSpacing = settings.itemUseHorizontalSpacing
 		AJM.db.autoAddQuestItemsToBar = settings.autoAddQuestItemsToBar
 		AJM.db.autoAddArtifactItemsToBar = settings.autoAddArtifactItemsToBar
+		AJM.db.autoAddSatchelsItemsToBar = settings.autoAddSatchelsItemsToBar
+		AJM.db.hideClearButton = settings.hideClearButton
 		AJM.db.itemBarsSynchronized = settings.itemBarsSynchronized
 		AJM.db.numberOfItems = settings.numberOfItems
 		AJM.db.numberOfRows = settings.numberOfRows
@@ -1093,6 +1197,9 @@ function AJM:ITEM_PUSH()
 	if AJM.db.autoAddArtifactItemsToBar == true then
 		AJM:ScheduleTimer( "CheckForArtifactItemAndAddToBar", 1 )
 	end
+	if AJM.db.autoAddSatchelsItemsToBar == true then
+		AJM:ScheduleTimer( "CheckForSatchelsItemAndAddToBar", 1 )
+	end	
 end
 
 function AJM:UPDATE_BINDINGS()

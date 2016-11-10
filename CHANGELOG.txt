@@ -1,16 +1,30 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 5.1.4
+WoW Game Version: 7.1.0
+File Version: 7.1.0-5.1.4
+Release Date: 11/11/2016	
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade, Mount
+
+*jamba-Item-Use
+	- Now uses blizzard code to scan tooltips.
+	- Removed LibGratuity
+	- Update Artifact is now a tooltip and a button that only say's "clear" to clear up space. (for wubsie ;) The size of two buttons.)
+	- Added a Auto add Satchel Items (items you can open, Blizzard-Devs seems to love them!)
+	
+	
+---------------------------
 Jamba Version: 5.1.2/3
 WoW Game Version: 7.1.0
 File Version: 7.1.0-5.1.2
 Release Date: 28/10/2016	
-Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade, Mount
 
 *Jamba-currency
 	- Added Curious Coin to DataBase
 
-*jamba-item-use
+*jamba-Item-use
 	- The clear button should now work on all team members and not just master
 	- Fixed a bug that was stop quest items auto getting removed.
 	- No Longer Shows Update Button if you truned off auto add of artifact power.
@@ -23,7 +37,7 @@ Jamba Version: 5.1.0
 WoW Game Version: 7.1.0
 File Version: 7.1.0-5.1.0
 Release Date: 26/10/2016	
-Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade, Mount
 
 *jamba-core
 	- Updated for patch 7.1
