@@ -22,3 +22,4 @@ move-folders:
     Jamba/Modules/Jamba-Target: Jamba-Target
     Jamba/Modules/Jamba-AdvancedLoot: Jamba-AdvancedLoot
 	Jamba/Modules/Jamba-Curr: Jamba-Curr
+	Jamba/Modules/Jamba-Mount: Jamba-Mount
