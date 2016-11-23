@@ -163,7 +163,7 @@ function AJM:SettingsCreateMount( top )
 		left, 
 		movingTop,
 		L["Only Dismount's from Master"],
-		AJM.SettingsToggleDisMountWithMaster.
+		AJM.SettingsToggleDisMountWithMaster,
 		L["Only Dismount's from Master character."]
 	)	
 	movingTop = movingTop - headingHeight
