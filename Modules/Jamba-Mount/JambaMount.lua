@@ -153,7 +153,8 @@ function AJM:SettingsCreateMount( top )
 		left, 
 		movingTop,
 		L["Dismount with Team"],
-		AJM.SettingsToggleDisMountWithTeam
+		AJM.SettingsToggleDisMountWithTeam,
+		L["Dismount with Character That Dismount"]
 	)	
 	movingTop = movingTop - headingHeight
 	AJM.settingsControl.checkBoxDismountWithMaster = JambaHelperSettings:CreateCheckBox( 
@@ -161,8 +162,9 @@ function AJM:SettingsCreateMount( top )
 		headingWidth, 
 		left, 
 		movingTop,
-		L["Olny Dismount's from Master"],
-		AJM.SettingsToggleDisMountWithMaster
+		L["Only Dismount's from Master"],
+		AJM.SettingsToggleDisMountWithMaster.
+		L["Only Dismount's from Master character."]
 	)	
 	movingTop = movingTop - headingHeight
 	AJM.settingsControl.checkBoxMountInRange = JambaHelperSettings:CreateCheckBox( 
@@ -170,9 +172,9 @@ function AJM:SettingsCreateMount( top )
 		headingWidth, 
 		left, 
 		movingTop,
-		L["Olny Mount when in Range"],
+		L["Only Mount when in Range"],
 		AJM.SettingsToggleMountInRange,
-		L["Olny Works In a party!"]
+		L["Only Works In a party!"]
 	)
 --	movingTop = movingTop - checkBoxHeight
 --	AJM.settingsControl.dropdownMessageArea = JambaHelperSettings:CreateDropdown( 
