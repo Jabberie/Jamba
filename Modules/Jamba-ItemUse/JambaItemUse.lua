@@ -241,7 +241,7 @@ end
 function AJM:ShowTooltip(frame, show)
 	if show then
 		GameTooltip:SetOwner(frame, "ANCHOR_TOP")
-		GameTooltip:SetPoint("TOPLEFT", icon, "TOPRIGHT", 16, 0)
+		GameTooltip:SetPoint("TOPLEFT", frame, "TOPRIGHT", 16, 0)
 		GameTooltip:ClearLines()
 		GameTooltip:AddLine(L["Clears items no longer in your bags "], 1, 0.82, 0, 1)
 		GameTooltip:Show()
