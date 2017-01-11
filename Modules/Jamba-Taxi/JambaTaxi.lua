@@ -247,7 +247,7 @@ local function TakeTaxi( sender, nodeName )
 	end
 end
 
-function AJM.TakeTimedTaxi( event, nodeIndex, )
+function AJM.TakeTimedTaxi( event, nodeIndex, ...)
 	if nodeIndex ~= nil then
 		GetNumRoutes( nodeIndex )
 		TakeTaxiNode( nodeIndex )
