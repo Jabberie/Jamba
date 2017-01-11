@@ -2,7 +2,7 @@
 ## Title: JambaCurr
 ## Notes: JambaCurr
 ## Author: Ebony, Former Author: Jafula
-## Version: 7.1.0-5.1.5
+## Version: 7.1.5-5.2.0
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
@@ -10,5 +10,3 @@
 ## LoadOnDemand: 1
 Locales\Locales.xml
 JambaCurr.lua
-
-

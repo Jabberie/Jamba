@@ -1,9 +1,9 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
-Copyright 2008 - 2016 Michael "Jafula" Miller
+Copyright 2008 - 2017 Michael "Jafula" Miller
 License: The MIT License
 
-This is was made by ebony with the idea from Hydra
+This is was made by Ebony with the idea from Hydra
 ]]--
 
 -- Create the addon using AceAddon-3.0 and embed some libraries.
@@ -286,9 +286,10 @@ function AJM:UNIT_SPELLCAST_START(event, unitID, spell, rank, lineID, spellID, .
 	--AJM:Print("Looking for Spells.", unitID, spellID, spell)
 	AJM.castingMount = nil
 	if unitID == "player" then
-		for i = 1, C_MountJournal.GetNumMounts() do
+	local mountIDs = C_MountJournal.GetMountIDs()	
+		for i = 1, #mountIDs do
 			--local name , id, icon, active = C_MountJournal.GetMountInfoByID(i)
-			local creatureName,_,_,_,_,_,_,_,_,_,_,mountID = C_MountJournal.GetMountInfoByID(i)
+			local creatureName,_,_,_,_,_,_,_,_,_,_,mountID = C_MountJournal.GetMountInfoByID(mountIDs[i])
 			--AJM:Print("Test", spell, creatureName)
 			if spell == creatureName then
 				--AJM:Print("SendtoTeam", "name", creatureName, "id", mountID)

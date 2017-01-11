@@ -1,6 +1,27 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 5.2.0
+WoW Game Version: 7.1.5
+File Version: 7.1.5-5.2.0
+Release Date: TBA/1/2017
+Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade, Mount
+
+
+*Jamba-Core
+    - Updated dates. to 2017
+
+*Jamba-Taxi
+	- Added a timmer/delay to help with sharding. see http://www.dual-boxing.com/threads/53568-Jamba-Fight-Master-Change-5-2-x
+	
+*Jamba-Mount
+	- Should now work with Mounts it did not before. Thanks to zinkala on curse for the fix.
+
+
+
+
+
+---------------------------
 Jamba Version: 5.1.6
 WoW Game Version: 7.1.0
 File Version: 5.1.6

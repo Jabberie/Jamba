@@ -1,6 +1,6 @@
 --[[
 Jamba - Jafula's Awesome Multi-Boxer Assistant
-Copyright 2008 - 2016 Michael "Jafula" Miller
+Copyright 2008 - 2017 Michael "Jafula" Miller
 License: The MIT License
 ]]--
 
@@ -10,7 +10,8 @@ local AJM = LibStub( "AceAddon-3.0" ):NewAddon(
 	"JambaModule-1.0", 
 	"AceConsole-3.0", 
 	"AceEvent-3.0",
-	"AceHook-3.0"
+	"AceHook-3.0",
+	"AceTimer-3.0"
 )
 
 -- Get the Jamba Utilities Library.
@@ -235,8 +236,9 @@ local function TakeTaxi( sender, nodeName )
 				AJM:SendMessage( AJM.MESSAGE_TAXI_TAKEN )
 				-- Take a taxi.
 				AJM.jambaTakesTaxi = true
-				GetNumRoutes( nodeIndex )
-				TakeTaxiNode( nodeIndex )
+				AJM:ScheduleTimer( "TakeTimedTaxi", 1, nodeIndex )
+				--GetNumRoutes( nodeIndex )
+				--TakeTaxiNode( nodeIndex )
 			else
 				-- Tell the master that this character could not take the same flight.
 				AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["I am unable to fly to A."]( nodeName ), false )
@@ -244,6 +246,14 @@ local function TakeTaxi( sender, nodeName )
 		end
 	end
 end
+
+function AJM.TakeTimedTaxi( event, nodeIndex, )
+	if nodeIndex ~= nil then
+		GetNumRoutes( nodeIndex )
+		TakeTaxiNode( nodeIndex )
+	end		
+end
+
 
 -- Called after the character has just taken a flight (hooked function).
 function AJM:TakeTaxiNode( taxiNodeIndex )

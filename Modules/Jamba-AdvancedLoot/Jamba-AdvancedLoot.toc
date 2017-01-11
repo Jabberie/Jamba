@@ -2,7 +2,7 @@
 ## Title: Jamba-AdvancedLoot
 ## Notes: Jamba-AdvancedLoot
 ## Author: Ebony, Former Author: Jafula & Max Schilling
-## Version: 7.1.0-5.1.5
+## Version: 7.1.5-5.2.0
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba
