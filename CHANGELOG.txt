@@ -1,31 +1,32 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
-Jamba Version: 5.2.0
+Jamba Version: 5.1.7
 WoW Game Version: 7.1.5
-File Version: 7.1.5-5.2.0
-Release Date: TBA/1/2017
+File Version: 7.1.5-5.1.7
+Release Date: 25/1/2017
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade, Mount
 
 
 *Jamba-Core
-    - Updated dates. to 2017
+    - Updated Copyright Dates To 2017 -- Happy New Year!
 
 *Jamba-Taxi
 	- Added a timmer/delay to help with sharding. see http://www.dual-boxing.com/threads/53568-Jamba-Fight-Master-Change-5-2-x
+	- Added A Slider to set the dayly of the the Fightmater set to 0 to disable.
 	
 *Jamba-Mount
 	- Should now work with Mounts it did not before. Thanks to zinkala on curse for the fix.
 
-
-
+*Jamba-TeamDisplay
+	- Currency should work agian in tooltips (Set From In Game Currency Backback box.)
 
 
 ---------------------------
 Jamba Version: 5.1.6
 WoW Game Version: 7.1.0
-File Version: 5.1.6
-Release Date: 21/07/2016
+File Version: 7.1.0-5.1.6
+Release Date: 21/12/2016
 Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase, Quest, Sell, Talk, Target, Taxi, Toon, Curr, Trade, Mount
 
 *Jamba-Core

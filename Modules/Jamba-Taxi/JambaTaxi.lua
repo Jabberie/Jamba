@@ -31,6 +31,7 @@ AJM.settings = {
 	profile = {
 		takeMastersTaxi = true,
 		requestTaxiStop = true,
+		changeTexiTime = 5,
 		messageArea = JambaApi.DefaultMessageArea(),
 	},
 }
@@ -126,10 +127,15 @@ end
 function AJM:SettingsCreateTaxi( top )
 	local checkBoxHeight = JambaHelperSettings:GetCheckBoxHeight()
 	local left = JambaHelperSettings:LeftOfSettings()
+	local sliderHeight = JambaHelperSettings:GetSliderHeight()
 	local headingHeight = JambaHelperSettings:HeadingHeight()
+	local horizontalSpacing = JambaHelperSettings:GetHorizontalSpacing()
 	local headingWidth = JambaHelperSettings:HeadingWidth( false )
+	local halfWidthSlider = (headingWidth - horizontalSpacing) / 2
 	local dropdownHeight = JambaHelperSettings:GetDropdownHeight()
 	local verticalSpacing = JambaHelperSettings:GetVerticalSpacing()
+	
+	
 	local movingTop = top
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Taxi Options"], movingTop, false )
 	movingTop = movingTop - headingHeight
@@ -138,8 +144,9 @@ function AJM:SettingsCreateTaxi( top )
 		headingWidth, 
 		left, 
 		movingTop,
-		L["Take Master's Taxi"],
-		AJM.SettingsToggleTakeTaxi
+		L["Take Teams Taxi"],
+		AJM.SettingsToggleTakeTaxi,
+		L["Take the same flight as the any team member (Other Team Members must have NPC Flight Master window open)."]
 	)	
 	movingTop = movingTop - headingHeight
 	AJM.settingsControl.checkBoxrequestStop = JambaHelperSettings:CreateCheckBox( 
@@ -150,7 +157,20 @@ function AJM:SettingsCreateTaxi( top )
 		L["Request Taxi Stop with Master"],
 		AJM.SettingsTogglerequestStop
 	)	
-	movingTop = movingTop - checkBoxHeight
+	movingTop = movingTop - headingHeight		
+	movingTop = movingTop - headingHeight
+	AJM.settingsControl.changeTexiTime = JambaHelperSettings:CreateSlider( 
+		AJM.settingsControl, 
+		halfWidthSlider, 
+		left, 
+		movingTop,
+		L["Clones To Take Taxi After Master"]
+	)		
+	AJM.settingsControl.changeTexiTime:SetSliderValues( 0, 10, 1 )
+	AJM.settingsControl.changeTexiTime:SetCallback( "OnValueChanged", AJM.SettingsChangeTaxiTimer )
+	
+	--movingTop = movingTop - halfWidthSlider
+	movingTop = movingTop - sliderHeight - verticalSpacing
 	AJM.settingsControl.dropdownMessageArea = JambaHelperSettings:CreateDropdown( 
 		AJM.settingsControl, 
 		headingWidth, 
@@ -183,12 +203,21 @@ function AJM:SettingsTogglerequestStop( event, checked )
 	AJM.db.requestTaxiStop = checked
 	AJM:SettingsRefresh()
 end
+
+function AJM:SettingsChangeTaxiTimer( event, value )
+	AJM.db.changeTexiTime = tonumber( value )
+	AJM:SettingsRefresh()
+end
+
+
+
 -- Settings received.
 function AJM:JambaOnSettingsReceived( characterName, settings )	
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
 		AJM.db.takeMastersTaxi = settings.takeMastersTaxi
 		AJM.db.requestTaxiStop = settings.requestTaxiStop
+		AJM.db.changeTexiTime = settings.changeTexiTime
 		AJM.db.messageArea = settings.messageArea
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
@@ -210,6 +239,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxTakeMastersTaxi:SetValue( AJM.db.takeMastersTaxi )
 	AJM.settingsControl.checkBoxrequestStop:SetValue( AJM.db.requestTaxiStop )
 	AJM.settingsControl.dropdownMessageArea:SetValue( AJM.db.messageArea )
+	AJM.settingsControl.changeTexiTime:SetValue( AJM.db.changeTexiTime )
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -236,7 +266,7 @@ local function TakeTaxi( sender, nodeName )
 				AJM:SendMessage( AJM.MESSAGE_TAXI_TAKEN )
 				-- Take a taxi.
 				AJM.jambaTakesTaxi = true
-				AJM:ScheduleTimer( "TakeTimedTaxi", 1, nodeIndex )
+				AJM:ScheduleTimer( "TakeTimedTaxi", AJM.db.changeTexiTime , nodeIndex )
 				--GetNumRoutes( nodeIndex )
 				--TakeTaxiNode( nodeIndex )
 			else

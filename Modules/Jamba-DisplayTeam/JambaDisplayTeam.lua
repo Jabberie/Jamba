@@ -779,6 +779,12 @@ function AJM:ShowFollowTooltip( frame, followBar, characterName, canShow )
 						GameTooltip:AddLine(L["Has New Mail From:"], 1, 0.82, 0, 1)
 						GameTooltip:AddLine( followBar.Mail,1,1,1,1)
 					end	
+					if not (followBar.CurrText == "currNothing") then
+						GameTooltip:AddLine(" ",1,1,1,1)
+						GameTooltip:AddLine(L["Currency Info:"], 1, 0.82, 0, 1)
+						GameTooltip:AddLine( followBar.CurrText,1,1,1,1)
+					end	
+
 					GameTooltip:Show()
 				else
 					GameTooltip:Hide()
