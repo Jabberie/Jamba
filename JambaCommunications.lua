@@ -205,6 +205,27 @@ local function CommandAll( moduleName, commandName, ... )
 end
 --]]
 
+
+local function LookUpBnPlayer( name, ... )
+	--AJM:Print("lookUP", name)
+	local _, numFriends = BNGetNumFriends()
+    for i = 1, numFriends do
+    --local bnID, presenceName, _, _, characterName, toonID = BNGetFriendInfo(i)
+    	for k = 1, BNGetNumFriendGameAccounts(i) do
+	    	local _, toonName, client, realmName, _, _, _, _, _, _, _, _, _, _, _, toonID, accontID, _, _, _ = BNGetFriendGameAccountInfo(i,k)
+			if client == "WoW" then
+				--AJM:Print(toonName, toonID, accontID, client)
+		   		if name == toonName then
+			    	--AJM:Print("foundnew", toonID )
+			    	return toonID
+		    	end	
+			end
+		end    
+    end	
+end
+
+
+
 local function CommandAll( moduleName, commandName, ... )
    -- AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
 	--AJM:Print( "Command All: ", moduleName, commandName, ... )
@@ -254,19 +275,50 @@ local function CommandAll( moduleName, commandName, ... )
 	end
 	--if the unit is not in the party then it unlikely did not get the party message,
 	for characterName, characterOrder in JambaPrivate.Team.TeamList() do		
-		--AJM:Print( "Toon not in party:", characterName)
-		if UnitInParty( Ambiguate( characterName, "none" ) ) == false then
+		if UnitInParty( Ambiguate( characterName, "none" ) ) == false then		
+			local player, realm = strsplit( "-", characterName, 2 )
+			local myRealm = string.gsub(GetRealmName(), "%s+", "")	
+				--AJM:Print("Name",player, "realm", realm, "MyRealm", myRealm)
+				if realm ~= myRealm then
+					--AJM:Print("Toon", player, "Is not From My Realm")
+					local toonID = LookUpBnPlayer(player)
+					--local bnetIDAccount = select(17, BNGetGameAccountInfo(toonID))
+					if toonID ~= nil then
+						if IsCharacterOnline( characterName ) == true then
+							--AJM:Print("test", toonID)
+							BNSendGameData(
+								toonID, 
+								AJM.COMMAND_PREFIX, 
+								message
+								)
+						end
+					else
+						--AJM:Print("Can not found character Name in BN Frineds List", characterName)
+						if IsCharacterOnline( characterName ) == true then
+						AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+							AJM:SendCommMessage(
+							AJM.COMMAND_PREFIX,
+							message,
+							AJM.COMMUNICATION_WHISPER,
+							characterName,
+							AJM.COMMUNICATION_PRIORITY_ALERT
+							)
+						end
+					end
+				--AJM:Print( "Toon not in party:", characterName)
+			else
 			AJM:DebugMessage( "Toon not in party:", characterName)
-			if IsCharacterOnline( characterName ) == true then
-				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
-					AJM:SendCommMessage(
-					AJM.COMMAND_PREFIX,
-					message,
-					AJM.COMMUNICATION_WHISPER,
-					characterName,
-					AJM.COMMUNICATION_PRIORITY_ALERT
-					)
-					--AJM:Print("testWis", AJM.COMMAND_PREFIX, AJM.COMMUNICATION_WHISPER, characterName , AJM.COMMUNICATION_PRIORITY_ALERT)
+				if IsCharacterOnline( characterName ) == true then
+					AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+						AJM:SendCommMessage(
+						AJM.COMMAND_PREFIX,
+						message,
+						AJM.COMMUNICATION_WHISPER,
+						characterName,
+						AJM.COMMUNICATION_PRIORITY_ALERT
+						)
+						--AJM:Print("testWis", AJM.COMMAND_PREFIX, AJM.COMMUNICATION_WHISPER, characterName , AJM.COMMUNICATION_PRIORITY_ALERT)	
+				end	
 			end	
 		end
 	end	
@@ -372,6 +424,19 @@ end
 
 
 -- Receive a command from another character.
+
+function AJM:BN_CHAT_MSG_ADDON( event, prefix, message, type,  senderToonID )
+	--AJM:Print("test", prefix, type, senderToonID )
+	local _, name, _, realm = BNGetGameAccountInfo( senderToonID )
+	if name ~= nil and realm ~= nil and prefix == AJM.COMMAND_PREFIX then	
+		sender = name.."-"..realm
+		--AJM:Print("NameTest", sender )
+		AJM:CommandReceived(prefix, message, type, sender)
+	end	
+end
+
+
+
 function AJM:CommandReceived( prefix, message, distribution, sender )
     local characterName = JambaUtilities:AddRealmToNameIfMissing( sender )
 	AJM:DebugMessage( "Command received: ", prefix, message, distribution, sender )
@@ -485,6 +550,7 @@ function AJM:OnInitialize()
 end
 	
 function AJM:OnEnable()
+	AJM:RegisterEvent("BN_CHAT_MSG_ADDON")
 	--local hookSecure = true
 	--AJM:RawHook( "ChatFrame_MessageEventHandler", true )
 	if AJM.db.boostCommunication == true then

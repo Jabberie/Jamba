@@ -5,6 +5,7 @@ License: The MIT License
 ]]--
 
 local L = LibStub( "AceLocale-3.0" ):NewLocale( "Jamba-Toon", "enUS", true )
+L["I'll be something one day"] = true
 L["Slash Commands"] = true
 L["Toon: Warnings"] = true
 L["Push Settings"] = true
@@ -81,6 +82,10 @@ L["Recover All Team Corpses?"] = true
 L["I can not release to my Corpse for:"] = true
 L[" Seconds"] = true
 L["I Do not have a SoulStone"] = true
+L["Raid/Party Tools."] = true
+L["Auto Accept Role Checks"] = true
+L["Accept Ready Checks With Team"] = true
+L["LFG Teleport With Team"] = true
 
 --Jamba Help Tooltips
 L["Display Team Release Popups when the Team Dies"] = true
@@ -101,3 +106,6 @@ L["Warn If All Regular Bags Are Full"] = true
 L["Warn If Toon Goes Inactive mosty for PVP"] = true
 L["Warn If any Minion Gets Crowd Control"] = true
 L["Automatically Deny All Guild Invites"] = true
+L["Automatically Accept Role Checks \n\nIf a role is already set.."] = true
+L["Accept Ready Checks With Team \n\nIf Team Member is the one that does the ready check it is Auto."] = true
+L["Teleport With Team Members LFG"] = true

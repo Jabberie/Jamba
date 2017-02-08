@@ -2,7 +2,7 @@
 ## Title: JambaCurr
 ## Notes: JambaCurr
 ## Author: Ebony, Former Author: Jafula
-## Version: 7.1.5-5.1.7
+## Version: 5.2.0
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

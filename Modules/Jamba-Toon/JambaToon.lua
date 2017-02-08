@@ -10,6 +10,7 @@ local AJM = LibStub( "AceAddon-3.0" ):NewAddon(
 	"JambaModule-1.0", 
 	"AceConsole-3.0", 
 	"AceEvent-3.0",
+	"AceHook-3.0",
 	"AceTimer-3.0"
 )
 
@@ -61,6 +62,12 @@ AJM.settings = {
 		merchantArea = JambaApi.DefaultMessageArea(),
 		warnAfk = true,
 		afkMessage = L["I am inactive!"],
+		autoAcceptRoleCheck = false,
+		enterLFGWithTeam = false,
+		acceptReadyCheck = false,
+		teleportLFGWithTeam = false,
+		--Debug Suff
+		testAlwaysOff = true
 	},
 }
 
@@ -95,7 +102,8 @@ end
 AJM.COMMAND_TEAM_DEATH = "JambaToonTeamDeath"
 AJM.COMMAND_RECOVER_TEAM = "JambaToonRecoverTeam"
 AJM.COMMAND_SOUL_STONE = "JambaToonSoulStone"
-
+AJM.COMMAND_READY_CHECK = "jambaReadyCheck"
+AJM.COMMAND_TELE_PORT = "jambateleport"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -229,8 +237,7 @@ local function SettingsCreateRequests( top )
 		L["Display Team Release Prompts"],
 		AJM.SettingsToggleAcceptDeathRequests,
 		L["Display Team Release Popup Displays when the Team Dies"]
-	)	
-	
+	)
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControlRequests.checkBoxAutoAcceptSummonRequest = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControlRequests, 
@@ -242,8 +249,41 @@ local function SettingsCreateRequests( top )
 		L["Automatically Accept Summon Requests"]
 	)
 	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControlRequests.dropdownRequestArea = JambaHelperSettings:CreateDropdown( 
+	-- Ebony Group Stuff			
+	JambaHelperSettings:CreateHeading( AJM.settingsControlRequests, L["Raid/Party Tools."], movingTop, false )
+	movingTop = movingTop - headingHeight
+	AJM.settingsControlRequests.checkBoxAutoRoleCheck = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControlRequests, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Auto Accept Role Checks"],
+		AJM.SettingsToggleAutoRoleCheck,
+		L["Automatically Accept Role Checks \n\nIf a role is already set.."]
+	)		
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControlRequests.checkBoxAcceptReadyCheck = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControlRequests, 
+		headingWidth, 
+		left, 
+		movingTop,
+		L["Accept Ready Checks With Team"],
+		AJM.SettingsToggleAcceptReadyCheck,
+		L["Accept Ready Checks With Team \n\nIf Team Member is the one that does the ready check it is Auto."]
+	)
+ 	movingTop = movingTop - checkBoxHeight
+ 	AJM.settingsControlRequests.checkBoxLFGTeleport = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControlRequests, 
+		headingWidth, 
+		left, 
+		movingTop,
+		L["LFG Teleport With Team"],
+		AJM.SettingsToggleLFGTeleport,
+		L["Teleport With Team Members LFG"]
+	)
+	movingTop = movingTop - dropdownHeight - verticalSpacing
+ 	AJM.settingsControlRequests.dropdownRequestArea = JambaHelperSettings:CreateDropdown( 
+	AJM.settingsControlRequests, 
 		headingWidth, 
 		left, 
 		movingTop, 
@@ -252,7 +292,6 @@ local function SettingsCreateRequests( top )
 	)
 	AJM.settingsControlRequests.dropdownRequestArea:SetList( JambaApi.MessageAreaList() )
 	AJM.settingsControlRequests.dropdownRequestArea:SetCallback( "OnValueChanged", AJM.SettingsSetRequestArea )
-	movingTop = movingTop - dropdownHeight - verticalSpacing			
 	return movingTop	
 end
 
@@ -524,10 +563,14 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlRequests.checkBoxAutoDenyDuels:SetValue( AJM.db.autoDenyDuels )
 	AJM.settingsControlRequests.checkBoxAutoAcceptSummonRequest:SetValue( AJM.db.autoAcceptSummonRequest )
 	AJM.settingsControlRequests.checkBoxAutoDenyGuildInvites:SetValue( AJM.db.autoDenyGuildInvites )
+	AJM.settingsControlRequests.checkBoxAutoRoleCheck:SetValue( AJM.db.autoAcceptRoleCheck )
+	AJM.settingsControlRequests.checkBoxAcceptReadyCheck:SetValue( AJM.db.acceptReadyCheck )
+	AJM.settingsControlRequests.checkBoxLFGTeleport:SetValue( AJM.db.teleportLFGWithTeam )
 	AJM.settingsControlRequests.dropdownRequestArea:SetValue( AJM.db.requestArea )
 	AJM.settingsControlMerchant.checkBoxAutoRepair:SetValue( AJM.db.autoRepair )
 	AJM.settingsControlMerchant.checkBoxAutoRepairUseGuildFunds:SetValue( AJM.db.autoRepairUseGuildFunds )
 	AJM.settingsControlMerchant.dropdownMerchantArea:SetValue( AJM.db.merchantArea )
+	
 	AJM.settingsControlWarnings.editBoxHitFirstTimeMessage:SetDisabled( not AJM.db.warnHitFirstTimeCombat )
 	AJM.settingsControlWarnings.editBoxWarnTargetNotMasterMessage:SetDisabled( not AJM.db.warnTargetNotMasterEnterCombat )
 	AJM.settingsControlWarnings.editBoxWarnFocusNotMasterMessage:SetDisabled( not AJM.db.warnFocusNotMasterEnterCombat )
@@ -559,10 +602,12 @@ function AJM:SettingsToggleAutoDenyDuels( event, checked )
 	AJM.db.autoDenyDuels = checked
 	AJM:SettingsRefresh()
 end
+
 function AJM:SettingsToggleAutoAcceptSummonRequest( event, checked )
 	AJM.db.autoAcceptSummonRequest = checked
 	AJM:SettingsRefresh()
 end
+
 function AJM:SettingsToggleAutoDenyGuildInvites( event, checked )
 	AJM.db.autoDenyGuildInvites = checked
 	AJM:SettingsRefresh()
@@ -573,9 +618,24 @@ function AJM:SettingsToggleAutoAcceptResurrectRequests( event, checked )
 	AJM:SettingsRefresh()
 end
 
-
 function AJM:SettingsToggleAcceptDeathRequests( event, checked )
 	AJM.db.acceptDeathRequests = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleAutoRoleCheck( event, checked )
+	AJM.db.autoAcceptRoleCheck = checked
+	AJM:SettingsRefresh()
+end
+
+
+function AJM:SettingsToggleAcceptReadyCheck( event, checked )
+	AJM.db.acceptReadyCheck = checked 	
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleLFGTeleport( event, checked )
+	AJM.db.teleportLFGWithTeam = checked
 	AJM:SettingsRefresh()
 end
 
@@ -712,6 +772,7 @@ end
 
 -- Called when the addon is enabled.
 function AJM:OnEnable()
+	AJM.isInternalCommand = false
 	-- WoW events.
 	AJM:RegisterEvent( "UNIT_COMBAT" )
 	AJM:RegisterEvent( "PLAYER_REGEN_DISABLED" )
@@ -730,14 +791,18 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "DUEL_REQUESTED" )
 	AJM:RegisterEvent( "GUILD_INVITE_REQUEST" )
 	AJM:RegisterEvent( "ITEM_PUSH" )
-	--test
-	--AJM:RegisterEvent("LOSS_OF_CONTROL_UPDATE")
+	AJM:RegisterEvent( "LFG_ROLE_CHECK_SHOW" )
+	AJM:RegisterEvent( "READY_CHECK" )
 	AJM:RegisterEvent("LOSS_OF_CONTROL_ADDED")
 	AJM:RegisterEvent( "UI_ERROR_MESSAGE", "ITEM_PUSH" )
 	AJM:RegisterEvent( "UNIT_AURA" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
 		AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_ONLINE, "OnCharactersChanged" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_OFFLINE, "OnCharactersChanged" )
+	-- Ace Hooks
+	AJM:SecureHook( "ConfirmReadyCheck" )
+	AJM:SecureHook( "LFGTeleport" )
+
 end
 
 -- Called when the addon is disabled.
@@ -769,9 +834,14 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.autoAcceptResurrectRequest = settings.autoAcceptResurrectRequest
 		AJM.db.acceptDeathRequests = settings.acceptDeathRequests
 		AJM.db.autoDenyDuels = settings.autoDenyDuels
-		--ebonnysum
 		AJM.db.autoAcceptSummonRequest = settings.autoAcceptSummonRequest
 		AJM.db.autoDenyGuildInvites = settings.autoDenyGuildInvites
+		
+		AJM.db.autoAcceptRoleCheck = settings.autoAcceptRoleCheck
+		AJM.db.enterLFGWithTeam = settings.enterLFGWithTeam
+		AJM.db.acceptReadyCheck = settings.acceptReadyCheck
+		AJM.db.teleportLFGWithTeam = settings.teleportLFGWithTeam
+
 		AJM.db.autoRepair = settings.autoRepair
 		AJM.db.autoRepairUseGuildFunds = settings.autoRepairUseGuildFunds
 		AJM.db.warningArea = settings.warningArea
@@ -1017,7 +1087,86 @@ function AJM:RESURRECT_REQUEST( event, ... )
 	end
 end
 
--- EbonySum Accepts summons
+--LFG stuff
+
+function AJM:READY_CHECK( event, name, ... )
+	-- Auto do Ready Check if team member is the one that does the readycheck
+	if AJM.db.acceptReadyCheck == true then
+		--AJM:Print("readyCheck", name )
+		for index, characterName in JambaApi.TeamListOrderedOnline() do
+			if name == Ambiguate( characterName, "none") then
+				AJM.isInternalCommand = ture
+				--AJM:Print("found in team", characterName)
+				if ReadyCheckFrame:IsShown() == true then
+					AJM:Print("Ok?")
+					ConfirmReadyCheck(1)
+					ReadyCheckFrame:Hide()
+				end	
+				AJM.isInternalCommand = false
+			end	
+		end	
+	end	
+end
+
+
+function AJM:ConfirmReadyCheck( ready )
+	--AJM:Print("Test", ready )
+	if AJM.db.acceptReadyCheck == true then	
+		if AJM.isInternalCommand == false then
+			AJM:JambaSendCommandToTeam( AJM.COMMAND_READY_CHECK, ready)
+		end	
+	end		
+end
+
+function AJM:AmReadyCheck( ready )
+	--AJM:Print("AmReady!", ready )
+	AJM.isInternalCommand = true
+		if ready == 1 then
+			ConfirmReadyCheck(1)
+			ReadyCheckFrame:Hide()
+		else
+			ConfirmReadyCheck()
+			ReadyCheckFrame:Hide()
+		end	
+	AJM.isInternalCommand = false
+end
+
+function AJM:LFGTeleport( event, arg1, ... )
+	--AJM:Print("LFGtest")
+	if AJM.db.teleportLFGWithTeam == true then
+		if IsShiftKeyDown() == false then
+			if AJM.isInternalCommand == false then
+				if IsInLFGDungeon() == true then
+					AJM:JambaSendCommandToTeam( AJM.COMMAND_TELE_PORT, true )
+				else
+					AJM:JambaSendCommandToTeam( AJM.COMMAND_TELE_PORT, false )	
+				end	
+			end	
+		end	
+	end		
+end
+
+function AJM:DoLFGTeleport(port)
+	--AJM:Print("TeleCommand", port)
+	AJM.isInternalCommand = true
+	if port == true then
+		--AJM:Print("yestel")
+		LFGTeleport(1)
+	else	
+		--AJM:Print("notel")
+		LFGTeleport()
+	end	
+	AJM.isInternalCommand = false
+end
+
+
+function AJM:LFG_ROLE_CHECK_SHOW( event, ... )
+	if AJM.db.autoAcceptRoleCheck == true then	
+		--AJM:Print("testPopup?")
+		CompleteLFGRoleCheck("ture")
+	end	
+end
+
 
 function AJM:CONFIRM_SUMMON( event, sender, location, ... )
 	local sender, location = GetSummonConfirmSummoner(), GetSummonConfirmAreaName()
@@ -1195,5 +1344,15 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	end
 	if commandName == AJM.COMMAND_SOUL_STONE then
 		AJM:doSoulStone()
+	end
+	if commandName == AJM.COMMAND_READY_CHECK then
+		if characterName ~= self.characterName then
+			AJM.AmReadyCheck( characterName, ... )
+		end	
+	end
+	if commandName == AJM.COMMAND_TELE_PORT then
+		if characterName ~= self.characterName then
+			AJM.DoLFGTeleport( characterName, ... )
+		end	
 	end
 end
