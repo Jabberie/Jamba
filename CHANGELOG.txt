@@ -6,7 +6,7 @@ WoW Game Version: 7.1.5
 File Version: 7.1.5-5.2.0
 Release Date: TBA
 Modules Changed: Core, Toon, Trade, Team
-
+Beta update date 10/02/2017
 
 *Jamba-Core (Communications)
 	- Added support for Cross Realm using BNSendGameData Jamba will look fo the character 
@@ -17,20 +17,22 @@ Modules Changed: Core, Toon, Trade, Team
 	- Ready-check with team.
 	- LFG Role-check with team.
 	- Teleport LFG with team.
-	- Roll Need/greed/Etc... with Team (WIP)
-	- Removed the exata Death Prompts Now Part of the basic wow's (hold shift to not pass release.) ( WIP )
+	- Roll Need/greed/Etc... with Team (Added)
+	- Removed the exata Death Prompts Now Part of the basic wow's (hold shift to not release.) ( WIP )
 
 *Jamba-Trade
 	-WIP!
-	*- comning soon™
+	*- coming soon™
 	*- Can now set a list of items you want to trade with master/team.
 	*- add a option to olny trade gold with master.
 
 Jamba-Team
-	- comning soon™
+	- coming soon™
 	- Removed InviteTag command and is now part of jamba-team Invite<tag> 	
 	- jamba-Invte now support the tag command if no <tag> then will use tag <all>.
+	- Added a option to set all members to assistant when you join a raid group. (WIP)
 
+	
 ---------------------------
 Jamba Version: 5.1.7
 WoW Game Version: 7.1.5

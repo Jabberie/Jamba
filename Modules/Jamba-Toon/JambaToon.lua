@@ -66,6 +66,7 @@ AJM.settings = {
 		enterLFGWithTeam = false,
 		acceptReadyCheck = false,
 		teleportLFGWithTeam = false,
+		rollWithTeam = false,
 		--Debug Suff
 		testAlwaysOff = true
 	},
@@ -102,8 +103,9 @@ end
 AJM.COMMAND_TEAM_DEATH = "JambaToonTeamDeath"
 AJM.COMMAND_RECOVER_TEAM = "JambaToonRecoverTeam"
 AJM.COMMAND_SOUL_STONE = "JambaToonSoulStone"
-AJM.COMMAND_READY_CHECK = "jambaReadyCheck"
-AJM.COMMAND_TELE_PORT = "jambateleport"
+AJM.COMMAND_READY_CHECK = "JambaReadyCheck"
+AJM.COMMAND_TELE_PORT = "Jambateleport"
+AJM.COMMAND_LOOT_ROLL = "JamabaLootRoll"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -281,6 +283,16 @@ local function SettingsCreateRequests( top )
 		AJM.SettingsToggleLFGTeleport,
 		L["Teleport With Team Members LFG"]
 	)
+ 	movingTop = movingTop - checkBoxHeight
+ 	AJM.settingsControlRequests.checkBoxLootWithTeam = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControlRequests, 
+		headingWidth, 
+		left, 
+		movingTop,
+		L["Roll Loot With Team"],
+		AJM.SettingsToggleLootWithTeam,
+		L["Roll Loot With the Team"]
+	)	
 	movingTop = movingTop - dropdownHeight - verticalSpacing
  	AJM.settingsControlRequests.dropdownRequestArea = JambaHelperSettings:CreateDropdown( 
 	AJM.settingsControlRequests, 
@@ -566,6 +578,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlRequests.checkBoxAutoRoleCheck:SetValue( AJM.db.autoAcceptRoleCheck )
 	AJM.settingsControlRequests.checkBoxAcceptReadyCheck:SetValue( AJM.db.acceptReadyCheck )
 	AJM.settingsControlRequests.checkBoxLFGTeleport:SetValue( AJM.db.teleportLFGWithTeam )
+	AJM.settingsControlRequests.checkBoxLootWithTeam:SetValue( AJM.db.rollWithTeam )
 	AJM.settingsControlRequests.dropdownRequestArea:SetValue( AJM.db.requestArea )
 	AJM.settingsControlMerchant.checkBoxAutoRepair:SetValue( AJM.db.autoRepair )
 	AJM.settingsControlMerchant.checkBoxAutoRepairUseGuildFunds:SetValue( AJM.db.autoRepairUseGuildFunds )
@@ -636,6 +649,11 @@ end
 
 function AJM:SettingsToggleLFGTeleport( event, checked )
 	AJM.db.teleportLFGWithTeam = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleLootWithTeam( event, checked )
+	AJM.db.rollWithTeam = checked
 	AJM:SettingsRefresh()
 end
 
@@ -802,6 +820,7 @@ function AJM:OnEnable()
 	-- Ace Hooks
 	AJM:SecureHook( "ConfirmReadyCheck" )
 	AJM:SecureHook( "LFGTeleport" )
+	AJM:SecureHook( "RollOnLoot" )
 
 end
 
@@ -841,6 +860,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.enterLFGWithTeam = settings.enterLFGWithTeam
 		AJM.db.acceptReadyCheck = settings.acceptReadyCheck
 		AJM.db.teleportLFGWithTeam = settings.teleportLFGWithTeam
+		AJM.db.rollWithTeam = settings.rollWithTeam
 
 		AJM.db.autoRepair = settings.autoRepair
 		AJM.db.autoRepairUseGuildFunds = settings.autoRepairUseGuildFunds
@@ -1168,6 +1188,29 @@ function AJM:LFG_ROLE_CHECK_SHOW( event, ... )
 end
 
 
+function AJM:RollOnLoot(id, rollType, ...)
+	AJM:Print("lootTest", id, rollType)
+	local texture, name, count, quality, bindOnPickUp = GetLootRollItemInfo( id )
+	AJM:Print("lootItemTest", name)
+	if AJM.db.rollWithTeam == true then
+		if IsShiftKeyDown() == false then
+			if AJM.isInternalCommand == false then
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_LOOT_ROLL, id, rollType, name)
+			end
+		end		
+	end
+end
+
+function AJM:DoLootRoll( id, rollType, name )
+	AJM:Print("i have a command to roll on item", name)
+	AJM.isInternalCommand = true
+	if name ~= nil then
+		RollOnLoot(id, rollType)
+	end	
+	AJM.isInternalCommand = false
+end
+
+
 function AJM:CONFIRM_SUMMON( event, sender, location, ... )
 	local sender, location = GetSummonConfirmSummoner(), GetSummonConfirmAreaName()
 	if AJM.db.autoAcceptSummonRequest == true then
@@ -1355,4 +1398,9 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 			AJM.DoLFGTeleport( characterName, ... )
 		end	
 	end
+if commandName == AJM.COMMAND_LOOT_ROLL then
+		if characterName ~= self.characterName then
+			AJM.DoLootRoll( characterName, ... )
+		end	
+	end	
 end
