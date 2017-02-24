@@ -215,7 +215,7 @@ local function LookUpBnPlayer( name, ... )
 	    	local _, toonName, client, realmName, _, _, _, _, _, _, _, _, _, _, _, toonID, accontID, _, _, _ = BNGetFriendGameAccountInfo(i,k)
 			if client == "WoW" then
 				--AJM:Print(toonName, toonID, accontID, client)
-		   		if name == toonName then
+		   		if name == toonName.."-"..realmName then
 			    	--AJM:Print("foundnew", toonID )
 			    	return toonID
 		    	end	
@@ -281,7 +281,7 @@ local function CommandAll( moduleName, commandName, ... )
 				--AJM:Print("Name",player, "realm", realm, "MyRealm", myRealm)
 				if realm ~= myRealm then
 					--AJM:Print("Toon", player, "Is not From My Realm")
-					local toonID = LookUpBnPlayer(player)
+					local toonID = LookUpBnPlayer(characterName)
 					--local bnetIDAccount = select(17, BNGetGameAccountInfo(toonID))
 					if toonID ~= nil then
 						if IsCharacterOnline( characterName ) == true then

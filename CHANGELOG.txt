@@ -6,32 +6,38 @@ WoW Game Version: 7.1.5
 File Version: 7.1.5-5.2.0
 Release Date: TBA
 Modules Changed: Core, Toon, Trade, Team
-Beta update date 10/02/2017
+Beta update date 24/02/2017
 
 *Jamba-Core (Communications)
 	- Added support for Cross Realm using BNSendGameData Jamba will look fo the character 
 	  and will do all the magic.
+	- Added libnotify-1-0 (addon to say there is a new version with a small Changelog.) (WIP)
+	- Removed all of Old ways to show changeLog on core GUI (WIP)
+	
+*jamba-Message
+	- New cool stuff here!
 	
 	
 *Jamba-Toon
-	- Ready-check with team.
-	- LFG Role-check with team.
-	- Teleport LFG with team.
+	- Ready-check with Team.
+	- LFG Role-check Auto.
+	- Teleport LFG with team. (hold shift to not port)
 	- Roll Need/greed/Etc... with Team (Added)
-	- Removed the exata Death Prompts Now Part of the basic wow's (hold shift to not release.) ( WIP )
+	- Clones always pass on loot (can not work with "roll with team") (WIP)
+	
 
 *Jamba-Trade
 	-WIP!
 	*- coming soon™
 	*- Can now set a list of items you want to trade with master/team.
-	*- add a option to olny trade gold with master.
+	*- add a option to only trade gold with master.
 
 Jamba-Team
-	- coming soon™
-	- Removed InviteTag command and is now part of jamba-team Invite<tag> 	
-	- jamba-Invte now support the tag command if no <tag> then will use tag <all>.
-	- Added a option to set all members to assistant when you join a raid group. (WIP)
-
+	- (new)Added a option to set all members to assistant when you join a raid group.
+	
+Jamba-Taxi
+	- Changed default Taxi dayly to 2 sec, added in 0.5sec max 5 sec now.
+	- When Closing out the Taxi Frame the Team will close as well.
 	
 ---------------------------
 Jamba Version: 5.1.7

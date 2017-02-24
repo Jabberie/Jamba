@@ -31,7 +31,7 @@ AJM.settings = {
 	profile = {
 		takeMastersTaxi = true,
 		requestTaxiStop = true,
-		changeTexiTime = 5,
+		changeTexiTime = 2,
 		messageArea = JambaApi.DefaultMessageArea(),
 	},
 }
@@ -67,6 +67,7 @@ end
 
 AJM.COMMAND_TAKE_TAXI = "JambaTaxiTakeTaxi"
 AJM.COMMAND_EXIT_TAXI = "JambaTaxiExitTaxi"
+AJM.COMMAND_CLOSE_TAXI = "JambaCloseTaxi"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -96,6 +97,8 @@ function AJM:OnEnable()
 	-- Hook the TaketaxiNode function.
 	AJM:SecureHook( "TakeTaxiNode" )
 	AJM:SecureHook( "TaxiRequestEarlyLanding" )
+	-- WoW API Events.
+	AJM:RegisterEvent("TAXIMAP_CLOSED")
 	AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
 end
 
@@ -166,7 +169,7 @@ function AJM:SettingsCreateTaxi( top )
 		movingTop,
 		L["Clones To Take Taxi After Master"]
 	)		
-	AJM.settingsControl.changeTexiTime:SetSliderValues( 0, 10, 1 )
+	AJM.settingsControl.changeTexiTime:SetSliderValues( 0, 5, 0.5 )
 	AJM.settingsControl.changeTexiTime:SetCallback( "OnValueChanged", AJM.SettingsChangeTaxiTimer )
 	
 	--movingTop = movingTop - halfWidthSlider
@@ -284,7 +287,6 @@ function AJM.TakeTimedTaxi( event, nodeIndex, ...)
 	end		
 end
 
-
 -- Called after the character has just taken a flight (hooked function).
 function AJM:TakeTaxiNode( taxiNodeIndex )
 	-- If the take masters taxi option is on.
@@ -298,7 +300,7 @@ function AJM:TakeTaxiNode( taxiNodeIndex )
 		AJM.jambaTakesTaxi = false
 	end
 end
--- exit taxi with team ebony
+
 local function LeaveTaxi ( sender )
 	if AJM.db.requestTaxiStop == true then
 		if sender ~= AJM.characterName then
@@ -309,10 +311,9 @@ local function LeaveTaxi ( sender )
 	end	
 end
 
-
-
 function AJM.TaxiRequestEarlyLanding( sender )
 	-- If the take masters taxi option is on.
+	--AJM:Print("test")
 	if AJM.db.requestTaxiStop == true then
 		if UnitOnTaxi( "player" ) and CanExitVehicle() == true then
 			if AJM.jambaLeavsTaxi == false then
@@ -323,6 +324,21 @@ function AJM.TaxiRequestEarlyLanding( sender )
 		AJM.jambaLeavsTaxi = false
 	end
 end
+
+function AJM:TAXIMAP_CLOSED( event, ... )
+	--AJM:Print("closeTaxiTwo", AJM.jambaTakesTaxi )
+	if TaxiFrame_ShouldShowOldStyle() or FlightMapFrame:IsVisible() then
+		AJM:JambaSendCommandToTeam ( AJM.COMMAND_CLOSE_TAXI )
+	end	
+end
+
+
+local function CloseTaxiMapFrame()
+	if AJM.jambaTakesTaxi == false then
+		CloseTaxiMap()
+	end
+end
+
 -- A Jamba command has been received.
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	if characterName ~= self.characterName then
@@ -348,6 +364,9 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 				LeaveTaxi ( characterName, ... )
 			end
 		end
+		if commandName == AJM.COMMAND_CLOSE_TAXI then
+			CloseTaxiMapFrame()
+		end	
 	end
 end
 

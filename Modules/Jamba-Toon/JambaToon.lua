@@ -1118,7 +1118,7 @@ function AJM:READY_CHECK( event, name, ... )
 				AJM.isInternalCommand = ture
 				--AJM:Print("found in team", characterName)
 				if ReadyCheckFrame:IsShown() == true then
-					AJM:Print("Ok?")
+					--AJM:Print("Ok?")
 					ConfirmReadyCheck(1)
 					ReadyCheckFrame:Hide()
 				end	
@@ -1169,13 +1169,15 @@ end
 function AJM:DoLFGTeleport(port)
 	--AJM:Print("TeleCommand", port)
 	AJM.isInternalCommand = true
-	if port == true then
-		--AJM:Print("yestel")
-		LFGTeleport(1)
-	else	
-		--AJM:Print("notel")
-		LFGTeleport()
-	end	
+	if IsShiftKeyDown() == false then
+		if port == true then
+			--AJM:Print("yestel")
+			LFGTeleport(1)
+		else	
+			--AJM:Print("notel")
+			LFGTeleport()
+		end
+	end		
 	AJM.isInternalCommand = false
 end
 
@@ -1188,10 +1190,12 @@ function AJM:LFG_ROLE_CHECK_SHOW( event, ... )
 end
 
 
+
+
 function AJM:RollOnLoot(id, rollType, ...)
-	AJM:Print("lootTest", id, rollType)
+	--AJM:Print("lootTest", id, rollType)
 	local texture, name, count, quality, bindOnPickUp = GetLootRollItemInfo( id )
-	AJM:Print("lootItemTest", name)
+	--AJM:Print("lootItemTest", name)
 	if AJM.db.rollWithTeam == true then
 		if IsShiftKeyDown() == false then
 			if AJM.isInternalCommand == false then
@@ -1202,7 +1206,7 @@ function AJM:RollOnLoot(id, rollType, ...)
 end
 
 function AJM:DoLootRoll( id, rollType, name )
-	AJM:Print("i have a command to roll on item", name)
+	--AJM:Print("i have a command to roll on item", name)
 	AJM.isInternalCommand = true
 	if name ~= nil then
 		RollOnLoot(id, rollType)

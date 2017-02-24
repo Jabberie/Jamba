@@ -47,6 +47,7 @@ AJM.settings = {
 		inviteAcceptGuild = false,
 		inviteDeclineStrangers = false,
 		inviteConvertToRaid = true,
+		inviteSetAllAssistant = false,
 		lootSetAutomatically = false,
 		lootSetFreeForAll = true,
 		lootSetGroupLoot = false,
@@ -393,7 +394,7 @@ local function SettingsCreatePartyInvitationsControl( top )
 	local checkBoxWidth = (headingWidth - horizontalSpacing) / 2
 	local column1Left = left
 	local column2Left = left + checkBoxWidth + horizontalSpacing
-	local bottomOfSection = top - headingHeight - (checkBoxHeight * 3) - (verticalSpacing * 2)
+	local bottomOfSection = top - headingHeight - (checkBoxHeight * 4) - (verticalSpacing * 2)
 	-- Create a heading.
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Party Invitations Control"], top, false )
 	-- Create checkboxes.
@@ -406,11 +407,20 @@ local function SettingsCreatePartyInvitationsControl( top )
 		AJM.SettingsinviteConvertToRaidToggle,
 		L["Auto Convert To Raid if team is over five character's"]
 	)
-	AJM.settingsControl.partyInviteControlCheckBoxAcceptMembers = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.partyInviteControlCheckBoxSetAllAssist = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
 		column2Left, 
-		top - headingHeight, 
+		top - headingHeight,
+		L["Auto Set All Assistant"],
+		AJM.SettingsinviteSetAllAssistToggle,
+		L["Auto Set all raid Member's to Assistant"]
+	)	
+	AJM.settingsControl.partyInviteControlCheckBoxAcceptMembers = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		checkBoxWidth, 
+		column1Left, 
+		top - headingHeight - checkBoxHeight, 
 		L["Accept from team."],
 		AJM.SettingsAcceptInviteMembersToggle,
 		L["Auto Accept invites from the team."]
@@ -418,7 +428,7 @@ local function SettingsCreatePartyInvitationsControl( top )
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptFriends = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
-		column1Left, 
+		column2Left, 
 		top - headingHeight - checkBoxHeight, 
 		L["Accept from friends."],
 		AJM.SettingsAcceptInviteFriendsToggle,
@@ -427,16 +437,16 @@ local function SettingsCreatePartyInvitationsControl( top )
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptBNFriends = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
-		column2Left, 
-		top - headingHeight - checkBoxHeight, 
-		L["Accept from BattleNet friends."],
+		column1Left, 
+		top - headingHeight - checkBoxHeight - checkBoxHeight, 
+		L["Accept From BattleTag Friends."],
 		AJM.SettingsAcceptInviteBNFriendsToggle,
-		L["Auto Accept invites from your Battlenet or RealID Friends list."]
+		L["Auto Accept invites from your BatteTag or RealID Friends list."]
 	)	
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptGuild = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
-		column1Left, 
+		column2Left, 
 		top - headingHeight - checkBoxHeight - checkBoxHeight,
 		L["Accept from guild."],
 		AJM.SettingsAcceptInviteGuildToggle,
@@ -445,8 +455,8 @@ local function SettingsCreatePartyInvitationsControl( top )
 	AJM.settingsControl.partyInviteControlCheckBoxDeclineStrangers = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
-		column2Left, 
-		top - headingHeight  - checkBoxHeight - checkBoxHeight,
+		column1Left, 
+		top - headingHeight  - checkBoxHeight - checkBoxHeight - checkBoxHeight,
 		L["Decline from strangers."],
 		AJM.SettingsDeclineInviteStrangersToggle,
 		L["Decline invites from anyone else."]
@@ -468,7 +478,7 @@ local function SettingsCreatePartyLootControl( top )
 	local indentContinueLabel = horizontalSpacing * 13
 	local column1Left = left
 	local column2Left = left + checkBoxWidth + horizontalSpacing
-	local bottomOfSection = top - headingHeight - checkBoxHeight - radioBoxHeight - verticalSpacing - checkBoxHeight - checkBoxHeight - (verticalSpacing * 4) - labelContinueHeight - checkBoxHeight 
+	local bottomOfSection = top - headingHeight - checkBoxHeight - radioBoxHeight - verticalSpacing - checkBoxHeight - checkBoxHeight -  checkBoxHeight - (verticalSpacing * 4) - labelContinueHeight - checkBoxHeight 
 	-- Create a heading.
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Party Loot Control (Instances)"], top, false )
 	-- Create checkboxes.
@@ -1071,7 +1081,12 @@ function AJM.DoTeamPartyInvite()
 	if AJM.currentInviteCount < AJM.inviteCount then
 		--if GetTeamListMaximumOrderOnline() > 5 and AJM.db.inviteConvertToRaid == true then
 		if AJM.inviteCount > 5 and AJM.db.inviteConvertToRaid == true then
-		ConvertToRaid()
+			if AJM.db.inviteSetAllAssistant == true then	
+				SetEveryoneIsAssistant("true")
+				ConvertToRaid()			
+			else				
+				ConvertToRaid()
+			end
 		end
 		AJM:ScheduleTimer( "DoTeamPartyInvite", 0.5 )
 	else
@@ -1241,14 +1256,12 @@ function AJM:PARTY_INVITE_REQUEST( event, inviter, ... )
 		-- Accept an invite from BNET/RealD?
 		if AJM.db.inviteAcceptBNFriends and BNFeaturesEnabledAndConnected() == true then
 			-- Iterate each friend; searching for the inviter in the friends list.
-			for bnIndex = 1, BNGetNumFriends() do
-			--local _, _, _, _, name, toonid = BNGetFriendGameAccountInfo( bnIndex )
+			local _, numFriends = BNGetNumFriends()
+			for bnIndex = 1, numFriends do
 				for toonIndex = 1, BNGetNumFriendGameAccounts( bnIndex ) do
 					local _, toonName, client, realmName = BNGetFriendGameAccountInfo( bnIndex, toonIndex )
-					--AJM:Print("Test", inviter, toonName, realmName, client )
+					--AJM:Print("BNFrindsTest", toonName, client, realmName, "inviter", inviter)
 					if client == "WoW" then
-						--inviter = inviter:match("(.+)%-.+") or inviter
-						--AJM:Print("True", toonName.."-"..realmName )
 						if toonName == inviter or toonName.."-"..realmName == inviter then
 							acceptInvite = true
 							break
@@ -1431,6 +1444,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptGuild:SetValue( AJM.db.inviteAcceptGuild )
 	AJM.settingsControl.partyInviteControlCheckBoxDeclineStrangers:SetValue( AJM.db.inviteDeclineStrangers )
 	AJM.settingsControl.partyInviteControlCheckBoxConvertToRaid:SetValue( AJM.db.inviteConvertToRaid )
+	AJM.settingsControl.partyInviteControlCheckBoxSetAllAssist:SetValue( AJM.db.inviteSetAllAssistant )
 	-- Party Loot Control.
 	AJM.settingsControl.partyLootControlCheckBoxSetLootMethod:SetValue( AJM.db.lootSetAutomatically )
 	AJM.settingsControl.partyLootControlCheckBoxSetFFA:SetValue( AJM.db.lootSetFreeForAll )
@@ -1440,6 +1454,7 @@ function AJM:SettingsRefresh()
 	--AJM.settingsControl.partyLootControlCheckBoxFriendsNotStrangers:SetValue( AJM.db.lootToGroupFriendsAreNotStrangers )
 	--AJM.settingsControl.partyLootControlCheckBoxSetOptOutOfLoot:SetValue( AJM.db.lootSlavesOptOutOfLoot )
 	-- Ensure correct state.
+	AJM.settingsControl.partyInviteControlCheckBoxSetAllAssist:SetDisabled (not AJM.db.inviteConvertToRaid )
 	AJM.settingsControl.partyLootControlCheckBoxSetFFA:SetDisabled( not AJM.db.lootSetAutomatically )
 	AJM.settingsControl.partyLootControlCheckBoxSetGroupLoot:SetDisabled( not AJM.db.lootSetAutomatically )
 	AJM.settingsControl.partyLootControlCheckBoxSetPersLooter:SetDisabled( not AJM.db.lootSetAutomatically )
@@ -1464,6 +1479,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.inviteAcceptGuild = settings.inviteAcceptGuild 
 		AJM.db.inviteDeclineStrangers = settings.inviteDeclineStrangers
 		AJM.db.inviteConvertToRaid = settings.inviteConvertToRaid
+		AJM.db.inviteSetAllAssistant = settings.inviteSetAllAssistant
 		AJM.db.lootSetAutomatically = settings.lootSetAutomatically 
 		AJM.db.lootSetFreeForAll = settings.lootSetFreeForAll 
 		AJM.db.lootSetGroupLoot = settings.lootSetGroupLoot 
@@ -1663,6 +1679,10 @@ end
 function AJM:SettingsinviteConvertToRaidToggle( event, checked )
 	AJM.db.inviteConvertToRaid = checked
 	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsinviteSetAllAssistToggle( event, checked )
+	AJM.db.inviteSetAllAssistant = checked
 end
 
 function AJM:SettingsSetLootMethodToggle( event, checked )

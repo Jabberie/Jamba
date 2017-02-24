@@ -41,6 +41,7 @@ L["When Master changes, promote Master to party leader."] = true
 L["Party Invitations Control"] = true
 L["Accept from team."] = true
 L["Auto Convert Team Over Five To Raid"] = true
+L["Auto Set All Assistant"] = true
 L["Accept from friends."] = true
 L["Accept from BattleNet/RealD friends."] = true
 L["Accept from guild."] = true
@@ -110,10 +111,13 @@ L["Minions Don't need loot."] = true
 L["Set to Group Loot "] = true
 L["Override: Set loot to Group Loot if stranger is in group."] = true
 L["Set the Loot Method to..."] = true
-L["Accept from BattleNet friends."] = true 
-L["Auto Accept invites from your Battlenet or RealID Friends list."] = true
+
+L["Accept From BattleTag Friends."] = true 
+
+L["Auto Accept invites from your BatteTag or RealID Friends list."] = true
 L["Auto Convert To Raid if team is over five character's"] = true
 L["Auto Convert To Raid"] = true
+L["Auto Set all raid Member's to Assistant"] = true
 L["Promote Master to party leader."] = true
 L["Set the Master to the Focus."] = true
 L["Focus will set master toon."] = true
