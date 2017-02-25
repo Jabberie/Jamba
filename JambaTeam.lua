@@ -103,19 +103,19 @@ function AJM:GetConfiguration()
 			invite = {
 				type = "input",
 				name = L["Invite"],
-				desc = L["Invite team members to a party."],
+				desc = L["Invite team members to a party with or without a <tag>."],
 				usage = "/jamba-team invite",
 				get = false,
 				set = "InviteTeamToParty",
 			},
-			inviteTag = {
-				type = "input",
-				name = L["Invites"],
-				desc = L["Invite team members to a <tag> party."],
-				usage = "/jamba-team invite <tag>",
-				get = false,
-				set = "InviteTeamToPartys",
-			},				
+		--	inviteTag = {
+		--		type = "input",
+		--		name = L["Invites"],
+		--		desc = L["Invite team members to a <tag> party."],
+		--		usage = "/jamba-team inviteTag <tag>",
+		--		get = false,
+		--		set = "InviteTeamToParty",
+		--	},				
 			disband = {
 				type = "input",
 				name = L["Disband"],
@@ -1058,6 +1058,7 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 -- Invite team to party.
+--[[
 function AJM:InviteTeamToParty()
 	-- Iterate each enabled member and invite them to a group.
 	AJM.inviteList = {}
@@ -1074,6 +1075,7 @@ function AJM:InviteTeamToParty()
 	AJM.currentInviteCount = 0
 	AJM:ScheduleTimer( "DoTeamPartyInvite", 0.5 )
 end
+--]]
 
 function AJM.DoTeamPartyInvite()
 	InviteUnit( AJM.inviteList[AJM.currentInviteCount] )
@@ -1096,28 +1098,28 @@ function AJM.DoTeamPartyInvite()
 	end
 end
 
-function AJM:InviteTeamToPartys( info, tag )
+
+function AJM:InviteTeamToParty( info, tag )
 	-- Iterate each enabled member and invite them to a group.
-	if tag == nil then
-	return
+	if tag == nil or tag == "" then
+		tag = "all"
 	end
-	if JambaPrivate.Tag.DoesCharacterHaveTag( AJM.characterName, tag ) == false then
-		--AJM:Print("IDONOTHAVETAG", tag)
-		for index, characterName in TeamListOrdered() do
-			--AJM:Print("NextChartohavetag", tag, characterName )
-			if JambaPrivate.Tag.DoesCharacterHaveTag( characterName, tag ) then
-				--AJM:Print("i have tag", tag, characterName )
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_TAG_PARTY, characterName, tag )
-				break
+	if JambaUtilities:InTagList(tag) == true then
+		if JambaPrivate.Tag.DoesCharacterHaveTag( AJM.characterName, tag ) == false then
+			--AJM:Print("IDONOTHAVETAG", tag)
+			for index, characterName in TeamListOrderedOnline() do
+				--AJM:Print("NextChartohavetag", tag, characterName )
+				if JambaPrivate.Tag.DoesCharacterHaveTag( characterName, tag ) then
+					--AJM:Print("i have tag", tag, characterName )
+					AJM:JambaSendCommandToTeam( AJM.COMMAND_TAG_PARTY, characterName, tag )
+					break
+				end
 			end
-		end
-		return
-	else
-		AJM.inviteList = {}
-		AJM.inviteCount = 0
-		for index, characterName in TeamListOrdered() do
-			if GetCharacterOnlineStatus( characterName ) == true then
-				--AJM:Print("test", characterName, tag )
+			return
+		else
+			AJM.inviteList = {}
+			AJM.inviteCount = 0
+			for index, characterName in TeamListOrderedOnline() do
 				if JambaPrivate.Tag.DoesCharacterHaveTag( characterName, tag ) then
 					--AJM:Print("HasTag", characterName, tag )
 					-- As long as they are not the player doing the inviting.
@@ -1128,17 +1130,19 @@ function AJM:InviteTeamToPartys( info, tag )
 				end
 			end
 		end
-	end
-	AJM.currentInviteCount = 0
-	AJM:ScheduleTimer( "DoTeamPartyInvite", 0.5 )
+		AJM.currentInviteCount = 0
+		AJM:ScheduleTimer( "DoTeamPartyInvite", 0.5 )
+	else
+	AJM:Print (L["Unknown Tag "]..tag )
+	end	
 end
 
-function AJM:TagParty(test, characterName, tag, ...)
+function AJM:TagParty(event, characterName, tag, ...)
 	--AJM:Print("test", characterName, tag )
 	if AJM.characterName == characterName then
 	 --AJM:Print("this msg is for me", characterName )
 		if JambaPrivate.Tag.DoesCharacterHaveTag( AJM.characterName, tag ) then
-			AJM:InviteTeamToPartys( nil, tag)
+			AJM:InviteTeamToParty( nil, tag)
 		else 
 			return
 		end
@@ -1616,7 +1620,7 @@ function AJM.SettingsAddPartyClick( event )
 	AJM:AddPartyMembers()
 end
 function AJM:SettingsInviteClick( event )
-	AJM:InviteTeamToParty()
+	AJM:InviteTeamToParty(nil)
 end
 
 function AJM:SettingsDisbandClick( event )

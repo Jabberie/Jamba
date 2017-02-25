@@ -276,35 +276,32 @@ local function CommandAll( moduleName, commandName, ... )
 	--if the unit is not in the party then it unlikely did not get the party message,
 	for characterName, characterOrder in JambaPrivate.Team.TeamList() do		
 		if UnitInParty( Ambiguate( characterName, "none" ) ) == false then		
-			local player, realm = strsplit( "-", characterName, 2 )
-			local myRealm = string.gsub(GetRealmName(), "%s+", "")	
-				--AJM:Print("Name",player, "realm", realm, "MyRealm", myRealm)
-				if realm ~= myRealm then
-					--AJM:Print("Toon", player, "Is not From My Realm")
-					local toonID = LookUpBnPlayer(characterName)
-					--local bnetIDAccount = select(17, BNGetGameAccountInfo(toonID))
-					if toonID ~= nil then
-						if IsCharacterOnline( characterName ) == true then
-							--AJM:Print("test", toonID)
-							BNSendGameData(
-								toonID, 
-								AJM.COMMAND_PREFIX, 
-								message
-								)
-						end
-					else
-						--AJM:Print("Can not found character Name in BN Frineds List", characterName)
-						if IsCharacterOnline( characterName ) == true then
-						AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
-							AJM:SendCommMessage(
-							AJM.COMMAND_PREFIX,
-							message,
-							AJM.COMMUNICATION_WHISPER,
-							characterName,
-							AJM.COMMUNICATION_PRIORITY_ALERT
+			if JambaUtilities:CheckIsFromMyRealm(characterName) == false then
+				--AJM:Print("Toon", player, "Is not From My Realm")
+				local toonID = LookUpBnPlayer(characterName)
+				--local bnetIDAccount = select(17, BNGetGameAccountInfo(toonID))
+				if toonID ~= nil then
+					if IsCharacterOnline( characterName ) == true then
+						--AJM:Print("test", toonID)
+						BNSendGameData(
+							toonID, 
+							AJM.COMMAND_PREFIX, 
+							message
 							)
-						end
+					end	
+				else
+					--AJM:Print("Can not found character Name in BN Frineds List", characterName)
+					if IsCharacterOnline( characterName ) == true then
+					AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+						AJM:SendCommMessage(
+						AJM.COMMAND_PREFIX,
+						message,
+						AJM.COMMUNICATION_WHISPER,
+						characterName,
+						AJM.COMMUNICATION_PRIORITY_ALERT
+						)
 					end
+				end
 				--AJM:Print( "Toon not in party:", characterName)
 			else
 			AJM:DebugMessage( "Toon not in party:", characterName)

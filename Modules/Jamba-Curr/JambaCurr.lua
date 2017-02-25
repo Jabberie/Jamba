@@ -726,8 +726,8 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.currencyFrameBorderColourG = settings.currencyFrameBorderColourG
 		AJM.db.currencyFrameBorderColourB = settings.currencyFrameBorderColourB
 		AJM.db.currencyFrameBorderColourA = settings.currencyFrameBorderColourA	
-		AJM.db.currencyMediaBorder = settings.currencyBorderStyle
-		AJM.db.currencyMediaBackground = settings.currencyBackgroundStyle
+		AJM.db.currencyBorderStyle = settings.currencyBorderStyle
+		AJM.db.currencyBackgroundStyle = settings.currencyBackgroundStyle
 		AJM.db.currencyFontSize = settings.currencyFontSize
 		AJM.db.currencyFontStyle = settings.currencyFontStyle
 		AJM.db.currencyNameWidth = settings.currencyNameWidth

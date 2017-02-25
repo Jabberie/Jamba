@@ -25,7 +25,7 @@ L["I Am Master"] = true
 L["Set this character to be the master character."] = true
 L["Invite"] = true
 L["Invites"] = true
-L["Invite team members to a party."] = true
+L["Invite team members to a party with or without a <tag>."] = true
 L["Invite team members to a <tag> party."] = true
 L["Disband"] = true
 L["Disband all team members from their parties."] = true
@@ -84,7 +84,7 @@ L["Set All Team Members OnLine"] = true
 L["Set Team OnLine"] = true
 L["Set Offline"] = true
 L["Sets a member offline"] = true
-
+L["Unknown Tag "] = true
 
 -- ebony tooltip work and Gui Changes.
 

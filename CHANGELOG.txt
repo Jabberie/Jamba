@@ -6,17 +6,13 @@ WoW Game Version: 7.1.5
 File Version: 7.1.5-5.2.0
 Release Date: TBA
 Modules Changed: Core, Toon, Trade, Team
-Beta update date 24/02/2017
+Beta update date 25/02/2017
 
 *Jamba-Core (Communications)
 	- Added support for Cross Realm using BNSendGameData Jamba will look fo the character 
 	  and will do all the magic.
 	- Added libnotify-1-0 (addon to say there is a new version with a small Changelog.) (WIP)
 	- Removed all of Old ways to show changeLog on core GUI (WIP)
-	
-*jamba-Message
-	- New cool stuff here!
-	
 	
 *Jamba-Toon
 	- Ready-check with Team.
@@ -27,15 +23,20 @@ Beta update date 24/02/2017
 	
 
 *Jamba-Trade
-	-WIP!
-	*- coming soon™
-	*- Can now set a list of items you want to trade with master/team.
-	*- add a option to only trade gold with master.
+	- Removed the Old Trade PopUp Window
+	- Can now set a list of items you want to trade with master.
+	- Only trade gold To master.
 
-Jamba-Team
-	- (new)Added a option to set all members to assistant when you join a raid group.
+*jamba-Currency
+	- Fixed a bug when Border/Background not getting Sent Settings.	
 	
-Jamba-Taxi
+*Jamba-Team
+	- (Added a option to set all members to assistant when you join a raid group.
+	- Remove command "/jamba-team InviteTag". (Update)
+	- "/Jamba-Team Invite" now support's <Tag>
+	- If Tag is Unknown it will tell you in chat.	
+
+*Jamba-Taxi
 	- Changed default Taxi dayly to 2 sec, added in 0.5sec max 5 sec now.
 	- When Closing out the Taxi Frame the Team will close as well.
 	

@@ -189,10 +189,48 @@ function JambaUtilities:FixValueToRange( value, minValue, maxValue )
 end
 
 
-		
+function JambaUtilities:CheckIsFromMyRealm( name )
+	--print("test", name)
+	local sameRealm = false
+	if name ~= nil then
+		local player, realm = strsplit( "-", name, 2 )
+		local myRealm = string.gsub(GetRealmName(), "%s+", "")
+		if realm == myRealm then
+			--print("Real SameRealm")
+			sameRealm = true
+		else
+			local connectedServers = GetAutoCompleteRealms()
+			if connectedServers then --Check if realm matches any realm in our connection		
+				for i = 1, #connectedServers do
+	 				if realm == connectedServers[i] then
+						--print("connectedRealm")
+						sameRealm = true
+					end
+				end		
+			else
+				--print("NotFromARealm")
+				sameRealm = false
+			end
+		end	
+	end
+	return sameRealm
+end		
 	
 	
-	
+function JambaUtilities:InTagList( tag )
+	local isInTagList = false
+	if tag ~= nil then	
+		local tagList = JambaApi.AllTagsList()
+		--if tagList then
+			for i = 1, #tagList do
+				if tag == tagList[i] then
+					isInTagList = true
+				end	
+			end		
+		--end
+	end
+	return isInTagList	
+end	
 	
 	
 	
