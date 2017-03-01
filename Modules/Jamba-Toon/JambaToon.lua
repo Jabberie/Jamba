@@ -18,6 +18,7 @@ local AJM = LibStub( "AceAddon-3.0" ):NewAddon(
 local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
 local LibBagUtils = LibStub:GetLibrary( "LibBagUtils-1.0" )
+--local LibCache = LibStub('LibItemCache-1.1')
 AJM.SharedMedia = LibStub( "LibSharedMedia-3.0" )
 
 --  Constants and Locale for this module.
@@ -106,6 +107,7 @@ AJM.COMMAND_SOUL_STONE = "JambaToonSoulStone"
 AJM.COMMAND_READY_CHECK = "JambaReadyCheck"
 AJM.COMMAND_TELE_PORT = "Jambateleport"
 AJM.COMMAND_LOOT_ROLL = "JamabaLootRoll"
+AJM.COMMAND_CHECK_BAGS = "jambaCheckBags"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -114,6 +116,9 @@ AJM.COMMAND_LOOT_ROLL = "JamabaLootRoll"
 -------------------------------------------------------------------------------------------------------------
 -- Variables used by module.
 -------------------------------------------------------------------------------------------------------------
+
+AJM.sharedInvData = {}
+
 
 -------------------------------------------------------------------------------------------------------------
 -- Settings Dialogs.
@@ -786,6 +791,9 @@ function AJM:OnInitialize()
 	AJM.haveBeenHit = false
 	-- Bags full changed count.
 	AJM.previousFreeBagSlotsCount = -1
+	--Start-DB for items.
+	--AJM:scanBagsForItems()
+	AJM:AddDummyItem()
 end
 
 -- Called when the addon is enabled.
@@ -814,14 +822,17 @@ function AJM:OnEnable()
 	AJM:RegisterEvent("LOSS_OF_CONTROL_ADDED")
 	AJM:RegisterEvent( "UI_ERROR_MESSAGE", "ITEM_PUSH" )
 	AJM:RegisterEvent( "UNIT_AURA" )
+	AJM:RegisterEvent(  "BAG_UPDATE_DELAYED" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
-		AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_ONLINE, "OnCharactersChanged" )
+	AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_ONLINE, "OnCharactersChanged" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_OFFLINE, "OnCharactersChanged" )
 	-- Ace Hooks
 	AJM:SecureHook( "ConfirmReadyCheck" )
 	AJM:SecureHook( "LFGTeleport" )
 	AJM:SecureHook( "RollOnLoot" )
+	
 
+	AJM:SecureHook( GameTooltip , "SetBagItem", "AddTooltipInfo" )
 end
 
 -- Called when the addon is disabled.
@@ -1380,6 +1391,120 @@ function AJM:LOSS_OF_CONTROL_ADDED( event, ... )
 	end
 end
 
+function AJM:AddDummyItem()
+	JambaUtilities:ClearTable( AJM.sharedInvData )
+	itemInformation = {}
+	itemInformation.characterName = "ebonyOwns"
+	itemInformation.name = "DummyTestItem"
+	itemInformation.count = "0"
+	itemInformation.itemId = "71142"
+	table.insert( AJM.sharedInvData, itemInformation )
+end
+
+
+function AJM:AddTooltipInfo( toolTip )
+	--AJM:Print("test")
+	local name, link = toolTip:GetItem()
+	local itemName, characterName, itemCount = AJM:AddToTooltip(link )
+	AJM:AddToTooltip(toolTip, link)
+
+--	local totalCount = 0
+--	if itemName ~= nil then
+--		toolTip:AddLine(" ")
+--		toolTip:AddLine(L["Jamba Inventory"], 1, 0.82, 0, 1)
+--		toolTip:AddDoubleLine(Ambiguate(characterName, "none"), L["Bags"]..L[" "]..itemCount, 1,1,1,1,1,1)
+--		totalCount = totalCount + itemCount
+--	end	
+--	if totalCount > 1 then
+--		toolTip:AddDoubleLine("Total", totalCount, 1,0,0,1,1,1)
+--	end
+	toolTip:Show()
+end
+
+function AJM:AddToTooltip(toolTip, link)
+	local totalCount = 0
+	if link ~= nil then
+		toolTip:AddLine(" ")
+		toolTip:AddLine(L["Jamba Bags"], 1, 0.82, 0, 1)
+		for id, item in pairs( AJM.sharedInvData ) do 
+			--AJM:Print("Checking", item.name, link, item.count)
+			local itemId = JambaUtilities:GetItemIdFromItemLink( link )
+			--AJM:Print("Checking", item.itemId, itemId, item.characterName )
+			if itemId == item.itemId then
+				--AJM:Print("found8", item.name, item.characterName, item.count)
+				toolTip:AddDoubleLine(Ambiguate(item.characterName, "none"), L["Bags"]..L[" "]..item.count, 1,1,1,1,1,1)
+				totalCount = totalCount + item.count
+			end
+		end
+	end		
+	if totalCount > 1 then
+		toolTip:AddLine(" ")
+		toolTip:AddDoubleLine("Total", totalCount, 1,0.82,0,1,1,1,1)
+	end					
+end		
+
+
+function  AJM:BAG_UPDATE_DELAYED(event, ... )	
+	for bagID = 0, NUM_BAG_SLOTS do	
+		for slot = 1, GetContainerNumSlots(bagID) do
+			--if slot ~= nil then
+			local itemLink = GetContainerItemLink(bagID, slot)	
+			if itemLink ~= nil then
+				--AJM:Print("test1212", itemLink)
+				local name, link, quality, iLevel, reqLevel, class, subclass, maxStack, equipSlot, texture, vendorPrice = GetItemInfo(itemLink)
+				local itemId = JambaUtilities:GetItemIdFromItemLink( itemLink )	
+					--AJM:Print("ItemNotInList", link)
+					--We olny want to check items with a count. EG- (mats etc.)
+				if maxStack	~= nil then
+					if maxStack > 1 then
+						local countBags = GetItemCount(link)
+						AJM:JambaSendCommandToTeam( AJM.COMMAND_CHECK_BAGS, link, countBags, itemId )
+					else
+						local countBags = GetItemCount(link)
+						--AJM:Print("NonStackeditems", link, countBags, itemId)
+						AJM:JambaSendCommandToTeam( AJM.COMMAND_CHECK_BAGS, link, countBags, itemId )
+					end	
+				end		
+			end	
+		end		
+	end	
+end
+
+function AJM:addItemIfNotExists( itemLink, countBags, characterName )
+	local IfNotExists = false
+		for id, item in pairs( AJM.sharedInvData ) do
+			--AJM:Print("test132", item.name, itemLink )
+			if item.itemId == itemLink and characterName == item.characterName then
+				--AJM:Print("found!", item.name, characterName)
+				IfNotExists = true
+				--If Count Has changed we need to update the text!
+				if item.count ~= countBags and item.characterName == characterName then
+					--AJM:Print("IDRemovTest", id)
+					AJM.sharedInvData[id] = nil	
+					IfNotExists = false
+				end
+				break
+			else 
+				IfNotExists = false
+			end	
+		end	
+	return 	IfNotExists
+end
+
+
+
+function AJM:ReceivedCheckBags( characterName, item, count, itemId )
+	--AJM:Print("itemTest.", characterName, item, count, itemId )
+	itemInformation = {}
+	itemInformation.characterName = characterName
+	itemInformation.name = item
+	itemInformation.count = count
+	itemInformation.itemId = itemId
+	if AJM:addItemIfNotExists( itemId, count, characterName )	== false then	
+		table.insert( AJM.sharedInvData, itemInformation )
+	end	
+end	
+
 -- A Jamba command has been received.
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	--AJM:Print("Test", characterName, commandName)
@@ -1402,9 +1527,12 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 			AJM.DoLFGTeleport( characterName, ... )
 		end	
 	end
-if commandName == AJM.COMMAND_LOOT_ROLL then
+	if commandName == AJM.COMMAND_LOOT_ROLL then
 		if characterName ~= self.characterName then
 			AJM.DoLootRoll( characterName, ... )
 		end	
+	end
+	if commandName == AJM.COMMAND_CHECK_BAGS then
+		AJM:ReceivedCheckBags( characterName, ... )
 	end	
 end

@@ -89,7 +89,8 @@ function AJM:OnInitialize()
 	-- Initialse the JambaModule part of this module.
 	AJM:JambaModuleInitialize( AJM.settingsControl.widgetSettings.frame )
 	-- Populate the settings.
-	AJM:SettingsRefresh()	
+	AJM:SettingsRefresh()
+	AJM.MountFromTeamMember	= false
 end
 
 -- Called when the addon is enabled.
@@ -282,23 +283,29 @@ end
 -- JambaMount functionality.
 -------------------------------------------------------------------------------------------------------------
 
-function AJM:UNIT_SPELLCAST_START(event, unitID, spell, rank, lineID, spellID, ...  )
-	--AJM:Print("Looking for Spells.", unitID, spellID, spell)
+function AJM:UNIT_SPELLCAST_START(event, unitID, name, rank, lineID, spellID, ...  )
+	--AJM:Print("Looking for Spells.", unitID, spellID, name)
 	AJM.castingMount = nil
-	if unitID == "player" then
-	local mountIDs = C_MountJournal.GetMountIDs()	
+	-- No Need to send the casting of mount again to team.
+	if AJM.MountFromTeamMember == true then
+		return
+	end	
+	if unitID == "player" and UnitAffectingCombat("player") == false then
+		local mountIDs = C_MountJournal.GetMountIDs()	
 		for i = 1, #mountIDs do
 			--local name , id, icon, active = C_MountJournal.GetMountInfoByID(i)
-			local creatureName,_,_,_,_,_,_,_,_,_,_,mountID = C_MountJournal.GetMountInfoByID(mountIDs[i])
-			--AJM:Print("Test", spell, creatureName)
-			if spell == creatureName then
-				--AJM:Print("SendtoTeam", "name", creatureName, "id", mountID)
-				if IsShiftKeyDown() == false then
-					AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_ME, creatureName, mountID )
-					AJM.castingMount = creatureName
-					break	
-				end	
-			end
+			local creatureName,mountSpellID,_,_,_,_,_,_,_,hideOnChar,isCollected,mountID = C_MountJournal.GetMountInfoByID(mountIDs[i])
+			if (isCollected and hideOnChar ~= true) then
+				--AJM:Print("MountName", name, spellID, "Checks", creatureName, mountSpellID)
+				if spellID == mountSpellID then
+					--AJM:Print("SendtoTeam", "name", name, "id", mountID)
+					if IsShiftKeyDown() == false then
+						AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_ME, spellID, mountID )
+						AJM.castingMount = name
+						break	
+					end	
+				end
+			end	
 		end	
 	end
 end
@@ -313,10 +320,6 @@ function AJM:UNIT_SPELLCAST_SUCCEEDED(event, unitID, spell, rank, lineID, spellI
 		AJM.isMounted = spell
 		--AJM:Print("Mounted!", AJM.isMounted)
 		AJM:RegisterEvent("UNIT_AURA")
-	--else
-		-- SomeThing gone wrong! so going to cast a random mount!
-		--AJM:Print("This Mount is not supported!", spell)
-		--AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_ME, "Random", "0" )
 	end
 	
 end
@@ -327,12 +330,13 @@ function AJM:UNIT_AURA(event, unitID, ... )
         return
     end
 	if not UnitBuff( unitID, AJM.isMounted) then
-		--AJM:Print("I have Dismounted - Send to team!")
+		--AJM:Print("I have Dismounted - Send to team!", AJM.isMounted)
 		if AJM.db.dismountWithMaster == true then
 			if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
 				if IsShiftKeyDown() == false then	
 					--AJM:Print("test")
 					AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_DISMOUNT )
+					AJM.MountFromTeamMember = false
 					AJM:UnregisterEvent("UNIT_AURA")
 				end		
 			else	
@@ -346,9 +350,26 @@ function AJM:UNIT_AURA(event, unitID, ... )
 	end
 end
 
-function AJM:TeamMount(characterName, name, mountID)
+function AJM:TeamMountStart(characterName, spellID, mountID)
+	--This checks the toon is not moving and if so adds a timmer before it mounts! (ebony magic :D)
+	local moving = GetUnitSpeed("Player")
+	--AJM:Print("moving", moving, spellID, mountID )
+	if moving == 0 then
+		AJM:TeamMount(characterName, spellID, mountID)
+	else
+		--AJM:Print("player Moving try agian in 1..." )
+		AJM:ScheduleTimer( "TeamMountStart", 1, nil, spellID, mountID )	
+	end	
+end
+
+
+function AJM:TeamMount(characterName, spellID, mountID)
 	--AJM:Print("testTeamMount", characterName, name, mountID )
 	--mount with team truned off.
+	if UnitAffectingCombat("player") == true then
+		AJM:JambaSendMessageToTeam( AJM.db.warningArea, L["I am Unable To Mount In Combat."], false )
+		return
+	end	
 	if AJM.db.mountWithTeam == false then
 		return
 	end
@@ -413,13 +434,15 @@ end
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	if characterName ~= self.characterName then
 		if commandName == AJM.COMMAND_MOUNT_ME then
-			--AJM:Print("command")
-			AJM:TeamMount( characterName, ... ) 
+			--AJM:Print("command")	
+			AJM:TeamMountStart( characterName, ... )
+			AJM.MountFromTeamMember = true
 		end
 		-- Dismount if mounted!
 		if commandName == AJM.COMMAND_MOUNT_DISMOUNT then
 			--AJM:Print("time to Dismount")
 			if IsMounted() then
+				AJM.MountFromTeamMember = false
 				Dismount()
 			end	
 		end

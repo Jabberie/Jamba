@@ -5,8 +5,16 @@ Jamba Version: 5.2.0
 WoW Game Version: 7.1.5
 File Version: 7.1.5-5.2.0
 Release Date: TBA
-Modules Changed: Core, Toon, Trade, Team
+Modules Changed: Core, Toon, Trade, Team, mount, trade, currency, taxi
 Beta update date 25/02/2017
+
+******** JAMBA BAGS in BETA 7.1.5.5.2.0-5 ********
+*Jamba-Bags(new)	
+	- Jamba-Bags in in the version i would like to see how many
+	get on with this how this it works. it tracks your teams bags and shows on a tooltip of a item, 
+	they be more to this with a command line to look for items, and this 
+	need fixing to work with the jamba-item bar.
+	(There is no way to trun it off)	
 
 *Jamba-Core (Communications)
 	- Added support for Cross Realm using BNSendGameData Jamba will look fo the character 
@@ -24,9 +32,10 @@ Beta update date 25/02/2017
 
 *Jamba-Trade
 	- Removed the Old Trade PopUp Window
-	- Can now set a list of items you want to trade with master.
-	- Only trade gold To master.
-
+	- Can now make a list of items you want to trade with master.
+	- Now will only trade gold To master.
+	- (beta-fix will trade all items not just the 1st slot it finds! )
+	
 *jamba-Currency
 	- Fixed a bug when Border/Background not getting Sent Settings.	
 	
@@ -34,11 +43,16 @@ Beta update date 25/02/2017
 	- (Added a option to set all members to assistant when you join a raid group.
 	- Remove command "/jamba-team InviteTag". (Update)
 	- "/Jamba-Team Invite" now support's <Tag>
-	- If Tag is Unknown it will tell you in chat.	
+	- If Tag is Unknown it will tell you.	
 
 *Jamba-Taxi
 	- Changed default Taxi dayly to 2 sec, added in 0.5sec max 5 sec now.
 	- When Closing out the Taxi Frame the Team will close as well.
+	
+*Jamba-Mount
+	- Fixed for Chauffeur Mount ( Level 1 Mount )
+	- Warns if the toon trying to mount is in combat.
+	- Checks the toon is not moving before it Mounts if is moving it will try again untill it stop moving.	
 	
 ---------------------------
 Jamba Version: 5.1.7

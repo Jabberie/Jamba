@@ -25,3 +25,4 @@ L["I am unable to Mount."] = true
 L["Only Works In a party!"] = true
 L["Dismount with Character That Dismount"] = true
 L["Only Dismount's from Master character."] = true
+L["I am Unable To Mount In Combat."] = true

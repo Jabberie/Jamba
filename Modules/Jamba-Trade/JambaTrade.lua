@@ -540,13 +540,15 @@ function AJM:TradeItemsFromList()
 					--AJM:Print("Items in list", itemInformation.link )
 					if JambaApi.DoesCharacterHaveTag( AJM.characterName, itemInformation.tag ) == true then
 					--Checks if there is a item in the bag with the name
-						local bag, slot, link = LibBagUtils:Find("BAGS", itemInformation.link )
-						if bag ~= nil then
-							--AJM:Print("found", bag, slot)
-							for iterateTradeSlots = 1, (MAX_TRADE_ITEMS - 1) do
-								if GetTradePlayerItemLink( iterateTradeSlots ) == nil then
-									PickupContainerItem( bag, slot )
-									ClickTradeButton( iterateTradeSlots )
+						--local bag, slot, link = LibBagUtils:Find("BAGS", itemInformation.link ) --did olny the find the 1st stack of a item.
+						for bag,slot,link in LibBagUtils:Iterate("BAGS", itemInformation.link ) do
+							if bag ~= nil then
+								AJM:Print("found", bag, slot)
+								for iterateTradeSlots = 1, (MAX_TRADE_ITEMS - 1) do
+									if GetTradePlayerItemLink( iterateTradeSlots ) == nil then
+										PickupContainerItem( bag, slot )
+										ClickTradeButton( iterateTradeSlots )
+									end	
 								end		
 							end
 						end		

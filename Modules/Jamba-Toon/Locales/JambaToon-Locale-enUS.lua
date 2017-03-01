@@ -111,3 +111,7 @@ L["Automatically Accept Role Checks \n\nIf a role is already set.."] = true
 L["Accept Ready Checks With Team \n\nIf Team Member is the one that does the ready check it is Auto."] = true
 L["Teleport With Team Members LFG"] = true
 L["Roll Loot With the Team"] = true
+--PLace Holder.
+L["Bags"] = true
+L[" "] = true
+L["Jamba Bags"] = true
