@@ -34,7 +34,7 @@ Beta update date 25/02/2017
 	- Removed the Old Trade PopUp Window
 	- Can now make a list of items you want to trade with master.
 	- Now will only trade gold To master.
-	- (beta-fix will trade all items not just the 1st slot it finds! )
+	- Added a option to trade Binds When Equipped Items With Master. (Green/Blue/Purple)
 	
 *jamba-Currency
 	- Fixed a bug when Border/Background not getting Sent Settings.	

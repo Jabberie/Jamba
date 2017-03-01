@@ -221,22 +221,46 @@ function JambaUtilities:InTagList( tag )
 	local isInTagList = false
 	if tag ~= nil then	
 		local tagList = JambaApi.AllTagsList()
-		--if tagList then
-			for i = 1, #tagList do
-				if tag == tagList[i] then
-					isInTagList = true
-				end	
-			end		
-		--end
+		for i = 1, #tagList do
+			if tag == tagList[i] then
+				isInTagList = true
+			end	
+		end		
 	end
 	return isInTagList	
 end	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+function JambaUtilities:TooltipScaner(item)
+	local text = nil
+	local text2 = nil	
+		if item ~= nil then
+			local tooltipName = "AJMScanner"
+			local tooltipScanner = CreateFrame("GameTooltip", tooltipName, nil, "GameTooltipTemplate")
+			tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")
+			tooltipScanner:SetHyperlink(item)
+			local tooltipText = _G[tooltipName.."TextLeft2"]:GetText()
+			local tooltipTextTwo = _G[tooltipName.."TextLeft3"]:GetText()
+				print("test",  tooltipTextTwo)
+				text = tooltipText 
+				text2 = tooltipTextTwo
+			end		
+	--print("test9", text, text2)
+	return text, text2
+end
+
+function JambaUtilities:ToolTipBagScaner(item, bag, slot)
+	--print("test", item, bag, slot )
+	if item ~= nil or bag ~= nil or slot ~= nil then
+		local boe = nil
+		local tooltipName = "AJMBagScanner"
+		local tooltipbagScanner = CreateFrame("GameTooltip", tooltipName , nil, "GameTooltipTemplate")
+			tooltipbagScanner:SetOwner(UIParent, "ANCHOR_NONE")
+			tooltipbagScanner:SetBagItem(bag, slot)
+			tooltipbagScanner:Show()
+		local tooltipText = _G[tooltipName.."TextLeft3"]:GetText()
+		--print("test", tooltipText)
+	    	boe = tooltipText
+	    	tooltipbagScanner:Hide()
+	    return boe
+	end
+end   

@@ -37,6 +37,7 @@ AJM.settings = {
 	profile = {
 		messageArea = JambaApi.DefaultMessageArea(),
 		showJambaTradeWindow = false,
+		tradeBoEItems = false,
 		autoTradeItemsList = {},
 		adjustMoneyWithGuildBank = false,
 		goldAmountToKeepOnToon = 200,
@@ -171,6 +172,15 @@ function AJM:SettingsCreateTrade( top )
 		movingTop, 
 		L["Trade The List Of Items With Master"],
 		AJM.SettingsToggleShowJambaTradeWindow
+	)	
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.checkBoxTradeBoEItems = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Trades Binds When Equipped Items With Master"],
+		AJM.SettingsToggleTradeBoEItems
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControl.tradeItemsHighlightRow = 1
@@ -369,6 +379,11 @@ function AJM:SettingsToggleShowJambaTradeWindow( event, checked )
 	AJM:SettingsRefresh()
 end
 
+function AJM:SettingsToggleTradeBoEItems(event, checked )
+	AJM.db.tradeBoEItems = checked
+	AJM:SettingsRefresh()
+end
+
 function AJM:SettingsToggleAdjustMoneyOnToonViaGuildBank( event, checked )
 	AJM.db.adjustMoneyWithGuildBank = checked
 	AJM:SettingsRefresh()
@@ -401,6 +416,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		-- Update the settings.
 		AJM.db.messageArea = settings.messageArea
 		AJM.db.showJambaTradeWindow = settings.showJambaTradeWindow
+		AJM.db.tradeBoEItems = settings.tradeBoEItems
 		AJM.db.autoTradeItemsList = JambaUtilities:CopyTable( settings.autoTradeItemsList )
 		AJM.db.adjustMoneyWithGuildBank = settings.adjustMoneyWithGuildBank
 		AJM.db.goldAmountToKeepOnToon = settings.goldAmountToKeepOnToon
@@ -422,6 +438,8 @@ end
 
 function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxShowJambaTradeWindow:SetValue( AJM.db.showJambaTradeWindow )
+	AJM.settingsControl.checkBoxTradeBoEItems:SetValue( AJM.db.tradeBoEItems)
+	AJM.settingsControl.checkBoxTradeBoEItems:SetDisabled( not AJM.db.showJambaTradeWindow )
 	AJM.settingsControl.dropdownMessageArea:SetValue( AJM.db.messageArea )
 	AJM.settingsControl.checkBoxAdjustMoneyOnToonViaGuildBank:SetValue( AJM.db.adjustMoneyWithGuildBank )
 	AJM.settingsControl.editBoxGoldAmountToLeaveOnToon:SetText( tostring( AJM.db.goldAmountToKeepOnToon ) )
@@ -467,7 +485,7 @@ function AJM:AddItem( itemLink, itemTag )
 	-- If the item could be found.
 	if name ~= nil then
 		local itemInformation = {}
-		itemInformation.link = itemLink
+		itemInformation.link = link
 		itemInformation.name = name
 		itemInformation.tag = itemTag
 		table.insert( AJM.db.autoTradeItemsList, itemInformation )
@@ -484,12 +502,16 @@ end
 
 
 function AJM:TRADE_SHOW( event, ... )	
-	if AJM.db.showJambaTradeWindow == true then
-		AJM:ScheduleTimer("TradeItemsFromList", 1 )
-	end	
 	--Keep for tradeing gold!
 	if AJM.db.adjustMoneyWithMasterOnTrade == true then
 		AJM:ScheduleTimer( "TradeShowAdjustMoneyWithMaster", 1 )
+	end	
+	-- do trade list with Gold!
+	if AJM.db.showJambaTradeWindow == true then
+		AJM:ScheduleTimer("TradeItemsFromList", 1 )
+	end
+	if AJM.db.tradeBoEItems == true and AJM.db.showJambaTradeWindow == true then
+		AJM:ScheduleTimer("TradeBoEItems", 1.5 )
 	end	
 end
 
@@ -543,7 +565,7 @@ function AJM:TradeItemsFromList()
 						--local bag, slot, link = LibBagUtils:Find("BAGS", itemInformation.link ) --did olny the find the 1st stack of a item.
 						for bag,slot,link in LibBagUtils:Iterate("BAGS", itemInformation.link ) do
 							if bag ~= nil then
-								AJM:Print("found", bag, slot)
+								--AJM:Print("found", bag, slot)
 								for iterateTradeSlots = 1, (MAX_TRADE_ITEMS - 1) do
 									if GetTradePlayerItemLink( iterateTradeSlots ) == nil then
 										PickupContainerItem( bag, slot )
@@ -557,6 +579,34 @@ function AJM:TradeItemsFromList()
 			end			
 		else
 			--AJM:Print(tradePlayersName, L["Is Not a Member of the team, Will not trade Items."])
+		end	
+	end	
+end
+
+function AJM:TradeBoEItems()
+	if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
+		return
+	end
+	for bag,slot,link in LibBagUtils:Iterate("BAGS") do
+		if bag ~= nil then
+			local _, _, locked, quality = GetContainerItemInfo(bag, slot)
+			-- quality is Uncommon (green) to  Epic (purple) 2 - 3 - 4
+			if quality ~= nil and locked == false then
+				if quality >= 2 and quality <= 4 then 
+					-- tooltips scan is the olny way to find if the item is BoE in bags!
+					local isBoe = JambaUtilities:ToolTipBagScaner(link, bag, slot)
+					-- if the item is boe then add it to the trade list!
+					if isBoe == ITEM_BIND_ON_EQUIP then
+						--AJM:Print("test21", link, locked)
+						for iterateTradeSlots = 1, (MAX_TRADE_ITEMS - 1) do
+							if GetTradePlayerItemLink( iterateTradeSlots ) == nil then
+								PickupContainerItem( bag, slot )
+								ClickTradeButton( iterateTradeSlots )
+							end	
+						end
+					end	
+				end	
+			end	
 		end	
 	end	
 end

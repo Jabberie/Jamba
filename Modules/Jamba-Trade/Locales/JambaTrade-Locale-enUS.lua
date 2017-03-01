@@ -29,5 +29,6 @@ L["Item tags must only be made up of letters and numbers."] = true
 L["Are you sure you wish to remove the selected item from the trade items list?"] = true
 L["Trade Excess Gold To Master From Minion"] = true
 L["Amount Of Gold To Keep"] = true
+L["Trades Binds When Equipped Items With Master"] = true
 L["Is Not a Member of the team, Will not trade Gold."] = true
 L["Is Not a Member of the team, Will not trade Items."] = true
