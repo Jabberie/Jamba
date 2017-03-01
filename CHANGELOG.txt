@@ -8,13 +8,13 @@ Release Date: TBA
 Modules Changed: Core, Toon, Trade, Team, mount, trade, currency, taxi
 Beta update date 25/02/2017
 
-******** JAMBA BAGS in BETA 7.1.5.5.2.0-5 ********
-*Jamba-Bags(new)	
-	- Jamba-Bags in in the version i would like to see how many
-	get on with this how this it works. it tracks your teams bags and shows on a tooltip of a item, 
-	they be more to this with a command line to look for items, and this 
-	need fixing to work with the jamba-item bar.
-	(There is no way to trun it off)	
+******** JAMBA BAGS Removed in BETA 7.1.5.5.2.0-6 ********	
+To many bugs sorry all that was very happy about it needs to be rewitten @ somepoint.
+
+*Jamba-Bags(new module)
+	- WIP!
+
+	
 
 *Jamba-Core (Communications)
 	- Added support for Cross Realm using BNSendGameData Jamba will look fo the character 

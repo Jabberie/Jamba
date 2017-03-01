@@ -822,7 +822,8 @@ function AJM:OnEnable()
 	AJM:RegisterEvent("LOSS_OF_CONTROL_ADDED")
 	AJM:RegisterEvent( "UI_ERROR_MESSAGE", "ITEM_PUSH" )
 	AJM:RegisterEvent( "UNIT_AURA" )
-	AJM:RegisterEvent(  "BAG_UPDATE_DELAYED" )
+-- Fail stuff??
+--	AJM:RegisterEvent(  "BAG_UPDATE_DELAYED" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_ONLINE, "OnCharactersChanged" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_CHARACTER_OFFLINE, "OnCharactersChanged" )
@@ -831,8 +832,8 @@ function AJM:OnEnable()
 	AJM:SecureHook( "LFGTeleport" )
 	AJM:SecureHook( "RollOnLoot" )
 	
-
-	AJM:SecureHook( GameTooltip , "SetBagItem", "AddTooltipInfo" )
+-- fail tooltip scan keep for now
+--	AJM:SecureHook( GameTooltip , "SetBagItem", "AddTooltipInfo" )
 end
 
 -- Called when the addon is disabled.
@@ -1390,6 +1391,10 @@ function AJM:LOSS_OF_CONTROL_ADDED( event, ... )
 		end
 	end
 end
+
+
+----------------------------------------------------------------------------------------------------------------
+--Most of this is Jamba-Bag sutff that needs is here for my notes. Ebony!
 
 function AJM:AddDummyItem()
 	JambaUtilities:ClearTable( AJM.sharedInvData )
