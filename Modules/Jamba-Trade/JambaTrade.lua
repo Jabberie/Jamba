@@ -495,7 +495,7 @@ function AJM:AddItem( itemLink, itemTag )
 end
 
 function AJM:RemoveItem()
-	table.remove( AJM.db.autoTradeItemsList, AJM.settingsControl.TradeHighlightRow )
+	table.remove( AJM.db.autoTradeItemsList, AJM.settingsControl.tradeItemsHighlightRow )
 	AJM:SettingsRefresh()
 	AJM:SettingsTradeItemsRowClick( 1, 1 )		
 end
