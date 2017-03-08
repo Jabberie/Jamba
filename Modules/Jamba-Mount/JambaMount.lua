@@ -91,6 +91,7 @@ function AJM:OnInitialize()
 	-- Populate the settings.
 	AJM:SettingsRefresh()
 	AJM.MountFromTeamMember	= false
+	AJM.castingMount = nil
 end
 
 -- Called when the addon is enabled.
@@ -99,7 +100,7 @@ function AJM:OnEnable()
 --	AJM:RegisterEvent("PLAYER_REGEN_DISABLED")	
 	AJM:RegisterEvent("UNIT_SPELLCAST_START")
 	AJM:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	--AJM:RegisterEvent("UNIT_AURA")
+	AJM:RegisterEvent("UNIT_AURA")
 	AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
 	
 end
@@ -285,7 +286,7 @@ end
 
 function AJM:UNIT_SPELLCAST_START(event, unitID, name, rank, lineID, spellID, ...  )
 	--AJM:Print("Looking for Spells.", unitID, spellID, name)
-	AJM.castingMount = nil
+	--AJM.castingMount = nil
 	-- No Need to send the casting of mount again to team.
 	if AJM.MountFromTeamMember == true then
 		return
@@ -298,10 +299,10 @@ function AJM:UNIT_SPELLCAST_START(event, unitID, name, rank, lineID, spellID, ..
 			if (isCollected and hideOnChar ~= true) then
 				--AJM:Print("MountName", name, spellID, "Checks", creatureName, mountSpellID)
 				if spellID == mountSpellID then
-					--AJM:Print("SendtoTeam", "name", name, "id", mountID)
+					--AJM:Print("SendtoTeam", "name", creatureName , "id", mountID)
 					if IsShiftKeyDown() == false then
+						AJM.castingMount = creatureName
 						AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_ME, spellID, mountID )
-						AJM.castingMount = name
 						break	
 					end	
 				end
@@ -319,7 +320,6 @@ function AJM:UNIT_SPELLCAST_SUCCEEDED(event, unitID, spell, rank, lineID, spellI
 		--AJM:Print("test", spell)
 		AJM.isMounted = spell
 		--AJM:Print("Mounted!", AJM.isMounted)
-		AJM:RegisterEvent("UNIT_AURA")
 	end
 	
 end
@@ -329,6 +329,7 @@ function AJM:UNIT_AURA(event, unitID, ... )
 	if unitID ~= "player" or AJM.isMounted == nil or AJM.db.dismountWithTeam == false then
         return
     end
+	--AJM:Print("tester", unitID, AJM.isMounted)
 	if not UnitBuff( unitID, AJM.isMounted) then
 		--AJM:Print("I have Dismounted - Send to team!", AJM.isMounted)
 		if AJM.db.dismountWithMaster == true then
@@ -337,7 +338,6 @@ function AJM:UNIT_AURA(event, unitID, ... )
 					--AJM:Print("test")
 					AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_DISMOUNT )
 					AJM.MountFromTeamMember = false
-					AJM:UnregisterEvent("UNIT_AURA")
 				end		
 			else	
 				--AJM:Print("test1")
@@ -345,7 +345,6 @@ function AJM:UNIT_AURA(event, unitID, ... )
 			end
 		else
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_MOUNT_DISMOUNT )
-			AJM:UnregisterEvent("UNIT_AURA")
 		end		
 	end
 end
@@ -355,6 +354,7 @@ function AJM:TeamMountStart(characterName, spellID, mountID)
 	local moving = GetUnitSpeed("Player")
 	--AJM:Print("moving", moving, spellID, mountID )
 	if moving == 0 then
+		--AJM:Print("mount?", spellID, mountID )
 		AJM:TeamMount(characterName, spellID, mountID)
 	else
 		--AJM:Print("player Moving try agian in 1..." )
