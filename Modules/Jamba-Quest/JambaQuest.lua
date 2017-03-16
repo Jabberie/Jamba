@@ -186,9 +186,7 @@ function AJM:OnEnable()
     AJM:SecureHook( "AcceptQuest" )
 	AJM:SecureHook( "AcknowledgeAutoAcceptQuest" )
     AJM:SecureHook( "CompleteQuest" )
-    --AJM:SecureHook( "DeclineQuest" )
-	AJM:SecureHook( "IgnoreQuest" )   
-	AJM:SecureHook( "UnignoreQuest" )
+    AJM:SecureHook( QuestFrame, "Hide", "DeclineQuest" )
 	AJM:SecureHook( "GetQuestReward" )
 	AJM:SecureHook( "ToggleFrame" )
 	AJM:SecureHook( "ToggleQuestLog" )
@@ -1236,16 +1234,7 @@ function AJM:DoSelectAvailableQuest( sender, questIndex )
 	end
 end
 
-function AJM:UnignoreQuest()
-	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
-		if AJM.isInternalCommand == false then
-            AJM:DebugMessage( "DeclineQuest" )
-			AJM:JambaSendCommandToTeam( AJM.COMMAND_DECLINE_QUEST )
-		end
-	end		
-end
-
-function AJM:IgnoreQuest()
+function AJM:DeclineQuest()
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		if AJM.isInternalCommand == false then
             AJM:DebugMessage( "DeclineQuest" )
@@ -1258,13 +1247,7 @@ function AJM:DoDeclineQuest( sender )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		AJM.isInternalCommand = true
         AJM:DebugMessage( "DoDeclineQuest" )
-		--DeclineQuest()
-		local isIgnored = IsQuestIgnored()
-		if isIgnored then
-			UnignoreQuest()
-		else
-			IgnoreQuest()
-		end
+		DeclineQuest()
 		AJM.isInternalCommand = false
 	end
 end
