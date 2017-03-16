@@ -63,14 +63,7 @@ L["I do not have enough money to repair all my items."] = true
 L["Repairing cost me: X"] = function( costString )
     return string.format( "Repairing cost me: %s", costString )
 end
-L["I am inactive!"] = true
-L["Warn If Toon Goes Inactive"] = true
-L["Inactive Message"] = true
--- Brgin special.
--- This is the inactive buff - you need to make sure it is localized correctly.
--- http://www.wowhead.com/spell=43681
-L["Inactive"] = true
--- End special.
+L["Other"] = true
 L["Crowd Control Message"] = true
 L["Warn If Toon Gets Crowd Control"] = true
 L["I Am"] = true
