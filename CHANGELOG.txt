@@ -1,20 +1,18 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
-Jamba Version: 5.2.0
+Jamba Version: 5.2.0[B9]
 WoW Game Version: 7.1.5
 File Version: 7.1.5-5.2.0
 Release Date: TBM
-Modules Changed: Core, Toon, Trade, Team, Mount, Trade, Currency, Taxi, Quest
-Beta update date 09/03/2017
+Modules Changed: Core, Toon, Trade, Team, Mount, Trade, Currency, Taxi, Quest, follow, team-display
+Beta update date 17/03/2017
 
 ******** JAMBA BAGS Removed in BETA 7.1.5.5.2.0-6 ********	
 To many bugs sorry all that was very happy about it needs to be rewitten @ somepoint.
 
 *Jamba-Bags(new module)
 	- WIP!
-
-	
 
 *Jamba-Core 
 	*(Communications)
@@ -24,7 +22,6 @@ To many bugs sorry all that was very happy about it needs to be rewitten @ somep
 	*(Core)
 	- Added libnotify-1-0 (addon to say there is a new version with a small Changelog.) (WIP)
 	- Removed all of Old ways to show changeLog on core GUI (WIP)
-	- Added NoTaint_UIDropDownMenu Lib (For jamba-quest)
 	
 *Jamba-Toon
 	( holding Shift will stop most stuff forwarding to team)
@@ -38,7 +35,6 @@ To many bugs sorry all that was very happy about it needs to be rewitten @ somep
 *Jamba-Quest
 	- Removed support for Unignore and Ignore --Blizzard removed in patch 7.2
 	- Added support to declining Quests with the team.
-	- Changed DropDown Menu to try and not taint the UI. << not worked need refix
 
 *Jamba-Trade
 	- Removed the Old Trade PopUp Window
@@ -64,8 +60,12 @@ To many bugs sorry all that was very happy about it needs to be rewitten @ somep
 	- Warns if the toon trying to mount is in combat.
 	- Checks the toon is not moving before it Mounts if toon is moving it will try again until toon stop moving.	
 
-*Jamba-follow
+*Jamba-Follow
 	- Having ticked [Auto Follow After Combat] will now warn when follow breaks.
+	- Updated the speed the follow msg gets sent by 0.5 secs.
+
+*Jamba-Team_Display
+	- added some glow effect when follow breaks on the Display-team bar.
 	
 ---------------------------
 Jamba Version: 5.1.7

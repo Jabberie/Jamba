@@ -18,6 +18,7 @@ local AJM = LibStub( "AceAddon-3.0" ):NewAddon(
 local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
 local LibBagUtils = LibStub:GetLibrary( "LibBagUtils-1.0" )
+local LibButtonGlow = LibStub:GetLibrary( "LibButtonGlow-1.0")
 AJM.SharedMedia = LibStub( "LibSharedMedia-3.0" )
 
 -- Constants required by JambaModule and Locale for this module.
@@ -2476,15 +2477,23 @@ function AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
 	if isFollowing == true then
 		-- Following.
 		followBar:SetStatusBarColor( 0.05, 0.85, 0.05, 1.00 )
+		LibButtonGlow.HideOverlayGlow(followBar)
 	else
 		if isFollowLeader == true then
 			-- Follow leader.
 			followBar:SetStatusBarColor( 0.55, 0.15, 0.15, 0.25 )
+			LibButtonGlow.HideOverlayGlow(followBar)
 		else
 			-- Not following.
+		LibButtonGlow.ShowOverlayGlow(followBar)
 		followBar:SetStatusBarColor( 0.85, 0.05, 0.05, 1.00 )
+		AJM:ScheduleTimer("EndGlowFollowBar", 2 , followBar)
 		end
 	end		
+end
+
+function AJM:EndGlowFollowBar(frame)
+	LibButtonGlow.HideOverlayGlow(frame)
 end
 
 function AJM:SettingsUpdateFollowTextAll()
@@ -2492,7 +2501,6 @@ function AJM:SettingsUpdateFollowTextAll()
 		AJM:SettingsUpdateFollowText( characterName )
 	end
 end
-
 
 function AJM:SettingsUpdateFollowText( characterName, characterLevel, characterMaxLevel, overall, equipped, gold, durability, slotsFree, totalSlots, toolText )
 	--AJM:Print("Info", characterName, characterLevel,characterMaxLevel, overall, equipped) -- debug
