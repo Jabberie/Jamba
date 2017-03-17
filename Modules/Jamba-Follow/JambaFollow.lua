@@ -683,8 +683,6 @@ function AJM:AreTeamMembersInCombat()
 		-- Is the team member online?
 		if JambaApi.GetCharacterOnlineStatus( characterName ) == true then
 			-- Yes, is the character in combat?
-			--if UnitAffectingCombat( characterName ) then
-			-- Ebony This API does not like A realmName so better remove it its from the server we playing on.
 			if UnitAffectingCombat( Ambiguate( characterName, "none" ) ) then
 			inCombat = true
 				break
@@ -702,6 +700,7 @@ function AJM:IsFollowingStrobingPaused()
 	return AJM.followingStrobingPaused
 end
 
+
 function AJM:CharacterOnTaxi()
 	AJM:SetNoFollowBrokenWarningNextBreak()
 	if AJM:IsFollowingStrobing() == true then
@@ -711,6 +710,7 @@ function AJM:CharacterOnTaxi()
 		end
 	end
 end
+
 
 function AJM:PLAYER_CONTROL_GAINED()
 	if AJM.characterIsOnTaxi == true then
@@ -723,21 +723,13 @@ function AJM:PLAYER_CONTROL_GAINED()
 	end
 end
 
+
 function AJM:SuppressNextFollowWarningCommand( info, parameters )
 	AJM:SuppressNextFollowWarning()
 end
 
 function AJM:SuppressNextFollowWarning()
 	-- Events are fired as follows for a /follow command.
-	-- When the character is not already following.
-	-- AUTOFOLLOW_BEGIN
-	-- AUTOFOLLOW_END (Need to suppress this)
-	-- AUTOFOLLOW_BEGIN
-	-- When a character is following.
-	-- AUTOFOLLOW_END (Need to suppress this)
-	-- AUTOFOLLOW_BEGIN
-	-- AUTOFOLLOW_END (And also we need to suppress this one as well)
-	-- AUTOFOLLOW_BEGIN
 	if AJM.isFollowing == true then
 		AJM:SetNoFollowBrokenWarningNextBreak()
 		AJM:SetNoFollowBrokenWarningNextSecondBreak()
@@ -754,17 +746,18 @@ function AJM:SetNoFollowBrokenWarningNextSecondBreak()
 	AJM.jambaExternalNoWarnNextSecondBreak = true	
 end
 
+
 function AJM:AUTOFOLLOW_BEGIN( event, target, ... )	
-			AJM.currentFollowTarget = target
-			AJM.isFollowing = true	
+	AJM.currentFollowTarget = target
+	AJM.isFollowing = true	
 end
 
 function AJM:AUTOFOLLOW_END( event, ... )
 	AJM.isFollowing = false
-	AJM:ScheduleTimer( "AutoFollowEndUpdate", 1 )
-	--AJM:AutoFollowEndSend()
+	AJM:ScheduleTimer( "AutoFollowEndUpdate", 0.5 )
 end
 
+-- checks the follow system Msg, is there under 1 always 1 unless it fadeing.
 function AJM:AutoFollowEndUpdate()
 	local alpha = AutoFollowStatus:GetAlpha()
 	--AJM:Print("updatetest", test)
@@ -774,58 +767,45 @@ function AJM:AutoFollowEndUpdate()
 	end
 end
 
-
 function AJM:AutoFollowEndSend()
-	-- Argument 1 has the reason follow ended, this does not come back from the event parameters.
-	-- arg1 is gone in 4.01 which makes this functionality kinda useless.  Shame.
 	-- If warn if auto follow breaks is on...
 	local canWarn = false
-	local canWarnMsg = nil
 	if AJM.db.warnWhenFollowBreaks == true then
 		if AJM.jambaSetFollowTarget == false then
 			canWarn = true			
 		end
 	end
-	-- Do not warn if not Taxi
-	if UnitOnTaxi(AJM.currentFollowTarget) == true or UnitOnTaxi("player") == true then
+	-- Do not warn if on Taxi
+	if UnitOnTaxi("player") == true then
+		--AJM:Print("taxi")
 		canWarn = false
 	end	
 	--Do not warn if in combat?
 	if AJM.db.doNotWarnFollowBreakInCombat == true and AJM.outOfCombat == false then
+		--AJM:Print("Do Not warn in comabt")
 		canWarn = false
 	end
 	--Do not warn if a passenger in a vehicle.
 	if UnitInVehicle("Player") == true and UnitControllingVehicle("player") == false then
+		--AJM:Print("UnitInVehicle")
 		canWarn = false
 	end
 	-- Do not warn if any other members in combat?
-	if AJM.db.doNotWarnFollowBreakMembersInCombat == true and AJM:AreTeamMembersInCombat() == true then
+	if AJM.db.doNotWarnFollowBreakMembersInCombat == true and AJM:AreTeamMembersInCombat() == true or UnitAffectingCombat("player") == true then
+		--AJM:Print("doNotWarnFollowBreakMembersInCombat")
 		canWarn = false
 	end
 	-- Don't warn about follow breaking if follow strobing is on or paused.
 	if AJM.db.doNotWarnFollowStrobing == true then
 		if AJM.followingStrobing == true or AJM.followStrobingPaused == true then
+			--AJM:Print("FollowStrobing")
 			canWarn = false
 		end
 	end
-	-- Ebony says this system does not work right. so is not checking to see if blizzard code says follow is borken, (or kinda anyway)
-	-- If the first do not warn flag is set, check the second do not warn flag.
---[[	if AJM.jambaExternalNoWarnNextBreak == false then
-			if AJM.jambaExternalNoWarnNextSecondBreak == true then
-				canWarn = false		
-				AJM.jambaExternalNoWarnNextSecondBreak = false
-			end	
-		end	
-	-- ebony says i DON'T even know what the hell this is doing??? so it can go
-	-- Is another Jamba module supressing this warning?
-	if AJM.jambaExternalNoWarnNextBreak == true then
-		canWarn = false		
-		canWarnMsg = "jambaExternalNoWarnNextBreak"
-		AJM.jambaExternalNoWarnNextBreak = false
-	end ]]
 	-- Check to see if range warning is in effect. This olny works in a party it seems!!
 	if AJM.db.onlyWarnIfOutOfFollowRange == true then
 		if CheckInteractDistance( AJM.currentFollowTarget, 4 ) then
+			--AJM:Print("CheckInteractDistance")
 			canWarn = false
 		end
 	end	
@@ -1093,7 +1073,7 @@ end
 
 function AJM:FollowTarget( target )
 	-- Attempting to follow self?  Note: if target ever is party1, etc, then this will not catch the same character.
-	if JambaUtilities:Lowercase( target ) == JambaUtilities:Lowercase( AJM.characterName ) then
+	if target == AJM.characterName then
 		return
 	end
 	local canFollowTarget = true
@@ -1120,7 +1100,8 @@ function AJM:FollowTarget( target )
 	-- If allowed to follow the target, then...
 	if canFollowTarget == true then
 		-- Set the jamba set this flag toggle, so not to complain about follow broken after combat.
-		if (AJM.db.autoFollowAfterCombat == true) or (AJM.followingStrobing == true) then
+		--if (AJM.db.autoFollowAfterCombat == true) or (AJM.followingStrobing == true) then
+		if 	AJM.followingStrobing == true then
 			AJM.jambaSetFollowTarget = true	
 		end
 		--AJM:Print( target )

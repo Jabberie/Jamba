@@ -4,9 +4,9 @@ ChangeLogs:
 Jamba Version: 5.2.0
 WoW Game Version: 7.1.5
 File Version: 7.1.5-5.2.0
-Release Date: TBA
-Modules Changed: Core, Toon, Trade, Team, mount, trade, currency, taxi
-Beta update date 25/02/2017
+Release Date: TBM
+Modules Changed: Core, Toon, Trade, Team, Mount, Trade, Currency, Taxi, Quest
+Beta update date 09/03/2017
 
 ******** JAMBA BAGS Removed in BETA 7.1.5.5.2.0-6 ********	
 To many bugs sorry all that was very happy about it needs to be rewitten @ somepoint.
@@ -16,31 +16,41 @@ To many bugs sorry all that was very happy about it needs to be rewitten @ somep
 
 	
 
-*Jamba-Core (Communications)
+*Jamba-Core 
+	*(Communications)
 	- Added support for Cross Realm using BNSendGameData Jamba will look fo the character 
 	  and will do all the magic.
+	- Opt to trun off BNTAGCOMMS(WIP)
+	*(Core)
 	- Added libnotify-1-0 (addon to say there is a new version with a small Changelog.) (WIP)
 	- Removed all of Old ways to show changeLog on core GUI (WIP)
+	- Added NoTaint_UIDropDownMenu Lib (For jamba-quest)
 	
 *Jamba-Toon
+	( holding Shift will stop most stuff forwarding to team)
 	- Ready-check with Team.
 	- LFG Role-check Auto.
-	- Teleport LFG with team. (hold shift to not port)
-	- Roll Need/greed/Etc... with Team (Added)
-	- Clones always pass on loot (can not work with "roll with team") (WIP)
-	
+	- Teleport LFG with team.
+	- Roll Need/greed/Etc... with Team
+	- Removed AFK (PvP) (*unstable most boxers don't do bgs anyway)
+	- Clones always pass to always pass on loot (can not work with "roll with team") (WIP)
+
+*Jamba-Quest
+	- Removed support for Unignore and Ignore --Blizzard removed in patch 7.2
+	- Added support to declining Quests with the team.
+	- Changed DropDown Menu to try and not taint the UI. << not worked need refix
 
 *Jamba-Trade
 	- Removed the Old Trade PopUp Window
-	- Can now make a list of items you want to trade with master.
-	- Now will only trade gold To master.
+	- You can now make a list of items you want to trade with master.
+	- Now will only trade gold to the master Toon.
 	- Added a option to trade Binds When Equipped Items With Master. (Green/Blue/Purple)
 	
 *jamba-Currency
-	- Fixed a bug when Border/Background not getting Sent Settings.	
+	- Fixed a bug when Border/Background not getting Senting Settings.	
 	
 *Jamba-Team
-	- (Added a option to set all members to assistant when you join a raid group.
+	- (Added a option to set all members to assistant when you join a raid group. (WIP Not working it seems)
 	- Remove command "/jamba-team InviteTag". (Update)
 	- "/Jamba-Team Invite" now support's <Tag>
 	- If Tag is Unknown it will tell you.	
@@ -52,7 +62,10 @@ To many bugs sorry all that was very happy about it needs to be rewitten @ somep
 *Jamba-Mount
 	- Fixed for Chauffeur Mount ( Level 1 Mount )
 	- Warns if the toon trying to mount is in combat.
-	- Checks the toon is not moving before it Mounts if is moving it will try again untill it stop moving.	
+	- Checks the toon is not moving before it Mounts if toon is moving it will try again until toon stop moving.	
+
+*Jamba-follow
+	- Having ticked [Auto Follow After Combat] will now warn when follow breaks.
 	
 ---------------------------
 Jamba Version: 5.1.7
