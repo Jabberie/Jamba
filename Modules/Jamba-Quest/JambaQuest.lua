@@ -48,6 +48,7 @@ AJM.settings = {
 		doNotAutoAccept = true,
 		allAcceptAnyQuest = false,
 		onlyAcceptQuestsFrom = false,
+		hideStaticPopup = false,
 		acceptFromTeam = false,
 		acceptFromNpc = false,
 		acceptFromFriends = false,
@@ -66,7 +67,6 @@ AJM.settings = {
 		hasChoiceSlaveChooseSameRewardAsMaster = false,
 		hasChoiceSlaveMustChooseOwnReward = true,
 		hasChoiceSlaveRewardChoiceModifierConditional = false,
---		hasChoiceAquireBestQuestRewardForCharacter = false,
 		hasChoiceCtrlKeyModifier = false,
 		hasChoiceShiftKeyModifier = false,
 		hasChoiceAltKeyModifier = false,
@@ -78,7 +78,6 @@ AJM.settings = {
 		frameXOffset = 0,
 		frameYOffset = 0,
 		overrideQuestAutoSelectAndComplete = false,
---		hasChoiceAquireBestQuestRewardForCharacterAndGet = false,
 	},
 }
 
@@ -116,29 +115,100 @@ end
 -- Command this module sends.
 -------------------------------------------------------------------------------------------------------------
 
-AJM.COMMAND_SELECT_GOSSIP_OPTION = "SelectGossipOption"
-AJM.COMMAND_SELECT_GOSSIP_ACTIVE_QUEST = "SelectGossipActiveQuest"
-AJM.COMMAND_SELECT_GOSSIP_AVAILABLE_QUEST = "SelectGossipAvailableQuest"
-AJM.COMMAND_SELECT_ACTIVE_QUEST = "SelectActiveQuest"
-AJM.COMMAND_SELECT_AVAILABLE_QUEST = "SelectAvailableQuest"
-AJM.COMMAND_ACCEPT_QUEST = "AcceptQuest"
-AJM.COMMAND_COMPLETE_QUEST = "CompleteQuest"
-AJM.COMMAND_CHOOSE_QUEST_REWARD = "ChooseQuestReward"
-AJM.COMMAND_DECLINE_QUEST = "DeclineQuest"
-AJM.COMMAND_SELECT_QUEST_LOG_ENTRY = "SelectQuestLogEntry"
-AJM.COMMAND_QUEST_TRACK = "QuestTrack"
-AJM.COMMAND_ABANDON_QUEST = "AbandonQuest"
-AJM.COMMAND_ABANDON_ALL_QUESTS = "AbandonAllQuests"
-AJM.COMMAND_TRACK_ALL_QUESTS = "TrackAllQuests"
-AJM.COMMAND_UNTRACK_ALL_QUESTS = "UnTrackAllQuests"
-AJM.COMMAND_SHARE_ALL_QUESTS = "ShareAllQuests"
-AJM.COMMAND_TOGGLE_AUTO_SELECT = "ToggleAutoSelect"
-AJM.COMMAND_LOG_COMPLETE_QUEST = "LogCompleteQuest"
-AJM.COMMAND_ACCEPT_QUEST_FAKE = "AcceptQuestFake"
+AJM.COMMAND_SELECT_GOSSIP_OPTION = "JambaSelectGossipOption"
+AJM.COMMAND_SELECT_GOSSIP_ACTIVE_QUEST = "JambaSelectGossipActiveQuest"
+AJM.COMMAND_SELECT_GOSSIP_AVAILABLE_QUEST = "JambaSelectGossipAvailableQuest"
+AJM.COMMAND_SELECT_ACTIVE_QUEST = "JambaSelectActiveQuest"
+AJM.COMMAND_SELECT_AVAILABLE_QUEST = "JambaSelectAvailableQuest"
+AJM.COMMAND_ACCEPT_QUEST = "JambaAcceptQuest"
+AJM.COMMAND_COMPLETE_QUEST = "JambaCompleteQuest"
+AJM.COMMAND_CHOOSE_QUEST_REWARD = "JambaChooseQuestReward"
+AJM.COMMAND_DECLINE_QUEST = "JambaDeclineQuest"
+AJM.COMMAND_SELECT_QUEST_LOG_ENTRY = "JambaSelectQuestLogEntry"
+AJM.COMMAND_QUEST_TRACK = "JambaQuestTrack"
+AJM.COMMAND_ABANDON_QUEST = "JambaAbandonQuest"
+AJM.COMMAND_ABANDON_ALL_QUESTS = "JambaAbandonAllQuests"
+AJM.COMMAND_TRACK_ALL_QUESTS = "JambaTrackAllQuests"
+AJM.COMMAND_UNTRACK_ALL_QUESTS = "JambaUnTrackAllQuests"
+AJM.COMMAND_SHARE_ALL_QUESTS = "JambaShareAllQuests"
+AJM.COMMAND_TOGGLE_AUTO_SELECT = "JambaToggleAutoSelect"
+AJM.COMMAND_LOG_COMPLETE_QUEST = "JambaLogCompleteQuest"
+AJM.COMMAND_ACCEPT_QUEST_FAKE = "JambaAcceptQuestFake"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
 -------------------------------------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------------------------------------
+-- Popup Dialogs.
+-------------------------------------------------------------------------------------------------------------
+
+-- Initialize Popup Dialogs.
+local function InitializePopupDialogs()
+   -- Asks If you like to Abandon on all toons
+   StaticPopupDialogs["JAMBAQUEST_ABANDON_ALL_TOONS"] = {
+        text = L["Would you like to Abandon \"%s\" On All Toons?"],
+        button1 = L["Just Me"],
+        button2 = L["All Team"],
+        button3 = NO,
+        timeout = 0,
+		whileDead = 1,
+		hideOnEscape = 1,
+        OnAccept = function( self )
+			--AJM:Print("Button1")
+			AbandonQuest()
+		end,
+		OnAlt = function ( self )
+			--AJM:Print("Button3")
+			
+		end,
+		OnCancel = function( self, data )
+			--AJM:Print("Button2")
+			AJM:JambaSendCommandToTeam( AJM.COMMAND_ABANDON_QUEST, data.questID, data.title)
+		end,		
+    }
+   -- Asks If you like to Track on all toons
+   StaticPopupDialogs["JAMBAQUEST_TRACK_ALL_TOONS"] = {
+        text = L["Would you like to Track \"%s\" On All Toons?"],
+        button1 = YES,
+        button2 = NO,
+        timeout = 0,
+		whileDead = 1,
+		hideOnEscape = 1,
+        OnAccept = function( self, data )
+			AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, data.questID, data.title, true )
+		end,
+		OnCancel = function( self )
+		end,		
+    }
+	StaticPopupDialogs["JAMBAQUEST_UNTRACK_ALL_TOONS"] = {
+        text = L["Would you like to UnTrack \"%s\" On All Toons?"],
+        button1 = YES,
+        button2 = NO,
+        timeout = 0,
+		whileDead = 1,
+		hideOnEscape = 1,
+        OnAccept = function( self, data )
+			AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, data.questID, data.title, false )
+		end,
+		OnCancel = function( self )
+		end,		
+    }
+	StaticPopupDialogs["AbandonALLToonsQuest"] = {
+        text = L["This will abandon ALL quests ON every toon!  Yes, this means you will end up with ZERO quests in your quest log!  Are you sure?"],
+        button1 = YES,
+        button2 = NO,
+        timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+       OnAccept = function()
+			AJM:DoAbandonAllQuestsFromAllToons()
+		end,
+    }    
+
+
+end
 
 -------------------------------------------------------------------------------------------------------------
 -- Addon initialization, enabling and disabling.
@@ -156,6 +226,8 @@ function AJM:OnInitialize()
 	AJM:JambaModuleInitialize( AJM.settingsControl.widgetSettings.frame )
 	-- Populate the settings.
 	AJM:SettingsRefresh()	
+	-- Initialise the popup dialogs.
+	InitializePopupDialogs()
 	-- Create the Jamba Quest Log frame.
 	AJM:CreateJambaMiniQuestLogFrame()
 	-- An empty table to hold the available and active quests at an npc.
@@ -175,8 +247,6 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "GOSSIP_SHOW" )
 	AJM:RegisterEvent( "QUEST_GREETING" )
 	AJM:RegisterEvent( "QUEST_PROGRESS" )
-	AJM:RegisterEvent( "WORLD_MAP_UPDATE" )
-	AJM:RegisterEvent( "ZONE_CHANGED_NEW_AREA" )
    -- Quest post hooks.
     AJM:SecureHook( "SelectGossipOption" )
     AJM:SecureHook( "SelectGossipActiveQuest" )
@@ -192,9 +262,15 @@ function AJM:OnEnable()
 	AJM:SecureHook( "ToggleQuestLog" )
 	AJM:SecureHook( WorldMapFrame, "Hide", "QuestLogFrameHide" )
 	AJM:SecureHook( "ShowQuestComplete" )
+	--New work
+--	AJM:SecureHook( "AbandonQuest")
+--	AJM:SecureHook( "SetAbandonQuest" )
+	AJM:SecureHook( "QuestMapQuestOptions_AbandonQuest" )
+	AJM:SecureHook( "QuestMapQuestOptions_TrackQuest" )
 
-	JambaQuestMapQuestOptionsDropDown.questID = 0;		-- for QuestMapQuestOptionsDropDown_Initialize
-	UIDropDownMenu_Initialize(JambaQuestMapQuestOptionsDropDown, JambaQuestMapQuestOptionsDropDown_Initialize, "MENU");
+-- remove 
+--	JambaQuestMapQuestOptionsDropDown.questID = 0;		-- for QuestMapQuestOptionsDropDown_Initialize
+--	UIDropDownMenu_Initialize(JambaQuestMapQuestOptionsDropDown, JambaQuestMapQuestOptionsDropDown_Initialize, "MENU");
 
 end
 
@@ -587,29 +663,6 @@ function AJM:SettingsCreateQuestCompletionControl( top )
 	)	
 	AJM.settingsControlCompletion.checkBoxHasChoiceMinionDoNothing:SetType( "radio" )
 	movingTop = movingTop - radioBoxHeight
-	-- TODO: Fix or remove.
-	-- Radio box: Has choice, choose best reward.
---	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter = JambaHelperSettings:CreateCheckBox( 
---		AJM.settingsControlCompletion, 
---		headingWidth, 
---		column1Left, 
---		movingTop,
---		L["Toon Auto Selects Best Reward"],
---		AJM.SettingsToggleHasChoiceAquireBestQuestRewardForCharacter
---	)	
---	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetType( "radio" )
---	movingTop = movingTop - radioBoxHeight
-	-- Radio box: Has choice, choose best reward - actually get it.
---	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward = JambaHelperSettings:CreateCheckBox( 
---		AJM.settingsControlCompletion, 
---		headingWidth, 
---		column1Left + indent, 
---		movingTop,
---		L["And Claims It As Well"],
---		AJM.SettingsToggleActuallyGetTheBestReward
---
---	)	
-	movingTop = movingTop - checkBoxHeight	
 	-- Radio box: Has choice, minion complete quest with master.
 	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster = JambaHelperSettings:CreateCheckBox(
 		AJM.settingsControlCompletion, 
@@ -750,8 +803,6 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.hasChoiceShiftKeyModifier = settings.hasChoiceShiftKeyModifier
 		AJM.db.hasChoiceAltKeyModifier = settings.hasChoiceAltKeyModifier
 		AJM.db.hasChoiceOverrideUseSlaveRewardSelected = settings.hasChoiceOverrideUseSlaveRewardSelected
---		AJM.db.hasChoiceAquireBestQuestRewardForCharacter = settings.hasChoiceAquireBestQuestRewardForCharacter
---		AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet = settings.hasChoiceAquireBestQuestRewardForCharacterAndGet
 		AJM.db.messageArea = settings.messageArea
 		AJM.db.warningArea = settings.warningArea
 		AJM.db.overrideQuestAutoSelectAndComplete = settings.overrideQuestAutoSelectAndComplete
@@ -805,9 +856,6 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster:SetValue( AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
 	AJM.settingsControlCompletion.checkBoxHasChoiceMinionChooseSameRewardAsMaster:SetValue( AJM.db.hasChoiceSlaveChooseSameRewardAsMaster )
 	AJM.settingsControlCompletion.checkBoxHasChoiceMinionMustChooseOwnReward:SetValue( AJM.db.hasChoiceSlaveMustChooseOwnReward )
---	Ebony Fix or remove,
---	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetValue( AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
---	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward:SetValue( AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet )
 	AJM.settingsControlCompletion.checkBoxHasChoiceMinionRewardChoiceModifierConditional:SetValue( AJM.db.hasChoiceSlaveRewardChoiceModifierConditional )
 	AJM.settingsControlCompletion.checkBoxHasChoiceCtrlKeyModifier:SetValue( AJM.db.hasChoiceCtrlKeyModifier )
 	AJM.settingsControlCompletion.checkBoxHasChoiceShiftKeyModifier:SetValue( AJM.db.hasChoiceShiftKeyModifier )
@@ -831,8 +879,6 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlCompletion.checkBoxNoChoiceMinionCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxNoChoiceAllAutoCompleteQuest:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxHasChoiceMinionDoNothing:SetDisabled( not AJM.db.enableAutoQuestCompletion )
---	AJM.settingsControlCompletion.checkBoxHasChoiceAquireBestQuestRewardForCharacter:SetDisabled( not AJM.db.enableAutoQuestCompletion )
---	AJM.settingsControlCompletion.checkBoxActuallyGetTheBestReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceAquireBestQuestRewardForCharacter )
 	AJM.settingsControlCompletion.checkBoxHasChoiceMinionCompleteQuestWithMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion )
 	AJM.settingsControlCompletion.checkBoxHasChoiceMinionChooseSameRewardAsMaster:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
 	AJM.settingsControlCompletion.checkBoxHasChoiceMinionMustChooseOwnReward:SetDisabled( not AJM.db.enableAutoQuestCompletion or not AJM.db.hasChoiceSlaveCompleteQuestWithMaster )
@@ -988,11 +1034,6 @@ function AJM:SettingsToggleHasChoiceAquireBestQuestRewardForCharacter( event, ch
 	AJM.db.hasChoiceSlaveDoNothing = not checked
 	AJM:SettingsRefresh()
 end
-
---function AJM:SettingsToggleActuallyGetTheBestReward( event, checked )
---	AJM.db.hasChoiceAquireBestQuestRewardForCharacterAndGet = checked
---	AJM:SettingsRefresh()
---end
 
 function AJM:SettingsToggleHasChoiceMinionChooseSameRewardAsMaster( event, checked )
 	AJM.db.hasChoiceSlaveChooseSameRewardAsMaster = checked
@@ -1319,8 +1360,6 @@ function AJM:DoShowQuestComplete( sender, questName )
 	local questIndex = AJM:GetQuestLogIndexByName( questName )
 	if questIndex ~= 0 then
 		ShowQuestComplete( questIndex )
-        --TODO fix this or remove
-		--WatchFrameAutoQuest_ClearPopUpByLogIndex( questIndex )
 	end
 	AJM.isInternalCommand = false	
 end
@@ -1415,216 +1454,6 @@ function AJM:DoChooseQuestReward( sender, questIndex, modifierKeysPressed, rewar
 	end
 end
 
---TODO FIX or Remove!
---[[
-function AJM:GetBestRewardIndexForCharacter()
-	-- Originally provided by loop: http://www.dual-boxing.com/showpost.php?p=257610&postcount=1505
-	-- New version provided by Mischanix via jamba.uservoice.com.
-	-- Modified by Jafula.
-	local numberOfQuestRewards = GetNumQuestChoices()
-	local bestQuestItemIndex = 1
-	local bestSellPrice = 0
-	-- Yanked this from LibItemUtils; sucks that we need this lookup table, but GetItemInfo only 
-	-- returns an equipment location, which must first be converted to a slot value that GetInventoryItemLink understands:
-	local equipmentSlotLookup = {
-		INVTYPE_HEAD = {"HeadSlot", nil},
-		INVTYPE_NECK = {"NeckSlot", nil},
-		INVTYPE_SHOULDER = {"ShoulderSlot", nil},
-		INVTYPE_CLOAK = {"BackSlot", nil},
-		INVTYPE_CHEST = {"ChestSlot", nil},
-		INVTYPE_WRIST = {"WristSlot", nil},
-		INVTYPE_HAND = {"HandsSlot", nil},
-		INVTYPE_WAIST = {"WaistSlot", nil},
-		INVTYPE_LEGS = {"LegsSlot", nil},
-		INVTYPE_FEET = {"FeetSlot", nil},
-		INVTYPE_SHIELD = {"SecondaryHandSlot", nil},
-		INVTYPE_ROBE = {"ChestSlot", nil},
-		INVTYPE_2HWEAPON = {"MainHandSlot", "SecondaryHandSlot"},
-		INVTYPE_WEAPONMAINHAND = {"MainHandSlot", nil},
-		INVTYPE_WEAPONOFFHAND = {"SecondaryHandSlot", "MainHandSlot"},
-		INVTYPE_WEAPON = {"MainHandSlot","SecondaryHandSlot"},
-		INVTYPE_THROWN = {"RangedSlot", nil},
-		INVTYPE_RANGED = {"RangedSlot", nil},
-		INVTYPE_RANGEDRIGHT = {"RangedSlot", nil},
-		INVTYPE_FINGER = {"Finger0Slot", "Finger1Slot"},
-		INVTYPE_HOLDABLE = {"SecondaryHandSlot", "MainHandSlot"},
-		INVTYPE_TRINKET = {"Trinket0Slot", "Trinket1Slot"}
-	} 
-	local statWeights = {
-		ITEM_MOD_STRENGTH_SHORT = 0x0C,
-		ITEM_MOD_AGILITY_SHORT = 0x02,
-		ITEM_MOD_INTELLECT_SHORT = 0x11,
-		ITEM_MOD_SPELL_POWER_SHORT = 0x11,
-		ITEM_MOD_SPIRIT_SHORT = 0x10,
-		ITEM_MOD_HIT_RATING_SHORT = 0x07,
-	}
-	local classSpec = {
-		DEATHKNIGHT1 = 0x08,
-		DEATHKNIGHT2 = 0x04,
-		DEATHKNIGHT3 = 0x04,
-		DRUID1 = 0x01,
-		DRUID2 = 0x02, -- Feral bears get agi itemization as well
-		DRUID3 = 0x10,
-		HUNTER1 = 0x02,
-		HUNTER2 = 0x02,
-		HUNTER3 = 0x02,
-		MAGE1 = 0x01,
-		MAGE2 = 0x01,
-		MAGE3 = 0x01,
-		PALADIN1 = 0x10,
-		PALADIN2 = 0x08,
-		PALADIN3 = 0x04,
-		PRIEST1 = 0x10,
-		PRIEST2 = 0x10,
-		PRIEST3 = 0x01,
-		ROGUE1 = 0x02,
-		ROGUE2 = 0x02,
-		ROGUE3 = 0x02,
-		SHAMAN1 = 0x01,
-		SHAMAN2 = 0x02,
-		SHAMAN3 = 0x10,
-		WARLOCK1 = 0x01,
-		WARLOCK2 = 0x01,
-		WARLOCK3 = 0x01,
-		WARRIOR1 = 0x04,
-		WARRIOR2 = 0x04,
-		WARRIOR3 = 0x08,
-	}
-	local _, class = UnitClass("player")
-	-- Original canWear - here for documentation purposes - Jafula.
-	END
-	local canWear = {
-		DEATHKNIGHT = {"Cloth", "Leather", "Mail", "Plate", "Axe", "Mace", "Polearm", "Sword"},
-		DRUID = {"Cloth", "Leather", "Dagger", "Fist Weapon", "Mace", "Polearm", "Staff"},
-		HUNTER = {"Cloth", "Leather", "Mail", "Axe", "Dagger", "Fist Weapon", "Polearm", "Staff", "Sword", "Bow", "Crossbow", "Gun"},
-		MAGE = {"Cloth", "Dagger", "Staff", "Sword", "Wand"},
-		PALADIN = {"Cloth", "Leather", "Mail", "Plate", "Axe", "Mace", "Polearm", "Sword"},
-		PRIEST = {"Cloth", "Dagger", "Mace", "Staff", "Wand"},
-		ROGUE = {"Cloth", "Leather", "Dagger", "Fist Weapon", "Axe", "Mace", "Sword"},
-		SHAMAN = {"Cloth", "Leather", "Mail", "Axe", "Dagger", "Fist Weapon", "Mace", "Staff"},
-		WARLOCK = {"Cloth", "Dagger", "Staff", "Sword", "Wand"},
-		WARRIOR = {"Cloth", "Leather", "Mail", "Plate", "Axe", "Dagger", "Fist Weapon", "Mace", "Polearm", "Staff", "Sword", "Bow", "Crossbow", "Gun", "Thrown"}
-	}
-	END
-	-- Removed lower tier armour from canWear table (i.e. DKs, Paladins, Warriers can only wear Plate).
-	-- I personally would not pick up a lower tiered piece for my toons.  Jafula.
-	local canWear = {
-		DEATHKNIGHT = {"Plate", "Guns", "One-Handed Axes", "One-Handed Maces", "One-Handed Swords", "Two-Handed Axes", "Two-Handed Maces", "Two-Handed Swords", "Sigils", "Miscellaneous"},
-		DRUID = {"Leather", "Daggers", "Fist Weapons", "One-Handed Maces", "Polearms", "Staves", "Two-Handed Maces", "Idols", "Miscellaneous"},
-		HUNTER = {"Mail", "Bows", "Crossbows", "Daggers", "Fist Weapons", "Guns", "One-Handed Axes", "One-Handed Swords", "Polearms", "Staves", "Two-Handed Axes", "Two-Handed Swords", "Thrown", "Miscellaneous"},
-		MAGE = {"Cloth", "Daggers", "One-Handed Swords", "Staves", "Wands", "Miscellaneous"},
-		PALADIN = {"Plate", "Shields", "Daggers", "One-Handed Axes", "One-Handed Maces", "One-Handed Swords", "Polearms", "Two-Handed Axes", "Two-Handed Maces", "Two-Handed Swords", "Librams", "Miscellaneous"},
-		PRIEST = {"Cloth", "Daggers", "One-Handed Maces", "One-Handed Swords", "Staves", "Wands", "Miscellaneous"},
-		ROGUE = {"Leather", "Bows", "Crossbows", "Daggers", "Fist Weapons", "Guns", "One-Handed Axes", "One-Handed Maces", "One-Handed Swords", "Thrown", "Miscellaneous"},
-		SHAMAN = {"Mail", "Shields", "Daggers", "Fist Weapons", "One-Handed Axes", "One-Handed Maces", "Staves", "Two-Handed Axes", "Two-Handed Maces", "Totems", "Miscellaneous"}, 
-		WARLOCK = {"Cloth", "Daggers", "One-Handed Swords", "Staves", "Wands", "Miscellaneous"},
-		WARRIOR = {"Plate", "Shields", "Bows", "Crossbows", "Daggers", "Fist Weapons", "Guns", "One-Handed Axes", "One-Handed Maces", "One-Handed Swords", "Polearms","Staves", "Two-Handed Axes","Two-Handed Maces", "Two-Handed Swords", "Thrown", "Miscellaneous"}
-	}
-	local canWearLowbies = {
-		DEATHKNIGHT = {"Plate", "Guns", "One-Handed Axes", "One-Handed Maces", "One-Handed Swords", "Two-Handed Axes", "Two-Handed Maces", "Two-Handed Swords", "Sigils", "Miscellaneous"},
-		DRUID = {"Leather", "Daggers", "Fist Weapons", "One-Handed Maces", "Polearms", "Staves", "Two-Handed Maces", "Idols", "Miscellaneous"},
-		HUNTER = {"Leather", "Bows", "Crossbows", "Daggers", "Fist Weapons", "Guns", "One-Handed Axes", "One-Handed Swords", "Polearms", "Staves", "Two-Handed Axes", "Two-Handed Swords", "Thrown", "Miscellaneous"},
-		MAGE = {"Cloth", "Daggers", "One-Handed Swords", "Staves", "Wands", "Miscellaneous"},
-		PALADIN = {"Mail", "Shields", "Daggers", "One-Handed Axes", "One-Handed Maces", "One-Handed Swords", "Polearms", "Two-Handed Axes", "Two-Handed Maces", "Two-Handed Swords", "Librams", "Miscellaneous"},
-		PRIEST = {"Cloth", "Daggers", "One-Handed Maces", "One-Handed Swords", "Staves", "Wands", "Miscellaneous"},
-		ROGUE = {"Leather", "Bows", "Crossbows", "Daggers", "Fist Weapons", "Guns", "One-Handed Axes", "One-Handed Maces", "One-Handed Swords", "Thrown", "Miscellaneous"},
-		SHAMAN = {"Leather", "Shields", "Daggers", "Fist Weapons", "One-Handed Axes", "One-Handed Maces", "Staves", "Two-Handed Axes", "Two-Handed Maces", "Totems", "Miscellaneous"}, 
-		WARLOCK = {"Cloth", "Daggers", "One-Handed Swords", "Staves", "Wands", "Miscellaneous"},
-		WARRIOR = {"Mail", "Shields", "Bows", "Crossbows", "Daggers", "Fist Weapons", "Guns", "One-Handed Axes", "One-Handed Maces", "One-Handed Swords", "Polearms","Staves", "Two-Handed Axes","Two-Handed Maces", "Two-Handed Swords", "Thrown", "Miscellaneous"}
-	}
-	local compare = function(val, t)
-		for _,v in ipairs(t) do if val == v then return true end end return false
-	end
-	local scaleRare = {
-		1,
-		1,
-		1,
-		1.11,
-		1.67,
-		2,
-		2.2,
-		1
-	}
-	if UnitLevel("player")<=58 then
-		scaleRare[7] = UnitLevel("player")+15
-	elseif UnitLevel("player")<=68 then
-		scaleRare[7] = (UnitLevel("player")-60)*3 + 85
-	elseif UnitLevel("player")<=79 then
-		scaleRare[7] = (UnitLevel("player")-70)*4 + 134
-	elseif UnitLevel("player")<=85 then
-		scaleRare[7] = (UnitLevel("player")-80)*8 + 292
-	end
-	local ourItemization = classSpec[class..(GetSpecialization() or 1)]
-	local statTable = {}
-	local rewardTable = {}
-	local countRewardNotLoaded = 0
-	for questItemIndex = 1, numberOfQuestRewards do
-		local rewardItemLink = GetQuestItemLink("choice", questItemIndex)
--- TODO: Remove
---AJM:Print( questItemIndex, " of ", numberOfQuestRewards, " is ", rewardItemLink )
-		if rewardItemLink ~= nil then
-			local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo( rewardItemLink )
-			if itemSellPrice > bestSellPrice then
-				bestSellPrice = itemSellPrice
-				bestQuestItemIndex = questItemIndex
-			end
-			local relevance = 0
-			local itemLevelD = 0
-			GetItemStats(itemLink, statTable)
-			for modifier, value in pairs(statTable) do
-				if statWeights[modifier] and bit.band(ourItemization, statWeights[modifier]) ~= 0 then
-					relevance = relevance + 1
-				end
-			end
-			local lowLevel = 400
-			local lowRare = 7
-			if equipmentSlotLookup[itemEquipLoc] ~= nil then
-				for _, a in ipairs( equipmentSlotLookup[itemEquipLoc] ) do
-					local itemLink = GetInventoryItemLink( "player", GetInventorySlotInfo( a ) )
-					if itemLink then
-						local _, _, ourRare, ourLevel = GetItemInfo( itemLink )
-						if ourLevel < lowLevel then
-							lowLevel = ourLevel
-							lowRare = ourRare
-						end
-					end
-				end
-				itemLevel = itemLevel * scaleRare[itemRarity]
-				lowLevel = lowLevel * scaleRare[lowRare]
-				itemLevelD = lowLevel - itemLevel			
-				--AJM:Print( itemLevelD, relevance, compare( itemSubType, canWear[class] ), compare( itemSubType, canWearLowbies[class] ), itemSubType)
-				local toonCanWearPiece = false
-				if UnitLevel("player") <= 39 then
-					toonCanWearPiece = compare( itemSubType, canWearLowbies[class] )
-				else
-					toonCanWearPiece = compare( itemSubType, canWear[class] )
-				end
-				if itemLevelD <= 0 and relevance > 0 and toonCanWearPiece == true then
-				--AJM:Print( "added: ", questItemIndex)
-					rewardTable[questItemIndex] = relevance
-				end
-				--AJM:Print(itemLink..": r="..relevance..", delta="..itemLevelD, "itemIndex="..questItemIndex)
-				wipe(statTable)
-			end
-		else
-			countRewardNotLoaded = countRewardNotLoaded + 1
-		end
-	end
-	if countRewardNotLoaded > 0 then
-		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["The reward information was not loaded from the server.  Close the quest window and open it again."], false )
-	end
-	bestR = -1
---AJM:Print( "dotable!" )
-	for i, r in pairs( rewardTable ) do
-		--AJM:Print( i, r )
-		if r > bestR then
-			bestQuestItemIndex = i
-			bestR = r
-		end
-	end
-	return bestQuestItemIndex
-end
-]]--
 
 -------------------------------------------------------------------------------------------------------------
 -- NPC QUEST PROCESSING - ACCEPTING
@@ -1636,8 +1465,6 @@ function AJM:QUEST_ACCEPTED( ... )
 		if AJM.db.masterAutoShareQuestOnAccept == true then	
 			if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
 				if AJM.isInternalCommand == false then
-					-- Remove some spam,
-					--AJM:JambaSendMessageToTeam( AJM.db.messageArea, "Attempting to auto share newly accepted quest.", false )
 					SelectQuestLogEntry( questIndex )
 						if GetQuestLogPushable() and GetNumSubgroupMembers() > 0 then
 							AJM:JambaSendMessageToTeam( AJM.db.messageArea, "Pushing newly accepted quest.", false )
@@ -1663,7 +1490,7 @@ end
 function AJM:DoAcceptQuest( sender )
 	if AJM.db.acceptQuests == true and AJM.db.slaveMirrorMasterAccept == true then
 	local questIndex = AJM:GetQuestLogIndexByName( questName )
-		--Olny works if the quest frame is open. Stops sending a blank quest.
+		--Only works if the quest frame is open. Stops sending a blank quest. Tell the team a char not got the quest window open???? <<<<<< TODO
 		if QuestFrame:IsShown() == true then
 			AJM.isInternalCommand = true
 			AJM:DebugMessage( "DoAcceptQuest" )
@@ -1785,6 +1612,44 @@ end
 -- JAMBA QUEST CONTEXT MENU
 -------------------------------------------------------------------------------------------------------------
 
+
+
+function AJM:QuestMapQuestOptions_AbandonQuest(questID)                       
+	if JambaApi.GetTeamListMaximumOrderOnline() > 1 then	
+		local lastQuestIndex = GetQuestLogSelection()
+		--AJM:Print("SetAbandonQuest", lastQuestIndex, questID)
+		title = GetAbandonQuestName()
+		local data = {}
+		data.questID = questID
+		data.title = title
+		StaticPopup_Hide( "ABANDON_QUEST" )
+		StaticPopup_Hide( "ABANDON_QUEST_WITH_ITEMS" )	
+		StaticPopup_Show( "JAMBAQUEST_ABANDON_ALL_TOONS", title, nil, data )
+	end	
+end
+
+function AJM:QuestMapQuestOptions_TrackQuest(questID)
+	if JambaApi.GetTeamListMaximumOrderOnline() > 1 then
+		--AJM:Print("test", questID)
+		local questLogIndex = GetQuestLogIndexByID(questID)
+		local title = GetQuestLogTitle( questLogIndex )
+		local data = {}
+		data.questID = questID
+		data.title = title
+		if ( IsQuestWatched(questLogIndex) ) then
+			--AJM:Print("TrackingQuest")
+			StaticPopup_Show( "JAMBAQUEST_TRACK_ALL_TOONS", title, nil, data )
+		else
+			--AJM:Print("UnTrackQuest")
+			StaticPopup_Show( "JAMBAQUEST_UNTRACK_ALL_TOONS", title, nil, data )	
+		end
+	end			
+end
+
+
+--Max's Menu System that was tainting like hell do like it trying quest3.0 Ebony's way.
+
+--[[
 function JambaQuestMapQuestOptionsDropDown_Initialize(self)
 	local questLogIndex = GetQuestLogIndexByID(self.questID);
 	local info = UIDropDownMenu_CreateInfo();
@@ -1831,10 +1696,10 @@ function JambaQuestMapQuestOptionsDropDown_Initialize(self)
         text = L["JAMBA_QUESTLOG_CONTEXT_ALERT_AbandonAllToons"],
         button1 = YES,
         button2 = NO,
-        timeout = 0,
-		whileDead = true,
+       	  timeout = 0,
+			whileDead = true,
 		hideOnEscape = true,
-        OnAccept = function(self, data)
+       OnAccept = function(self, data)
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_ABANDON_QUEST, data.questID, data.title)
 		end,
     }
@@ -1858,7 +1723,7 @@ function AJM:QuestMapQuestOptions_ShareQuest(questID)
 	PlaySound("igQuestLogOpen");
 end
 
-function AJM:QuestMapQuestOptions_AbandonQuest(questID)
+ function AJM:QuestMapQuestOptions_AbandonQuest(questID)
 	local lastQuestIndex = GetQuestLogSelection();
 	SelectQuestLogEntry(GetQuestLogIndexByID(questID));
 	SetAbandonQuest();
@@ -1871,21 +1736,6 @@ function AJM:QuestMapQuestOptions_AbandonQuest(questID)
 		StaticPopup_Show("ABANDON_QUEST", GetAbandonQuestName());
 	end
 	SelectQuestLogEntry(lastQuestIndex);
-end
-
-function AJM:QuestMapQuestOptions_TrackQuest(questID, questLogIndex)
-	--AJM:Print("test", questID, questLogIndex )
-	if ( not IsQuestWatched(questID) ) then
-		AddQuestWatch(questLogIndex, true);
-		QuestSuperTracking_OnQuestTracked(questID);
-	end
-end
-
-function AJM:QuestMapQuestOptions_UnTrackQuest(questID, questLogIndex)
-	--AJM:Print("test", questID, questLogIndex )
-	if ( IsQuestWatched(questLogIndex) ) then
-		QuestObjectiveTracker_UntrackQuest(nil, questID);
-	end
 end
 
 function AJM:QuestMapQuestOptions_ToggleTrackQuestAllToons(questID)
@@ -1913,45 +1763,62 @@ function AJM:QuestMapQuestOptions_AbandonQuestAllToons(questID)
 	
 end
 
-function AJM:QuestMapQuestOptions_Jamba_DoQuestTrack( sender, questID, title, track )
 
+]]
+
+function AJM:QuestMapQuestOptions_Jamba_DoQuestTrack( sender, questID, title, track )
 	local questLogIndex = GetQuestLogIndexByID( questID )
-	
 	if questLogIndex ~= 0 then
 		if track then
-			AJM:QuestMapQuestOptions_TrackQuest( questID, questLogIndex )
+			AJM:JambaDoQuest_TrackQuest( questID, questLogIndex )
 		else
-			AJM:QuestMapQuestOptions_UnTrackQuest( questID, questLogIndex )
+			AJM:JambaDoQuest_UnTrackQuest( questID, questLogIndex )
 		end
 	else
-		AJM:JambaSendMessageToTeam( AJM.db.warningArea, L["JAMBA_QUESTLOG_DoNotHaveQuest"]( title ), false )
+		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["JAMBA_QUESTLOG_DoNotHaveQuest"]( title ), false )
 	end		
 end
 
+function AJM:JambaDoQuest_TrackQuest(questID, questLogIndex)
+	--AJM:Print("test", questID, questLogIndex )
+	if ( not IsQuestWatched(questID) ) then
+		AddQuestWatch(questLogIndex, true)
+		QuestSuperTracking_OnQuestTracked(questID)
+	end
+end
+
+
+function AJM:JambaDoQuest_UnTrackQuest(questID, questLogIndex)
+	--AJM:Print("test", questID, questLogIndex )
+	if ( IsQuestWatched(questLogIndex) ) then
+		QuestObjectiveTracker_UntrackQuest(nil, questID)
+	end
+end
+
+
+
 function AJM:QuestMapQuestOptions_Jamba_DoAbandonQuest( sender, questID, title )
-
 	local questLogIndex = GetQuestLogIndexByID( questID )
-	
 	if questLogIndex ~= 0 then
-
 		local lastQuestIndex = GetQuestLogSelection();
 		SelectQuestLogEntry(GetQuestLogIndexByID(questID));
 		SetAbandonQuest();
 		AbandonQuest();
-		SelectQuestLogEntry(lastQuestIndex);
-		
+		SelectQuestLogEntry(lastQuestIndex);	
 		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["JAMBA_QUESTLOG_HaveAbandonedQuest"]( title ), false )
-	else
-		AJM:JambaSendMessageToTeam( AJM.db.warningArea, L["JAMBA_QUESTLOG_DoNotHaveQuest"]( title ), false )
 	end		
-
 end
+
+
+
+-- Jamba ALL menu at the bottom of quest WorldMap Quest Log
+
 
 function AJM:CreateJambaMiniQuestLogFrame()
 
     JambaMiniQuestLogFrame = CreateFrame( "Frame", "JambaMiniQuestLogFrame", QuestMapFrame )
     local frame = JambaMiniQuestLogFrame
-	frame:SetWidth( 155 )
+	frame:SetWidth( 295 )
 	frame:SetHeight( 50 )
 	frame:SetFrameStrata( "HIGH" )
 	frame:SetToplevel( true )
@@ -1966,174 +1833,166 @@ function AJM:CreateJambaMiniQuestLogFrame()
 		tile = true, tileSize = 15, edgeSize = 15, 
 		insets = { left = 5, right = 5, top = 5, bottom = 5 }
 	} )
-	
 	table.insert( UISpecialFrames, "JambaQuestLogWindowFrame" )
-	AJM:CreateQuestLogButton('_AbandonAllButton',  0, AJM.QuestMapAll_Jamba_DoAbandonAllQuestsFromAllToons)
-	--AJM:CreateQuestLogButton('_ShareAllButton',  1, AJM.QuestMapAll_Jamba_DoShareAllQuestsFromThisToon) -- MCS 2016/04/02 This would make the share functionality share all quests from just the current toon
-	AJM:CreateQuestLogButton('_ShareAllButton',  1, AJM.QuestMapAll_Jamba_DoShareAllQuestsFromAllToons) -- MCS 2016/04/02 This would make the share functionality share all quests on all toons, rather than just current toon
-	AJM:CreateQuestLogButton('_TrackAllButton',  2, AJM.QuestMapAll_Jamba_DoTrackAllQuestsFromAllToons)
-	AJM:CreateQuestLogButton('_UnTrackAllButton',  3, AJM.QuestMapAll_Jamba_DoUnTrackAllQuestsFromAllToons)
-
-end
-
-function AJM:CreateQuestLogButton(name, index, doAction)
-
-	StaticPopupDialogs[name .. "_confirm"] = {
-        text = L["JAMBA_QUESTLOG_ALL_ALERT" .. name],
-        button1 = YES,
-        button2 = NO,
-        timeout = 0,
-		whileDead = true,
-		hideOnEscape = true,
-        OnAccept = function()
-			doAction()
-		end,
-    }    
-
-	local x_coord = -10 - index * 35
-
-	local button = CreateFrame( "CheckButton", name, JambaMiniQuestLogFrame )
-
-	local buttonTexture = button:CreateTexture()
-	buttonTexture:SetAllPoints()
-	buttonTexture:SetTexture(ALL_QUEST_BUTTON_TEXTURES[name])
 	
-	button.Normal = buttonTexture
-	button.ButtonName = name
-	
-	button:SetScript( "OnClick", AJM.JambaAllQuestButtonOnClick )
-	button:SetScript( "OnEnter", AJM.JambaAllQuestButtonOnEnter )
-	button:SetScript( "OnLeave", AJM.JambaAllQuestButtonOnLeave )
-	button:RegisterForClicks("AnyUp")
-	button:SetSize( 30, 30 )
-	button:ClearAllPoints()
-	button:SetPoint("BOTTOMRIGHT", JambaMiniQuestLogFrame, "BOTTOMRIGHT", x_coord, 10)
+
+	-- abandon ALL button
+	local abandonButton = CreateFrame( "Button", "abandonButton", frame, "UIPanelButtonTemplate" )
+	abandonButton:SetScript( "OnClick", function()  StaticPopup_Show("AbandonALLToonsQuest") end )
+	abandonButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", 0, 0)
+	abandonButton:SetHeight( 21 )
+	abandonButton:SetWidth( 100 )
+	abandonButton:SetText( L["Abandon All"] )	
+	abandonButton:SetScript("OnEnter", function(self) AJM:ShowTooltip(trackButton, true, L["Aabandon All Quests on all Minions"]) end)
+	abandonButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+	abandonQuestLogWindowAbandonFrameButton = abandonButton
+
+	-- Share All Button
+	local shareButton = CreateFrame( "Button", "hareButton", frame, "UIPanelButtonTemplate" )
+	shareButton:SetScript( "OnClick", function()  AJM:DoShareAllQuestsFromAllToons() end )
+	shareButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", 100, 0)
+	shareButton:SetHeight( 21 )
+	shareButton:SetWidth( 100 )
+	shareButton:SetText( L["Share All"] )	
+	shareButton:SetScript("OnEnter", function(self) AJM:ShowTooltip(shareButton, true, L["share All Quests to all Minions"]) end)
+	shareButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+	shareQuestLogWindowFrameShareButton = shareButton
+
+	--Track All Button
+	local trackButton = CreateFrame( "Button", "trackButton", frame, "UIPanelButtonTemplate" )
+	trackButton:SetScript( "OnClick", function()  AJM:DoTrackAllQuestsFromAllToons() end )
+	trackButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", 0, 0)
+	trackButton:SetHeight( 21 )
+	trackButton:SetWidth( 100 )
+	trackButton:SetText( L["Track All"] )	
+	trackButton:SetScript("OnEnter", function(self) AJM:ShowTooltip(trackButton, true, L["Track All Quests on all Minions"]) end)
+	trackButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+	JambaQuestLogWindowFrameTrackButton = trackButton
+
+	-- Untrack All
+	local unTrackButton = CreateFrame( "Button", "unTrackButton", frame, "UIPanelButtonTemplate" )
+	unTrackButton:SetScript( "OnClick", function()  AJM:DoUnTrackAllQuestsFromAllToons() end )
+	unTrackButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", 0, -21)
+	unTrackButton:SetHeight( 21 )
+	unTrackButton:SetWidth( 100 )
+	unTrackButton:SetText( L["Untrack All"] )	
+	unTrackButton:SetScript("OnEnter", function(self) AJM:ShowTooltip(trackButton, true, L["Untrack All Quests on all Minions"]) end)
+	unTrackButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+	JambaQuestLogWindowFrameUnTrackButton = unTrackButton
 end
 
-function AJM.JambaAllQuestButtonOnEnter (button)
-	WorldMapTooltip:SetOwner( button, "ANCHOR_TOPLEFT" )
-	WorldMapTooltip:SetText( L["JAMBA_QUESTLOG_ALL_MOUSEOVER" .. button.ButtonName], nil, nil, nil, nil, 1 )
+
+function AJM:ShowTooltip(frame, show, text)
+	if show then
+		GameTooltip:SetOwner(frame, "ANCHOR_TOP")
+		GameTooltip:SetPoint("TOPLEFT", frame, "TOPRIGHT", 16, 0)
+		GameTooltip:ClearLines()
+		GameTooltip:AddLine( text , 1, 0.82, 0, 1)
+		GameTooltip:Show()
+	else
+	GameTooltip:Hide()
+	end
 end
 
-function AJM.JambaAllQuestButtonOnLeave ()
-	WorldMapTooltip:Hide()
+function AJM:DoAbandonAllQuestsFromAllToons()
+	AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Abandoning quest's to all toons"], false )
+	AJM:DoAbandonAllQuestsFromThisToon()	
+	AJM:ScheduleTimer("JambaSendCommandToTeam" , 2, AJM.COMMAND_ABANDON_ALL_QUESTS)
 end
 
-function AJM.JambaAllQuestButtonOnClick (button)
-	StaticPopup_Show( button.ButtonName .. "_confirm" )
-end
-
-function AJM.QuestMapAll_Jamba_DoAbandonAllQuestsFromAllToons()
-	AJM:JambaSendCommandToTeam( AJM.COMMAND_ABANDON_ALL_QUESTS)
-end
-
-function AJM.QuestMapAll_Jamba_DoAbandonAllQuestsFromThisToon()
+function AJM:DoAbandonAllQuestsFromThisToon()
 	AJM.iterateQuests = 0
-	AJM:IterateQuests("QuestMapAll_Jamba_AbandonNextQuest", 0.5)
+	AJM:IterateQuests("AbandonNextQuest", 0.5)
 end
 
-function AJM.QuestMapAll_Jamba_AbandonNextQuest()
-
+function AJM.AbandonNextQuest()
 	local title, isHeader, questID = AJM:GetRelevantQuestInfo(AJM.iterateQuests)
-
 	if isHeader == false and questID ~= 0 then
-	
 		local canAbandon = CanAbandonQuest(questID)
 		if canAbandon then
-	
-			AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["JAMBA_QUESTLOG_ALL_MESSAGE_AbandonAllButton"]( title ), false )
 			AJM:JambaSendCommandToTeam( AJM.COMMAND_ABANDON_QUEST, questID, title)
-		
 			if (AJM.iterateQuests ~= GetNumQuestLogEntries()) then
 				-- decrement quest count as we have removed one if not last quest
 				AJM.iterateQuests = AJM.iterateQuests - 1
 			end
-		else
-			AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["JAMBA_QUESTLOG_ALL_MESSAGE_CannotAbandonQuest"]( title ), false )
 		end
 	end
-
-	AJM:IterateQuests("QuestMapAll_Jamba_AbandonNextQuest", 0.5)
+	AJM:IterateQuests("AbandonNextQuest", 0.5)
 end
 
-function AJM.QuestMapAll_Jamba_DoShareAllQuestsFromAllToons()
-	AJM:JambaSendCommandToTeam( AJM.COMMAND_SHARE_ALL_QUESTS)
+function AJM.DoShareAllQuestsFromAllToons()
+	AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Sharing Quest's to All Minions"], false )
+	AJM:DoShareAllQuestsFromThisToon()	
+	AJM:ScheduleTimer("JambaSendCommandToTeam" , 2,  AJM.COMMAND_SHARE_ALL_QUESTS)
 end
 
-function AJM.QuestMapAll_Jamba_DoShareAllQuestsFromThisToon()
+function AJM.DoShareAllQuestsFromThisToon()
 	AJM.iterateQuests = 0
-	AJM:IterateQuests("QuestMapAll_Jamba_ShareNextQuest", 1)
+	AJM:IterateQuests("ShareNextQuest", 1)
 end
 
-function AJM.QuestMapAll_Jamba_ShareNextQuest()
+function AJM.ShareNextQuest()
+	local title, isHeader, questID = AJM:GetRelevantQuestInfo(AJM.iterateQuests)
+	if GetQuestLogPushable() then
+		if isHeader == false and questID ~= 0 then
+			QuestMapQuestOptions_ShareQuest(questID)
+		end
+	end	
+	AJM:IterateQuests("ShareNextQuest", 1)
+end
+
+
+function AJM:DoTrackAllQuestsFromAllToons()
+	AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Tracking Quest's to All Minions"], false )
+	AJM:DoTrackAllQuestsFromThisToon()
+	AJM:ScheduleTimer("JambaSendCommandToTeam", 1, AJM.COMMAND_TRACK_ALL_QUESTS)
+end
+
+function AJM:DoTrackAllQuestsFromThisToon()
+	AJM.iterateQuests = 0
+	AJM:IterateQuests("TrackNextQuest", 0.5)
+end
+
+function AJM.TrackNextQuest()
 
 	local title, isHeader, questID = AJM:GetRelevantQuestInfo(AJM.iterateQuests)
 
 	if isHeader == false and questID ~= 0 then
-		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["JAMBA_QUESTLOG_ALL_MESSAGE_ShareAllButton"]( title ), false )
-		QuestMapQuestOptions_ShareQuest(questID)
-	end
-
-	AJM:IterateQuests("QuestMapAll_Jamba_ShareNextQuest", 1)
-end
-
-function AJM.QuestMapAll_Jamba_DoTrackAllQuestsFromAllToons()
-	AJM:JambaSendCommandToTeam( AJM.COMMAND_TRACK_ALL_QUESTS)
-end
-
-function AJM.QuestMapAll_Jamba_DoTrackAllQuestsFromThisToon()
-	AJM.iterateQuests = 0
-	AJM:IterateQuests("QuestMapAll_Jamba_TrackNextQuest", 0.5)
-end
-
-function AJM.QuestMapAll_Jamba_TrackNextQuest()
-
-	local title, isHeader, questID = AJM:GetRelevantQuestInfo(AJM.iterateQuests)
-
-	if isHeader == false and questID ~= 0 then
-		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["JAMBA_QUESTLOG_ALL_MESSAGE_TrackAllButton"]( title ), false )
 		AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, questID, title, true )
 	end
 
-	AJM:IterateQuests("QuestMapAll_Jamba_TrackNextQuest", 0.5)
+	AJM:IterateQuests("TrackNextQuest", 0.5)
 end
 
-function AJM.QuestMapAll_Jamba_DoUnTrackAllQuestsFromThisToon()
+function AJM:DoUnTrackAllQuestsFromAllToons()
+	AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["Untracking Quest's to All Minions"], false )
+	AJM:DoUnTrackAllQuestsFromThisToon()
+	AJM:ScheduleTimer("JambaSendCommandToTeam", 1, AJM.COMMAND_UNTRACK_ALL_QUESTS)
+end
+
+function AJM:DoUnTrackAllQuestsFromThisToon()
 	AJM.iterateQuests = 0
-	AJM:IterateQuests("QuestMapAll_Jamba_UnTrackNextQuest", 0.5)
+	AJM:IterateQuests("UnTrackNextQuest", 0.5)
 end
 
-function AJM.QuestMapAll_Jamba_DoUnTrackAllQuestsFromAllToons()
-	AJM:JambaSendCommandToTeam( AJM.COMMAND_UNTRACK_ALL_QUESTS)
-end
 
-function AJM.QuestMapAll_Jamba_UnTrackNextQuest()
-
+function AJM.UnTrackNextQuest()
 	local title, isHeader, questID = AJM:GetRelevantQuestInfo(AJM.iterateQuests)
-
-	if isHeader == false and questID ~= 0 then
-	
-		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["JAMBA_QUESTLOG_ALL_MESSAGE_UnTrackAllButton"]( title ), false )
-		
-		AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, questID, title, false )
-	end
-
-	AJM:IterateQuests("QuestMapAll_Jamba_UnTrackNextQuest", 0.5)
+		if isHeader == false and questID ~= 0 then
+			AJM:JambaSendCommandToTeam( AJM.COMMAND_QUEST_TRACK, questID, title, false )
+		end
+	AJM:IterateQuests("UnTrackNextQuest", 0.5)
 end
 
 function AJM:IterateQuests(methodToCall, timer)
-
 	AJM.iterateQuests = AJM.iterateQuests + 1
-	
-	if AJM.iterateQuests <= GetNumQuestLogEntries() then
-		AJM:ScheduleTimer( methodToCall, timer )
-	end
+		if AJM.iterateQuests <= GetNumQuestLogEntries() then
+			AJM:ScheduleTimer( methodToCall, timer )
+		end
 end
 
 function AJM:GetRelevantQuestInfo(questLogIndex)
-
     local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questLogIndex )
-
 	return title, isHeader, questID
 end
 
@@ -2144,7 +2003,6 @@ function AJM:ToggleFrame( frame )
 end
 
 function AJM:ToggleQuestLog()
-
 	-- This sorts out hooking on L or marcioMenu button
 	if AJM.db.showJambaQuestLogWithWoWQuestLog == true then
 		if WorldMapFrame:IsVisible() and QuestMapFrame:IsVisible() then
@@ -2169,40 +2027,6 @@ function AJM:ToggleShowQuestCommandWindow( show )
     end
 end
 
-function AJM:WORLD_MAP_UPDATE()
-	JambaHookQuestButtons()
-end
-
-function AJM:ZONE_CHANGED_NEW_AREA()
-	JambaHookQuestButtons()
-end
-
-function JambaHookQuestButtons()
-
-	for k, v in pairs( QuestMapFrame.QuestsFrame.Contents.Titles ) do
-
-		if AJM:IsHooked(v, "OnClick") then
-			AJM:Unhook(v, "OnClick")
-		end
-		
-		AJM:RawHookScript(v, "OnClick", "QuestMapLogTitleButton_OnClick")
-	end
-end
-
-function AJM:QuestMapLogTitleButton_OnClick(frame, button)
-
-	if ( button == "RightButton" ) then
-
-		if ( frame.questID ~= JambaQuestMapQuestOptionsDropDown.questID ) then
-			CloseDropDownMenus();
-		end
-		
-		JambaQuestMapQuestOptionsDropDown.questID = frame.questID;
-		ToggleDropDownMenu(1, nil, JambaQuestMapQuestOptionsDropDown, "cursor", 6, -6);		
-	else
-		self.hooks[frame].OnClick(frame, button)
-	end
-end
 
 -------------------------------------------------------------------------------------------------------------
 -- ESCORT QUEST
@@ -2276,29 +2100,30 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	if commandName == AJM.COMMAND_TOGGLE_AUTO_SELECT then
 		AJM:DoAutoSelectToggle( characterName, ... )
 	end
-	-- Want to action track and abandon command on the same character that sent the command.
-	
+-- Want to action track and abandon command on the same character tat sent the command.
 	if commandName == AJM.COMMAND_QUEST_TRACK then
 		AJM:QuestMapQuestOptions_Jamba_DoQuestTrack( characterName, ... )
 	end
 	if commandName == AJM.COMMAND_ABANDON_QUEST then		
 		AJM:QuestMapQuestOptions_Jamba_DoAbandonQuest( characterName, ... )
 	end
-	if commandName == AJM.COMMAND_ABANDON_ALL_QUESTS then		
-		AJM:QuestMapAll_Jamba_DoAbandonAllQuestsFromThisToon( )
-	end
-	if commandName == AJM.COMMAND_TRACK_ALL_QUESTS then		
-		AJM:QuestMapAll_Jamba_DoTrackAllQuestsFromThisToon( )
-	end
-	if commandName == AJM.COMMAND_UNTRACK_ALL_QUESTS then		
-		AJM:QuestMapAll_Jamba_DoUnTrackAllQuestsFromThisToon( )
-	end
-		if commandName == AJM.COMMAND_SHARE_ALL_QUESTS then		
-		AJM:QuestMapAll_Jamba_DoShareAllQuestsFromThisToon( )
-	end
-	-- If this character sent this command, don't action it.
+	 
+	 -- If this character sent this command, don't action it.
 	if characterName == AJM.characterName then
 		return
+	end
+
+	if commandName == AJM.COMMAND_ABANDON_ALL_QUESTS then		
+		AJM:DoAbandonAllQuestsFromThisToon()
+	end
+	if commandName == AJM.COMMAND_TRACK_ALL_QUESTS then		
+		AJM:DoTrackAllQuestsFromThisToon()
+	end
+	if commandName == AJM.COMMAND_UNTRACK_ALL_QUESTS then		
+		AJM:DoUnTrackAllQuestsFromThisToon()
+	end
+	if commandName == AJM.COMMAND_SHARE_ALL_QUESTS then		
+		AJM:DoShareAllQuestsFromThisToon()
 	end
 	if commandName == AJM.COMMAND_ACCEPT_QUEST then		
 		AJM:DoAcceptQuest( characterName, ...  )

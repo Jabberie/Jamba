@@ -35,6 +35,12 @@ To many bugs sorry all that was very happy about it needs to be rewitten @ somep
 *Jamba-Quest
 	- Removed support for Unignore and Ignore --Blizzard removed in patch 7.2
 	- Added support to declining Quests with the team.
+	- Jamba_Quest 3.0
+		- Now shows a Popup Dialog when you track or abandon quests asking if you like to do it with the team.
+		- Removed "box" icons for abandon/track/share ALL, Changed for Blizzard Buttons.
+		- Nolonger spams raid warning's if the toon does not have the quest to abandon
+		- Does not loop on all toon's when abandoning/track/share all quests.
+		
 
 *Jamba-Trade
 	- Removed the Old Trade PopUp Window

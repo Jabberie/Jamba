@@ -89,6 +89,7 @@ L["Toon Auto Selects Best Reward"] = true
 L["And Claims It As Well"] = true
 L["The reward information was not loaded from the server.  Close the quest window and open it again."] = true
 
+--[[
 L["JAMBA_QUESTLOG_CONTEXT_DROPDOWNTEXT_AbandonAllToons"] = "Jamba Abandon On All Toons"
 L["JAMBA_QUESTLOG_CONTEXT_DROPDOWNTEXT_TrackAllToons"] = "Jamba Track On All Toons"
 L["JAMBA_QUESTLOG_CONTEXT_DROPDOWNTEXT_UnTrackAllToons"] = "Jamba UnTrack On All Toons"
@@ -131,5 +132,35 @@ end
 
 L["JAMBA_QUESTLOG_ALL_MESSAGE_ShareAllButton"] = function( questName )
 	return string.format( "Sharing quest to all toons: %s", questName )
+
+L["JAMBA_QUESTLOG_ALL_MESSAGE_AbandonAllButton"] = function( questName )
+	return string.format( "Abandoning quest on all toons: %s", questName )
 end
 
+
+]]
+L["JAMBA_QUESTLOG_HaveAbandonedQuest"] = function( questName )
+	return string.format( "I have abandoned the quest: %s", questName )
+end
+
+
+
+--JAMBA QUEST 3.0
+L["Would you like to Abandon \"%s\" On All Toons?"] = true
+L["Would you like to Track \"%s\" On All Toons?"] = true
+L["Would you like to UnTrack \"%s\" On All Toons?"] = true
+L["Just Me"] = true
+L["All Team"] = true
+L["This will abandon ALL quests ON every toon!  Yes, this means you will end up with ZERO quests in your quest log!  Are you sure?"] = true
+L["Untracking Quest's to All Minions"] = true
+L["Tracking Quest's to All Minions"] = true
+L["Sharing Quest's to All Minions"] = true
+L["Abandoning quest's to all toons"] = true
+L["Abandon All"] = true
+L["Aabandon All Quests on all Minions"] = true
+L["Untrack All"] = true
+L["Untrack All Quests on all Minions"] = true
+L["Track All"] = true
+L["Track All Quests on all Minions"] = true
+L["Share All"] = true 
+L["share All Quests to all Minions"] = true
