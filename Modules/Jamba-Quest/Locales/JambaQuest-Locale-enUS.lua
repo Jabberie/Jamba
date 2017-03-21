@@ -143,6 +143,9 @@ L["JAMBA_QUESTLOG_HaveAbandonedQuest"] = function( questName )
 	return string.format( "I have abandoned the quest: %s", questName )
 end
 
+L["JAMBA_QUESTLOG_DoNotHaveQuest"] = function( questName )
+	return string.format( "I do not have the quest: %s", questName )
+end
 
 
 --JAMBA QUEST 3.0

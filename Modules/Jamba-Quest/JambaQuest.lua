@@ -31,12 +31,6 @@ local L = LibStub( "AceLocale-3.0" ):GetLocale( AJM.moduleName )
 AJM.parentDisplayName = L["Quest"]
 AJM.moduleDisplayName = L["Quest"]
 
-ALL_QUEST_BUTTON_TEXTURES = {
-    _AbandonAllButton = [[Interface\Icons\INV_BOX_01]],
-    _ShareAllButton = [[Interface\Icons\INV_BOX_02]],
-    _TrackAllButton  = [[Interface\Icons\INV_BOX_03]],
-    _UnTrackAllButton = [[Interface\Icons\INV_BOX_04]],
-}
 
 -- Settings - the values to store and their defaults for the settings database.
 AJM.settings = {
@@ -256,22 +250,14 @@ function AJM:OnEnable()
     AJM:SecureHook( "AcceptQuest" )
 	AJM:SecureHook( "AcknowledgeAutoAcceptQuest" )
     AJM:SecureHook( "CompleteQuest" )
-    AJM:SecureHook( QuestFrame, "Hide", "DeclineQuest" )
 	AJM:SecureHook( "GetQuestReward" )
 	AJM:SecureHook( "ToggleFrame" )
 	AJM:SecureHook( "ToggleQuestLog" )
 	AJM:SecureHook( WorldMapFrame, "Hide", "QuestLogFrameHide" )
 	AJM:SecureHook( "ShowQuestComplete" )
-	--New work
---	AJM:SecureHook( "AbandonQuest")
---	AJM:SecureHook( "SetAbandonQuest" )
 	AJM:SecureHook( "QuestMapQuestOptions_AbandonQuest" )
 	AJM:SecureHook( "QuestMapQuestOptions_TrackQuest" )
-
--- remove 
---	JambaQuestMapQuestOptionsDropDown.questID = 0;		-- for QuestMapQuestOptionsDropDown_Initialize
---	UIDropDownMenu_Initialize(JambaQuestMapQuestOptionsDropDown, JambaQuestMapQuestOptionsDropDown_Initialize, "MENU");
-
+--	AJM:SecureHook( QuestFrame, "Hide", "DeclineQuest" )	
 end
 
 -- Called when the addon is disabled.
@@ -1279,7 +1265,7 @@ function AJM:DeclineQuest()
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		if AJM.isInternalCommand == false then
             AJM:DebugMessage( "DeclineQuest" )
-			AJM:JambaSendCommandToTeam( AJM.COMMAND_DECLINE_QUEST )
+			AJM:ScheduleTimer("JambaSendCommandToTeam", 0.5, AJM.COMMAND_DECLINE_QUEST )
 		end
 	end		
 end
@@ -1288,7 +1274,8 @@ function AJM:DoDeclineQuest( sender )
 	if AJM.db.mirrorMasterQuestSelectionAndDeclining == true then
 		AJM.isInternalCommand = true
         AJM:DebugMessage( "DoDeclineQuest" )
-		DeclineQuest()
+		HideUIPanel(QuestFrame)
+		--DeclineQuest()
 		AJM.isInternalCommand = false
 	end
 end
