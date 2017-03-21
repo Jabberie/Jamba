@@ -669,7 +669,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		L["Text10"]
 	)	
 	--movingTop = movingTop - labelContinueHeight
-	movingTop = movingTop - buttonHeight * 3
+--[[	movingTop = movingTop - buttonHeight * 3
 	AJM.settingsControl.buttonPushSettingsForAllModules = JambaHelperSettings:CreateButton(	
 		AJM.settingsControl, 
 		buttonPushAllSettingsWidth, 
@@ -679,6 +679,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		AJM.ShowChangeLog,
 		L["Shows the Full changelog\nOpens a new Frame."]
 	)
+--]]
 	-- Special thanks Heading
 	
 	movingTop = movingTop - buttonHeight 
@@ -706,7 +707,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["To Schilm (Max Schilling) for Advanced Loot and Jamba-Quest for 4.3"]
+		L["To Schilm (Max Schilling) for Advanced Loot"]
 	)
 	-- Useful websites Heading
 	movingTop = movingTop - labelContinueHeight * 2

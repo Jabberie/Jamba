@@ -1,24 +1,17 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
-Jamba Version: 5.2.0[B9]
+Jamba Version: 5.2.0[B10]
 WoW Game Version: 7.1.5
 File Version: 7.1.5-5.2.0
-Release Date: TBM
-Modules Changed: Core, Toon, Trade, Team, Mount, Trade, Currency, Taxi, Quest, follow, team-display
-Beta update date 17/03/2017
-
-******** JAMBA BAGS Removed in BETA 7.1.5.5.2.0-6 ********	
-To many bugs sorry all that was very happy about it needs to be rewitten @ somepoint.
-
-*Jamba-Bags(new module)
-	- WIP!
+Release Date: TBA
+Modules Changed: Core, Toon, Trade, Team, Mount, Trade, Currency, Taxi, Quest, Follow, Team-Display
+Beta update date 21/03/2017
 
 *Jamba-Core 
 	*(Communications)
 	- Added support for Cross Realm using BNSendGameData Jamba will look fo the character 
 	  and will do all the magic.
-	- Opt to trun off BNTAGCOMMS(WIP)
 	*(Core)
 	- Added libnotify-1-0 (addon to say there is a new version with a small Changelog.) (WIP)
 	- Removed all of Old ways to show changeLog on core GUI (WIP)
@@ -29,19 +22,16 @@ To many bugs sorry all that was very happy about it needs to be rewitten @ somep
 	- LFG Role-check Auto.
 	- Teleport LFG with team.
 	- Roll Need/greed/Etc... with Team
-	- Removed AFK (PvP) (*unstable most boxers don't do bgs anyway)
-	- Clones always pass to always pass on loot (can not work with "roll with team") (WIP)
+	- Removed AFK (PvP)
 
 *Jamba-Quest
 	- Removed support for Unignore and Ignore --Blizzard removed in patch 7.2
-	- Added support to declining Quests with the team.
 	- Jamba_Quest 3.0
 		- Now shows a Popup Dialog when you track or abandon quests asking if you like to do it with the team.
 		- Removed "box" icons for abandon/track/share ALL, Changed for Blizzard Buttons.
 		- Nolonger spams raid warning's if the toon does not have the quest to abandon
 		- Does not loop on all toon's when abandoning/track/share all quests.
-		
-
+	
 *Jamba-Trade
 	- Removed the Old Trade PopUp Window
 	- You can now make a list of items you want to trade with master.
@@ -49,11 +39,11 @@ To many bugs sorry all that was very happy about it needs to be rewitten @ somep
 	- Added a option to trade Binds When Equipped Items With Master. (Green/Blue/Purple)
 	
 *jamba-Currency
-	- Fixed a bug when Border/Background not getting Senting Settings.	
+	- Fixed a bug when Border/Background not Sending Settings.	
 	
 *Jamba-Team
 	- (Added a option to set all members to assistant when you join a raid group. (WIP Not working it seems)
-	- Remove command "/jamba-team InviteTag". (Update)
+	- Remove command "/jamba-team InviteTag".
 	- "/Jamba-Team Invite" now support's <Tag>
 	- If Tag is Unknown it will tell you.	
 

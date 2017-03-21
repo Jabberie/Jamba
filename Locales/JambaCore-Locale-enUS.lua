@@ -6,7 +6,7 @@ License: The MIT License
 
 local L = LibStub("AceLocale-3.0"):NewLocale( "Jamba-Core", "enUS", true )
 --Change ME when update version
-L["Version"] = "5.1"
+L["Version"] = "5.2.0"
 --End of Changeme
 L["Slash Commands"] = true
 L["Team"] = true
@@ -55,8 +55,8 @@ L["Copyright 2008-2016 Michael 'Jafula' Miller, Now managed By Ebony"] = true
 L["Copyright 2008-2016 Michael 'Jafula' Miller, Released Under The MIT License"] = true
 L["Current Project Manager - Jennifer 'Ebony'"] = true
 L["Special thanks:"] = true
-L["To Schilm (Max Schilling) for building Advanced Loot and The changes to Jamba-Quest for 4.3"] = true
-L["To Schilm (Max Schilling) for Advanced Loot and Jamba-Quest for 4.3"] = true 
+L["To Schilm (Max Schilling) for building Advanced Loot"] = true
+L["To Schilm (Max Schilling) for Advanced Loot"] = true 
 L["To Olipcs on dual-boxing.com for writing the FTL Helper module."] = true
 L["To Michael 'Jafula' Miller who made Jamba"] = true
 L["Made For MultiBoxing"] = true
@@ -67,7 +67,7 @@ L["www.dual-boxing.com"] = true
 L["www.isboxer.com"] = true
 L["www.twitter.com/jenn_ebony"] = true
 L["Special thanks to olipcs on dual-boxing.com for writing the FTL Helper module."] = true
-L["Advanced Loot by schilm (Max Schilling) - modified by Tehtsuo and Jafula."] = true
+L["Advanced Loot by schilm (Max Schilling) - modified by Tehtsuo and Jafula and Ebony."] = true
 L["Attempting to reset the Jamba Settings Frame."] = true
 L["Reset Settings Frame"] = true
 L["Settings"] = true
@@ -93,15 +93,15 @@ L["Full Change Log"] = true
 L["Full ChangeLog"] = true
 L["ChangeLog"] = true
 L["Shows the Full changelog\nOpens a new Frame."] = true
-L["Text1"] = "Welcome to Legion 7.1.0!" 
-L["Text2"] = "" 
-L["Text3"] = "Jamba Has Had a few changes for 7.1 to check out"
-L["Text4"] = ""
-L["Text5"] = "Jamba-Mount one button to mount all the team."
-L["Text6"] = ""
-L["Text7"] = "Artifact Power is now Auto added to to the item Use bar!"
-L["Text8"] = ""
-L["Text9"] = "You can not use jamba to invite groups with tags."
+L["Text1"] = "Welcome to Legion Patch7.2.0!" 
+L["Text2"] = "Jamba-Trade 2.0 Now is a list to trade items with Master" 
+L["Text3"] = ""
+L["Text4"] = "Jamba-Quest 3.0 No more Taint menu"
+L["Text5"] = ""
+L["Text6"] = "Tons of bug fix's"
+L["Text7"] = ""
+L["Text8"] = "See ChangeLog"
+L["Text9"] = ""
 L["Text10"] = ""
 
 
