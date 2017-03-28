@@ -1813,7 +1813,7 @@ function AJM:CreateJambaMiniQuestLogFrame()
 	frame:EnableMouse( true )
 	frame:SetMovable( true )	
 	frame:ClearAllPoints()
-	frame:SetPoint("BOTTOMRIGHT", QuestMapFrame, "BOTTOMRIGHT", 5,-55)
+	frame:SetPoint("BOTTOMRIGHT", QuestMapFrame, "BOTTOMRIGHT", 5,-50)
 		frame:SetBackdrop( {
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", 
 		edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
@@ -1821,23 +1821,22 @@ function AJM:CreateJambaMiniQuestLogFrame()
 		insets = { left = 5, right = 5, top = 5, bottom = 5 }
 	} )
 	table.insert( UISpecialFrames, "JambaQuestLogWindowFrame" )
-	
 
 	-- abandon ALL button
 	local abandonButton = CreateFrame( "Button", "abandonButton", frame, "UIPanelButtonTemplate" )
 	abandonButton:SetScript( "OnClick", function()  StaticPopup_Show("AbandonALLToonsQuest") end )
-	abandonButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", 0, 0)
-	abandonButton:SetHeight( 21 )
+	abandonButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", 0 , -5)
+	abandonButton:SetHeight( 35 )
 	abandonButton:SetWidth( 100 )
-	abandonButton:SetText( L["Abandon All"] )	
+	abandonButton:SetText( L["Abandon All\nQuests"] )	
 	abandonButton:SetScript("OnEnter", function(self) AJM:ShowTooltip(trackButton, true, L["Aabandon All Quests on all Minions"]) end)
 	abandonButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 	abandonQuestLogWindowAbandonFrameButton = abandonButton
 
 	-- Share All Button
-	local shareButton = CreateFrame( "Button", "hareButton", frame, "UIPanelButtonTemplate" )
+	local shareButton = CreateFrame( "Button", "shareButton", frame, "UIPanelButtonTemplate" )
 	shareButton:SetScript( "OnClick", function()  AJM:DoShareAllQuestsFromAllToons() end )
-	shareButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", 100, 0)
+	shareButton:SetPoint( "TOPLEFT", frame, "TOPLEFT", 100, -5)
 	shareButton:SetHeight( 21 )
 	shareButton:SetWidth( 100 )
 	shareButton:SetText( L["Share All"] )	
@@ -1848,7 +1847,7 @@ function AJM:CreateJambaMiniQuestLogFrame()
 	--Track All Button
 	local trackButton = CreateFrame( "Button", "trackButton", frame, "UIPanelButtonTemplate" )
 	trackButton:SetScript( "OnClick", function()  AJM:DoTrackAllQuestsFromAllToons() end )
-	trackButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", 0, 0)
+	trackButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", 0, -5)
 	trackButton:SetHeight( 21 )
 	trackButton:SetWidth( 100 )
 	trackButton:SetText( L["Track All"] )	
@@ -1859,7 +1858,7 @@ function AJM:CreateJambaMiniQuestLogFrame()
 	-- Untrack All
 	local unTrackButton = CreateFrame( "Button", "unTrackButton", frame, "UIPanelButtonTemplate" )
 	unTrackButton:SetScript( "OnClick", function()  AJM:DoUnTrackAllQuestsFromAllToons() end )
-	unTrackButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", 0, -21)
+	unTrackButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", 0, -25)
 	unTrackButton:SetHeight( 21 )
 	unTrackButton:SetWidth( 100 )
 	unTrackButton:SetText( L["Untrack All"] )	

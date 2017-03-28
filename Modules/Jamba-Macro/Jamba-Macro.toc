@@ -1,4 +1,4 @@
-## Interface: 70100
+## Interface: 70200
 ## Title: Jamba-Macro
 ## Notes: Jamba-Macro
 ## Author: Ebony, Former Author: Jafula

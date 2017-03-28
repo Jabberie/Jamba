@@ -1,4 +1,4 @@
-## Interface: 70100
+## Interface: 70200
 ## Title: Jamba
 ## Notes: Jamba
 ## Author: Ebony, Former Author: Jafula

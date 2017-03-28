@@ -159,7 +159,7 @@ L["Untracking Quest's to All Minions"] = true
 L["Tracking Quest's to All Minions"] = true
 L["Sharing Quest's to All Minions"] = true
 L["Abandoning quest's to all toons"] = true
-L["Abandon All"] = true
+L["Abandon All\nQuests"] = true
 L["Aabandon All Quests on all Minions"] = true
 L["Untrack All"] = true
 L["Untrack All Quests on all Minions"] = true
@@ -167,3 +167,6 @@ L["Track All"] = true
 L["Track All Quests on all Minions"] = true
 L["Share All"] = true 
 L["share All Quests to all Minions"] = true
+
+
+

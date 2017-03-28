@@ -1,23 +1,20 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
-Jamba Version: 5.2.0[B10]
-WoW Game Version: 7.1.5
-File Version: 7.1.5-5.2.0
-Release Date: TBA
+Jamba Version: 5.2.0
+WoW Game Version: 7.2.0
+File Version: 7.2.0-5.2.0
+Release Date: 28/3/2017
 Modules Changed: Core, Toon, Trade, Team, Mount, Trade, Currency, Taxi, Quest, Follow, Team-Display
 Beta update date 21/03/2017
 
 *Jamba-Core 
 	*(Communications)
 	- Added support for Cross Realm using BNSendGameData Jamba will look fo the character 
-	  and will do all the magic.
-	*(Core)
-	- Added libnotify-1-0 (addon to say there is a new version with a small Changelog.) (WIP)
-	- Removed all of Old ways to show changeLog on core GUI (WIP)
-	
+	  and will do all the magic. (you need to turn this on in options)
+	  
 *Jamba-Toon
-	( holding Shift will stop most stuff forwarding to team)
+	(Holding Shift will stop most stuff forwarding to team)
 	- Ready-check with Team.
 	- LFG Role-check Auto.
 	- Teleport LFG with team.
@@ -29,7 +26,7 @@ Beta update date 21/03/2017
 	- Jamba_Quest 3.0
 		- Now shows a Popup Dialog when you track or abandon quests asking if you like to do it with the team.
 		- Removed "box" icons for abandon/track/share ALL, Changed for Blizzard Buttons.
-		- Nolonger spams raid warning's if the toon does not have the quest to abandon
+		- No Longer spams raid warning if the toon does not have the quest to abandon
 		- Does not loop on all toon's when abandoning/track/share all quests.
 	
 *Jamba-Trade
@@ -42,13 +39,13 @@ Beta update date 21/03/2017
 	- Fixed a bug when Border/Background not Sending Settings.	
 	
 *Jamba-Team
-	- (Added a option to set all members to assistant when you join a raid group. (WIP Not working it seems)
+	- Added a option to set all members to assistant when you join a raid group.
 	- Remove command "/jamba-team InviteTag".
 	- "/Jamba-Team Invite" now support's <Tag>
 	- If Tag is Unknown it will tell you.	
 
 *Jamba-Taxi
-	- Changed default Taxi dayly to 2 sec, added in 0.5sec max 5 sec now.
+	- Changed default Taxi dely to 2 sec, added in 0.5sec max 5 sec now.
 	- When Closing out the Taxi Frame the Team will close as well.
 	
 *Jamba-Mount
@@ -58,10 +55,10 @@ Beta update date 21/03/2017
 
 *Jamba-Follow
 	- Having ticked [Auto Follow After Combat] will now warn when follow breaks.
-	- Updated the speed the follow msg gets sent by 0.5 secs.
+	- Updated the speed the follow message gets sent by 0.5 secs.
 
 *Jamba-Team_Display
-	- added some glow effect when follow breaks on the Display-team bar.
+	- Added a glow effect when follow brecks on the Display-team bar.
 	
 ---------------------------
 Jamba Version: 5.1.7

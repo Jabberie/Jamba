@@ -108,14 +108,14 @@ function AJM:GetConfiguration()
 				get = false,
 				set = "InviteTeamToParty",
 			},
-		--	inviteTag = {
-		--		type = "input",
-		--		name = L["Invites"],
-		--		desc = L["Invite team members to a <tag> party."],
-		--		usage = "/jamba-team inviteTag <tag>",
-		--		get = false,
-		--		set = "InviteTeamToParty",
-		--	},				
+			inviteTag = {
+				type = "input",
+				name = L["Invites"],
+				desc = L["Invite team members to a <tag> party."],
+				usage = "/jamba-team inviteTag <tag>",
+				get = false,
+				set = "InviteTeamToPartys",
+			},				
 			disband = {
 				type = "input",
 				name = L["Disband"],
@@ -415,7 +415,7 @@ local function SettingsCreatePartyInvitationsControl( top )
 		L["Auto Set All Assistant"],
 		AJM.SettingsinviteSetAllAssistToggle,
 		L["Auto Set all raid Member's to Assistant"]
-	)	
+	)
 	AJM.settingsControl.partyInviteControlCheckBoxAcceptMembers = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		checkBoxWidth, 
@@ -1058,24 +1058,12 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 -- Invite team to party.
---[[
-function AJM:InviteTeamToParty()
-	-- Iterate each enabled member and invite them to a group.
-	AJM.inviteList = {}
-	AJM.inviteCount = 0
-	for index, characterName in TeamListOrdered() do
-		if GetCharacterOnlineStatus( characterName ) == true then
-			-- As long as they are not the player doing the inviting.
-			if characterName ~= AJM.characterName then
-				AJM.inviteList[AJM.inviteCount] = characterName
-				AJM.inviteCount = AJM.inviteCount + 1
-			end
-		end
-	end
-	AJM.currentInviteCount = 0
-	AJM:ScheduleTimer( "DoTeamPartyInvite", 0.5 )
+
+function AJM:InviteTeamToPartys()
+	--Clean up in next xpac!
+	AJM:Print("This Command Has Been Removed and is now used as \"/Jamba-Team Invite <TagName>/")
 end
---]]
+
 
 function AJM.DoTeamPartyInvite()
 	InviteUnit( AJM.inviteList[AJM.currentInviteCount] )
@@ -1084,8 +1072,8 @@ function AJM.DoTeamPartyInvite()
 		--if GetTeamListMaximumOrderOnline() > 5 and AJM.db.inviteConvertToRaid == true then
 		if AJM.inviteCount > 5 and AJM.db.inviteConvertToRaid == true then
 			if AJM.db.inviteSetAllAssistant == true then	
-				SetEveryoneIsAssistant("true")
-				ConvertToRaid()			
+				ConvertToRaid()
+				SetEveryoneIsAssistant(true)
 			else				
 				ConvertToRaid()
 			end

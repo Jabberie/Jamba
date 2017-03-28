@@ -1,4 +1,4 @@
-## Interface: 70100
+## Interface: 70200
 ## Title: Jamba-Purchase
 ## Notes: Jamba-Purchase
 ## Author: Ebony, Former Author: Jafula

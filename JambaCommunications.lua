@@ -89,6 +89,7 @@ AJM.settings = {
 		assumeTeamAlwaysOnline = false, -- This is a place holder And is used as backup DO NOT CHANGE assumeTeamAlwaysOnline unless you know what your doing that you probs don't ;)
 		autoSetTeamOnlineorOffline = true,
 		boostCommunication = true,
+		useBNComms = false,
 	},
 }
 
@@ -276,34 +277,36 @@ local function CommandAll( moduleName, commandName, ... )
 	--if the unit is not in the party then it unlikely did not get the party message,
 	for characterName, characterOrder in JambaPrivate.Team.TeamList() do		
 		if UnitInParty( Ambiguate( characterName, "none" ) ) == false then		
-			if JambaUtilities:CheckIsFromMyRealm(characterName) == false then
-				--AJM:Print("Toon", player, "Is not From My Realm")
-				local toonID = LookUpBnPlayer(characterName)
-				--local bnetIDAccount = select(17, BNGetGameAccountInfo(toonID))
-				if toonID ~= nil then
-					if IsCharacterOnline( characterName ) == true then
-						--AJM:Print("test", toonID)
-						BNSendGameData(
-							toonID, 
-							AJM.COMMAND_PREFIX, 
-							message
+			if AJM.db.useBNComms == true then
+				if JambaUtilities:CheckIsFromMyRealm(characterName) == false then
+					--AJM:Print("Toon", player, "Is not From My Realm")
+					local toonID = LookUpBnPlayer(characterName)
+					--local bnetIDAccount = select(17, BNGetGameAccountInfo(toonID))
+					if toonID ~= nil then
+						if IsCharacterOnline( characterName ) == true then
+							--AJM:Print("test", toonID)
+							BNSendGameData(
+								toonID, 
+								AJM.COMMAND_PREFIX, 
+								message
+								)
+						end	
+					else
+						--AJM:Print("Can not found character Name in BN Frineds List", characterName)
+						if IsCharacterOnline( characterName ) == true then
+						AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+							AJM:SendCommMessage(
+							AJM.COMMAND_PREFIX,
+							message,
+							AJM.COMMUNICATION_WHISPER,
+							characterName,
+							AJM.COMMUNICATION_PRIORITY_ALERT
 							)
-					end	
-				else
-					--AJM:Print("Can not found character Name in BN Frineds List", characterName)
-					if IsCharacterOnline( characterName ) == true then
-					AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
-						AJM:SendCommMessage(
-						AJM.COMMAND_PREFIX,
-						message,
-						AJM.COMMUNICATION_WHISPER,
-						characterName,
-						AJM.COMMUNICATION_PRIORITY_ALERT
-						)
+						end
 					end
-				end
 				--AJM:Print( "Toon not in party:", characterName)
-			else
+			end
+		else
 			AJM:DebugMessage( "Toon not in party:", characterName)
 				if IsCharacterOnline( characterName ) == true then
 					AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
@@ -675,16 +678,41 @@ function AJM:SettingsCreateOptions( top )
 		L["**reload UI to take effect, may cause disconnections"]
 	)	
 	movingTop = movingTop - buttonHeight		
-	AJM.settingsControl.checkBoxShowChannel = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.checkBoxUseBNComms = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 
+		column1Left, 
+		movingTop, 
+		L["Use BatteTag Communications***"],
+		AJM.CheckBoxUseBNComms
+	)
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.labelInformationBNComms = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["*** Can not work if the team are on the same Blizzard Account"]
+	)
+	
+	
+	
+--[[	AJM.settingsControl.checkBoxShowChannel = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 		
+		headingWidth, 		
 		column1Left, 
 		movingTop, 
 		L["Show Online Channel Traffic (For Debugging Purposes)"],
 		AJM.CheckBoxShowChannelClick
 	)
+]]
 	movingTop = movingTop - checkBoxHeight		
 	return movingTop	
+end
+
+function AJM:CheckBoxUseBNComms( event, value )
+	AJM.db.useBNComms = value
+	AJM:SettingsRefresh()
 end
 
 function AJM:CheckBoxBoostCommunication( event, value )
@@ -713,6 +741,7 @@ function AJM:SettingsRefresh()
 --	AJM.settingsControl.checkBoxAssumeAlwaysOnline:SetValue( AJM.db.assumeTeamAlwaysOnline )
 	AJM.settingsControl.checkBoxAutoSetTeamOnlineorOffline:SetValue( AJM.db.autoSetTeamOnlineorOffline )
 	AJM.settingsControl.checkBoxBoostCommunication:SetValue( AJM.db.boostCommunication )
+	AJM.settingsControl.checkBoxUseBNComms:SetValue( AJM.db.useBNComms )
 end
 
 -- Settings received.
@@ -727,6 +756,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.assumeTeamAlwaysOnline = settings.assumeTeamAlwaysOnline
 		AJM.db.autoSetTeamOnlineorOffline = settings.autoSetTeamOnlineorOffline
 		AJM.db.boostCommunication = settings.boostCommunication
+		AJM.db.useBNComms = settings.useBNComms
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
 		-- Tell the player.

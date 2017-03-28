@@ -78,6 +78,9 @@ L["Assume All Team Members Always Online*"] = true
 L["Boost Jamba to Jamba Communications**"] = true
 L["**reload UI to take effect, may cause disconnections"] = true
 L["*reload UI to take effect"] = true
+L["Use BatteTag Communications***"] = true
+L["*** Can not work if the team are on the same Blizzard Account"] = true
+
 L["Release Notes / News: "] = true
 L["Close and Do Not Show Again"] = true
 L["Close"] = true
