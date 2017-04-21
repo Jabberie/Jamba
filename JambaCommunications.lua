@@ -279,7 +279,7 @@ local function CommandAll( moduleName, commandName, ... )
 		if UnitInParty( Ambiguate( characterName, "none" ) ) == false then		
 			if AJM.db.useBNComms == true then
 				if JambaUtilities:CheckIsFromMyRealm(characterName) == false then
-					--AJM:Print("Toon", player, "Is not From My Realm")
+					--AJM:Print("Toon", characterName, "Is not From My Realm")
 					local toonID = LookUpBnPlayer(characterName)
 					--local bnetIDAccount = select(17, BNGetGameAccountInfo(toonID))
 					if toonID ~= nil then
@@ -291,18 +291,18 @@ local function CommandAll( moduleName, commandName, ... )
 								message
 								)
 						end	
-					else
-						--AJM:Print("Can not found character Name in BN Frineds List", characterName)
-						if IsCharacterOnline( characterName ) == true then
+					end	
+				else
+					--AJM:Print("Can not found character Name in BN Frineds List", characterName)
+					if IsCharacterOnline( characterName ) == true then
 						AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
-							AJM:SendCommMessage(
-							AJM.COMMAND_PREFIX,
-							message,
-							AJM.COMMUNICATION_WHISPER,
-							characterName,
-							AJM.COMMUNICATION_PRIORITY_ALERT
-							)
-						end
+						AJM:SendCommMessage(
+						AJM.COMMAND_PREFIX,
+						message,
+						AJM.COMMUNICATION_WHISPER,
+						characterName,
+						AJM.COMMUNICATION_PRIORITY_ALERT
+						)
 					end
 				--AJM:Print( "Toon not in party:", characterName)
 			end

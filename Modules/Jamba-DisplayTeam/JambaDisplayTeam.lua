@@ -2691,6 +2691,10 @@ function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxE
 		honorExhaustionStateID = experienceHonorBarText.honorExhaustionStateID
 	end
 	
+	local min, max = math.min(0, playerExperience), playerMaxExperience
+	
+	AJM:Print("XpTest2", "old", min , "new" , max ) 
+	
 	experienceBarText.playerExperience = playerExperience
 	experienceBarText.playerMaxExperience = playerMaxExperience
 	experienceBarText.exhaustionStateID = exhaustionStateID
@@ -2724,6 +2728,8 @@ function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxE
 		experienceBar:SetAlpha( 1 )
 	end
 --]]	
+	
+	--AJM:Print("XpTest", "old", experienceBarText.playerExperience, "new" , playerExperience ) 
 	local text = ""
 	if AJM.db.experienceStatusShowValues == true then
 		text = text..tostring( AbbreviateLargeNumbers(playerExperience) )..L[" / "]..tostring( AbbreviateLargeNumbers(playerMaxExperience) )..L[" "]

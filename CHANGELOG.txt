@@ -1,12 +1,29 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 5.2.1
+WoW Game Version: 7.2.1
+File Version: 7.2.0-5.2.1
+Release Date: 4/4/2017
+Modules Changed: Core, Mount, Currency
+
+*Jamba-Core 
+	*(Communications) fixed a small bug with this not working.
+	
+*Jamba-Mount
+	*Temp Fix undone most changes form 5.2.0
+	
+*jamba-Currency
+	- Added currency Legionfall War Supplies (1342)
+	
+
+
+---------------------------
 Jamba Version: 5.2.0
 WoW Game Version: 7.2.0
 File Version: 7.2.0-5.2.0
 Release Date: 28/3/2017
 Modules Changed: Core, Toon, Trade, Team, Mount, Trade, Currency, Taxi, Quest, Follow, Team-Display
-Beta update date 21/03/2017
 
 *Jamba-Core 
 	*(Communications)
