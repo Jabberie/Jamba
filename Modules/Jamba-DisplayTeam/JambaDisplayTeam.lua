@@ -2693,7 +2693,7 @@ function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxE
 	
 	local min, max = math.min(0, playerExperience), playerMaxExperience
 	
-	AJM:Print("XpTest2", "old", min , "new" , max ) 
+	--AJM:Print("XpTest2", "old", min , "new" , max ) 
 	
 	experienceBarText.playerExperience = playerExperience
 	experienceBarText.playerMaxExperience = playerMaxExperience
