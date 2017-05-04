@@ -1,10 +1,25 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 5.2.2
+WoW Game Version: 7.2.0
+File Version: 7.2.0-5.2.2
+Release Date: 4/5/2017
+Modules Changed: Core, Display-Team
+
+
+*jamba-Display Team
+
+	- Fixed the artifact bug -- am really sorry this one took so long, av not been very well.
+
+
+
+
+---------------------------
 Jamba Version: 5.2.1
 WoW Game Version: 7.2.1
 File Version: 7.2.0-5.2.1
-Release Date: 4/4/2017
+Release Date: 21/4/2017
 Modules Changed: Core, Mount, Currency
 
 *Jamba-Core 
