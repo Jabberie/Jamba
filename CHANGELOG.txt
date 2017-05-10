@@ -1,6 +1,23 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 5.2.3(A1)
+WoW Game Version: 7.2.0
+File Version: 7.2.0-5.2.3
+Release Date: WIP
+Modules Changed: Core, Display-Team, Quest-Watcher
+
+
+*Jamba-Display Team
+	- Added xp bars Animation
+
+*Jamba-Quest-Watcher
+	- Fixed bug #117 
+
+
+
+
+---------------------------
 Jamba Version: 5.2.2
 WoW Game Version: 7.2.0
 File Version: 7.2.0-5.2.2
