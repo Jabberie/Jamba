@@ -15,21 +15,21 @@ JambaPrivate.Team = {}
 JambaPrivate.Tag = {}
 
 -- The global public API table for Jamba.
-JambaApi = {}EMA
+JambaApi = {}
 
-local EMA = LibStub( "AceAddon-3.0" ):NewAddon( 
+local AJM = LibStub( "AceAddon-3.0" ):NewAddon( 
 	"JambaCore", 
 	"AceConsole-3.0" 
 )
 
 -- JambaCore is not a module, but the same naming convention for these values is convenient.
-EMA.moduleName = "Jamba-Core"
-local L = LibStub( "AceLocale-3.0" ):GetLocale( EMA.moduleName )
-EMA.moduleDisplayName = L["Jamba"]
-EMA.settingsDatabaseName = "JambaCoreProfileDB"
-EMA.parentDisplayName = "Jamba"
-EMA.chatCommand = "jamba"
-EMA.teamModuleName = "Jamba-Team"
+AJM.moduleName = "Jamba-Core"
+local L = LibStub( "AceLocale-3.0" ):GetLocale( AJM.moduleName )
+AJM.moduleDisplayName = L["Jamba"]
+AJM.settingsDatabaseName = "JambaCoreProfileDB"
+AJM.parentDisplayName = "Jamba"
+AJM.chatCommand = "jamba"
+AJM.teamModuleName = "Jamba-Team"
 
 -- Load libraries.
 local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
@@ -52,18 +52,18 @@ JambaPrivate.SettingsFrame.WidgetTree:EnableButtonTooltips( false )
 JambaPrivate.SettingsFrame.Widget:AddChild( JambaPrivate.SettingsFrame.WidgetTree )
 JambaPrivate.SettingsFrame.WidgetTree:SetLayout( "Fill" )
 
-function EMA:OnEnable()
-	if EMA.db.showStartupMessage4000 then
+function AJM:OnEnable()
+	if AJM.db.showStartupMessage4000 then
 		JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Full Change Log"] )
 		--JambaStartupMessageFrame:Show()
-		EMA.db.showStartupMessage4000 = false
+		AJM.db.showStartupMessage4000 = false
 	end
 end
 
-function EMA:OnDisable()
+function AJM:OnDisable()
 end
 
-function EMA:ShowChangeLog()
+function AJM:ShowChangeLog()
 	JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Full Change Log"] )
 	JambaStartupMessageFrame:Show()
 end	
@@ -215,7 +215,7 @@ local function JambaModuleSelected( tree, event, treeValue, selected )
 				JambaPrivate.SettingsFrame.Tree.ModuleFramesTabGroup[value]:SelectTab( "options" )
 			else
 				-- Hacky hack hack.
-				LibStub( "AceConfigDialog-3.0" ):Open( EMA.moduleName.."-Profiles", moduleFrame )
+				LibStub( "AceConfigDialog-3.0" ):Open( AJM.moduleName.."-Profiles", moduleFrame )
 			end			
 			return
 		end
@@ -235,7 +235,7 @@ JambaPrivate.SettingsFrame.Widget:Hide()
 table.insert( UISpecialFrames, "JambaSettingsWindowsFrame" )
 
 -- Settings - the values to store and their defaults for the settings database.
-EMA.settings = {
+AJM.settings = {
 	profile = {
 		showMinimapIcon = true,
 		showStartupMessage4000 = true,
@@ -246,7 +246,7 @@ EMA.settings = {
 local function GetConfiguration()
 	local configuration = {
 		name = "Jamba",
-		handler = EMA,
+		handler = AJM,
 		type = 'group',
 		childGroups  = "tab",
 		get = "ConfigurationGetSetting",
@@ -278,17 +278,17 @@ local function GetConfiguration()
 end
 
 -- Get a settings value.
-function EMA:ConfigurationGetSetting( key )
-	return EMA.db[key[#key]]
+function AJM:ConfigurationGetSetting( key )
+	return AJM.db[key[#key]]
 end
 
 -- Set a settings value.
-function EMA:ConfigurationSetSetting( key, value )
-	EMA.db[key[#key]] = value
+function AJM:ConfigurationSetSetting( key, value )
+	AJM.db[key[#key]] = value
 end
 
 local function DebugMessage( ... )
-	EMA:Print( ... )
+	AJM:Print( ... )
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -297,14 +297,14 @@ end
 
 -- Register a Jamba module.
 local function RegisterModule( moduleAddress, moduleName )
-	if EMA.registeredModulesByName == nil then
-		EMA.registeredModulesByName = {}
+	if AJM.registeredModulesByName == nil then
+		AJM.registeredModulesByName = {}
 	end
-	if EMA.registeredModulesByAddress == nil then
-		EMA.registeredModulesByAddress = {}
+	if AJM.registeredModulesByAddress == nil then
+		AJM.registeredModulesByAddress = {}
 	end
-	EMA.registeredModulesByName[moduleName] = moduleAddress
-	EMA.registeredModulesByAddress[moduleAddress] = moduleName
+	AJM.registeredModulesByName[moduleName] = moduleAddress
+	AJM.registeredModulesByAddress[moduleAddress] = moduleName
 end
 
 -------------------------------------------------------------------------------------------------------------
@@ -314,7 +314,7 @@ end
 -- Send the settings for the module specified (using its address) to other Jamba Team characters.
 local function SendSettings( moduleAddress, settings )
 	-- Get the name of the module.
-	local moduleName = EMA.registeredModulesByAddress[moduleAddress]
+	local moduleName = AJM.registeredModulesByAddress[moduleAddress]
 	-- Send the settings identified by the module name.
 	JambaPrivate.Communications.SendSettings( moduleName, settings )
 end
@@ -322,12 +322,12 @@ end
 -- Settings are received, pass them to the relevant module.
 local function OnSettingsReceived( sender, moduleName, settings )
 	sender = JambaUtilities:AddRealmToNameIfMissing( sender )
-	--EMA:Print("onsettings", sender, moduleName )
+	--AJM:Print("onsettings", sender, moduleName )
 	-- Get the address of the module.
-	local moduleAddress = EMA.registeredModulesByName[moduleName]	
+	local moduleAddress = AJM.registeredModulesByName[moduleName]	
 	-- can not receive a message from a Module not Loaded so ignore it. Better tell them its not loaded --ebony.
 	if moduleAddress == nil then 
-		EMA:Print(L["Module Not Loaded:"], moduleName)
+		AJM:Print(L["Module Not Loaded:"], moduleName)
 		return
 	else
 	-- loaded? Pass the module its settings.
@@ -335,10 +335,10 @@ local function OnSettingsReceived( sender, moduleName, settings )
 	end	
 end
 
-function EMA:SendSettingsAllModules()
-	EMA:Print( "Sending settings for all modules." )
-	for moduleName, moduleAddress in pairs( EMA.registeredModulesByName ) do
-		EMA:Print( "Sending settings for: ", moduleName )
+function AJM:SendSettingsAllModules()
+	AJM:Print( "Sending settings for all modules." )
+	for moduleName, moduleAddress in pairs( AJM.registeredModulesByName ) do
+		AJM:Print( "Sending settings for: ", moduleName )
 		moduleAddress:JambaSendSettings()
 	end
 end
@@ -351,7 +351,7 @@ end
 -- Send a command for the module specified (using its address) to other Jamba Team characters.
 local function SendCommandToTeam( moduleAddress, commandName, ... )
 	-- Get the name of the module.
-	local moduleName = EMA.registeredModulesByAddress[moduleAddress]
+	local moduleName = AJM.registeredModulesByAddress[moduleAddress]
 	-- Send the command identified by the module name.
 	JambaPrivate.Communications.SendCommandAll( moduleName, commandName, ... )
 end
@@ -359,14 +359,14 @@ end
 -- Send a command for the module specified (using its address) to the master character.
 local function SendCommandToMaster( moduleAddress, commandName, ... )
 	-- Get the name of the module.
-	local moduleName = EMA.registeredModulesByAddress[moduleAddress]
+	local moduleName = AJM.registeredModulesByAddress[moduleAddress]
 	-- Send the command identified by the module name.
 	JambaPrivate.Communications.SendCommandMaster( moduleName, commandName, ... )
 end
 
 local function SendCommandToToon( moduleAddress, characterName, commandName, ... )
 	-- Get the name of the module.
-	local moduleName = EMA.registeredModulesByAddress[moduleAddress]
+	local moduleName = AJM.registeredModulesByAddress[moduleAddress]
 	-- Send the command identified by the module name.
 	JambaPrivate.Communications.SendCommandToon( moduleName, characterName, commandName, ... )
 end
@@ -375,7 +375,7 @@ end
 local function OnCommandReceived( sender, moduleName, commandName, ... )
 	sender = JambaUtilities:AddRealmToNameIfMissing( sender )
 	-- Get the address of the module.
-	local moduleAddress = EMA.registeredModulesByName[moduleName]
+	local moduleAddress = AJM.registeredModulesByName[moduleName]
 	-- Pass the module its settings.
 	moduleAddress:JambaOnCommandReceived( sender, commandName, ... )
 end
@@ -384,94 +384,94 @@ end
 -- Jamba Core Profile Support.
 -------------------------------------------------------------------------------------------------------------
 
-function EMA:FireBeforeProfileChangedEvent()
-	for moduleName, moduleAddress in pairs( EMA.registeredModulesByName ) do
-		if moduleName ~= EMA.moduleName then		
+function AJM:FireBeforeProfileChangedEvent()
+	for moduleName, moduleAddress in pairs( AJM.registeredModulesByName ) do
+		if moduleName ~= AJM.moduleName then		
 			moduleAddress:BeforeJambaProfileChanged()
 		end
 	end
 end
 
-function EMA:CanChangeProfileForModule( moduleName )
-	if (moduleName ~= EMA.moduleName) and (moduleName ~= EMA.teamModuleName) then		
+function AJM:CanChangeProfileForModule( moduleName )
+	if (moduleName ~= AJM.moduleName) and (moduleName ~= AJM.teamModuleName) then		
 		return true
 	end
 	return false
 end
 
-function EMA:FireOnProfileChangedEvent( moduleAddress )
+function AJM:FireOnProfileChangedEvent( moduleAddress )
 	moduleAddress.db = moduleAddress.completeDatabase.profile
 	moduleAddress:OnJambaProfileChanged()
 end
 
-function EMA:OnProfileChanged( event, database, newProfileKey, ... )
-	EMA:Print( "Profile changed - iterating all modules." )
-	EMA:FireBeforeProfileChangedEvent()
+function AJM:OnProfileChanged( event, database, newProfileKey, ... )
+	AJM:Print( "Profile changed - iterating all modules." )
+	AJM:FireBeforeProfileChangedEvent()
 	-- Do the team module before all the others.
-	local teamModuleAddress = EMA.registeredModulesByName[EMA.teamModuleName]
-	EMA:Print( "Changing profile: ", EMA.teamModuleName )
+	local teamModuleAddress = AJM.registeredModulesByName[AJM.teamModuleName]
+	AJM:Print( "Changing profile: ", AJM.teamModuleName )
 	teamModuleAddress.completeDatabase:SetProfile( newProfileKey )
-	EMA:FireOnProfileChangedEvent( teamModuleAddress )
+	AJM:FireOnProfileChangedEvent( teamModuleAddress )
 	-- Do the other modules.
-	for moduleName, moduleAddress in pairs( EMA.registeredModulesByName ) do
-		if EMA:CanChangeProfileForModule( moduleName ) == true then		
-			EMA:Print( "Changing profile: ", moduleName )
+	for moduleName, moduleAddress in pairs( AJM.registeredModulesByName ) do
+		if AJM:CanChangeProfileForModule( moduleName ) == true then		
+			AJM:Print( "Changing profile: ", moduleName )
 			moduleAddress.completeDatabase:SetProfile( newProfileKey )
-			EMA:FireOnProfileChangedEvent( moduleAddress )
+			AJM:FireOnProfileChangedEvent( moduleAddress )
 		end
 	end
 end
 
-function EMA:OnProfileCopied( event, database, sourceProfileKey )
-	EMA:Print( "Profile copied - iterating all modules." )
-	EMA:FireBeforeProfileChangedEvent()
+function AJM:OnProfileCopied( event, database, sourceProfileKey )
+	AJM:Print( "Profile copied - iterating all modules." )
+	AJM:FireBeforeProfileChangedEvent()
 	-- Do the team module before all the others.
-	local teamModuleAddress = EMA.registeredModulesByName[EMA.teamModuleName]
-	EMA:Print( "Copying profile: ", EMA.teamModuleName )
+	local teamModuleAddress = AJM.registeredModulesByName[AJM.teamModuleName]
+	AJM:Print( "Copying profile: ", AJM.teamModuleName )
 	teamModuleAddress.completeDatabase:CopyProfile( sourceProfileKey, true )
-	EMA:FireOnProfileChangedEvent( teamModuleAddress )	
+	AJM:FireOnProfileChangedEvent( teamModuleAddress )	
 	-- Do the other modules.
-	for moduleName, moduleAddress in pairs( EMA.registeredModulesByName ) do
-		if EMA:CanChangeProfileForModule( moduleName ) == true then		
-			EMA:Print( "Copying profile: ", moduleName )
+	for moduleName, moduleAddress in pairs( AJM.registeredModulesByName ) do
+		if AJM:CanChangeProfileForModule( moduleName ) == true then		
+			AJM:Print( "Copying profile: ", moduleName )
 			moduleAddress.completeDatabase:CopyProfile( sourceProfileKey, true )
-			EMA:FireOnProfileChangedEvent( moduleAddress )
+			AJM:FireOnProfileChangedEvent( moduleAddress )
 		end
 	end
 end
 
-function EMA:OnProfileReset( event, database )
-	EMA:Print( "Profile reset - iterating all modules." )
-	EMA:FireBeforeProfileChangedEvent()
+function AJM:OnProfileReset( event, database )
+	AJM:Print( "Profile reset - iterating all modules." )
+	AJM:FireBeforeProfileChangedEvent()
 	-- Do the team module before all the others.
-	local teamModuleAddress = EMA.registeredModulesByName[EMA.teamModuleName]
-	EMA:Print( "Resetting profile: ", EMA.teamModuleName )
+	local teamModuleAddress = AJM.registeredModulesByName[AJM.teamModuleName]
+	AJM:Print( "Resetting profile: ", AJM.teamModuleName )
 	teamModuleAddress.completeDatabase:ResetProfile()
-	EMA:FireOnProfileChangedEvent( teamModuleAddress )	
+	AJM:FireOnProfileChangedEvent( teamModuleAddress )	
 	-- Do the other modules.	
-	for moduleName, moduleAddress in pairs( EMA.registeredModulesByName ) do
-		if EMA:CanChangeProfileForModule( moduleName ) == true then		
-			EMA:Print( "Resetting profile: ", moduleName )
+	for moduleName, moduleAddress in pairs( AJM.registeredModulesByName ) do
+		if AJM:CanChangeProfileForModule( moduleName ) == true then		
+			AJM:Print( "Resetting profile: ", moduleName )
 			moduleAddress.completeDatabase:ResetProfile()
-			EMA:FireOnProfileChangedEvent( moduleAddress )
+			AJM:FireOnProfileChangedEvent( moduleAddress )
 		end
 	end
 end
 
-function EMA:OnProfileDeleted( event, database, profileKey )
-	EMA:Print( "Profile deleted - iterating all modules." )
-	EMA:FireBeforeProfileChangedEvent()
+function AJM:OnProfileDeleted( event, database, profileKey )
+	AJM:Print( "Profile deleted - iterating all modules." )
+	AJM:FireBeforeProfileChangedEvent()
 	-- Do the team module before all the others.
-	local teamModuleAddress = EMA.registeredModulesByName[EMA.teamModuleName]
-	EMA:Print( "Deleting profile: ", EMA.teamModuleName )
+	local teamModuleAddress = AJM.registeredModulesByName[AJM.teamModuleName]
+	AJM:Print( "Deleting profile: ", AJM.teamModuleName )
 	teamModuleAddress.completeDatabase:DeleteProfile( profileKey, true )
-	EMA:FireOnProfileChangedEvent( teamModuleAddress )	
+	AJM:FireOnProfileChangedEvent( teamModuleAddress )	
 	-- Do the other modules.		
-	for moduleName, moduleAddress in pairs( EMA.registeredModulesByName ) do
-		if EMA:CanChangeProfileForModule( moduleName ) == true then		
-			EMA:Print( "Deleting profile: ", moduleName )
+	for moduleName, moduleAddress in pairs( AJM.registeredModulesByName ) do
+		if AJM:CanChangeProfileForModule( moduleName ) == true then		
+			AJM:Print( "Deleting profile: ", moduleName )
 			moduleAddress.completeDatabase:DeleteProfile( profileKey, true )
-			EMA:FireOnProfileChangedEvent( moduleAddress )
+			AJM:FireOnProfileChangedEvent( moduleAddress )
 		end
 	end
 end
@@ -481,79 +481,79 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 -- Initialize the addon.
-function EMA:OnInitialize()
+function AJM:OnInitialize()
 	-- Tables to hold registered modules - lookups by name and by address.  
 	-- By name is used for communication between clients and by address for communication between addons on the same client.
-	EMA.registeredModulesByName = {}
-	EMA.registeredModulesByAddress = {}
+	AJM.registeredModulesByName = {}
+	AJM.registeredModulesByAddress = {}
 	-- Create the settings database supplying the settings values along with defaults.
-    EMA.completeDatabase = LibStub( "AceDB-3.0" ):New( EMA.settingsDatabaseName, EMA.settings )
-	EMA.completeDatabase.RegisterCallback( EMA, "OnProfileChanged", "OnProfileChanged" )
-	EMA.completeDatabase.RegisterCallback( EMA, "OnProfileCopied", "OnProfileCopied" )
-	EMA.completeDatabase.RegisterCallback( EMA, "OnProfileReset", "OnProfileReset" )	
-	EMA.completeDatabase.RegisterCallback( EMA, "OnProfileDeleted", "OnProfileDeleted" )	
-	EMA.db = EMA.completeDatabase.profile
+    AJM.completeDatabase = LibStub( "AceDB-3.0" ):New( AJM.settingsDatabaseName, AJM.settings )
+	AJM.completeDatabase.RegisterCallback( AJM, "OnProfileChanged", "OnProfileChanged" )
+	AJM.completeDatabase.RegisterCallback( AJM, "OnProfileCopied", "OnProfileCopied" )
+	AJM.completeDatabase.RegisterCallback( AJM, "OnProfileReset", "OnProfileReset" )	
+	AJM.completeDatabase.RegisterCallback( AJM, "OnProfileDeleted", "OnProfileDeleted" )	
+	AJM.db = AJM.completeDatabase.profile
 	-- Create the settings.
 	LibStub( "AceConfig-3.0" ):RegisterOptionsTable( 
-		EMA.moduleName, 
+		AJM.moduleName, 
 		GetConfiguration() 
 	)
 	-- Create the settings frame.
-	EMA:CoreSettingsCreate()
-	EMA.settingsFrame = EMA.settingsControl.widgetSettings.frame
+	AJM:CoreSettingsCreate()
+	AJM.settingsFrame = AJM.settingsControl.widgetSettings.frame
 	-- Blizzard options frame.
 	local frame = CreateFrame( "Frame" )
 	frame.name = L["Jamba"]
 	local button = CreateFrame( "Button", nil, frame, "OptionsButtonTemplate" )
 	button:SetPoint( "CENTER" )
 	button:SetText( "/jamba" )
-	button:SetScript( "OnClick", EMA.LoadJambaSettings )
+	button:SetScript( "OnClick", AJM.LoadJambaSettings )
 	InterfaceOptions_AddCategory( frame )
 	-- Create the settings profile support.
 	LibStub( "AceConfig-3.0" ):RegisterOptionsTable( 
-		EMA.moduleName.."-Profiles",
-		LibStub( "AceDBOptions-3.0" ):GetOptionsTable( EMA.completeDatabase ) 
+		AJM.moduleName.."-Profiles",
+		LibStub( "AceDBOptions-3.0" ):GetOptionsTable( AJM.completeDatabase ) 
 	)
 	local profileContainerWidget = AceGUI:Create( "SimpleGroup" )
 	profileContainerWidget:SetLayout( "Fill" )
 	JambaPrivate.SettingsFrame.Tree.Add( L["Core"]..L[": Profiles"], L["Profiles"], profileContainerWidget, nil )
 	-- Register the core as a module.
-	RegisterModule( EMA, EMA.moduleName )
+	RegisterModule( AJM, AJM.moduleName )
 	-- Register the chat command.
-	EMA:RegisterChatCommand( EMA.chatCommand, "JambaChatCommand" )
+	AJM:RegisterChatCommand( AJM.chatCommand, "JambaChatCommand" )
 	-- Attempt to load modules, if they are disabled, they won't be loaded.
 	-- TODO: This kinda defeats the purpose of the module system if we have to update core each time a module is added.
-    EMA:LoadJambaModule( "Jamba-AdvancedLoot" )
-	EMA:LoadJambaModule( "Jamba-DisplayTeam" )
-	EMA:LoadJambaModule( "Jamba-Follow" )
-	EMA:LoadJambaModule( "Jamba-FTL" )
-	EMA:LoadJambaModule( "Jamba-ItemUse" )
-	EMA:LoadJambaModule( "Jamba-Macro" )
-	EMA:LoadJambaModule( "Jamba-Proc" )
-	EMA:LoadJambaModule( "Jamba-Purchase" )
-	EMA:LoadJambaModule( "Jamba-Quest" )
-	EMA:LoadJambaModule( "Jamba-QuestWatcher" )
-	EMA:LoadJambaModule( "Jamba-Sell" )
-	EMA:LoadJambaModule( "Jamba-Talk" )
-	EMA:LoadJambaModule( "Jamba-Target" )
-	EMA:LoadJambaModule( "Jamba-Taxi" )
-	EMA:LoadJambaModule( "Jamba-Toon" )
-	EMA:LoadJambaModule( "Jamba-Trade" )
-	EMA:LoadJambaModule( "Jamba-Video" )
-	EMA:LoadJambaModule( "Jamba-Curr" )
-	EMA:LoadJambaModule( "Jamba-Mount" )
+    AJM:LoadJambaModule( "Jamba-AdvancedLoot" )
+	AJM:LoadJambaModule( "Jamba-DisplayTeam" )
+	AJM:LoadJambaModule( "Jamba-Follow" )
+	AJM:LoadJambaModule( "Jamba-FTL" )
+	AJM:LoadJambaModule( "Jamba-ItemUse" )
+	AJM:LoadJambaModule( "Jamba-Macro" )
+	AJM:LoadJambaModule( "Jamba-Proc" )
+	AJM:LoadJambaModule( "Jamba-Purchase" )
+	AJM:LoadJambaModule( "Jamba-Quest" )
+	AJM:LoadJambaModule( "Jamba-QuestWatcher" )
+	AJM:LoadJambaModule( "Jamba-Sell" )
+	AJM:LoadJambaModule( "Jamba-Talk" )
+	AJM:LoadJambaModule( "Jamba-Target" )
+	AJM:LoadJambaModule( "Jamba-Taxi" )
+	AJM:LoadJambaModule( "Jamba-Toon" )
+	AJM:LoadJambaModule( "Jamba-Trade" )
+	AJM:LoadJambaModule( "Jamba-Video" )
+	AJM:LoadJambaModule( "Jamba-Curr" )
+	AJM:LoadJambaModule( "Jamba-Mount" )
 end
 
-function EMA:LoadJambaModule( moduleName )
+function AJM:LoadJambaModule( moduleName )
 	local loaded, reason = LoadAddOn( moduleName )
 	if not loaded then
 		if reason ~= "DISABLED" and reason ~= "MISSING" then
-			EMA:Print("Failed to load Jamba Module '"..moduleName.."' ["..reason.."]." )
+			AJM:Print("Failed to load Jamba Module '"..moduleName.."' ["..reason.."]." )
 		end
 	end
 end
 
-function EMA:CoreSettingsCreateInfo( top )
+function AJM:CoreSettingsCreateInfo( top )
 	-- Get positions and dimensions.
 	local buttonPushAllSettingsWidth = 200
 	local buttonHeight = JambaHelperSettings:GetButtonHeight()
@@ -577,92 +577,92 @@ function EMA:CoreSettingsCreateInfo( top )
 	local column3LeftIndent = column2LeftIndent + checkBoxThirdWidth + horizontalSpacing
 	local movingTop = top
 	--Main Heading
-	JambaHelperSettings:CreateHeading( EMA.settingsControl, L["The Awesome Multi-Boxer Assistant"], movingTop, false )
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["The Awesome Multi-Boxer Assistant"], movingTop, false )
 	movingTop = movingTop - headingHeight
-	EMA.settingsControl.labelInformation1 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation1 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Current Project Manager - Jennifer 'Ebony'"]
 	)	
 	movingTop = movingTop + movingTop * 2
-	JambaHelperSettings:CreateHeading( EMA.settingsControl, L["Release Notes / News: "]..GetAddOnMetadata("jamba", "version") , movingTop, false )
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Release Notes / News: "]..GetAddOnMetadata("jamba", "version") , movingTop, false )
 	movingTop = movingTop - headingHeight
-	EMA.settingsControl.labelInformation10 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation10 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Text1"]
 	)
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation11 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation11 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Text2"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation12 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation12 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Text3"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation13	= JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation13	= JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Text4"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation14 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation14 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Text5"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation15 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation15 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Text6"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation16 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation16 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Text7"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation17 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation17 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Text8"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation18 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation18 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["Text9"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation19 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation19 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
@@ -670,31 +670,31 @@ function EMA:CoreSettingsCreateInfo( top )
 	)	
 	--movingTop = movingTop - labelContinueHeight
 --[[	movingTop = movingTop - buttonHeight * 3
-	EMA.settingsControl.buttonPushSettingsForAllModules = JambaHelperSettings:CreateButton(	
-		EMA.settingsControl, 
+	AJM.settingsControl.buttonPushSettingsForAllModules = JambaHelperSettings:CreateButton(	
+		AJM.settingsControl, 
 		buttonPushAllSettingsWidth, 
 		column2Left, 
 		movingTop, 
 		L["Full ChangeLog"],
-		EMA.ShowChangeLog,
+		AJM.ShowChangeLog,
 		L["Shows the Full changelog\nOpens a new Frame."]
 	)
 --]]
 	-- Special thanks Heading
 	
 	movingTop = movingTop - buttonHeight 
-	JambaHelperSettings:CreateHeading( EMA.settingsControl, L["Special thanks:"], movingTop, false )	
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Special thanks:"], movingTop, false )	
 	movingTop = movingTop - headingHeight
-	EMA.settingsControl.labelInformation20 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation20 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
 		L["To Michael 'Jafula' Miller who made Jamba"]
 	)	
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation21 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation21 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
@@ -702,8 +702,8 @@ function EMA:CoreSettingsCreateInfo( top )
 		
 	)	
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation22 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation22 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
@@ -711,10 +711,10 @@ function EMA:CoreSettingsCreateInfo( top )
 	)
 	-- Useful websites Heading
 	movingTop = movingTop - labelContinueHeight * 2
-	JambaHelperSettings:CreateHeading( EMA.settingsControl, L["Useful websites:"], movingTop, false )	
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Useful websites:"], movingTop, false )	
 	movingTop = movingTop - headingHeight
-	EMA.settingsControl.labelInformation30 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation30 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column2Left, 
 		movingTop,
@@ -722,16 +722,16 @@ function EMA:CoreSettingsCreateInfo( top )
 		
 	)		
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation21 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation21 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column2Left, 
 		movingTop,
 		L["www.dual-boxing.com"]
 	)
 	movingTop = movingTop - labelContinueHeight
-	EMA.settingsControl.labelInformation22 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation22 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column2Left, 
 		movingTop,
@@ -739,8 +739,8 @@ function EMA:CoreSettingsCreateInfo( top )
 	)	
 	--CopyRight heading
 	movingTop = movingTop - labelContinueHeight * 4
-	EMA.settingsControl.labelInformation30 = JambaHelperSettings:CreateContinueLabel( 
-		EMA.settingsControl, 
+	AJM.settingsControl.labelInformation30 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
 		headingWidth, 
 		column1Left, 
 		movingTop,
@@ -749,67 +749,67 @@ function EMA:CoreSettingsCreateInfo( top )
 	return movingTop	
 end
 
-function EMA:CoreSettingsCreate()
-	EMA.settingsControl = {}
+function AJM:CoreSettingsCreate()
+	AJM.settingsControl = {}
 	-- Create the settings panel.
 	JambaHelperSettings:CreateSettings( 
-		EMA.settingsControl, 
-		EMA.moduleDisplayName, 
-		EMA.parentDisplayName, 
-		EMA.SendSettingsAllModules 
+		AJM.settingsControl, 
+		AJM.moduleDisplayName, 
+		AJM.parentDisplayName, 
+		AJM.SendSettingsAllModules 
 	)
-	local bottomOfInfo = EMA:CoreSettingsCreateInfo( JambaHelperSettings:TopOfSettings() )
-	EMA.settingsControl.widgetSettings.content:SetHeight( -bottomOfInfo )
+	local bottomOfInfo = AJM:CoreSettingsCreateInfo( JambaHelperSettings:TopOfSettings() )
+	AJM.settingsControl.widgetSettings.content:SetHeight( -bottomOfInfo )
 end
 
 -- Send core settings.
-function EMA:JambaSendSettings()
-	JambaPrivate.Communications.SendSettings( EMA.moduleName, EMA.db )
+function AJM:JambaSendSettings()
+	JambaPrivate.Communications.SendSettings( AJM.moduleName, AJM.db )
 end
 
-function EMA:OnJambaProfileChanged()	
-	EMA:SettingsRefresh()
+function AJM:OnJambaProfileChanged()	
+	AJM:SettingsRefresh()
 end
 
-function EMA:SettingsRefresh()
+function AJM:SettingsRefresh()
 end
 
 -- Core settings received.
-function EMA:JambaOnSettingsReceived( characterName, settings )
+function AJM:JambaOnSettingsReceived( characterName, settings )
 	--Checks character is not the the character that send the settings. Now checks the character has a realm on there name to match Jamba team list.
 	--characterName = JambaUtilities:AddRealmToNameIfMissing( characterName )
-	if characterName ~= EMA.characterName then
+	if characterName ~= AJM.characterName then
 		-- Update the settings.
         -- TODO: What is this minimap icon?
-		EMA.db.showMinimapIcon = settings.showMinimapIcon
+		AJM.db.showMinimapIcon = settings.showMinimapIcon
 		-- Refresh the settings.
-		EMA:SettingsRefresh()
+		AJM:SettingsRefresh()
 		-- Tell the player.
-		EMA:Print( L["Settings received from A."]( characterName ) )
+		AJM:Print( L["Settings received from A."]( characterName ) )
 		-- Tell the team?
-		--EMA:JambaSendMessageToTeam( EMA.db.messageArea,  L["Settings received from A."]( characterName ), false )
+		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
 
-function EMA:LoadJambaSettings()
+function AJM:LoadJambaSettings()
 	InterfaceOptionsFrameCancel_OnClick()
 	HideUIPanel( GameMenuFrame )
-	EMA:JambaChatCommand( "" )
+	AJM:JambaChatCommand( "" )
 end
 
 -- Handle the chat command.
-function EMA:JambaChatCommand( input )
+function AJM:JambaChatCommand( input )
     if not input or input:trim() == "" then
 		JambaPrivate.SettingsFrame.Widget:Show()
-		JambaPrivate.SettingsFrame.WidgetTree:SelectByValue( EMA.moduleDisplayName )
-		JambaPrivate.SettingsFrame.Tree.ButtonClick( nil, nil, EMA.moduleDisplayName, false)
+		JambaPrivate.SettingsFrame.WidgetTree:SelectByValue( AJM.moduleDisplayName )
+		JambaPrivate.SettingsFrame.Tree.ButtonClick( nil, nil, AJM.moduleDisplayName, false)
     else
-        LibStub( "AceConfigCmd-3.0" ):HandleCommand( EMA.chatCommand, EMA.moduleName, input )
+        LibStub( "AceConfigCmd-3.0" ):HandleCommand( AJM.chatCommand, AJM.moduleName, input )
     end
 end
 
-function EMA:ResetSettingsFrame()
-	EMA:Print( L["Attempting to reset the Jamba Settings Frame."] )
+function AJM:ResetSettingsFrame()
+	AJM:Print( L["Attempting to reset the Jamba Settings Frame."] )
 	JambaPrivate.SettingsFrame.Widget:SetPoint("TOPLEFT", 0, 0)
 	JambaPrivate.SettingsFrame.Widget:SetWidth(770)
 	JambaPrivate.SettingsFrame.Widget:SetHeight(650)

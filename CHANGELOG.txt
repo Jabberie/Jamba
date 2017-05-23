@@ -16,7 +16,7 @@ Modules Changed: Core, Display-Team, Quest-Watcher, Jamba-Team, Jamba-Trade, Jam
 
 *Jamba-ItemUse
 	- Fixed a buged where Emissary quest items Nolonger would show on bar.
-	- Nolonger add's LockBox to the Item-Bar
+	- Nolonger adds LockBox to the Item-Bar
 
 *Jamba-Team
 	- added Enhancement #179*
