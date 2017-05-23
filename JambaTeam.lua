@@ -39,6 +39,7 @@ AJM.settings = {
 		master = "",
         teamList = {},
 		characterOnline = {},
+		characterClass = {},
 		focusChangeSetMaster = false,
 		masterChangePromoteLeader = false,
 		inviteAcceptTeam = true,
@@ -296,7 +297,7 @@ local function SettingsCreateTeamList()
 		topOfList - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight,
 		L["Add Party"],
 		AJM.SettingsAddPartyClick,
-		L["Adds all Party members to the team list"]
+		L["Adds all Party/Raid members to the team list"]
 	)
 	AJM.settingsControl.teamListButtonRemove = JambaHelperSettings:CreateButton(
 		AJM.settingsControl, 
@@ -305,7 +306,7 @@ local function SettingsCreateTeamList()
 		topOfList - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight - verticalSpacing - buttonHeight, 
 		L["Remove"],
 		AJM.SettingsRemoveClick,
-		L["Removes Party members from the team list"]
+		L["Removes Members from the team list"]
 	)
 	AJM.settingsControl.teamListButtonSetMaster = JambaHelperSettings:CreateButton(
 		AJM.settingsControl,  
@@ -636,8 +637,23 @@ local function TeamList()
 end
 
 local function Offline()
-	return pairs( AJM.db.characterOnline)
+	return pairs( AJM.db.characterOnline )
 end
+
+local function characterClass()
+	return pairs( AJM.db.characterClass )
+end
+
+local function setClass()
+	for characterName, position in pairs( AJM.db.teamList ) do
+	local class, classFileName, classIndex = UnitClass( Ambiguate(characterName, "none") )
+		--AJM:Print("new", class, CharacterName )
+		if class ~= nil then
+			AJM.db.characterClass[characterName] = classFileName
+		end
+	end	
+end
+
 
 -- Get the largest order number from the team list.
 local function GetTeamListMaximumOrder()
@@ -764,11 +780,19 @@ local function AddMember( characterName )
 	if characterName ~= nil and characterName:trim() ~= "" and characterName:len() > 1 then
 		-- If the character is not already in the list...
 		local character = JambaUtilities:AddRealmToNameIfMissing( characterName )
-			if AJM.db.teamList[character] == nil then
+		if AJM.db.teamList[character] == nil then
 			-- Get the maximum order number.
 			local maxOrder = GetTeamListMaximumOrder()
 			-- Yes, add to the member list.
 			AJM.db.teamList[character] = maxOrder + 1
+			
+			local class, classFileName, classIndex = UnitClass( characterName )
+			if class ~= nil then	
+				--AJM:Print( classFileName )
+				AJM.db.characterClass[character] = classFileName
+			else
+				AJM.db.characterClass[character] = nil
+			end
 			JambaPrivate.Team.SetTeamOnline()
 			--AJM.Print("teamList", character)
 			-- Send a message to any listeners that AJM character has been added.
@@ -789,12 +813,23 @@ end
 
 -- Add all party members to the member list. does not worl cross rwalm todo
 function AJM:AddPartyMembers()
-	local numberPartyMembers = GetNumSubgroupMembers()
+	--local numberPartyMembers = GetNumSubgroupMembers()
+	local numberPartyMembers = GetNumGroupMembers()
 	for iteratePartyMembers = numberPartyMembers, 1, -1 do
-		local partyMemberName, partyMemberRealm = UnitName( "party"..iteratePartyMembers )
-		local character = JambaUtilities:AddRealmToNameIfNotNil( partyMemberName, partyMemberRealm )
-		if IsCharacterInTeam( character ) == false then
-			AddMember( character )
+		--AJM:Print("party/raid", numberPartyMembers, iteratePartyMembers)
+		local inRaid = IsInRaid()
+		if inRaid == true then
+			local partyMemberName, partyMemberRealm = UnitName( "raid"..iteratePartyMembers )
+			local character = JambaUtilities:AddRealmToNameIfNotNil( partyMemberName, partyMemberRealm )
+			if IsCharacterInTeam( character ) == false then
+				AddMember( character )
+			end	
+		else
+			local partyMemberName, partyMemberRealm = UnitName( "party"..iteratePartyMembers )
+			local character = JambaUtilities:AddRealmToNameIfNotNil( partyMemberName, partyMemberRealm )
+			if IsCharacterInTeam( character ) == false then
+				AddMember( character )
+			end
 		end
 	end
 end
@@ -1376,6 +1411,9 @@ function AJM:OnInitialize()
 			AJM.db.teamList = JambaUtilities:CopyTable( updatedTeamList )
 		end
 	end
+	--Sets The class of the char.
+	setClass()
+	
 --todo look at this ebony
 --	local updateMatchStart = AJM.db.master:find( "-" )
 --	if not updateMatchStart then
@@ -1523,6 +1561,17 @@ function AJM:SettingsTeamListScrollRefresh()
 			if isOnline == false then
 				displayCharacterName = characterName.." "..L["(Offline)"]
 			end
+			local class = AJM.db.characterClass[characterName]
+			--AJM:Print("Test", class)
+			-- Set Class Color
+			if class ~= nil then
+				local color = RAID_CLASS_COLORS[class]
+	--Debug	--	AJM:Print("Name", characterName, class)
+				AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( color.r, color.g, color.b, 1.0 )
+				if isOnline == false then
+				AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( color.r, color.g, color.b, 0.4 )
+				end
+			end
 			local isMaster = false
 			local characterType = L["Minion"]
 			if IsCharacterTheMaster( characterName ) == true then
@@ -1533,14 +1582,13 @@ function AJM:SettingsTeamListScrollRefresh()
 			AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[2].textString:SetText( characterType )
 			-- Master is a yellow colour.
 			if isMaster == true then
-				AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 0.96, 0.41, 1.0 )
+				--AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 0.96, 0.41, 1.0 )
 				AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 0.96, 0.41, 1.0 )
 			end
-			-- Offline is a grey colour.
-			if isOnline == false then
-				AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[1].textString:SetTextColor( 1.0, 1.0, 1.0, 0.6 )
-				AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 1.0, 1.0, 0.6 )
-			end
+		--	-- Offline is a grey colour.
+		--	
+		--		AJM.settingsControl.teamList.rows[iterateDisplayRows].columns[2].textString:SetTextColor( 1.0, 1.0, 1.0, 0.6 )
+		--	end
 			-- Highlight the selected row.
 			if dataRowNumber == AJM.settingsControl.teamListHighlightRow then
 				--AJM.settingsControl.teamList.rows[iterateDisplayRows].highlight:SetTexture( 1.0, 1.0, 0.0, 0.5 )
@@ -1818,3 +1866,5 @@ JambaApi.setOnline = setOnline
 JambaApi.GetTeamListMaximumOrderOnline = GetTeamListMaximumOrderOnline
 JambaApi.TeamListOrderedOnline = TeamListOrderedOnline
 JambaApi.GetPositionForCharacterNameOnline = GetPositionForCharacterNameOnline
+JambaApi.GetClass = characterClass
+JambaApi.SetClass = setClass

@@ -1,22 +1,32 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
-Jamba Version: 5.2.3(A1)
+Jamba Version: 5.2.3
 WoW Game Version: 7.2.0
 File Version: 7.2.0-5.2.3
-Release Date: WIP
-Modules Changed: Core, Display-Team, Quest-Watcher
+Release Date: 23/5/2017
+Modules Changed: Core, Display-Team, Quest-Watcher, Jamba-Team, Jamba-Trade, Jamba_itemUse
 
 
 *Jamba-Display Team
-	- Added xp bars Animation
+	- Added xp bars Animations
 
 *Jamba-Quest-Watcher
 	- Fixed bug #117 
 
+*Jamba-ItemUse
+	- Fixed a buged where Emissary quest items Nolonger would show on bar.
+	- Nolonger add's LockBox to the Item-Bar
 
-
-
+*Jamba-Team
+	- added Enhancement #179*
+	*- Add Party to team works with Raids.
+	- Added Class colour Support Jamba_API/EMA_API
+	
+*jamba-Trade
+	- Added Enhancement #181*
+	*- Premade for Crafting Reagents.
+	
 ---------------------------
 Jamba Version: 5.2.2
 WoW Game Version: 7.2.0

@@ -468,11 +468,27 @@ end
 function AJM:CheckForSatchelsItemAndAddToBar()
 	for bag = 0, NUM_BAG_SLOTS do
 		for slot = 1, GetContainerNumSlots(bag) do
-		local texture, count, locked, quality, readable, lootable, link, isFiltered, hasNoValue, itemID = GetContainerItemInfo(bag, slot)
-		--AJM:Print("test", link, lootable)	
-			if link and lootable then
-				--AJM:Print("satchelsFound", link)
+		local texture, count, locked, quality, readable, lootable, link, isFiltered, hasNoValue, itemID = GetContainerItemInfo(bag, slot)	
+			--AJM:Print("test", link, lootable, itemID)	-- Debug
+			-- hacky hack for Emissary Loot boxs and there are nolonger classed as a lootable item???? 7.2??
+			-- Highmountain - 146748, Farondis - 146750, Dreamweaver - 146747, Warden's - 146752, Nightfallen - 146751, Valarjar - 146749
+			if itemID == 146748 or itemID == 146750 or itemID == 146747 or itemID == 146752 or itemID == 146751 or itemID == 146749 then
+				--AJM:Print("Emissary SatchelsFound", link) -- Debug
 				AJM:AddAnItemToTheBarIfNotExists( link, false )
+			else
+				if link and lootable then
+					--AJM:Print("test", link)	
+					tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")
+					tooltipScanner:SetHyperlink(link)
+					--AJM:Print("scanTooltip", link) -- Debug
+					local tooltipText = _G[tooltipName.."TextLeft2"]:GetText()
+					--AJM:Print("tooltiptest", link, tooltipText) -- Debug
+					if tooltipText ~= "Locked" then
+						--AJM:Print("Not Locked", link)
+						--AJM:Print("satchelsFound", link)
+						AJM:AddAnItemToTheBarIfNotExists( link, false )
+					end	
+				end	
 			end
 		end
 	end

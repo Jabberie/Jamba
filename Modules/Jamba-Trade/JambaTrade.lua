@@ -38,6 +38,7 @@ AJM.settings = {
 		messageArea = JambaApi.DefaultMessageArea(),
 		showJambaTradeWindow = false,
 		tradeBoEItems = false,
+		tradeCRItems = false,
 		autoTradeItemsList = {},
 		adjustMoneyWithGuildBank = false,
 		goldAmountToKeepOnToon = 200,
@@ -181,6 +182,15 @@ function AJM:SettingsCreateTrade( top )
 		movingTop, 
 		L["Trades Binds When Equipped Items With Master"],
 		AJM.SettingsToggleTradeBoEItems
+	)	
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.checkBoxTradeCRItems = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Trades Crafting Reagents Items With Master"],
+		AJM.SettingsToggleTradeCRItems
 	)	
 	movingTop = movingTop - checkBoxHeight
 	AJM.settingsControl.tradeItemsHighlightRow = 1
@@ -384,6 +394,11 @@ function AJM:SettingsToggleTradeBoEItems(event, checked )
 	AJM:SettingsRefresh()
 end
 
+function AJM:SettingsToggleTradeCRItems(event, checked )
+	AJM.db.tradeCRItems = checked
+	AJM:SettingsRefresh()
+end
+
 function AJM:SettingsToggleAdjustMoneyOnToonViaGuildBank( event, checked )
 	AJM.db.adjustMoneyWithGuildBank = checked
 	AJM:SettingsRefresh()
@@ -417,6 +432,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.messageArea = settings.messageArea
 		AJM.db.showJambaTradeWindow = settings.showJambaTradeWindow
 		AJM.db.tradeBoEItems = settings.tradeBoEItems
+		AJM.db.tradeCRItems = settings.tradeCRItems
 		AJM.db.autoTradeItemsList = JambaUtilities:CopyTable( settings.autoTradeItemsList )
 		AJM.db.adjustMoneyWithGuildBank = settings.adjustMoneyWithGuildBank
 		AJM.db.goldAmountToKeepOnToon = settings.goldAmountToKeepOnToon
@@ -439,7 +455,9 @@ end
 function AJM:SettingsRefresh()
 	AJM.settingsControl.checkBoxShowJambaTradeWindow:SetValue( AJM.db.showJambaTradeWindow )
 	AJM.settingsControl.checkBoxTradeBoEItems:SetValue( AJM.db.tradeBoEItems)
+	AJM.settingsControl.checkBoxTradeCRItems:SetValue( AJM.db.tradeCRItems)
 	AJM.settingsControl.checkBoxTradeBoEItems:SetDisabled( not AJM.db.showJambaTradeWindow )
+	AJM.settingsControl.checkBoxTradeCRItems:SetDisabled( not AJM.db.showJambaTradeWindow )
 	AJM.settingsControl.dropdownMessageArea:SetValue( AJM.db.messageArea )
 	AJM.settingsControl.checkBoxAdjustMoneyOnToonViaGuildBank:SetValue( AJM.db.adjustMoneyWithGuildBank )
 	AJM.settingsControl.editBoxGoldAmountToLeaveOnToon:SetText( tostring( AJM.db.goldAmountToKeepOnToon ) )
@@ -512,6 +530,9 @@ function AJM:TRADE_SHOW( event, ... )
 	end
 	if AJM.db.tradeBoEItems == true and AJM.db.showJambaTradeWindow == true then
 		AJM:ScheduleTimer("TradeBoEItems", 1.5 )
+	end	
+	if AJM.db.tradeCRItems == true and AJM.db.showJambaTradeWindow == true then
+		AJM:ScheduleTimer("TradeCRItems", 1.8 )
 	end	
 end
 
@@ -604,6 +625,34 @@ function AJM:TradeBoEItems()
 								ClickTradeButton( iterateTradeSlots )
 							end	
 						end
+					end	
+				end	
+			end	
+		end	
+	end	
+end
+
+
+function AJM:TradeCRItems()
+	if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
+		return
+	end
+	for bag,slot,itemLink in LibBagUtils:Iterate("BAGS") do
+		if itemLink then
+			-- using legion CraftingReagent API, as tooltip massess up some "items"
+			local _,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,isCraftingReagent = GetItemInfo(itemLink)
+			if isCraftingReagent == true then
+				--AJM:Print("TradeCraftingGoods", isCraftingReagent, itemLink)
+				-- tooltips scan is the olny way to find if the item is BOP in bags!
+				local isBop = JambaUtilities:TooltipScaner(itemLink)
+				--AJM:Print("testBOP", itemLink, isBop)
+				if isBop ~= ITEM_BIND_ON_PICKUP then
+				--AJM:Print("AddToTrade", itemLink)
+					for iterateTradeSlots = 1, (MAX_TRADE_ITEMS - 1) do
+						if GetTradePlayerItemLink( iterateTradeSlots ) == nil then
+							PickupContainerItem( bag, slot )
+							ClickTradeButton( iterateTradeSlots )
+						end	
 					end	
 				end	
 			end	

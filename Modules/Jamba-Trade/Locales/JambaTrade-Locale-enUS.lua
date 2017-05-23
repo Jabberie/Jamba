@@ -32,3 +32,4 @@ L["Amount Of Gold To Keep"] = true
 L["Trades Binds When Equipped Items With Master"] = true
 L["Is Not a Member of the team, Will not trade Gold."] = true
 L["Is Not a Member of the team, Will not trade Items."] = true
+L["Trades Crafting Reagents Items With Master"] = true

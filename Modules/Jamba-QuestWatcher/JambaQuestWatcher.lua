@@ -281,7 +281,7 @@ function AJM:SettingsCreateQuestWatcherControl( top )
 		movingTop, 
 		L["Unlock JoT"],
 		AJM.SettingsToggleUnlockWatcherFrame,
-		L["Unlocks Jamba Objective Tracker\nTo Move It\nLock to Click Through"]	
+		L["Unlocks Jamba Objective Tracker\n Hold Alt key To Move It\n Lock to Click Through"]
 	)
 	movingTop = movingTop - checkBoxHeight	
 	AJM.settingsControlWatcher.checkBoxHideBlizzardWatchFrame = JambaHelperSettings:CreateCheckBox( 
