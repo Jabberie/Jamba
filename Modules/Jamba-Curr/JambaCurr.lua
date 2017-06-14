@@ -61,7 +61,10 @@ AJM.currTypes.ShadowyCoins = 1154
 AJM.currTypes.SightlessEye = 1149
 AJM.currTypes.TimeWornArtifact = 1268
 AJM.currTypes.CuriousCoin = 1275
+--7.2
 AJM.currTypes.LegionfallWarSupplies = 1342
+--7.2.5
+AJM.currTypes.CoinsOfAir = 1416
 
 -------------------------------------- End of edit --------------------------------------------------------------
 
@@ -86,9 +89,9 @@ AJM.settings = {
 		CcurrTypeThreeName = AJM:CurrencyIconAndName(AJM.currTypes.TimeWalker),
 		CcurrTypeFour = AJM.currTypes.SightlessEye,
 		CcurrTypeFourName = AJM:CurrencyIconAndName(AJM.currTypes.SightlessEye),
-		CcurrTypeFive = 0,
+		CcurrTypeFive = 1,
 		CcurrTypeFiveName = "",
-		CcurrTypeSix = 0,
+		CcurrTypeSix = 1,
 		CcurrTypeSixName = "",	
 		currencyFrameAlpha = 1.0,
 		currencyFramePoint = "CENTER",
@@ -984,28 +987,40 @@ function AJM:UpdateHendingText()
 	local parentFrame = JambaToonCurrencyListFrame
 	-- Type One
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeOne )
-	local iconTextureString = strconcat(" |T"..icon..":20|t")
-		parentFrame.TypeOneText:SetText( iconTextureString )
+	if icon ~= nil then
+		local iconTextureString = strconcat(" |T"..icon..":20|t")
+			parentFrame.TypeOneText:SetText( iconTextureString )
+	end		
 	-- Type Two
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeTwo )
-	local iconTextureString = strconcat(" |T"..icon..":20|t")
-		parentFrame.TypeTwoText:SetText( iconTextureString )
+	if icon ~= nil then	
+		local iconTextureString = strconcat(" |T"..icon..":20|t")
+			parentFrame.TypeTwoText:SetText( iconTextureString )
+	end
 	-- Type Three
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeThree )
-	local iconTextureString = strconcat(" |T"..icon..":20|t")
-		parentFrame.TypeThreeText:SetText( iconTextureString )	
+	if icon ~= nil then
+		local iconTextureString = strconcat(" |T"..icon..":20|t")
+			parentFrame.TypeThreeText:SetText( iconTextureString )	
+	end
 	-- Type Four
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeFour )
-	local iconTextureString = strconcat(" |T"..icon..":20|t")
-		parentFrame.TypeFourText:SetText( iconTextureString ) 	
+	if icon ~= nil then	
+		local iconTextureString = strconcat(" |T"..icon..":20|t")
+			parentFrame.TypeFourText:SetText( iconTextureString )
+	end
 	-- Type Five
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeFive )
-	local iconTextureString = strconcat(" |T"..icon..":20|t")
-		parentFrame.TypeFiveText:SetText( iconTextureString )
+	if icon ~= nil then	
+		local iconTextureString = strconcat(" |T"..icon..":20|t")
+			parentFrame.TypeFiveText:SetText( iconTextureString )
+	end
 	-- Type six
 	local name, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered = GetCurrencyInfo( AJM.db.CcurrTypeSix )
-	local iconTextureString = strconcat(" |T"..icon..":20|t")
-		parentFrame.TypeSixText:SetText( iconTextureString )
+	if icon ~= nil then	
+		local iconTextureString = strconcat(" |T"..icon..":20|t")
+			parentFrame.TypeSixText:SetText( iconTextureString )
+	end
 end
 
 function AJM:CurrencyUpdateWindowLock()
@@ -1028,7 +1043,9 @@ function AJM:SettingsUpdateBorderStyle()
 	} )
 	frame:SetBackdropColor( AJM.db.currencyFrameBackgroundColourR, AJM.db.currencyFrameBackgroundColourG, AJM.db.currencyFrameBackgroundColourB, AJM.db.currencyFrameBackgroundColourA )
 	frame:SetBackdropBorderColor( AJM.db.currencyFrameBorderColourR, AJM.db.currencyFrameBorderColourG, AJM.db.currencyFrameBorderColourB, AJM.db.currencyFrameBorderColourA )
+	frame:ClearAllPoints()
 	frame:SetAlpha( AJM.db.currencyFrameAlpha )
+	frame:SetPoint( AJM.db.currencyFramePoint, UIParent, AJM.db.currencyFrameRelativePoint, AJM.db.currencyFrameXOffset, AJM.db.currencyFrameYOffset )
 end
 
 function AJM:SettingsUpdateFontStyle()
@@ -1445,6 +1462,7 @@ function AJM:JambaToonRequestCurrency()
 	end
 	AJM:JambaSendCommandToTeam( AJM.COMMAND_REQUEST_CURRENCY, "" )
 	AJM.SettingsRefresh()
+	
 end
 
 function AJM:DoSendCurrency( characterName, dummyValue )
