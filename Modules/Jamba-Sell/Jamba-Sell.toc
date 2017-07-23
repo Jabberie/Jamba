@@ -2,7 +2,7 @@
 ## Title: JambaSell
 ## Notes: JambaSell
 ## Author: Ebony, Former Author: Jafula
-## Version: 5.2.4
+## Version: 5.3.0
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

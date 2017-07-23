@@ -353,7 +353,12 @@ local function SendCommandToTeam( moduleAddress, commandName, ... )
 	-- Get the name of the module.
 	local moduleName = AJM.registeredModulesByAddress[moduleAddress]
 	-- Send the command identified by the module name.
+	if moduleAddress == nil then 
+		AJM:Print(L["Module Not Loaded:"], moduleName)
+		return
+	else	
 	JambaPrivate.Communications.SendCommandAll( moduleName, commandName, ... )
+	end
 end
 
 -- Send a command for the module specified (using its address) to the master character.
@@ -361,14 +366,24 @@ local function SendCommandToMaster( moduleAddress, commandName, ... )
 	-- Get the name of the module.
 	local moduleName = AJM.registeredModulesByAddress[moduleAddress]
 	-- Send the command identified by the module name.
+	if moduleAddress == nil then 
+		AJM:Print(L["Module Not Loaded:"], moduleName)
+		return
+	else	
 	JambaPrivate.Communications.SendCommandMaster( moduleName, commandName, ... )
+	end
 end
 
 local function SendCommandToToon( moduleAddress, characterName, commandName, ... )
 	-- Get the name of the module.
 	local moduleName = AJM.registeredModulesByAddress[moduleAddress]
 	-- Send the command identified by the module name.
+	if moduleAddress == nil then 
+		AJM:Print(L["Module Not Loaded:"], moduleName)
+		return
+	else
 	JambaPrivate.Communications.SendCommandToon( moduleName, characterName, commandName, ... )
+	end
 end
 
 -- A command is received, pass it to the relevant module.
@@ -377,7 +392,12 @@ local function OnCommandReceived( sender, moduleName, commandName, ... )
 	-- Get the address of the module.
 	local moduleAddress = AJM.registeredModulesByName[moduleName]
 	-- Pass the module its settings.
-	moduleAddress:JambaOnCommandReceived( sender, commandName, ... )
+	if moduleAddress == nil then 
+		AJM:Print(L["Module Not Loaded:"], moduleName)
+		return
+	else
+		moduleAddress:JambaOnCommandReceived( sender, commandName, ... )
+	end		
 end
 
 -------------------------------------------------------------------------------------------------------------

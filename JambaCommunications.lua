@@ -42,12 +42,6 @@ AJM.COMMUNICATION_GROUP = "RAID"
 -- Communication message prefix.
 AJM.MESSAGE_PREFIX = "JmbCmMsg"
 
---[[
--- Communication over channel for online status.
-AJM.COMMUNICATION_TEAM_ONLINE_PREFIX = "JmbCmTmOn"
-AJM.COMMUNICATION_MESSAGE_ONLINE = "JmbCmTmOnTe"
-AJM.COMMUNICATION_MESSAGE_OFFLINE = "JmbCmTmOnFe"
---]]
 
 -- Communication priorities.
 AJM.COMMUNICATION_PRIORITY_BULK = "BULK"
@@ -66,8 +60,6 @@ AJM.COMMAND_INTERNAL_SEND_SETTINGS = "JmbCmSdSet"
 -- Messages module sends.
 -------------------------------------------------------------------------------------------------------------
 
---AJM.MESSAGE_CHARACTER_ONLINE = "JmbTmChrOn"
---AJM.MESSAGE_CHARACTER_OFFLINE = "JmbTmChrOf"
 
 -- Get a settings value.
 function AJM:ConfigurationGetSetting( key )
@@ -89,7 +81,7 @@ AJM.settings = {
 		assumeTeamAlwaysOnline = false, -- This is a place holder And is used as backup DO NOT CHANGE assumeTeamAlwaysOnline unless you know what your doing that you probs don't ;)
 		autoSetTeamOnlineorOffline = true,
 		boostCommunication = true,
-		useBNComms = false,
+--		useBNComms = false,
 	},
 }
 
@@ -124,7 +116,6 @@ end
 -------------------------------------------------------------------------------------------------------------
 -- Character online management.
 -------------------------------------------------------------------------------------------------------------
--- TODO: Is a character online? This needs Working on Ebony Or needs to go for now it always return true
 local function IsCharacterOnline( characterName )
 	if AJM.db.assumeTeamAlwaysOnline == true then
 		return true
@@ -163,69 +154,6 @@ local function CreateCommandToSend( moduleName, commandName, ... )
 	return message	
 end
 
---[[
--- Rewrite of communications start ebony. Using Guild, Party, then whisper 
--- Send a command to all members of the current team. Trying to use a goble channel to send all communications on.
-local function CommandAll( moduleName, commandName, ... )
-    AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
-	-- Get the message to send.
-	local message = CreateCommandToSend( moduleName, commandName, ... )
-	for characterName, characterOrder in JambaPrivate.Team.TeamList() do
-		-- Send command to all in party.
-		--if UnitInParty( characterName ) == true then	and not isInInstance
-		--local Instance, instanceType = IsInInstance()
-		--AJM.Print("Raid test", Instance)
-		--if Instance == false then
-		if UnitInParty( Ambiguate( characterName, "none" ) ) == true then
-			if not UnitInBattleground( "player" ) then
-				--if not IsInInstance("raid") then	
-				--AJM.Print("UnitisinParty", characterName )
-					AJM:DebugMessage("Sending command to group.", message, "Group", nil)
-							AJM:SendCommMessage( 
-							AJM.COMMAND_PREFIX,
-							message,
-							AJM.COMMUNICATION_GROUP,
-							nil,
-							AJM.COMMUNICATION_PRIORITY_ALERT
-							)
-				--end	
-			end	
-		else
-			if IsCharacterOnline( characterName ) == true then
-				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName, "online", IsCharacterOnline)	
-					AJM:SendCommMessage( 
-					AJM.COMMAND_PREFIX,
-					message,
-					AJM.COMMUNICATION_WHISPER,
-					characterName,
-					AJM.COMMUNICATION_PRIORITY_ALERT
-					)
-			end		
-		end
-	end
-end
---]]
-
-
-local function LookUpBnPlayer( name, ... )
-	--AJM:Print("lookUP", name)
-	local _, numFriends = BNGetNumFriends()
-    for i = 1, numFriends do
-    --local bnID, presenceName, _, _, characterName, toonID = BNGetFriendInfo(i)
-    	for k = 1, BNGetNumFriendGameAccounts(i) do
-	    	local _, toonName, client, realmName, _, _, _, _, _, _, _, _, _, _, _, toonID, accontID, _, _, _ = BNGetFriendGameAccountInfo(i,k)
-			if client == "WoW" then
-				--AJM:Print(toonName, toonID, accontID, client)
-		   		if name == toonName.."-"..realmName then
-			    	--AJM:Print("foundnew", toonID )
-			    	return toonID
-		    	end	
-			end
-		end    
-    end	
-end
-
-
 
 local function CommandAll( moduleName, commandName, ... )
    -- AJM:DebugMessage( "Command All: ", moduleName, commandName, ... )
@@ -235,7 +163,7 @@ local function CommandAll( moduleName, commandName, ... )
 	local channel
 	-- toon has to be in a group		
 	if UnitInBattleground( "player" ) then
-	AJM:DebugMessage( "PvP_INSTANCE")
+		AJM:DebugMessage( "PvP_INSTANCE")
 		channel = "INSTANCE_CHAT"
 	elseif IsInGroup() then
 		AJM:DebugMessage( "Group")
@@ -276,49 +204,18 @@ local function CommandAll( moduleName, commandName, ... )
 	end
 	--if the unit is not in the party then it unlikely did not get the party message,
 	for characterName, characterOrder in JambaPrivate.Team.TeamList() do		
-		if UnitInParty( Ambiguate( characterName, "none" ) ) == false then		
-			if AJM.db.useBNComms == true then
-				if JambaUtilities:CheckIsFromMyRealm(characterName) == false then
-					--AJM:Print("Toon", characterName, "Is not From My Realm")
-					local toonID = LookUpBnPlayer(characterName)
-					--local bnetIDAccount = select(17, BNGetGameAccountInfo(toonID))
-					if toonID ~= nil then
-						if IsCharacterOnline( characterName ) == true then
-							--AJM:Print("test", toonID)
-							BNSendGameData(
-								toonID, 
-								AJM.COMMAND_PREFIX, 
-								message
-								)
-						end	
-					end	
-				else
-					--AJM:Print("Can not found character Name in BN Frineds List", characterName)
-					if IsCharacterOnline( characterName ) == true then
-						AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
-						AJM:SendCommMessage(
-						AJM.COMMAND_PREFIX,
-						message,
-						AJM.COMMUNICATION_WHISPER,
-						characterName,
-						AJM.COMMUNICATION_PRIORITY_ALERT
-						)
-					end
-				--AJM:Print( "Toon not in party:", characterName)
-			end
-		else
+		if UnitInParty( Ambiguate( characterName, "none" ) ) == false then				
 			AJM:DebugMessage( "Toon not in party:", characterName)
-				if IsCharacterOnline( characterName ) == true then
-					AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
-						AJM:SendCommMessage(
-						AJM.COMMAND_PREFIX,
-						message,
-						AJM.COMMUNICATION_WHISPER,
-						characterName,
-						AJM.COMMUNICATION_PRIORITY_ALERT
-						)
-						--AJM:Print("testWis", AJM.COMMAND_PREFIX, AJM.COMMUNICATION_WHISPER, characterName , AJM.COMMUNICATION_PRIORITY_ALERT)	
-				end	
+			if IsCharacterOnline( characterName ) == true then
+				AJM:DebugMessage("Sending command to others not in party/raid.", message, "WHISPER", characterName)	
+				AJM:SendCommMessage(
+				AJM.COMMAND_PREFIX,
+				message,
+				AJM.COMMUNICATION_WHISPER,
+				characterName,
+				AJM.COMMUNICATION_PRIORITY_ALERT
+				)
+				--AJM:Print("testWis", AJM.COMMAND_PREFIX, AJM.COMMUNICATION_WHISPER, characterName , AJM.COMMUNICATION_PRIORITY_ALERT)	
 			end	
 		end
 	end	
@@ -398,45 +295,8 @@ end
 ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", SystemSpamFilter)
 
 
---Ebony old way. was this is a better way? it did not work with EvlUI.
---[[
-function AJM:ChatFrame_MessageEventHandler(frame, event, msg, ...)
-		--if event == "CHAT_MSG_SYSTEM" then
-		if( event == "CHAT_MSG_SYSTEM") then	
-			--local match = strmatch(msg, format(ERR_CHAT_PLAYER_NOT_FOUND_S, "(.+)"))
-				--if match then
-					if msg:match(string.format(ERR_CHAT_PLAYER_NOT_FOUND_S, "(.+)")) then
-					return true
-				--if (not match) then
-				--IF not match then Go about whatever you wonted to do, If match hide Msg from player.
-				--self:DebugMessage( "Not matched!" )
-				--self.hooks.ChatFrame_MessageEventHandler(frame, event, ...)
-				--AJM.hooks["ChatFrame_MessageEventHandler"]( self, event, ... )
-			end
-		else
-		self.hooks.ChatFrame_MessageEventHandler(frame, event, ...);
-		end
-
-end
---]]
---ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", SystemSpamFilter)
---AJM.ChatFrame_AddMessageEventVanasKoS("CHAT_MSG_SYSTEM", AJM:ChatFrame_MessageEventHandler)
-
 
 -- Receive a command from another character.
-
-function AJM:BN_CHAT_MSG_ADDON( event, prefix, message, type,  senderToonID )
-	--AJM:Print("test", prefix, type, senderToonID )
-	local _, name, _, realm = BNGetGameAccountInfo( senderToonID )
-	if name ~= nil and realm ~= nil and prefix == AJM.COMMAND_PREFIX then	
-		sender = name.."-"..realm
-		--AJM:Print("NameTest", sender )
-		AJM:CommandReceived(prefix, message, type, sender)
-	end	
-end
-
-
-
 function AJM:CommandReceived( prefix, message, distribution, sender )
     local characterName = JambaUtilities:AddRealmToNameIfMissing( sender )
 	AJM:DebugMessage( "Command received: ", prefix, message, distribution, sender )
@@ -446,12 +306,12 @@ function AJM:CommandReceived( prefix, message, distribution, sender )
 		--checks the char is in the team if not everyone can change settings and we do not want that
 		if JambaPrivate.Team.IsCharacterInTeam( sender ) == true then
 		    AJM:DebugMessage( "Sender is in team list." )
-		   --automaic setting team members online. -- we don't really need to keep sending this so we add a if
+		   --automaic setting team members online.
 			--AJM:Print("toonnonline", sender )
-			if JambaPrivate.Team.GetCharacterOnlineStatus( characterName ) == false then
-				--AJM:Print("Setting Toon online", sender, characterName )
-				JambaApi.setOnline( characterName, true)
-			end
+				if JambaPrivate.Team.GetCharacterOnlineStatus( characterName ) == false then
+					--AJM:Print("Setting Toon online", sender, characterName )
+					JambaApi.setOnline( characterName, true)
+				end
 			-- Split the command into its components.
 			local moduleName, commandName, argumentsStringSerialized = strsplit( AJM.COMMAND_SEPERATOR, message )
 			local argumentsTable  = {}
@@ -544,13 +404,11 @@ function AJM:OnInitialize()
 	self.characterName = self.characterNameLessRealm.."-"..self.characterRealm
 	AJM.characterGUID = UnitGUID( "player" )
 	-- End of needed:
-	--AJM:RegisterChatCommand( AJM.chatCommand, "JambaChatCommand" )
 	-- Register communications as a module.
 	JambaPrivate.Core.RegisterModule( AJM, AJM.moduleName )
 end
 	
 function AJM:OnEnable()
-	AJM:RegisterEvent("BN_CHAT_MSG_ADDON")
 	--local hookSecure = true
 	--AJM:RawHook( "ChatFrame_MessageEventHandler", true )
 	if AJM.db.boostCommunication == true then
@@ -563,13 +421,13 @@ end
 function AJM:BoostCommunication()
 	if AJM.db.boostCommunication == true then
 		-- 2000 seems to be safe if NOTHING ELSE is happening. let's call it 800.
-		ChatThrottleLib.MAX_CPS = 1200 --800
+		ChatThrottleLib.MAX_CPS = 2000 --800
 		-- Guesstimate overhead for sending a message; source+dest+chattype+protocolstuff
 		ChatThrottleLib.MSG_OVERHEAD = 40
 		-- WoW's server buffer seems to be about 32KB. 8KB should be safe, but seen disconnects on _some_ servers. Using 4KB now.
-		ChatThrottleLib.BURST = 6000 --4000
+		ChatThrottleLib.BURST = 25000 --4000
 		-- Reduce output CPS to half (and don't burst) if FPS drops below this value
-		ChatThrottleLib.MIN_FPS = 10 --20
+		ChatThrottleLib.MIN_FPS = 5 --20
 	end
 end
 
@@ -582,19 +440,6 @@ function AJM:JambaChatCommand( input )
     end    
 end
 
---[[
-function AJM:StopChannelPollTimer()
-	if AJM.channelPollTimer ~= nil then
-		AJM:CancelTimer( AJM.channelPollTimer )
-	end
-end
-
-
-function AJM:StartChannelPollTimer()
-	-- Poll for characters every 5 seconds.
-	AJM.channelPollTimer = AJM:ScheduleRepeatingTimer( ListChannelByName, 5, AJM.lastChannel )
-end
---]]
 function AJM:OnDisable()
 	--AJM:CancelAllTimers()
 end
@@ -677,23 +522,23 @@ function AJM:SettingsCreateOptions( top )
 		movingTop,
 		L["**reload UI to take effect, may cause disconnections"]
 	)	
-	movingTop = movingTop - buttonHeight		
-	AJM.settingsControl.checkBoxUseBNComms = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop, 
-		L["Use BatteTag Communications***"],
-		AJM.CheckBoxUseBNComms
-	)
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.labelInformationBNComms = JambaHelperSettings:CreateContinueLabel( 
-		AJM.settingsControl, 
-		headingWidth, 
-		column1Left, 
-		movingTop,
-		L["*** Can not work if the team are on the same Blizzard Account"]
-	)
+--	movingTop = movingTop - buttonHeight		
+--	AJM.settingsControl.checkBoxUseBNComms = JambaHelperSettings:CreateCheckBox( 
+--		AJM.settingsControl, 
+--		headingWidth, 
+--		column1Left, 
+--		movingTop, 
+--		L["Use BatteTag Communications***"],
+--		AJM.CheckBoxUseBNComms
+--	)
+--	movingTop = movingTop - checkBoxHeight
+--	AJM.settingsControl.labelInformationBNComms = JambaHelperSettings:CreateContinueLabel( 
+--		AJM.settingsControl, 
+--		headingWidth, 
+--		column1Left, 
+--		movingTop,
+--		L["*** Can not work if the team are on the same Blizzard Account"]
+--	)
 	
 	
 	
@@ -710,10 +555,10 @@ function AJM:SettingsCreateOptions( top )
 	return movingTop	
 end
 
-function AJM:CheckBoxUseBNComms( event, value )
-	AJM.db.useBNComms = value
-	AJM:SettingsRefresh()
-end
+--function AJM:CheckBoxUseBNComms( event, value )
+--	AJM.db.useBNComms = value
+--	AJM:SettingsRefresh()
+--end
 
 function AJM:CheckBoxBoostCommunication( event, value )
 	AJM.db.boostCommunication = value
@@ -741,7 +586,7 @@ function AJM:SettingsRefresh()
 --	AJM.settingsControl.checkBoxAssumeAlwaysOnline:SetValue( AJM.db.assumeTeamAlwaysOnline )
 	AJM.settingsControl.checkBoxAutoSetTeamOnlineorOffline:SetValue( AJM.db.autoSetTeamOnlineorOffline )
 	AJM.settingsControl.checkBoxBoostCommunication:SetValue( AJM.db.boostCommunication )
-	AJM.settingsControl.checkBoxUseBNComms:SetValue( AJM.db.useBNComms )
+--	AJM.settingsControl.checkBoxUseBNComms:SetValue( AJM.db.useBNComms )
 end
 
 -- Settings received.
@@ -756,7 +601,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.assumeTeamAlwaysOnline = settings.assumeTeamAlwaysOnline
 		AJM.db.autoSetTeamOnlineorOffline = settings.autoSetTeamOnlineorOffline
 		AJM.db.boostCommunication = settings.boostCommunication
-		AJM.db.useBNComms = settings.useBNComms
+--		AJM.db.useBNComms = settings.useBNComms
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
 		-- Tell the player.
@@ -766,13 +611,14 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 	end
 end
 
--- text = message to send
+-- text = message to send -- this seems to be old code remove?
 -- chatDestination = "PARTY, WHISPER, RAID, CHANNEL, etc"
 -- characterOrChannelName = character name if WHISPER or channel name if CHANNEL or nil otherwise
 -- priority = one of 
 --   AJM.COMMUNICATION_PRIORITY_BULK,
 --   AJM.COMMUNICATION_PRIORITY_NORMAL
 --   AJM.COMMUNICATION_PRIORITY_ALERT
+--[[
 local function SendChatMessage( text, chatDestination, characterOrChannelName, priority )
 	-- Message small enough to send?
 	AJM:Print("test", text, chatDestination, characterOrChannelName, priority)
@@ -815,6 +661,7 @@ local function SendChatMessage( text, chatDestination, characterOrChannelName, p
 		end
 	end
 end
+]]
 
 -- Functions available from Jamba Communications for other Jamba internal objects.
 JambaPrivate.Communications.COMMUNICATION_PRIORITY_BULK = AJM.COMMUNICATION_PRIORITY_BULK
@@ -828,13 +675,8 @@ JambaPrivate.Communications.SendCommandToon = SendCommandToon
 JambaPrivate.Communications.SendCommandMaster = SendCommandMaster
 JambaPrivate.Communications.SendCommandToon = SendCommandToon
 JambaPrivate.Communications.AssumeTeamAlwaysOnline = AssumeTeamAlwaysOnline
--- moved to jamba-team
---JambaPrivate.Communications.MESSAGE_CHARACTER_ONLINE = AJM.MESSAGE_CHARACTER_ONLINE
---JambaPrivate.Communications.MESSAGE_CHARACTER_OFFLINE = AJM.MESSAGE_CHARACTER_OFFLINE
-JambaApi.SendChatMessage = SendChatMessage
-JambaApi.COMMUNICATION_PRIORITY_BULK = AJM.COMMUNICATION_PRIORITY_BULK
-JambaApi.COMMUNICATION_PRIORITY_NORMAL = AJM.COMMUNICATION_PRIORITY_NORMAL
-JambaApi.COMMUNICATION_PRIORITY_ALERT = AJM.COMMUNICATION_PRIORITY_ALERT
--- moved to jamba-team
---JambaApi.MESSAGE_CHARACTER_ONLINE = AJM.MESSAGE_CHARACTER_ONLINE
---JambaApi.MESSAGE_CHARACTER_OFFLINE = AJM.MESSAGE_CHARACTER_OFFLINE
+-- OLD API
+--JambaApi.SendChatMessage = SendChatMessage
+--JambaApi.COMMUNICATION_PRIORITY_BULK = AJM.COMMUNICATION_PRIORITY_BULK
+--JambaApi.COMMUNICATION_PRIORITY_NORMAL = AJM.COMMUNICATION_PRIORITY_NORMAL
+--JambaApi.COMMUNICATION_PRIORITY_ALERT = AJM.COMMUNICATION_PRIORITY_ALERT

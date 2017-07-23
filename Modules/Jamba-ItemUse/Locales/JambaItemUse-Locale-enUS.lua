@@ -65,10 +65,13 @@ L["Number Of Rows"] = true
 L["New item that starts a quest found!"] = true
 L["Clear Item Bar"] = true
 L["Clear the item bar (remove all items)."] = true
-L["Hides the clear Button"] = true
+L["Hide Buttons"] = true
 L["Item Bar Cleared"] = true
 L["Automatically Add Artifact Power Items To Bar"] = true
 L["Automatically Add Satchel Items To Bar"] = true
 L["New Artifact Power Item found!"] = true
+
 L["Clear"] = true
-L["Clears items no longer in your bags "] = true
+L["Clears items no longer in your bags"] = true
+L["Sync"] = true
+L["Synchronise Item-Use Buttons"] = true

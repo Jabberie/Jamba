@@ -6,7 +6,7 @@ License: The MIT License
 
 local L = LibStub("AceLocale-3.0"):NewLocale( "Jamba-Core", "enUS", true )
 --Change ME when update version
-L["Version"] = "5.2.0"
+L["Version"] = "5.3"
 --End of Changeme
 L["Slash Commands"] = true
 L["Team"] = true

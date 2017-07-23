@@ -143,6 +143,9 @@ end
 -- Command this module sends.
 -------------------------------------------------------------------------------------------------------------
 
+AJM.COMMAND_ITEMBAR_BUTTON = "JambaCommandItemBarButton"
+AJM.COMMAND_ITEMUSE_SYNC = "JambaCommandItemBarSync"
+
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
 -------------------------------------------------------------------------------------------------------------
@@ -215,12 +218,22 @@ local function CreateJambaItemUseFrame()
 		updateButton:SetScript( "OnClick", function() AJM:ClearButton() end )
 		updateButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", -4, -3 )
 		updateButton:SetHeight( 20 )
-		updateButton:SetWidth( 70 )
+		updateButton:SetWidth( 65 )
 		updateButton:SetText( L["Clear"] )	
-		updateButton:SetScript("OnEnter", function(self) AJM:ShowTooltip(updateButton, true) end)
+		updateButton:SetScript("OnEnter", function(self) AJM:ShowTooltip(updateButton, "clear", true) end)
 		updateButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
-		ArtifactUpdateButton = updateButton
-		frame:ClearAllPoints()
+		ClearUpdateButton = updateButton
+	-- Sync Button	
+		local syncButton = CreateFrame( "Button", "ButtonSync", frame, "UIPanelButtonTemplate" )
+		syncButton:SetScript( "OnClick", function() AJM:SyncButton() end )
+		syncButton:SetPoint( "TOPRIGHT", frame, "TOPRIGHT", -71, -3 )
+		syncButton:SetHeight( 20 )
+		syncButton:SetWidth( 65 )
+		syncButton:SetText( L["Sync"] )	
+		syncButton:SetScript("OnEnter", function(self) AJM:ShowTooltip(updateButton, "sync", true) end)
+		syncButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+		SyncUpdateButton = syncButton
+	frame:ClearAllPoints()
 	frame:SetPoint( AJM.db.framePoint, UIParent, AJM.db.frameRelativePoint, AJM.db.frameXOffset, AJM.db.frameYOffset )
 	frame:SetBackdrop( {
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", 
@@ -238,12 +251,16 @@ local function CreateJambaItemUseFrame()
 	AJM.UpdateHeight()
 end
 
-function AJM:ShowTooltip(frame, show)
+function AJM:ShowTooltip(frame, info, show)
 	if show then
 		GameTooltip:SetOwner(frame, "ANCHOR_TOP")
 		GameTooltip:SetPoint("TOPLEFT", frame, "TOPRIGHT", 16, 0)
 		GameTooltip:ClearLines()
-		GameTooltip:AddLine(L["Clears items no longer in your bags "], 1, 0.82, 0, 1)
+		if info == "clear" then
+		GameTooltip:AddLine(L["Clears items no longer in your bags"], 1, 0.82, 0, 1)
+		elseif info == "sync" then
+		GameTooltip:AddLine(L["Synchronise Item-Use Buttons"], 1, 0.82, 0, 1)
+		end
 		GameTooltip:Show()
 	else
 	GameTooltip:Hide()
@@ -255,12 +272,14 @@ function AJM:UpdateHeight()
 	if AJM.db.hideClearButton == false then
 		AJM.db.itemUseTitleHeight = 2
 		local newHeight = AJM.db.itemUseTitleHeight + 20
-		ArtifactUpdateButton:Show()
+		ClearUpdateButton:Show()
+		SyncUpdateButton:Show()
 		return newHeight	
 	else
 		AJM.db.itemUseTitleHeight = 2
 		oldHeight = AJM.db.itemUseTitleHeight
-		ArtifactUpdateButton:Hide()
+		ClearUpdateButton:Hide()
+		SyncUpdateButton:Hide()
 		return oldHeight
 	end	
 end
@@ -330,7 +349,8 @@ function AJM:UpdateQuestItemsInBar()
 					if AJM:IsInInventory( itemLink ) == false then
 					--AJM:Print("NOT IN BAGS", itemLink)
 						AJM.db.itemsAdvanced[iterateItems] = nil	
-						AJM:JambaSendSettings()						
+						AJM:JambaSendUpdate( iterateItems, "empty", nil )
+						--AJM:JambaSendSettings()						
 					end
 				end	
 			end
@@ -388,8 +408,9 @@ function AJM:OnButtonContentsChanged( event, button, state, type, value, ... )
 		return
     end
     AJM:AddItemToItemDatabase( button.itemNumber, type, value )
-    AJM:JambaSendSettings()
-    AJM:SettingsRefresh()
+    AJM:JambaSendUpdate(button.itemNumber, type, value )
+	--AJM:JambaSendSettings()
+	AJM:SettingsRefresh()
 end
 
 function AJM:OnButtonUpdate( event, button, ... )
@@ -468,27 +489,18 @@ end
 function AJM:CheckForSatchelsItemAndAddToBar()
 	for bag = 0, NUM_BAG_SLOTS do
 		for slot = 1, GetContainerNumSlots(bag) do
-		local texture, count, locked, quality, readable, lootable, link, isFiltered, hasNoValue, itemID = GetContainerItemInfo(bag, slot)	
-			--AJM:Print("test", link, lootable, itemID)	-- Debug
-			-- hacky hack for Emissary Loot boxs and there are nolonger classed as a lootable item???? 7.2??
-			-- Highmountain - 146748, Farondis - 146750, Dreamweaver - 146747, Warden's - 146752, Nightfallen - 146751, Valarjar - 146749
-			if itemID == 146748 or itemID == 146750 or itemID == 146747 or itemID == 146752 or itemID == 146751 or itemID == 146749 then
-				--AJM:Print("Emissary SatchelsFound", link) -- Debug
-				AJM:AddAnItemToTheBarIfNotExists( link, false )
-			else
-				if link and lootable then
-					--AJM:Print("test", link)	
-					tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")
-					tooltipScanner:SetHyperlink(link)
-					--AJM:Print("scanTooltip", link) -- Debug
-					local tooltipText = _G[tooltipName.."TextLeft2"]:GetText()
-					--AJM:Print("tooltiptest", link, tooltipText) -- Debug
-					if tooltipText ~= "Locked" then
-						--AJM:Print("Not Locked", link)
-						--AJM:Print("satchelsFound", link)
-						AJM:AddAnItemToTheBarIfNotExists( link, false )
-					end	
-				end	
+			if link and lootable then
+				--AJM:Print("test", link)	
+				tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")
+				tooltipScanner:SetHyperlink(link)
+				--AJM:Print("scanTooltip", link) -- Debug
+				local tooltipText = _G[tooltipName.."TextLeft2"]:GetText()
+				--AJM:Print("tooltiptest", link, tooltipText) -- Debug
+				if tooltipText ~= "Locked" then
+					--AJM:Print("Not Locked", link)
+					--AJM:Print("satchelsFound", link)
+					AJM:AddAnItemToTheBarIfNotExists( link, false )
+				end
 			end
 		end
 	end
@@ -498,7 +510,7 @@ end
 
 function AJM:ClearButton()
 	local state = "0"
-	for iterateItems = 1, AJM.maximumNumberOfItems, 1 do
+	for iterateItems = 1, AJM.db.numberOfItems, 1 do
 		local itemContainer = AJM.itemContainer[iterateItems]
 		if itemContainer == nil then
 			AJM:CreateJambaItemUseItemContainer( iterateItems, parentFrame )
@@ -521,14 +533,37 @@ function AJM:ClearButton()
 					if AJM:IsInInventory( name ) == false then
 						--AJM:Print("NOT IN BAGS", itemLink)
 						AJM.db.itemsAdvanced[iterateItems] = nil
+						AJM:JambaSendUpdate( iterateItems, "empty", nil	)
 						AJM:SettingsRefresh()
-						AJM:JambaSendSettings()
 					end		
 				end
 			end					
 		end
 	end	
 end
+
+-- Sync Buttion
+function AJM:SyncButton()
+	local dataTable = {}
+	for iterateItems = 1, AJM.db.numberOfItems, 1 do
+	local itemContainer = AJM.itemContainer[iterateItems]
+		if itemContainer == nil then
+			AJM:CreateJambaItemUseItemContainer( iterateItems, parentFrame )
+			itemContainer = AJM.itemContainer[iterateItems]
+		end
+			local containerButton = itemContainer["container"]
+			local itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
+			local kind = itemInfo.kind
+			local action = itemInfo.action
+			data = {}
+			data.button = iterateItems
+			data.type = kind
+			data.action = action
+			table.insert( dataTable, data )
+	end
+	AJM:JambaSendCommandToTeam( AJM.COMMAND_ITEMUSE_SYNC, dataTable)
+end
+
 
 -- Adds artifact power items to item bar.
 function AJM:CheckForArtifactItemAndAddToBar()
@@ -549,43 +584,8 @@ function AJM:CheckForArtifactItemAndAddToBar()
 		end
 	end
 end		
-
---Removes artifact power after used.
---[[
-function AJM:UpdateArtifactItemsInBar()
-	local state = "0"
-	for iterateItems = 1, AJM.maximumNumberOfItems, 1 do
-		local itemContainer = AJM.itemContainer[iterateItems]
-		if itemContainer == nil then
-			AJM:CreateJambaItemUseItemContainer( iterateItems, parentFrame )
-			itemContainer = AJM.itemContainer[iterateItems]
-		end
-		local containerButton = itemContainer["container"]
-		local itemInfo = AJM:GetItemFromItemDatabase( iterateItems )
-		local kind = itemInfo.kind
-		local action = itemInfo.action
-		if kind == "item" then
-			local name, itemLink,_,_,_,_,questItem = GetItemInfo( action )
-			if itemLink and itemLink:match("item:%d") then
-				tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")
-				tooltipScanner:SetHyperlink(itemLink)
-				--AJM:Print("scanTooltip", name, itemLink)
-				local tooltipText = _G[tooltipName.."TextLeft2"]:GetText()
-				if tooltipText and tooltipText:match(ARTIFACT_POWER) then
-					if AJM:IsInInventory( name ) == false then
-						--AJM:Print("NOT IN BAGS", itemLink)
-						AJM.db.itemsAdvanced[iterateItems] = nil
-						AJM:SettingsRefresh()
-						AJM:JambaSendSettings()
-					end	
-				end	
-			end				
-		end
-	end	
-end	
---]]
 	
---Checks the item is in the player players bag
+--Checks the item is in the Toon players bag
 function AJM:IsInInventory(itemLink)
 	for bag = 0,4,1 do 
 		for slot = 1,GetContainerNumSlots(bag),1 do 
@@ -628,7 +628,7 @@ function AJM:AddAnItemToTheBarIfNotExists( itemLink, startsQuest)
 			--Checks the items we talking about is in the bags of the player.
 			if itemInfo.kind == "empty" then
 				AJM:AddItemToItemDatabase( iterateItems, "item", itemId )
-				AJM:JambaSendSettings()
+				AJM:JambaSendUpdate( iterateItems, "item", itemId )
 				AJM:SettingsRefresh()	
 					if startsQuest then
 						AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["New item that starts a quest found!"], false )
@@ -685,6 +685,31 @@ function AJM:UpdateJambaItemUseDimensions()
 	frame:SetHeight( getHeight + (AJM.itemSize * AJM.db.numberOfRows) + (AJM.db.itemUseVerticalSpacing * AJM.db.numberOfRows) + (AJM.db.itemUseVerticalSpacing * 3))
 	frame:SetScale( AJM.db.itemUseScale )
 end
+
+-------------------------------------------------------------------------------------------------------------
+-- Communications
+-------------------------------------------------------------------------------------------------------------
+
+function AJM:JambaSendUpdate( button, type, action )
+	--AJM:Print("testDataDebug", button, type, action )
+	AJM:JambaSendCommandToTeam( AJM.COMMAND_ITEMBAR_BUTTON, button, type, action )
+end
+
+function AJM:ReceiveButtonData(characterName, button, type, action)
+	--AJM:Print("ReceiveButtonDataDebug", button, type, action )
+	AJM:AddItemToItemDatabase( button, type, action )
+	AJM:SettingsRefresh()
+end
+
+function AJM:ReceiveSync(characterName, data)
+	--AJM:Print("ReceiveSync", data)
+	for id, data in pairs( data ) do 
+		--AJM:Print("ID", id, data.button, data.type, data.action )
+		AJM:AddItemToItemDatabase( data.button, data.type, data.action )
+		AJM:SettingsRefresh()
+	end		
+end	
+
 
 -------------------------------------------------------------------------------------------------------------
 -- Settings Dialogs.
@@ -771,7 +796,7 @@ local function SettingsCreateOptions( top )
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Hides the clear Button"],
+		L["Hide Buttons"],
 		AJM.SettingsToggleHideClearButton
 	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing	
@@ -1244,4 +1269,12 @@ end
 
 -- A Jamba command has been recieved.
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )
-end
+	if characterName ~= self.characterName then
+		if commandName == AJM.COMMAND_ITEMBAR_BUTTON then
+			AJM:ReceiveButtonData( characterName, ... )
+		end
+		if commandName == AJM.COMMAND_ITEMUSE_SYNC then
+			AJM:ReceiveSync( characterName, ... )
+		end
+	end
+end	

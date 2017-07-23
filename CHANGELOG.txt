@@ -1,6 +1,51 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 5.3.0
+WoW Game Version: 7.2.5
+File Version: 7.5.5-5.3.0
+Release Date: TBA
+Modules Changed: Core, communications, Item-Use
+Modules Removed: Macros, Target
+BetaRelease: 0001
+
+*Jamba-Core
+	-Should Nolonger LUA error when sending to a toon that does not have the module Installed (GameData/commsData)
+	
+*Jamba-Communications
+	-Removed BN communications (To much excess Data to check was kinda pointless and did not work right sorry.)
+	-Tried to Speed Up ChatThrottleLib WIP TEST!
+	
+*Jamba-ItemUse
+	- No Longer sends all Settings when changing items on the bar though SendPushSettings()
+	- Added a Sync Button next to clear (In Case minions are not Synced)
+	--WIP got deleted... will be in next build i guess,
+	- Added new commands -- wip
+		-/Jamba-item-use reset (resets all buttons). -- wip
+		-/Jamba-item-use sync. -- wip 
+		-/Jamba-item-use clear Clear bags. -- wip
+
+*Jamba-Macro
+	- Removed.
+
+*Jamba-Target
+	- Removed.	
+
+
+---------------------------
+Jamba Version: 5.2.4
+WoW Game Version: 7.2.5
+File Version: 7.2.5-5.2.4
+Release Date: 14/6/2017
+Modules Changed: Core, Display-Curr
+
+*Jamba-Currency
+	- Fixed a icon bug with patch 7.2.5
+	- Should now update frame position when sending settings without a reload on UI.
+	- Added new 7.2.5 Currency "Coins of Air"
+
+
+---------------------------
 Jamba Version: 5.2.3
 WoW Game Version: 7.2.0
 File Version: 7.2.0-5.2.3
