@@ -421,13 +421,13 @@ end
 function AJM:BoostCommunication()
 	if AJM.db.boostCommunication == true then
 		-- 2000 seems to be safe if NOTHING ELSE is happening. let's call it 800.
-		ChatThrottleLib.MAX_CPS = 2000 --800
+		ChatThrottleLib.MAX_CPS = 1200 --800
 		-- Guesstimate overhead for sending a message; source+dest+chattype+protocolstuff
 		ChatThrottleLib.MSG_OVERHEAD = 40
 		-- WoW's server buffer seems to be about 32KB. 8KB should be safe, but seen disconnects on _some_ servers. Using 4KB now.
-		ChatThrottleLib.BURST = 25000 --4000
+		ChatThrottleLib.BURST = 6000 --4000
 		-- Reduce output CPS to half (and don't burst) if FPS drops below this value
-		ChatThrottleLib.MIN_FPS = 5 --20
+		ChatThrottleLib.MIN_FPS = 10 --20
 	end
 end
 

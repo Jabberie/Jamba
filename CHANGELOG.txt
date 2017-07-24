@@ -14,7 +14,7 @@ BetaRelease: 0001
 	
 *Jamba-Communications
 	-Removed BN communications (To much excess Data to check was kinda pointless and did not work right sorry.)
-	-Tried to Speed Up ChatThrottleLib WIP TEST!
+	-REMOVED -- Tried to Speed Up ChatThrottleLib WIP TEST! -- REMOVED
 	
 *Jamba-ItemUse
 	- No Longer sends all Settings when changing items on the bar though SendPushSettings()
