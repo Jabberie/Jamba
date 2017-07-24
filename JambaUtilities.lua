@@ -240,7 +240,7 @@ function JambaUtilities:TooltipScaner(item)
 			tooltipScanner:SetHyperlink(item)
 			local tooltipText = _G[tooltipName.."TextLeft2"]:GetText()
 			local tooltipTextTwo = _G[tooltipName.."TextLeft3"]:GetText()
-				print("test",  tooltipTextTwo)
+				--print("test",  tooltipTextTwo)
 				text = tooltipText 
 				text2 = tooltipTextTwo
 			end		

@@ -535,8 +535,8 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	followBar.CurrText = "currNothing"
 	followBar.CharacterLevel = 1
 	followBar.MaxCharacterLevel = 100
-	followBarClick:SetScript("OnEnter", function(self) AJM:ShowFollowTooltip(followBarClick, followBar, characterName, true) end)
-	followBarClick:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+--	followBarClick:SetScript("OnEnter", function(self) AJM:ShowFollowTooltip(followBarClick, followBar, characterName, true) end)
+--	followBarClick:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 	-- Set the experience bar.
 	local experienceName = AJM.globalFramePrefix.."ExperienceBar"
 	local experienceBar = CreateFrame( "StatusBar", experienceName, parentFrame, "AnimatedStatusBarTemplate" ) --"TextStatusBar,SecureActionButtonTemplate" )
