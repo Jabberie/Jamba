@@ -2433,6 +2433,7 @@ function AJM:SendFollowStatusUpdateCommand( isFollowing )
 	if AJM.db.showTeamList == true and AJM.db.showFollowStatus == true then	
 		local canSend = false
 		local alpha = AutoFollowStatus:GetAlpha()
+		AJM:Print("testA", alpha)
 		if alpha < 1 then
 			canSend = true
 			AJM.isFollowing = false
@@ -2447,23 +2448,34 @@ function AJM:SendFollowStatusUpdateCommand( isFollowing )
 				canSend = false
 			end
 		end	
-		--AJM:Print("canSend", canSend)
+		--AJM:Print("canSend", canSend, inCombat)
 		if canSend == true then
 			if AJM.db.showTeamListOnMasterOnly == true then
-				AJM:JambaSendCommandToMaster( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing )
+				AJM:JambaSendCommandToMaster( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing, nil )
 			else
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing, nil )
 			end
 		end
 	end
 end
 
-function AJM:ProcessUpdateFollowStatusMessage( characterName, isFollowing )
-	AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
+function AJM:SendCombatStatusUpdateCommand()
+	local inCombat = UnitAffectingCombat("player")
+	local isFollowing = false
+	--AJM:Print("canSend", inCombat)
+	if AJM.db.showTeamListOnMasterOnly == true then
+		AJM:JambaSendCommandToMaster( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing, inCombat )
+	else
+		AJM:JambaSendCommandToTeam( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing, inCombat )
+	end
 end
 
-function AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
-	--AJM:Print("follow", characterName, isFollowing, isFollowLeader)
+function AJM:ProcessUpdateFollowStatusMessage( characterName, isFollowing, inCombat )
+	AJM:UpdateFollowStatus( characterName, isFollowing, inCombat )
+end
+
+function AJM:UpdateFollowStatus( characterName, isFollowing, inCombat )
+	--AJM:Print("follow", characterName, "follow", isFollowing, "combat", inCombat)
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -2475,7 +2487,8 @@ function AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
 	if characterStatusBar == nil then
 		return
 	end
-	local followBar = characterStatusBar["followBar"]	
+	local followBar = characterStatusBar["followBar"]
+	local followBarText = characterStatusBar["followBarText"]
 	if isFollowing == true then
 		-- Following.
 		followBar:SetStatusBarColor( 0.05, 0.85, 0.05, 1.00 )
@@ -2491,7 +2504,18 @@ function AJM:UpdateFollowStatus( characterName, isFollowing, isFollowLeader )
 		followBar:SetStatusBarColor( 0.85, 0.05, 0.05, 1.00 )
 		AJM:ScheduleTimer("EndGlowFollowBar", 2 , followBar)
 		end
-	end		
+	end
+	if inCombat == true then 
+	--AJM:Print("change stuff here")
+		local _, _, icon = GetCurrencyInfo( "1356" )
+		local text = followBarText:GetText()
+		local iconTextureString = strconcat(" |T"..icon..":14|t")
+		followBarText:SetText( iconTextureString.." "..text )
+	else
+		local text = ""
+		text = text..Ambiguate( characterName, "none" )
+		followBarText:SetText( text )
+	end
 end
 
 function AJM:EndGlowFollowBar(frame)
@@ -3425,12 +3449,20 @@ function AJM:PLAYER_REGEN_ENABLED( event, ... )
 	if AJM.updateSettingsAfterCombat == true then
 		AJM:SettingsRefresh()
 		AJM.updateSettingsAfterCombat = false
-	end 
+	end
+	-- Ebony added follow bar combat Icon
+	if AJM.db.showTeamList == true and AJM.db.showFollowStatus == true then
+		AJM:ScheduleTimer( "SendCombatStatusUpdateCommand", 1 )
+	end
 end
 
 function AJM:PLAYER_REGEN_DISABLED( event, ... )
 	if AJM.db.hideTeamListInCombat == true then
 		JambaDisplayTeamListFrame:Hide()
+	end
+	-- Ebony added follow bar combat Icon
+	if AJM.db.showTeamList == true and AJM.db.showFollowStatus == true then
+		AJM:ScheduleTimer( "SendCombatStatusUpdateCommand", 1 )
 	end
 end
 
