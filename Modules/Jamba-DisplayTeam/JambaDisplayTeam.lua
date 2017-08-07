@@ -2433,7 +2433,7 @@ function AJM:SendFollowStatusUpdateCommand( isFollowing )
 	if AJM.db.showTeamList == true and AJM.db.showFollowStatus == true then	
 		local canSend = false
 		local alpha = AutoFollowStatus:GetAlpha()
-		AJM:Print("testA", alpha)
+		--AJM:Print("testA", alpha)
 		if alpha < 1 then
 			canSend = true
 			AJM.isFollowing = false
