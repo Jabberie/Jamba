@@ -44,8 +44,10 @@ L["Change Channel"] = true
 L["Change the communications channel."] = true
 L["Jamba4"] = true
 L["Jamba"] = true
-
 L["The Awesome Multi-Boxer Assistant"] = true
+L["Use Guild Communications***"] = true
+L["*** EveryToon will be classed as online and needs to be in same guild!"] = true
+
 
 
 L["Jafula's Awesome Multi-Boxer Assistant"] = true

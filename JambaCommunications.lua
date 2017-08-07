@@ -38,6 +38,7 @@ AJM.chatCommand = "jamba-comm"
 -- Communication methods.
 AJM.COMMUNICATION_WHISPER = "WHISPER"
 AJM.COMMUNICATION_GROUP = "RAID"
+AJM.COMMUNICATION_GUILD = "GUILD"
 
 -- Communication message prefix.
 AJM.MESSAGE_PREFIX = "JmbCmMsg"
@@ -81,7 +82,7 @@ AJM.settings = {
 		assumeTeamAlwaysOnline = false, -- This is a place holder And is used as backup DO NOT CHANGE assumeTeamAlwaysOnline unless you know what your doing that you probs don't ;)
 		autoSetTeamOnlineorOffline = true,
 		boostCommunication = true,
---		useBNComms = false,
+		useGuildComms = false,
 	},
 }
 
@@ -161,6 +162,16 @@ local function CommandAll( moduleName, commandName, ... )
 	-- Get the message to send.
 	local message = CreateCommandToSend( moduleName, commandName, ... )
 	local channel
+	if AJM.db.useGuildComms == true then
+			AJM:SendCommMessage(
+			AJM.COMMAND_PREFIX,
+			message,
+			AJM.COMMUNICATION_GUILD,
+			nil,
+			AJM.COMMUNICATION_PRIORITY_ALERT	
+			)
+		return
+	end	
 	-- toon has to be in a group		
 	if UnitInBattleground( "player" ) then
 		AJM:DebugMessage( "PvP_INSTANCE")
@@ -522,26 +533,23 @@ function AJM:SettingsCreateOptions( top )
 		movingTop,
 		L["**reload UI to take effect, may cause disconnections"]
 	)	
---	movingTop = movingTop - buttonHeight		
---	AJM.settingsControl.checkBoxUseBNComms = JambaHelperSettings:CreateCheckBox( 
---		AJM.settingsControl, 
---		headingWidth, 
---		column1Left, 
---		movingTop, 
---		L["Use BatteTag Communications***"],
---		AJM.CheckBoxUseBNComms
---	)
---	movingTop = movingTop - checkBoxHeight
---	AJM.settingsControl.labelInformationBNComms = JambaHelperSettings:CreateContinueLabel( 
---		AJM.settingsControl, 
---		headingWidth, 
---		column1Left, 
---		movingTop,
---		L["*** Can not work if the team are on the same Blizzard Account"]
---	)
-	
-	
-	
+	movingTop = movingTop - buttonHeight		
+	AJM.settingsControl.checkBoxUseGuildComms = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop, 
+		L["Use Guild Communications***"],
+		AJM.CheckBoxUseGuildComms
+	)
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.labelInformationBNComms = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
+		L["*** EveryToon will be classed as online and needs to be in same guild!"]
+	)
 --[[	AJM.settingsControl.checkBoxShowChannel = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 		
 		headingWidth, 		
@@ -555,10 +563,10 @@ function AJM:SettingsCreateOptions( top )
 	return movingTop	
 end
 
---function AJM:CheckBoxUseBNComms( event, value )
---	AJM.db.useBNComms = value
---	AJM:SettingsRefresh()
---end
+function AJM:CheckBoxUseGuildComms( event, value )
+	AJM.db.useGuildComms = value
+	AJM:SettingsRefresh()
+end
 
 function AJM:CheckBoxBoostCommunication( event, value )
 	AJM.db.boostCommunication = value
@@ -586,7 +594,7 @@ function AJM:SettingsRefresh()
 --	AJM.settingsControl.checkBoxAssumeAlwaysOnline:SetValue( AJM.db.assumeTeamAlwaysOnline )
 	AJM.settingsControl.checkBoxAutoSetTeamOnlineorOffline:SetValue( AJM.db.autoSetTeamOnlineorOffline )
 	AJM.settingsControl.checkBoxBoostCommunication:SetValue( AJM.db.boostCommunication )
---	AJM.settingsControl.checkBoxUseBNComms:SetValue( AJM.db.useBNComms )
+	AJM.settingsControl.checkBoxUseGuildComms:SetValue( AJM.db.useGuildComms )
 end
 
 -- Settings received.
@@ -601,7 +609,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.assumeTeamAlwaysOnline = settings.assumeTeamAlwaysOnline
 		AJM.db.autoSetTeamOnlineorOffline = settings.autoSetTeamOnlineorOffline
 		AJM.db.boostCommunication = settings.boostCommunication
---		AJM.db.useBNComms = settings.useBNComms
+		AJM.db.useGuildComms = settings.useGuildComms
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
 		-- Tell the player.

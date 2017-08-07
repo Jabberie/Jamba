@@ -7,14 +7,14 @@ File Version: 7.5.5-5.3.0
 Release Date: TBA
 Modules Changed: Core, communications, Item-Use
 Modules Removed: Macros, Target
-BetaRelease: 0001
+BetaRelease: 0002
 
 *Jamba-Core
 	-Should Nolonger LUA error when sending to a toon that does not have the module Installed (GameData/commsData)
 	
 *Jamba-Communications
 	-Removed BN communications (To much excess Data to check was kinda pointless and did not work right sorry.)
-	-REMOVED -- Tried to Speed Up ChatThrottleLib WIP TEST! -- REMOVED
+	- Added Guild communications - this will put all communications though the guild Might for use with big teams.
 	
 *Jamba-ItemUse
 	- No Longer sends all Settings when changing items on the bar though SendPushSettings()
@@ -25,6 +25,10 @@ BetaRelease: 0001
 		-/Jamba-item-use sync. -- wip 
 		-/Jamba-item-use clear Clear bags. -- wip
 
+*Jamba-team-display
+	- Added a combat icon on the follow bar before the minions name when the minion is in combat
+		
+		
 *Jamba-Macro
 	- Removed.
 
