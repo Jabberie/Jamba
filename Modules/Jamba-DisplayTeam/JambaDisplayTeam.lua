@@ -156,6 +156,7 @@ AJM.COMMAND_TOONINFORMATION_UPDATE = "IlvlInfoUpd"
 AJM.COMMAND_REPUTATION_STATUS_UPDATE = "RepStsUpd"
 AJM.COMMAND_COMBO_STATUS_UPDATE = "CboStsUpd"
 AJM.COMMAND_REQUEST_INFO = "SendInfo"
+AJM.COMMAND_COMBAT_STATUS_UPDATE = "InComStsUpd"
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -2225,6 +2226,7 @@ end ]]
 -- A Jamba command has been recieved.
 function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	AJM:DebugMessage( "JambaOnCommandReceived", characterName )
+	--AJM:Print("DebugCommandReceived", characterName, commandName )
 	if commandName == AJM.COMMAND_FOLLOW_STATUS_UPDATE then
 		AJM:ProcessUpdateFollowStatusMessage( characterName, ... )
 	end
@@ -2240,9 +2242,12 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	if commandName == AJM.COMMAND_COMBO_STATUS_UPDATE then
 		AJM:ProcessUpdateComboStatusMessage( characterName, ... )
 	end	
+	if commandName == AJM.COMMAND_COMBAT_STATUS_UPDATE then
+		AJM:ProcessUpdateCombatStatusMessage( characterName, ... )
+	end	
 	if commandName == AJM.COMMAND_REQUEST_INFO then
 		AJM.SendInfomationUpdateCommand()
-	end		
+	end
 end	
 
 -------------------------------------------------------------------------------------------------------------
@@ -2448,34 +2453,24 @@ function AJM:SendFollowStatusUpdateCommand( isFollowing )
 				canSend = false
 			end
 		end	
-		--AJM:Print("canSend", canSend, inCombat)
+		--AJM:Print("canSend", canSend )
 		if canSend == true then
 			if AJM.db.showTeamListOnMasterOnly == true then
-				AJM:JambaSendCommandToMaster( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing, nil )
+				AJM:JambaSendCommandToMaster( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing )
 			else
-				AJM:JambaSendCommandToTeam( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing, nil )
+				AJM:JambaSendCommandToTeam( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing )
 			end
 		end
 	end
 end
 
-function AJM:SendCombatStatusUpdateCommand()
-	local inCombat = UnitAffectingCombat("player")
-	local isFollowing = false
-	--AJM:Print("canSend", inCombat)
-	if AJM.db.showTeamListOnMasterOnly == true then
-		AJM:JambaSendCommandToMaster( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing, inCombat )
-	else
-		AJM:JambaSendCommandToTeam( AJM.COMMAND_FOLLOW_STATUS_UPDATE, isFollowing, inCombat )
-	end
+
+function AJM:ProcessUpdateFollowStatusMessage( characterName, isFollowing )
+	AJM:UpdateFollowStatus( characterName, isFollowing )
 end
 
-function AJM:ProcessUpdateFollowStatusMessage( characterName, isFollowing, inCombat )
-	AJM:UpdateFollowStatus( characterName, isFollowing, inCombat )
-end
-
-function AJM:UpdateFollowStatus( characterName, isFollowing, inCombat )
-	--AJM:Print("follow", characterName, "follow", isFollowing, "combat", inCombat)
+function AJM:UpdateFollowStatus( characterName, isFollowing )
+	--AJM:Print("follow", characterName, "follow", isFollowing)
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -2488,7 +2483,6 @@ function AJM:UpdateFollowStatus( characterName, isFollowing, inCombat )
 		return
 	end
 	local followBar = characterStatusBar["followBar"]
-	local followBarText = characterStatusBar["followBarText"]
 	if isFollowing == true then
 		-- Following.
 		followBar:SetStatusBarColor( 0.05, 0.85, 0.05, 1.00 )
@@ -2505,31 +2499,39 @@ function AJM:UpdateFollowStatus( characterName, isFollowing, inCombat )
 		AJM:ScheduleTimer("EndGlowFollowBar", 2 , followBar)
 		end
 	end
-	if inCombat == true then 
-	--AJM:Print("change stuff here")
-		local _, _, icon = GetCurrencyInfo( "1356" )
-		local text = followBarText:GetText()
-		local iconTextureString = strconcat(" |T"..icon..":14|t")
-		followBarText:SetText( iconTextureString.." "..text )
-	else
-		local text = ""
-		text = text..Ambiguate( characterName, "none" )
-		followBarText:SetText( text )
-	end
 end
 
 function AJM:EndGlowFollowBar(frame)
 	LibButtonGlow.HideOverlayGlow(frame)
 end
 
-function AJM:SettingsUpdateFollowTextAll()
-	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:SettingsUpdateFollowText( characterName )
+-- TEXT and Combat updates
+
+function AJM:SendCombatStatusUpdateCommand()
+	local inCombat = UnitAffectingCombat("player")
+	--AJM:Print("canSend", inCombat)
+	if AJM.db.showTeamListOnMasterOnly == true then
+		AJM:JambaSendCommandToMaster( AJM.COMMAND_COMBAT_STATUS_UPDATE, inCombat )
+	else
+		AJM:JambaSendCommandToTeam( AJM.COMMAND_COMBAT_STATUS_UPDATE, inCombat )
 	end
 end
 
-function AJM:SettingsUpdateFollowText( characterName, characterLevel, characterMaxLevel, overall, equipped, gold, durability, slotsFree, totalSlots, toolText )
-	--AJM:Print("Info", characterName, characterLevel,characterMaxLevel, overall, equipped) -- debug
+function AJM:SettingsUpdateFollowTextAll()
+	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
+		AJM:SettingsUpdateFollowText( characterName, nil )
+	end
+end
+
+
+function AJM:ProcessUpdateCombatStatusMessage( characterName, inCombat )
+--	AJM:Print("test", characterName, inCombat )
+	AJM:SettingsUpdateFollowText( characterName, inCombat )
+end
+
+
+function AJM:SettingsUpdateFollowText( characterName, inCombat )
+	--AJM:Print("FollowTextInfo", characterName, inCombat) -- debug
 	if CanDisplayTeamList() == false then
 		return
 	end
@@ -2541,8 +2543,26 @@ function AJM:SettingsUpdateFollowText( characterName, characterLevel, characterM
 	if characterStatusBar == nil then
 		return
 	end
-
 	local followBarText = characterStatusBar["followBarText"]
+
+--[[	if inCombat == true then 
+	--AJM:Print("change stuff here")
+		local _, _, icon = GetCurrencyInfo( "1356" )
+		local text = followBarText:GetText()
+		local iconTextureString = strconcat(" |T"..icon..":14|t")
+		followBarText:SetText( iconTextureString.." "..text )
+	else
+		local text = ""
+		text = text..Ambiguate( characterName, "none" )
+		followBarText:SetText( text )
+	end
+]]	
+	if inCombat == true then
+		followBarText:SetTextColor(1.0, 0.5, 0.25)
+	else
+		followBarText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
+	end
+	
 	local text = ""
 	if AJM.db.followStatusShowName == true then
 		text = text..Ambiguate( characterName, "none" )
@@ -2618,12 +2638,8 @@ function AJM:SendExperienceStatusUpdateCommand()
 		local honorExhaustionStateID = GetHonorRestState()		
 		if not (honorexhaustionStateID == 1) then
 			honorExhaustionStateID = 0
-		end		
-
-		
+		end	
 	--	AJM:Print("testSend", honorXP, honorMax, HonorLevel, honorExhaustionStateID)
-
-
 		if AJM.db.showTeamListOnMasterOnly == true then
 				--AJM:Print("Test", characterName, name, xp, xpForNextPoint, numPointsAvailableToSpend)
 				AJM:JambaSendCommandToMaster( AJM.COMMAND_EXPERIENCE_STATUS_UPDATE, playerExperience, playerMaxExperience, exhaustionStateID, playerLevel, artifactName, artifactPointsSpent, artifactXP, artifactForNextPoint, artifactPointsAvailable, honorXP, honorMax, HonorLevel, honorExhaustionStateID )			

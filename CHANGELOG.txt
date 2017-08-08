@@ -26,7 +26,7 @@ BetaRelease: 0002
 		-/Jamba-item-use clear Clear bags. -- wip
 
 *Jamba-team-display
-	- Added a combat icon on the follow bar before the minions name when the minion is in combat
+	- Changed the minions name colour when the minion is in combat
 		
 		
 *Jamba-Macro
