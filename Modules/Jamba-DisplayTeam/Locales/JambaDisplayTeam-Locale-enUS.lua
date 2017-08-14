@@ -81,8 +81,9 @@ L["Currency Info:"] = true
 L["Unknown Sender"] = true
 L["Show ToolTip"] = true
 L["Characters Per Bar"] = true
-L["Olny Show in Party"] = true
-L["Olny Show Display-Team\nIn Party or Raid"] = true
+L["Only Show in Party"] = true
+L["Only Show Display-Team\nIn Party or Raid"] = true
+L["Health & Power Out of Group"] = true
 
 --Help System
 
@@ -95,7 +96,7 @@ L["Enable Clique Support"] = true
 L["Enable Clique Support\n\n**reload UI to take effect**"] = true
 L["Show Title"] = true
 L["Show the Character Portrait"] = true
-L["Olny shows Equipped item Level"] = true
+L["Only shows Equipped item Level"] = true
 L["Show the Team Experience(xp) bar"] = true
 L["Show the Team Reputation Bar"] = true
 L["Show the Teams Health Bars"] = true
@@ -119,4 +120,5 @@ L["Show the Team Artifact XP bar"] = true
 L["Show the Team Honor XP Bar"] = true
 L["ShowReputation"] = true
 L["Show the Team Reputation Bar"] = true
+L["Update Health and Power out of Groups\nUse Guild Communications!"] = true
 

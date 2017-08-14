@@ -53,6 +53,7 @@ AJM.settings = {
 		teamListHorizontal = true,
 		showListTitle = false,
 		olnyShowInParty = false,
+		healthManaOutOfParty = false,
 		showCharacterPortrait = true,
 		characterPortraitWidth = 80,
 		showFollowStatus = true,
@@ -157,6 +158,8 @@ AJM.COMMAND_REPUTATION_STATUS_UPDATE = "RepStsUpd"
 AJM.COMMAND_COMBO_STATUS_UPDATE = "CboStsUpd"
 AJM.COMMAND_REQUEST_INFO = "SendInfo"
 AJM.COMMAND_COMBAT_STATUS_UPDATE = "InComStsUpd"
+AJM.COMMAND_POWER_STATUS_UPDATE = "PowStsUpd"
+AJM.COMMAND_HEALTH_STATUS_UPDATE = "heaStsUpd"											  
 
 -------------------------------------------------------------------------------------------------------------
 -- Messages module sends.
@@ -440,7 +443,7 @@ function AJM:SettingsUpdateStatusBarTexture()
 		characterStatusBar["reputationBar"]:GetStatusBarTexture():SetVertTile( false )		
 		characterStatusBar["healthBar"]:SetStatusBarTexture( statusBarTexture )
 		characterStatusBar["healthBar"]:GetStatusBarTexture():SetHorizTile( false )
-		characterStatusBar["healthBar"]:GetStatusBarTexture():SetVertTile( false )		
+		characterStatusBar["healthBar"]:GetStatusBarTexture():SetVertTile( false )				
 		characterStatusBar["powerBar"]:SetStatusBarTexture( statusBarTexture )
 		characterStatusBar["powerBar"]:GetStatusBarTexture():SetHorizTile( false )
 		characterStatusBar["powerBar"]:GetStatusBarTexture():SetVertTile( false )
@@ -668,6 +671,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	healthBarText:SetAllPoints()
 	healthBarText.playerHealth = 100
 	healthBarText.playerMaxHealth = 100
+	healthBarText.inComingHeal = 0
 	characterStatusBar["healthBarText"] = healthBarText
 	AJM:UpdateHealthStatus( characterName, nil, nil )
 	-- Set the power bar.
@@ -1215,7 +1219,7 @@ local function SettingsCreateDisplayOptions( top )
 		L["Show Team List"],
 		AJM.SettingsToggleShowTeamList,
 		L["Show Jamba Team or Unit Frame List"]
-	)
+	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing
 	AJM.settingsControl.displayOptionsCheckBoxShowTeamListOnlyOnMaster = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
@@ -1247,6 +1251,26 @@ local function SettingsCreateDisplayOptions( top )
 		L["Enable Clique Support\n\n**reload UI to take effect**"]
 	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing
+	AJM.settingsControl.displayOptionsCheckBoxOlnyShowInParty = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Only Show in Party"],
+		AJM.SettingsToggleOlnyShowinParty,
+		L["Only Show Display-Team\nIn Party or Raid"]
+	)
+	movingTop = movingTop - checkBoxHeight - verticalSpacing
+	AJM.settingsControl.displayOptionsCheckBoxHpManaOutOfParty = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		headingWidth, 
+		left, 
+		movingTop, 
+		L["Health & Power Out of Group"],
+		AJM.SettingsToggleHpManaOutOfParty,
+		L["Update Health and Power out of Groups\nUse Guild Communications!"]
+	)
+	movingTop = movingTop - checkBoxHeight - verticalSpacing
 	-- Create appearance & layout.
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Appearance & Layout"], movingTop, true )
 	movingTop = movingTop - headingHeight
@@ -1258,18 +1282,8 @@ local function SettingsCreateDisplayOptions( top )
 		L["Show Title"],
 		AJM.SettingsToggleShowTeamListTitle,
 		L["Show Team List Title"]
-	)
-	AJM.settingsControl.displayOptionsCheckBoxOlnyShowInParty = JambaHelperSettings:CreateCheckBox( 
-		AJM.settingsControl, 
-		thirdWidth, 
-		left2, 
-		movingTop, 
-		L["Olny Show in Party"],
-		AJM.SettingsToggleOlnyShowinParty,
-		L["Olny Show Display-Team\nIn Party or Raid"]
 	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing
-	
 	AJM.settingsControl.displayOptionsCharactersPerBar = JambaHelperSettings:CreateSlider( 
 		AJM.settingsControl, 
 		halfWidthSlider, 
@@ -1752,6 +1766,7 @@ function AJM:SettingsRefresh()
 --	AJM.settingsControl.displayOptionsCheckBoxTeamHorizontal:SetValue( AJM.db.teamListHorizontal )
 	AJM.settingsControl.displayOptionsCheckBoxShowListTitle:SetValue( AJM.db.showListTitle )
 	AJM.settingsControl.displayOptionsCheckBoxOlnyShowInParty:SetValue( AJM.db.olnyShowInParty )
+	AJM.settingsControl.displayOptionsCheckBoxHpManaOutOfParty:SetValue ( AJM.db.healthManaOutOfParty )
 	AJM.settingsControl.displayOptionsTeamListTransparencySlider:SetValue( AJM.db.frameAlpha )
 	AJM.settingsControl.displayOptionsTeamListScaleSlider:SetValue( AJM.db.teamListScale )
 	AJM.settingsControl.displayOptionsTeamListMediaStatus:SetValue( AJM.db.statusBarTexture ) 
@@ -1807,6 +1822,7 @@ function AJM:SettingsRefresh()
 		--AJM.settingsControl.displayOptionsCheckBoxTeamHorizontal:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxShowListTitle:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsCheckBoxOlnyShowInParty:SetDisabled( not AJM.db.showTeamList )
+		AJM.settingsControl.displayOptionsCheckBoxHpManaOutOfParty:SetDisabled( not AJM.db.showTeamList)
 		AJM.settingsControl.displayOptionsTeamListScaleSlider:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsTeamListTransparencySlider:SetDisabled( not AJM.db.showTeamList )
 		AJM.settingsControl.displayOptionsTeamListMediaStatus:SetDisabled( not AJM.db.showTeamList )
@@ -1882,6 +1898,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		--AJM.db.teamListHorizontal = settings.teamListHorizontal
 		AJM.db.showListTitle = settings.showListTitle
 		AJM.db.olnyShowInParty = settings.olnyShowInParty
+		AJM.db.healthManaOutOfParty = settings.healthManaOutOfParty
 		AJM.db.teamListScale = settings.teamListScale
 		AJM.db.statusBarTexture = settings.statusBarTexture
 		AJM.db.borderStyle = settings.borderStyle
@@ -1996,6 +2013,12 @@ function AJM:SettingsToggleOlnyShowinParty( event, checked )
 	AJM.db.olnyShowInParty = checked
 	AJM:SettingsRefresh()
 end
+
+function AJM:SettingsToggleHpManaOutOfParty( event, checked )
+	AJM.db.healthManaOutOfParty = checked
+	AJM:SettingsRefresh()
+end
+
 
 function AJM:SettingsChangeScale( event, value )
 	AJM.db.teamListScale = tonumber( value )
@@ -2244,7 +2267,13 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 	end	
 	if commandName == AJM.COMMAND_COMBAT_STATUS_UPDATE then
 		AJM:ProcessUpdateCombatStatusMessage( characterName, ... )
-	end	
+	end
+	if commandName == AJM.COMMAND_HEALTH_STATUS_UPDATE then
+		AJM:ProcessUpdateHealthStatusMessage( characterName, ... )
+	end
+	if commandName == AJM.COMMAND_POWER_STATUS_UPDATE then
+		AJM:ProcessUpdatePowerStatusMessage(characterName, ... )
+	end																		  	
 	if commandName == AJM.COMMAND_REQUEST_INFO then
 		AJM.SendInfomationUpdateCommand()
 	end
@@ -2962,8 +2991,8 @@ end
 -------------------------------------------------------------------------------------------------------------
 
 function AJM:UNIT_HEALTH( event, unit, ... )
-	AJM:SendHealthStatusUpdateCommand( unit )
 	--AJM:Print("test2", unit)
+	AJM:SendHealthStatusUpdateCommand( unit )
 end
 
 function AJM:UNIT_MAXHEALTH( event, unit, ... )
@@ -2971,29 +3000,57 @@ function AJM:UNIT_MAXHEALTH( event, unit, ... )
 	AJM:SendHealthStatusUpdateCommand( unit )
 end
 
+function AJM:UNIT_HEAL_PREDICTION( event, unit, ... )
+	--AJM:Print("test2", unit)
+	AJM:SendHealthStatusUpdateCommand( unit )
+end
+
 
 function AJM:SendHealthStatusUpdateCommand(unit)
+	--AJM:Print("debugHealthUpd", unit )
 	if unit == nil then
 		return
 	end	
 	if AJM.db.showTeamList == true and AJM.db.showHealthStatus == true then
-		local playerHealth = UnitHealth( unit )
-		local playerMaxHealth = UnitHealthMax( unit )
-		local characterName, characterRealm = UnitName( unit )
-		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
-		--AJM:Print("HeathStats", character, playerHealth, playerMaxHealth)
-		AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth)
+		if AJM.db.healthManaOutOfParty == true then
+			if unit == "player" then 
+				--AJM:Print("itsme", unit)
+				local playerHealth = UnitHealth( unit )
+				local playerMaxHealth = UnitHealthMax( unit )
+				local inComingHeal = UnitGetIncomingHeals( unit )
+				
+				if AJM.db.showTeamListOnMasterOnly == true then
+					--AJM:Print( "SendHealthStatusUpdateCommand TO Master!" )
+					AJM:JambaSendCommandToMaster( AJM.COMMAND_HEALTH_STATUS_UPDATE, playerHealth, playerMaxHealth, inComingHeal )
+				else
+					--AJM:Print( "SendHealthStatusUpdateCommand TO Team!" )
+					AJM:JambaSendCommandToTeam( AJM.COMMAND_HEALTH_STATUS_UPDATE, playerHealth, playerMaxHealth, inComingHeal )
+				end	
+			end
+		else
+			local playerHealth = UnitHealth( unit )
+			local playerMaxHealth = UnitHealthMax( unit )
+			local inComingHeal = UnitGetIncomingHeals( unit )
+			local characterName, characterRealm = UnitName( unit )
+			local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+			--AJM:Print("HeathStats", character, playerHealth, playerMaxHealth)
+			AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth, inComingHeal)
+		end
 	end
+end
+
+function AJM:ProcessUpdateHealthStatusMessage( characterName, playerHealth, playerMaxHealth, inComingHeal )
+	AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, inComingHeal)
 end
 
 function AJM:SettingsUpdateHealthAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateHealthStatus( characterName, nil, nil )
+		AJM:UpdateHealthStatus( characterName, nil, nil, nil )
 	end
 end
 
-function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
-	--AJM:Print("testUpdate", characterName, playerHealth, playerMaxHealth) 
+function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, inComingHeal )
+	--AJM:Print("testUpdate", characterName, playerHealth, playerMaxHealth, inComingHeal ) 
 		if characterName == nil then
 		return
 	end
@@ -3009,7 +3066,7 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
 		return
 	end
 	local healthBarText = characterStatusBar["healthBarText"]	
-	local healthBar = characterStatusBar["healthBar"]	
+	local healthBar = characterStatusBar["healthBar"]
 	
 	if playerMaxHealth == 0 then 
 		playerMaxHealth = healthBarText.playerMaxHealth
@@ -3019,6 +3076,9 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
 	end
 	if playerMaxHealth == nil then
 		playerMaxHealth = healthBarText.playerMaxHealth
+	end	
+	if inComingHeal == nil then
+		inComingHeal = healthBarText.inComingHeal
 	end	
 --[[
 	if 	UnitInParty(Ambiguate( characterName, "none" ) ) == true then
@@ -3033,8 +3093,15 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth )
 ]]	
 	healthBarText.playerHealth = playerHealth
 	healthBarText.playerMaxHealth = playerMaxHealth
+	healthBarText.inComingHeal = inComingHeal
+	-- Set statusBar
 	healthBar:SetMinMaxValues( 0, tonumber( playerMaxHealth ) )
 	healthBar:SetValue( tonumber( playerHealth ) )
+	
+	if inComingHeal > 0 then
+--	AJM:Print("incomingHeal", inComingHeal)
+		healthBar:SetValue( tonumber( playerHealth + inComingHeal ) )
+	end
 	local text = ""
 	if UnitIsDeadOrGhost(Ambiguate( characterName, "none" ) ) == true then
 		--AJM:Print("dead", characterName)
@@ -3083,23 +3150,44 @@ end
 
 function AJM:SendPowerStatusUpdateCommand( unit )
 	if AJM.db.showTeamList == true and AJM.db.showPowerStatus == true then
-		local playerPower = UnitPower( unit )
-		local playerMaxPower = UnitPowerMax( unit )
-		local characterName, characterRealm = UnitName( unit )
-		local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
-		--AJM:Print("power", character, playerPower, playerMaxPower )
-		AJM:UpdatePowerStatus( character, playerPower, playerMaxPower)
+		if AJM.db.healthManaOutOfParty == true then
+			if unit == "player" then 
+				--AJM:Print("itsme", unit)
+				local playerPower = UnitPower( unit )
+				local playerMaxPower = UnitPowerMax( unit )
+				local _, powerToken = UnitPowerType( unit )
+				if AJM.db.showTeamListOnMasterOnly == true then
+					--AJM:Print( "SendHealthStatusUpdateCommand TO Master!"  )
+					AJM:JambaSendCommandToMaster( AJM.COMMAND_POWER_STATUS_UPDATE, playerPower, powerToken )
+				else
+					--AJM:Print( "SendHealthStatusUpdateCommand TO Team!", playerPower, playerMaxPower, powerToken )
+					AJM:JambaSendCommandToTeam( AJM.COMMAND_POWER_STATUS_UPDATE, playerPower, playerMaxPower, powerToken )
+				end	
+			end
+		else
+			local playerPower = UnitPower( unit )
+			local playerMaxPower = UnitPowerMax( unit )
+			local characterName, characterRealm = UnitName( unit )
+			local _, powerToken = UnitPowerType( unit )
+			local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
+			--AJM:Print("power", character, playerPower, playerMaxPower )
+			AJM:UpdatePowerStatus( character, playerPower, playerMaxPower, powerToken)
+		end
 	end
 end
 
+function AJM:ProcessUpdatePowerStatusMessage( characterName, playerPower, playerMaxPower, powerToken )
+	AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower, powerToken )
+end		
+																					  
 function AJM:SettingsUpdatePowerAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdatePowerStatus( characterName, nil, nil )
+		AJM:UpdatePowerStatus( characterName, nil, nil, nil )
 	end
 end
 
-function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower)
-	--AJM:Print("testPOwer", characterName, playerPower, playerMaxPower )
+function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower, powerToken)
+	--AJM:Print("testPOwer", characterName, playerPower, playerMaxPower, powerToken )
 	if characterName == nil then
 		return
 	end
@@ -3155,19 +3243,26 @@ function AJM:UpdatePowerStatus( characterName, playerPower, playerMaxPower)
 		end
 	end
 	powerBarText:SetText( text )		
-	AJM:SetStatusBarColourForPower( powerBar, originalChatacterName )
+	AJM:SetStatusBarColourForPower( powerBar, powerToken )--originalChatacterName )
 end
 
-function AJM:SetStatusBarColourForPower( statusBar, unit )
-	unit =  Ambiguate( unit, "none" )
-	local powerIndex, powerString, altR, altG, altB = UnitPowerType( unit )
+function AJM:SetStatusBarColourForPower( statusBar, powerToken )
+	local info = PowerBarColor[powerToken]
+	if info ~= nil then
+	--	AJM:Print("powertest", powerToken, info.r, info.g, info.b )
+		statusBar:SetStatusBarColor( info.r, info.g, info.b, 1 )
+		statusBar.backgroundTexture:SetColorTexture( info.r, info.g, info.b, 0.25 )
+	
+	end
+	--unit =  Ambiguate( unit, "none" )
+--[[	local powerIndex, powerString, altR, altG, altB = UnitPowerType( powerToken )
 	if powerString ~= nil and powerString ~= "" then
 		local r = PowerBarColor[powerString].r
 		local g = PowerBarColor[powerString].g
 		local b = PowerBarColor[powerString].b
 		statusBar:SetStatusBarColor( r, g, b, 1 )
 		statusBar.backgroundTexture:SetColorTexture( r, g, b, 0.25 )
-	end
+	end ]]
 end		
 
 -------------------------------------------------------------------------------------------------------------
@@ -3383,6 +3478,7 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "PLAYER_LEVEL_UP" )		
 	AJM:RegisterEvent( "UNIT_HEALTH" )
 	AJM:RegisterEvent( "UNIT_MAXHEALTH" )
+	AJM:RegisterEvent( "UNIT_HEAL_PREDICTION" )
 	AJM:RegisterEvent( "UNIT_POWER", "UNIT_POWER" )
 	AJM:RegisterEvent( "UNIT_MAXPOWER", "UNIT_POWER" )
 	AJM:RegisterEvent( "PLAYER_ENTERING_WORLD" )

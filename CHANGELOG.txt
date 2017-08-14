@@ -7,7 +7,7 @@ File Version: 7.5.5-5.3.0
 Release Date: TBA
 Modules Changed: Core, communications, Item-Use
 Modules Removed: Macros, Target
-BetaRelease: 0002
+BetaRelease: 0003
 
 *Jamba-Core
 	-Should Nolonger LUA error when sending to a toon that does not have the module Installed (GameData/commsData)
@@ -15,6 +15,7 @@ BetaRelease: 0002
 *Jamba-Communications
 	-Removed BN communications (To much excess Data to check was kinda pointless and did not work right sorry.)
 	- Added Guild communications - this will put all communications though the guild Might for use with big teams.
+	- Added support for Guild communications to use the Automated Online/Offline System.
 	
 *Jamba-ItemUse
 	- No Longer sends all Settings when changing items on the bar though SendPushSettings()
