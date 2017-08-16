@@ -120,6 +120,9 @@ end
 -- itemLink - the item link to extract an item id from.
 -- Gets an item id from an item link.  Returns nil, if an item id could not be found.
 function JambaUtilities:GetItemIdFromItemLink( itemLink )
+	if itemLink == nil then
+		return
+	end
 	local itemIdFound = nil 
 	local itemStringStart, itemStringEnd, itemString = itemLink:find( "^|c%x+|H(.+)|h%[.*%]" )
 	if itemStringStart then
@@ -248,19 +251,25 @@ function JambaUtilities:TooltipScaner(item)
 	return text, text2
 end
 
+
 function JambaUtilities:ToolTipBagScaner(item, bag, slot)
 	--print("test", item, bag, slot )
 	if item ~= nil or bag ~= nil or slot ~= nil then
 		local boe = nil
+		local ilvl = nil
 		local tooltipName = "AJMBagScanner"
 		local tooltipbagScanner = CreateFrame("GameTooltip", tooltipName , nil, "GameTooltipTemplate")
 			tooltipbagScanner:SetOwner(UIParent, "ANCHOR_NONE")
 			tooltipbagScanner:SetBagItem(bag, slot)
-			tooltipbagScanner:Show()
-		local tooltipText = _G[tooltipName.."TextLeft3"]:GetText()
-		--print("test", tooltipText)
-	    	boe = tooltipText
-	    	tooltipbagScanner:Hide()
-	    return boe
+			tooltipbagScanner:Show()		
+		for i = 1,6 do
+			local t = _G[tooltipName.."TextLeft"..i]:GetText()
+			--print("test", t)
+			if (t == ITEM_SOULBOUND) then
+				boe = ITEM_SOULBOUND
+			end
+		end
+	    tooltipbagScanner:Hide()
+		return boe
 	end
-end   
+end

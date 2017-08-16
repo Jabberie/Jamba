@@ -617,7 +617,7 @@ function AJM:TradeBoEItems()
 					-- tooltips scan is the olny way to find if the item is BoE in bags!
 					local isBoe = JambaUtilities:ToolTipBagScaner(link, bag, slot)
 					-- if the item is boe then add it to the trade list!
-					if isBoe == ITEM_BIND_ON_EQUIP then
+					if isBoe ~= ITEM_SOULBOUND then
 						--AJM:Print("test21", link, locked)
 						for iterateTradeSlots = 1, (MAX_TRADE_ITEMS - 1) do
 							if GetTradePlayerItemLink( iterateTradeSlots ) == nil then

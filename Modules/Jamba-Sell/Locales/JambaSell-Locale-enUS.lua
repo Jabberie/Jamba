@@ -21,14 +21,18 @@ end
 L["DID NOT SELL: X"] = function( itemLink )
 	return string.format( "DID NOT SELL: %s", itemLink )
 end
+L["I have sold: X Items And Made:"] = function( count )
+	return string.format( "I have sold: %s Items And Made: ", count )
+end
+L["Items"] = true
 L["Sell: Others"] = true
-L["Sell Greys"] = true
+--L["Sell Greys"] = true
 L["Sell Others"] = true
-L["Auto Sell Poor Quality Items"] = true
-L["Except For These Poor Quality Items"] = true
-L["Add Exception"] = true
-L["Exception Item (drag item to box)"] = true
-L["Exception Tag"] = true
+--L["Auto Sell Poor Quality Items"] = true
+--L["Except For These Poor Quality Items"] = true
+--L["Add Exception"] = true
+--L["Exception Item (drag item to box)"] = true
+--L["Exception Tag"] = true
 L["Remove"] = true
 L["Add"] = true
 L["Sell Others"] = true
@@ -41,10 +45,21 @@ L["Add Other"] = true
 L["Sell Messages"] = true
 L["Sell Item On All Toons"] = true
 L["Hold Alt While Selling An Item To Sell On All Toons"] = true
-L["PopOut"] = true
-L["Show the sell other settings in their own window."] = true
-L["Sell Unusable Soulbound Items"] = true
-L["Automatically Sell Unusable Soulbound Items"] = true
-L["On Characters With This Tag"] = true
+--L["PopOut"] = true
+--L["Show the sell other settings in their own window."] = true
+--L["Sell Unusable Soulbound Items"] = true
+--L["Automatically Sell Unusable Soulbound Items"] = true
+--L["On Characters With This Tag"] = true
 L["Sell"] = true
-L["And Unusable Lower Tier Armour Soulbound Items"] = true
+--L["And Unusable Lower Tier Armour Soulbound Items"] = true
+
+--New Stuff
+
+L["Automatically Sell Items"] = true
+L["Sell Items"] = true
+L["Only SoulBound"] = true
+L["Item Level"] = true
+L["Sell Gray Items"] = true
+L["Sell Green Items"] = true
+L["Sell Rare Items"] = true
+L["Sell Epic Items"] = true

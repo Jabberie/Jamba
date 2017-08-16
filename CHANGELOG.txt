@@ -5,15 +5,19 @@ Jamba Version: 5.3.0
 WoW Game Version: 7.2.5
 File Version: 7.5.5-5.3.0
 Release Date: TBA
-Modules Changed: Core, communications, Item-Use
+Modules Changed: Core, communications, Item-Use, Team-Display - Jamba-sell
 Modules Removed: Macros, Target
-BetaRelease: 0003
+BetaRelease: 0007
 
 *Jamba-Core
-	-Should Nolonger LUA error when sending to a toon that does not have the module Installed (GameData/commsData)
+	- Should Nolonger LUA error when sending to a toon that does not have the module Installed (GameData/commsData)
+	******* Patch 7.3 PlaceHolder **********	
+	- Updated Ace3 for Patch 7.3
+	- Added a new library LibItemUpGradeInfo.
+	
 	
 *Jamba-Communications
-	-Removed BN communications (To much excess Data to check was kinda pointless and did not work right sorry.)
+	- Removed BN communications (To much excess Data to check was kinda pointless and did not work right.)
 	- Added Guild communications - this will put all communications though the guild Might for use with big teams.
 	- Added support for Guild communications to use the Automated Online/Offline System.
 	
@@ -26,10 +30,31 @@ BetaRelease: 0003
 		-/Jamba-item-use sync. -- wip 
 		-/Jamba-item-use clear Clear bags. -- wip
 
-*Jamba-team-display
+*Jamba-Team_Display
 	- Changed the minions name colour when the minion is in combat
-		
-		
+	- Added support for basic incoming Heals.
+	- Can set a option to show hp/mana updates when not in a party ( might lag out communications Use at own risk, With guild communications)
+
+*Jamba-Sell
+	- *sell other items(Alt)* No longer Trys to Equips Items when not interacting with the merchant.
+	- Should now sell ALL grays in your bags. (Not half at a time)
+	- New Options Sell Items by Quality, ItemLevel and Soulbound.
+	- Tells The Team the amount of items they have sold and the gold they have made.
+	- Removed Old Useable soulbound Items and Lower tier options ( Game has come a long way since then )
+
+*Jamba-Trade
+	- Updated Trade BoE to support the new tooltip Scanner
+	
+*jamba-Currency
+	- if the minion is Maxed on a currency type (EG can not have anymore of that currency ) then the text will show red.
+	
+	---* Patch 7.3 PlaceHolder	*****
+	- Added 7.3 currencies:
+		- Writhing Essence  *1501*
+		- Argus Waystone  *1506*
+		- Veiled Argunite  *1508*
+	------ ****** -------- 
+	
 *Jamba-Macro
 	- Removed.
 

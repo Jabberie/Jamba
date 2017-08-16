@@ -10,15 +10,17 @@ local AJM = LibStub( "AceAddon-3.0" ):NewAddon(
 	"JambaModule-1.0", 
 	"AceConsole-3.0", 
 	"AceEvent-3.0",
-	"AceHook-3.0"
+	"AceHook-3.0",
+	"AceTimer-3.0"
 )
 
 -- Load libraries.
 local JambaUtilities = LibStub:GetLibrary( "JambaUtilities-1.0" )
 local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
 local AceGUI = LibStub:GetLibrary( "AceGUI-3.0" )
+local LibBagUtils = LibStub:GetLibrary( "LibBagUtils-1.0" )
 local LibItemUtilsJamba = LibStub:GetLibrary( "LibItemUtilsJamba-1.0" )
-local LibGratuity = LibStub( "LibGratuity-3.0" )
+local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
 
 --  Constants and Locale for this module.
 AJM.moduleName = "Jamba-Sell"
@@ -28,19 +30,37 @@ local L = LibStub( "AceLocale-3.0" ):GetLocale( AJM.moduleName )
 AJM.parentDisplayName = L["Merchant"]
 AJM.moduleDisplayName = L["Sell"]
 
+
 -- Settings - the values to store and their defaults for the settings database.
 AJM.settings = {
 	profile = {
 		sellItemOnAllWithAltKey = false,
-		autoSellPoorItems = false,
-		autoSellPoorItemsHaveExceptions = false,
-		autoSellPoorItemsExceptionList = {},
+	
+		--TODO REMOVE
+	--	autoSellPoorItems = false,
+	--	autoSellPoorItemsHaveExceptions = false,
+	--	autoSellPoorItemsExceptionList = {},
+		
+		-- Other Items
 		autoSellOtherItems = false,
 		autoSellOtherItemsList = {},
 		messageArea = JambaApi.DefaultMessageArea(),
-		autoSellUnusableSoulbound = false,
-		autoSellUnusableSoulboundLowerTier = false,
-		autoSellUnusableSoulboundTag = ""
+		autoSellItem = false,
+		-- Gray
+		autoSellPoor = false,
+		autoSellBoEPoor	=  false,
+		-- Green	
+		autoSellUncommon = false,
+		autoSellIlvlUncommon = 0,
+		autoSellBoEUncommon	= false,
+		-- Rare
+		autoSellRare = false,
+		autoSellIlvlRare = 0,
+		autoSellBoERare	=  false,
+		-- Epic
+		autoSellEpic = false,
+		autoSellIlvlEpic = 0,
+		autoSellBoEEpic	=  false,		
 	},
 }
 
@@ -54,16 +74,6 @@ function AJM:GetConfiguration()
 		get = "JambaConfigurationGetSetting",
 		set = "JambaConfigurationSetSetting",
 		args = {
-			--[[
-			popout = {
-				type = "input",
-				name = L["PopOut"],
-				desc = L["Show the sell other settings in their own window."],
-				usage = "/jamba-sell popout",
-				get = false,
-				set = "ShowPopOutWindow",
-			},
-			]]--
 			push = {
 				type = "input",
 				name = L["Push Settings"],
@@ -94,7 +104,16 @@ AJM.COMMAND_SELL_ITEM = "SellItem"
 AJM.BAG_PLAYER_BACKPACK = 0
 -- NUM_BAG_SLOTS is defined as 4 in Blizzard's FrameXML\BankFrame.lua.
 AJM.BAG_PLAYER_MAXIMUM = NUM_BAG_SLOTS
+-- Store ItemQuality https://wow.gamepedia.com/API_TYPE_Quality
 AJM.ITEM_QUALITY_POOR = 0
+AJM.ITEM_QUALITY_COMMON = 1
+AJM.ITEM_QUALITY_UNCOMMON = 2
+AJM.ITEM_QUALITY_RARE = 3
+AJM.ITEM_QUALITY_EPIC = 4
+AJM.ITEM_QUALITY_LEGENDARY = 5
+AJM.ITEM_QUALITY_ARTIFACT = 6
+AJM.ITEM_QUALITY_HEIRLOOM = 7
+AJM.MIN_ITEM_LEVEL = 10
 
 function AJM:BeforeJambaProfileChanged()	
 end
@@ -106,15 +125,39 @@ end
 function AJM:SettingsRefresh()
 	-- Sell on all with alt key.
 	AJM.settingsControl.checkBoxSellItemOnAllWithAltKey:SetValue( AJM.db.sellItemOnAllWithAltKey )
-	-- Auto sell unusable soulbound items.
-	AJM.settingsControl.checkBoxAutoSellUnusableSoulboundItems:SetValue( AJM.db.autoSellUnusableSoulbound )
-	AJM.settingsControl.checkBoxAutoSellUnusableSoulboundLowerTierItems:SetValue( AJM.db.autoSellUnusableSoulboundLowerTier )
-	AJM.settingsControl.editBoxUnusableSoulboundTag:SetText( AJM.db.autoSellUnusableSoulboundTag )
-	AJM.settingsControl.checkBoxAutoSellUnusableSoulboundLowerTierItems:SetDisabled( not AJM.db.autoSellUnusableSoulbound )
-	AJM.settingsControl.editBoxUnusableSoulboundTag:SetDisabled( not AJM.db.autoSellUnusableSoulbound )
+	-- Auto sell Quality and Ilvl items.
+	AJM.settingsControl.checkBoxAutoSellItems:SetValue( AJM.db.autoSellItem )
+	-- Poor
+	AJM.settingsControl.checkBoxAutoSellPoor:SetValue ( AJM.db.autoSellPoor )
+	AJM.settingsControl.checkBoxAutoSellBoEPoor:SetValue ( AJM.db.autoSellBoEPoor )
+	AJM.settingsControl.checkBoxAutoSellPoor:SetDisabled ( not AJM.db.autoSellItem )
+	AJM.settingsControl.checkBoxAutoSellBoEPoor:SetDisabled ( not AJM.db.autoSellPoor )
+	-- Uncommon
+	AJM.settingsControl.checkBoxAutoSellUncommon:SetValue (AJM.db.autoSellUncommon )
+	AJM.settingsControl.editBoxAutoSellIlvlUncommon:SetText (AJM.db.autoSellIlvlUncommon )
+	AJM.settingsControl.checkBoxAutoSellBoEUncommon:SetValue (AJM.db.autoSellBoEUncommon )
+	AJM.settingsControl.checkBoxAutoSellUncommon:SetDisabled ( not AJM.db.autoSellItem )
+	AJM.settingsControl.editBoxAutoSellIlvlUncommon:SetDisabled ( not AJM.db.autoSellUncommon )
+	AJM.settingsControl.checkBoxAutoSellBoEUncommon:SetDisabled ( not AJM.db.autoSellUncommon )	
+	-- Rare
+	AJM.settingsControl.checkBoxAutoSellRare:SetValue (AJM.db.autoSellRare )
+	AJM.settingsControl.editBoxAutoSellIlvlRare:SetText (AJM.db.autoSellIlvlRare )
+	AJM.settingsControl.checkBoxAutoSellBoERare:SetValue (AJM.db.autoSellBoERare )
+	AJM.settingsControl.checkBoxAutoSellRare:SetDisabled ( not AJM.db.autoSellItem )
+	AJM.settingsControl.editBoxAutoSellIlvlRare:SetDisabled ( not AJM.db.autoSellRare )
+	AJM.settingsControl.checkBoxAutoSellBoERare:SetDisabled ( not AJM.db.autoSellRare )	
+	-- Epic
+	AJM.settingsControl.checkBoxAutoSellEpic:SetValue ( AJM.db.autoSellEpic )
+	AJM.settingsControl.editBoxAutoSellIlvlEpic:SetText ( AJM.db.autoSellIlvlEpic)
+	AJM.settingsControl.checkBoxAutoSellBoEEpic:SetValue ( AJM.db.autoSellBoEEpic )
+	AJM.settingsControl.checkBoxAutoSellEpic:SetDisabled ( not AJM.db.autoSellItem )
+	AJM.settingsControl.editBoxAutoSellIlvlEpic:SetDisabled ( not AJM.db.autoSellEpic )
+	AJM.settingsControl.checkBoxAutoSellBoEEpic:SetDisabled ( not AJM.db.autoSellEpic )		
 	-- Messages.
 	AJM.settingsControl.dropdownMessageArea:SetValue( AJM.db.messageArea )
 	-- Greys.
+
+--[[
 	AJM.settingsControlGreys.checkBoxAutoSellPoorItems:SetValue( AJM.db.autoSellPoorItems )
 	AJM.settingsControlGreys.checkBoxAutoSellPoorItemsHaveExceptions:SetValue( AJM.db.autoSellPoorItemsHaveExceptions )
 	AJM.settingsControlGreys.greysEditBoxExceptionTag:SetText( AJM.autoSellPoorItemExceptionTag )
@@ -123,6 +166,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlGreys.greysEditBoxExceptionTag:SetDisabled( not AJM.db.autoSellPoorItems or not AJM.db.autoSellPoorItemsHaveExceptions )
 	AJM.settingsControlGreys.greysButtonRemove:SetDisabled( not AJM.db.autoSellPoorItems or not AJM.db.autoSellPoorItemsHaveExceptions )
 	AJM.settingsControlGreys.greysButtonAdd:SetDisabled( not AJM.db.autoSellPoorItems or not AJM.db.autoSellPoorItemsHaveExceptions )
+]]
 	-- Others. 
 	AJM.settingsControlOthers.checkBoxAutoSellOtherItems:SetValue( AJM.db.autoSellOtherItems )
 	AJM.settingsControlOthers.othersEditBoxOtherTag:SetText( AJM.autoSellOtherItemTag )
@@ -130,7 +174,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControlOthers.othersEditBoxOtherTag:SetDisabled( not AJM.db.autoSellOtherItems )
 	AJM.settingsControlOthers.othersButtonRemove:SetDisabled( not AJM.db.autoSellOtherItems )
 	AJM.settingsControlOthers.othersButtonAdd:SetDisabled( not AJM.db.autoSellOtherItems )
-	AJM:SettingsGreysScrollRefresh()
+--	AJM:SettingsGreysScrollRefresh()
 	AJM:SettingsOthersScrollRefresh()
 end
 
@@ -139,14 +183,23 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 	if characterName ~= AJM.characterName then
 		-- Update the settings.
 		AJM.db.sellItemOnAllWithAltKey = settings.sellItemOnAllWithAltKey
-		AJM.db.autoSellUnusableSoulbound = settings.autoSellUnusableSoulbound
-		AJM.db.autoSellUnusableSoulboundTag = settings.autoSellUnusableSoulboundTag
-		AJM.db.autoSellUnusableSoulboundLowerTier = settings.autoSellUnusableSoulboundLowerTier
-		AJM.db.autoSellPoorItems = settings.autoSellPoorItems
-		AJM.db.autoSellPoorItemsHaveExceptions = settings.autoSellPoorItemsHaveExceptions 
+		AJM.db.autoSellItem = settings.autoSellItem
+		AJM.db.autoSellPoor = settings.autoSellPoor
+		AJM.db.autoSellBoEPoor = settings.autoSellBoEPoor
+		AJM.db.autoSellUncommon = settings.autoSellUncommon
+		AJM.db.autoSellIlvlUncommon = settings.autoSellIlvlUncommon
+		AJM.db.autoSellBoEUncommon = settings.autoSellBoEUncommon
+		AJM.db.autoSellRare = settings.autoSellRare
+		AJM.db.autoSellIlvlRare = settings.autoSellIlvlRare
+		AJM.db.autoSellBoERare = settings.autoSellBoERare
+		AJM.db.autoSellEpic = settings.autoSellEpic
+		AJM.db.autoSellIlvlEpic = settings.autoSellIlvlEpic
+		AJM.db.autoSellBoEEpic = settings.autoSellBoEEpic
+	--	AJM.db.autoSellPoorItems = settings.autoSellPoorItems
+	--	AJM.db.autoSellPoorItemsHaveExceptions = settings.autoSellPoorItemsHaveExceptions 
 		AJM.db.autoSellOtherItems = settings.autoSellOtherItems
 		AJM.db.messageArea = settings.messageArea
-		AJM.db.autoSellPoorItemsExceptionList = JambaUtilities:CopyTable( settings.autoSellPoorItemsExceptionList )
+--		AJM.db.autoSellPoorItemsExceptionList = JambaUtilities:CopyTable( settings.autoSellPoorItemsExceptionList )
 		AJM.db.autoSellOtherItemsList = JambaUtilities:CopyTable( settings.autoSellOtherItemsList )
 		-- Refresh the settings.
 		AJM:SettingsRefresh()
@@ -156,6 +209,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		--AJM:JambaSendMessageToTeam( AJM.db.messageArea,  L["Settings received from A."]( characterName ), false )
 	end
 end
+
 
 -------------------------------------------------------------------------------------------------------------
 -- Settings Dialogs.
@@ -172,8 +226,12 @@ local function SettingsCreateMain( top )
 	local headingHeight = JambaHelperSettings:HeadingHeight()
 	local headingWidth = JambaHelperSettings:HeadingWidth( false )
 	local horizontalSpacing = JambaHelperSettings:GetHorizontalSpacing()
+	local indent = horizontalSpacing * 12
 	local verticalSpacing = JambaHelperSettings:GetVerticalSpacing()
 	local halfWidth = (headingWidth - horizontalSpacing) / 2
+	local thirdWidth = (headingWidth - (horizontalSpacing * 5)) / 5
+	local left2 = left + thirdWidth
+	local left3 = left + halfWidth
 	local movingTop = top
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Sell Item On All Toons"], movingTop, false )
 	movingTop = movingTop - headingHeight	
@@ -186,34 +244,116 @@ local function SettingsCreateMain( top )
 		AJM.SettingsToggleSellItemOnAllWithAltKey
 	)	
 	movingTop = movingTop - checkBoxHeight	
-	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Sell Unusable Soulbound Items"], movingTop, false )
+	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Sell Items"], movingTop, false )
+	
 	movingTop = movingTop - headingHeight	
-	AJM.settingsControl.checkBoxAutoSellUnusableSoulboundItems = JambaHelperSettings:CreateCheckBox( 
+	AJM.settingsControl.checkBoxAutoSellItems = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
 		headingWidth, 
 		left, 
 		movingTop, 
-		L["Automatically Sell Unusable Soulbound Items"],
-		AJM.SettingsToggleAutoSellUnusableSoulboundItems
+		L["Automatically Sell Items"],
+		AJM.SettingsToggleAutoSellItems
 	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.checkBoxAutoSellUnusableSoulboundLowerTierItems = JambaHelperSettings:CreateCheckBox( 
+-- Gray
+	movingTop = movingTop - checkBoxHeight - 3
+	AJM.settingsControl.checkBoxAutoSellPoor = JambaHelperSettings:CreateCheckBox( 
 		AJM.settingsControl, 
-		headingWidth, 
-		left, 
-		movingTop, 
-		L["And Unusable Lower Tier Armour Soulbound Items"],
-		AJM.SettingsToggleAutoSellUnusableSoulboundLowerTierItems
-	)	
-	movingTop = movingTop - checkBoxHeight
-	AJM.settingsControl.editBoxUnusableSoulboundTag = JambaHelperSettings:CreateEditBox( 
-		AJM.settingsControl,
-		headingWidth,
+		halfWidth, 
 		left,
 		movingTop,
-		L["On Characters With This Tag"]
+		L["Sell Gray Items"],
+		AJM.SettingsToggleAutoSellPoor
 	)
-	AJM.settingsControl.editBoxUnusableSoulboundTag:SetCallback( "OnEnterPressed", AJM.SettingsEditBoxChangedUnusableSoulboundTag )
+	AJM.settingsControl.checkBoxAutoSellBoEPoor = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left3,
+		movingTop,
+		L["Only SoulBound"],
+		AJM.SettingsToggleAutoSellBoEPoor
+	)
+-- Green	
+	movingTop = movingTop - checkBoxHeight - 3
+	AJM.settingsControl.checkBoxAutoSellUncommon = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left,
+		movingTop,
+		L["Sell Green Items"],
+		AJM.SettingsToggleAutoSellUncommon
+	)
+	AJM.settingsControl.checkBoxAutoSellBoEUncommon = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left3,
+		movingTop,
+		L["Only SoulBound"],
+		AJM.SettingsToggleAutoSellBoEUncommon
+	)
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.editBoxAutoSellIlvlUncommon = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl, 
+		thirdWidth, 
+		left,
+		movingTop,
+		L["Item Level"]
+	)	
+	AJM.settingsControl.editBoxAutoSellIlvlUncommon:SetCallback( "OnEnterPressed", AJM.SettingsEditBoxChangedIlvlUncommon )	
+-- Rare
+	movingTop = movingTop - editBoxHeight - 3	
+	AJM.settingsControl.checkBoxAutoSellRare = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left,
+		movingTop,
+		L["Sell Rare Items"],
+		AJM.SettingsToggleAutoSellRare
+	)
+	AJM.settingsControl.checkBoxAutoSellBoERare = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left3,
+		movingTop,
+		L["Only SoulBound"],
+		AJM.SettingsToggleAutoSellBoERare
+	)
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.editBoxAutoSellIlvlRare = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl, 
+		thirdWidth, 
+		left,
+		movingTop,
+		L["Item Level"]
+	)	
+	AJM.settingsControl.editBoxAutoSellIlvlRare:SetCallback( "OnEnterPressed", AJM.SettingsEditBoxChangedIlvlRare )		
+-- Epic
+	movingTop = movingTop - editBoxHeight - 3
+	AJM.settingsControl.checkBoxAutoSellEpic = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left,
+		movingTop,
+		L["Sell Epic Items"],
+		AJM.SettingsToggleAutoSellEpic
+	)
+	AJM.settingsControl.checkBoxAutoSellBoEEpic = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		halfWidth, 
+		left3,
+		movingTop,
+		L["Only SoulBound"],
+		AJM.SettingsToggleAutoSellBoEEpic
+	)
+	movingTop = movingTop - checkBoxHeight
+	AJM.settingsControl.editBoxAutoSellIlvlEpic = JambaHelperSettings:CreateEditBox( 
+		AJM.settingsControl, 
+		thirdWidth, 
+		left,
+		movingTop,
+		L["Item Level"]
+	)	
+	AJM.settingsControl.editBoxAutoSellIlvlEpic:SetCallback( "OnEnterPressed", AJM.SettingsEditBoxChangedIlvlEpic )		
 	movingTop = movingTop - editBoxHeight	
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Sell Messages"], movingTop, false )
 	movingTop = movingTop - headingHeight	
@@ -234,6 +374,7 @@ function AJM:OnMessageAreasChanged( message )
 	AJM.settingsControl.dropdownMessageArea:SetList( JambaApi.MessageAreaList() )
 end
 
+--[[
 local function SettingsCreateGreys( top )
 	-- Position and size constants.
 	local buttonControlWidth = 105
@@ -332,6 +473,7 @@ local function SettingsCreateGreys( top )
 	movingTop = movingTop -	buttonHeight	
 	return movingTop
 end
+]]
 
 local function SettingsCreateOthers( top )
 	-- Position and size constants.
@@ -424,7 +566,7 @@ end
 
 local function SettingsCreate()
 	AJM.settingsControl = {}
-	AJM.settingsControlGreys = {}
+	--AJM.settingsControlGreys = {}
 	AJM.settingsControlOthers = {}
 	JambaHelperSettings:CreateSettings( 
 		AJM.settingsControl, 
@@ -432,12 +574,12 @@ local function SettingsCreate()
 		AJM.parentDisplayName, 
 		AJM.SettingsPushSettingsClick 
 	)	
-	JambaHelperSettings:CreateSettings( 
-		AJM.settingsControlGreys, 
-		L["Sell: Greys"], 
-		AJM.parentDisplayName, 
-		AJM.SettingsPushSettingsClick 
-	)
+--	JambaHelperSettings:CreateSettings( 
+--		AJM.settingsControlGreys, 
+--		L["Sell: Greys"], 
+--		AJM.parentDisplayName, 
+--		AJM.SettingsPushSettingsClick 
+--	)
 	JambaHelperSettings:CreateSettings( 
 		AJM.settingsControlOthers, 
 		L["Sell: Others"], 
@@ -446,8 +588,8 @@ local function SettingsCreate()
 	)	
 	local bottomOfSell = SettingsCreateMain( JambaHelperSettings:TopOfSettings() )
 	AJM.settingsControl.widgetSettings.content:SetHeight( -bottomOfSell )
-	local bottomOfGreys = SettingsCreateGreys( JambaHelperSettings:TopOfSettings() )
-	AJM.settingsControlGreys.widgetSettings.content:SetHeight( -bottomOfGreys )
+--	local bottomOfGreys = SettingsCreateGreys( JambaHelperSettings:TopOfSettings() )
+--	AJM.settingsControlGreys.widgetSettings.content:SetHeight( -bottomOfGreys )
 	local bottomOfOthers = SettingsCreateOthers( JambaHelperSettings:TopOfSettings() )
 	AJM.settingsControlOthers.widgetSettings.content:SetHeight( -bottomOfOthers )
 	-- Help
@@ -459,6 +601,7 @@ end
 -- Settings Callbacks.
 -------------------------------------------------------------------------------------------------------------
 
+--[[
 function AJM:SettingsGreysScrollRefresh()
 	FauxScrollFrame_Update(
 		AJM.settingsControlGreys.greys.listScrollFrame, 
@@ -495,6 +638,8 @@ function AJM:SettingsGreysRowClick( rowNumber, columnNumber )
 		AJM:SettingsGreysScrollRefresh()
 	end
 end
+]]
+
 
 function AJM:SettingsOthersScrollRefresh()
 	FauxScrollFrame_Update(
@@ -542,21 +687,85 @@ function AJM:SettingsToggleSellItemOnAllWithAltKey( event, checked )
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleAutoSellUnusableSoulboundItems( event, checked )
-	AJM.db.autoSellUnusableSoulbound = checked
+--Here
+
+function AJM:SettingsToggleAutoSellItems( event, checked )
+	AJM.db.autoSellItem = checked
+	AJM:SettingsRefresh()
+end	
+
+--  Poor
+function AJM:SettingsToggleAutoSellPoor( event, checked )
+	AJM.db.autoSellPoor = checked
+	AJM:SettingsRefresh()
+end	
+
+
+function AJM:SettingsToggleAutoSellBoEPoor( event, checked )
+	AJM.db.autoSellBoEPoor = checked
+	AJM:SettingsRefresh()
+end	
+
+-- Uncommon
+
+function AJM:SettingsToggleAutoSellUncommon( event, checked )
+	AJM.db.autoSellUncommon = checked
+	AJM:SettingsRefresh()
+end	
+
+function AJM:SettingsEditBoxChangedIlvlUncommon( event, text )
+	AJM.db.autoSellIlvlUncommon = text
 	AJM:SettingsRefresh()
 end
 
-function AJM:SettingsToggleAutoSellUnusableSoulboundLowerTierItems( event, checked )
-	AJM.db.autoSellUnusableSoulboundLowerTier = checked
+function AJM:SettingsToggleAutoSellBoEUncommon( event, checked )
+	AJM.db.autoSellBoEUncommon = checked
 	AJM:SettingsRefresh()
 end
+
+-- Rare
+
+function AJM:SettingsToggleAutoSellRare( event, checked )
+	AJM.db.autoSellRare = checked
+	AJM:SettingsRefresh()
+end	
+
+function AJM:SettingsEditBoxChangedIlvlRare( event, text )
+	AJM.db.autoSellIlvlRare = text
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleAutoSellBoERare( event, checked )
+	AJM.db.autoSellBoERare = checked
+	AJM:SettingsRefresh()
+end
+
+-- Epic
+
+function AJM:SettingsToggleAutoSellEpic( event, checked )
+	AJM.db.autoSellEpic = checked
+	AJM:SettingsRefresh()
+end	
+
+function AJM:SettingsEditBoxChangedIlvlEpic( event, text )
+	AJM.db.autoSellIlvlEpic = text
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleAutoSellBoEEpic( event, checked )
+	AJM.db.autoSellBoEEpic = checked
+	AJM:SettingsRefresh()
+end
+
 
 function AJM:SettingsSetMessageArea( event, value )
 	AJM.db.messageArea = value
 	AJM:SettingsRefresh()
 end
 
+
+--TPDO Remove!
+--[[ 
 function AJM:SettingsToggleAutoSellPoorItems( event, checked )
 	AJM.db.autoSellPoorItems = checked
 	AJM:SettingsRefresh()
@@ -593,6 +802,7 @@ function AJM:SettingsGreysAddClick( event )
 		AJM:SettingsRefresh()
 	end
 end
+]]
 
 function AJM:SettingsToggleAutoSellOtherItems( event, checked )
 	AJM.db.autoSellOtherItems = checked
@@ -641,17 +851,17 @@ end
 
 -- Initialize Popup Dialogs.
 local function InitializePopupDialogs()
-	StaticPopupDialogs["JAMBASELL_CONFIRM_REMOVE_AUTO_SELL_POOR_ITEMS_EXCEPTION"] = {
-        text = L["Are you sure you wish to remove the selected item from the auto sell poor items exception list?"],
-        button1 = YES,
-        button2 = NO,
-        timeout = 0,
-		whileDead = 1,
-		hideOnEscape = 1,
-        OnAccept = function()
-			AJM:RemoveGrey()
-		end,
-    }
+--	StaticPopupDialogs["JAMBASELL_CONFIRM_REMOVE_AUTO_SELL_POOR_ITEMS_EXCEPTION"] = {
+--       text = L["Are you sure you wish to remove the selected item from the auto sell poor items exception list?"],
+--       button1 = YES,
+--       button2 = NO,
+--       timeout = 0,
+--		 whileDead = 1,
+--		 hideOnEscape = 1,
+--       OnAccept = function()
+--		 AJM:RemoveGrey()
+--		 end,
+--   } 
 	StaticPopupDialogs["JAMBASELL_CONFIRM_REMOVE_AUTO_SELL_OTHER_ITEMS"] = {
         text = L["Are you sure you wish to remove the selected item from the auto sell other items list?"],
         button1 = YES,
@@ -672,32 +882,23 @@ end
 -- Initialise the module.
 function AJM:OnInitialize()
 	-- Item link of item to add to auto sell item other / poor exception list.
-	AJM.autoSellPoorItemExceptionLink = nil
+--	AJM.autoSellPoorItemExceptionLink = nil
 	AJM.autoSellOtherItemLink = nil
 	-- The tag to add to the other / poor exception item.
-	AJM.autoSellPoorItemExceptionTag = JambaApi.AllTag()
+--	AJM.autoSellPoorItemExceptionTag = JambaApi.AllTag()
 	AJM.autoSellOtherItemTag = JambaApi.AllTag()
+
 	-- Create the settings control.
 	SettingsCreate()
 	-- Initialise the JambaModule part of this module.
-	AJM:JambaModuleInitialize( AJM.settingsControlGreys.widgetSettings.frame )
+--	AJM:JambaModuleInitialize( AJM.settingsControlGreys.widgetSettings.frame )
+	AJM:JambaModuleInitialize( AJM.settingsControl.widgetSettings.frame )
 	-- Populate the settings.
 	AJM:SettingsRefresh()	
 	-- Initialise the popup dialogs.
 	InitializePopupDialogs()	
 	-- Hook the item click event.
 	AJM:RawHook( "ContainerFrameItemButton_OnModifiedClick", true )
-	--[[
-	-- Create a standalone window for the sell others.
-	AJM.standaloneWindow = AceGUI:Create( "Window" )
-	AJM.standaloneWindow:Hide()
-	AJM.standaloneWindow:SetTitle( "Jamba-Sell" )
-	AJM.standaloneWindow:SetLayout( "Fill" )
-	AJM.standaloneWindow:AddChild( AJM.settingsControlOthers.widgetSettings )
-	AJM.standaloneWindow:SetHeight( 410 )
-	AJM.standaloneWindow:SetWidth( 410 )
-	AJM.standaloneWindow.frame:SetFrameStrata( "HIGH" )
-	]]--
 end
 
 -- Called when the addon is enabled.
@@ -714,9 +915,9 @@ end
 -- JambaSell functionality.
 -------------------------------------------------------------------------------------------------------------
 
-function AJM:ShowPopOutWindow()
+--function AJM:ShowPopOutWindow()
 	--AJM.standaloneWindow:Show()
-end
+--end
 
 -- The ContainerFrameItemButton_OnModifiedClick hook.
 function AJM:ContainerFrameItemButton_OnModifiedClick( self, event, ... )
@@ -732,7 +933,8 @@ function AJM:DoSellItem( itemlink )
 	-- Iterate each bag the player has.		
 	for bag = AJM.BAG_PLAYER_BACKPACK, AJM.BAG_PLAYER_MAXIMUM do 
 		-- Iterate each slot in the bag.
-		for slot = 1, GetContainerNumSlots( bag ) do 
+		numSlots = GetContainerNumSlots( bag )
+		for slot = 1, numSlots do 
 			-- Get the item link for the item in this slot.
 			local bagItemLink = GetContainerItemLink( bag, slot )
 			-- If there is an item...
@@ -740,7 +942,9 @@ function AJM:DoSellItem( itemlink )
 				-- Does it match the item to sell?					
 				if JambaUtilities:DoItemLinksContainTheSameItem( bagItemLink, itemlink ) then
 					-- Yes, sell this item.
-					UseContainerItem( bag, slot ) 
+					if MerchantFrame:IsVisible() == true then
+						UseContainerItem( bag, slot ) 
+					end
 					-- Tell the boss.
 					AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
 				end
@@ -749,6 +953,7 @@ function AJM:DoSellItem( itemlink )
 	end
 end
 
+--[[
 function AJM:GetGreysMaxPosition()
 	return #AJM.db.autoSellPoorItemsExceptionList
 end
@@ -786,6 +991,7 @@ function AJM:RemoveGrey()
 	AJM:SettingsRefresh()
 	AJM:SettingsGreysRowClick( 1, 1 )		
 end
+]]
 
 function AJM:GetOthersMaxPosition()
 	return #AJM.db.autoSellOtherItemsList
@@ -817,22 +1023,133 @@ function AJM:RemoveOther()
 end
 
 function AJM:MERCHANT_SHOW()
-	-- Does the user want to auto sell poor items?
-	if AJM.db.autoSellPoorItems == true then
-		AJM:DoMerchantSellPoorItems()
+	-- Sell Items
+	if AJM.db.autoSellItem == true then
+		AJM:DoMerchantSellItems()
+	
 	end
-	-- Does the user want to auto sell other items?
+	-- Sell Other Items
 	if AJM.db.autoSellOtherItems == true then
-		AJM:DoMerchantSellOtherItems()
+		AJM:ScheduleTimer( "DoMerchantSellOtherItems", 2 )
 	end
+	
+	-- Does the user want to auto sell poor items?
+	--if AJM.db.autoSellPoorItems == true then
+	--	AJM:DoMerchantSellPoorItems()
+	--end
+
+	-- Does the user want to auto sell other items?
 	-- Does the user want to auto sell unusable soulbound items?
-	if AJM.db.autoSellUnusableSoulbound == true then
-		if JambaApi.DoesCharacterHaveTag( AJM.characterName, AJM.db.autoSellUnusableSoulboundTag ) == true then
-			AJM:DoMerchantSellUnusableSoulbound()
+--	if AJM.db.autoSellUnusableSoulbound == true then
+--		if JambaApi.DoesCharacterHaveTag( AJM.characterName, AJM.db.autoSellUnusableSoulboundTag ) == true then
+--			AJM:DoMerchantSellUnusableSoulbound()
+--		end
+--	end
+end
+
+
+function AJM:DoMerchantSellItems()
+	local count = 0
+	local gold = 0
+	for bag,slot,link in LibBagUtils:Iterate("BAGS") do
+		if bag ~= nil then
+			if link ~= nil then	
+			local canSell = false
+			local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, iconFileDataID, itemSellPrice = GetItemInfo( link )	
+			--AJM:Print("Test", itemLink, itemType )
+				if AJM.db.autoSellPoor == true then
+					if itemRarity == AJM.ITEM_QUALITY_POOR then
+						canSell = true
+						if AJM.db.autoSellBoEPoor == true then 
+							local isBop = JambaUtilities:ToolTipBagScaner(link, bag, slot)
+							if isBop ~= ITEM_SOULBOUND then
+							 --AJM:Print("BoE", link )
+							 canSell = false
+							end
+						end	
+					end
+				end	
+				-- Green
+				if AJM.db.autoSellUncommon == true then
+					if itemRarity == AJM.ITEM_QUALITY_UNCOMMON and itemType == WEAPON or itemType == ARMOR then
+						local num = tonumber( AJM.db.autoSellIlvlUncommon )
+						local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
+						--AJM:Print("test", iLvl, "vs", num )
+						if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
+							if iLvl >= num then
+								canSell = true
+							end
+						end	
+						if AJM.db.autoSellBoEUncommon == true then 
+							local isBop = JambaUtilities:ToolTipBagScaner( link,bag,slot )
+							--AJM:Print("IsBoP", isBop)									
+							if isBop ~= ITEM_SOULBOUND then
+								canSell = false
+							end
+						end
+					end
+				end	
+					--Blue
+					if AJM.db.autoSellRare == true then
+						if itemRarity == AJM.ITEM_QUALITY_RARE and itemType == WEAPON or itemType == ARMOR then
+							local num = tonumber( AJM.db.autoSellIlvlRare )
+							local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
+							--AJM:Print("test", iLvl, "vs", num )
+							if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
+								if iLvl >= num then
+									canSell = true
+								end
+							end	
+							if AJM.db.autoSellBoERare == true then 
+								local isBop = JambaUtilities:ToolTipBagScaner( link,bag,slot )
+								--AJM:Print("IsBoP", isBop)
+								if isBop ~= ITEM_SOULBOUND then
+									canSell = false									
+								end
+							end
+						end	
+					end		
+					-- Epic
+					if AJM.db.autoSellEpic == true then
+						if itemRarity == AJM.ITEM_QUALITY_EPIC and itemType == WEAPON or itemType == ARMOR then
+							local num = tonumber( AJM.db.autoSellIlvlEpic )
+							local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
+							--AJM:Print("test", iLvl, "vs", num )
+								if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
+								if iLvl >= num then
+									canSell = true
+								end
+							end	
+							if AJM.db.autoSellBoEEpic == true then 
+								local isBop = JambaUtilities:ToolTipBagScaner( link,bag,slot )
+								--AJM:Print("IsBoP", isBop)
+								if isBop ~= ITEM_SOULBOUND then
+									canSell = false
+								end
+							end
+						end
+					end
+					if canSell == true then 
+						if itemSellPrice ~= nil and itemSellPrice > 0 then
+							if MerchantFrame:IsVisible() == true then
+								count = count + 1
+								gold = gold + itemSellPrice
+								UseContainerItem( bag, slot )	
+							end
+						end	
+					end
+				end	
+			end
 		end
+	if count > 0 then	
+		local formattedGoldAmount = GetCoinTextureString(gold)
+		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X Items And Made:"]( count )..formattedGoldAmount, false )
 	end
 end
 
+
+
+--[[
 function AJM:DoMerchantSellUnusableSoulbound()
 	-- Iterate each bag the player has.
 	local localizedClass, fileClass = UnitClass( "player" )
@@ -880,8 +1197,10 @@ function AJM:DoMerchantSellUnusableSoulbound()
 						if compare( itemSubType, canWear["ALL"] ) then
 							if not compare( itemSubType, canWear[fileClass] ) then
 								-- Sell.
-								UseContainerItem( bag, slot ) 
-								AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( itemLink ), false )
+								if MerchantFrame:IsVisible() == true then
+									UseContainerItem( bag, slot ) 
+									AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( itemLink ), false )
+								end
 							end
 						end
 					end
@@ -891,11 +1210,13 @@ function AJM:DoMerchantSellUnusableSoulbound()
 	end
 end
 
+
 function AJM:DoMerchantSellPoorItems()
 	-- Iterate each bag the player has.		
 	for bag = AJM.BAG_PLAYER_BACKPACK, AJM.BAG_PLAYER_MAXIMUM do 
 		-- Iterate each slot in the bag.
-		for slot = 1, GetContainerNumSlots( bag ) do 
+		local numSlots = GetContainerNumSlots( bag )
+		for slot = 1, numSlots do 
 			-- Get the item link for the item in this slot.
 			local itemLink = GetContainerItemLink( bag, slot )
 			-- If there is an item...
@@ -929,12 +1250,16 @@ function AJM:SellPoorItemIfNotAnException( itemName, itemLink, bag, slot )
 	-- Can sell the item?
 	if canSell == true then
 		-- Then use it (effectively selling it as the character is talking to a merchant).
-		UseContainerItem( bag, slot ) 
-		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( itemLink ), false )
+		if MerchantFrame:IsVisible() == true then
+			UseContainerItem( bag, slot ) 
+			AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( itemLink ), false )
+		end	
 	else
 		AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["DID NOT SELL: X"]( itemLink ), false )
 	end						
 end
+]]
+-- Sell Other Items! 
 
 function AJM:DoMerchantSellOtherItems()
 	-- Iterate all the wanted items...
@@ -953,9 +1278,11 @@ function AJM:DoMerchantSellOtherItems()
 						-- Does it match the item to sell?					
 						if JambaUtilities:DoItemLinksContainTheSameItem( bagItemLink, itemInformation.link ) then
 							-- Yes, sell this item.
-							UseContainerItem( bag, slot ) 
-							-- Tell the boss.
-							AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
+							if MerchantFrame:IsVisible() == true then	
+								UseContainerItem( bag, slot ) 
+								-- Tell the boss.
+								--AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
+							end
 						end
 					end
 				end
