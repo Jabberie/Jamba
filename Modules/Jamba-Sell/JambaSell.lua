@@ -1281,7 +1281,7 @@ function AJM:DoMerchantSellOtherItems()
 							if MerchantFrame:IsVisible() == true then	
 								UseContainerItem( bag, slot ) 
 								-- Tell the boss.
-								--AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
+								AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
 							end
 						end
 					end

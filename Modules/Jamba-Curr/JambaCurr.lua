@@ -1416,10 +1416,10 @@ function AJM:JambaToonHideCurrency()
 end
 
 function AJM:JambaToonRequestCurrency()
-	-- Colour red.
+	-- Colour Light Red.
 	local r = 1.0
-	local g = 0.0
-	local b = 0.0
+	local g = 0.42
+	local b = 0.42
 	local a = 0.6
 	for characterName, currencyFrameCharacterInfo in pairs( AJM.currencyFrameCharacterInfo ) do
 		--AJM.Print("DoRequestCurrency", characterName)
@@ -1477,6 +1477,13 @@ function AJM:DoSendCurrency( characterName, dummyValue )
 	AJM.currentCurrencyValues.currTypeFour	= select( 2, GetCurrencyInfo( AJM.db.CcurrTypeFour ) )
 	AJM.currentCurrencyValues.currTypeFive = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeFive ) )
 	AJM.currentCurrencyValues.currTypeSix = select( 2, GetCurrencyInfo( AJM.db.CcurrTypeSix ) )
+	-- Max CurrencyValues
+	AJM.currentCurrencyValues.currMaxTypeOne = select( 6, GetCurrencyInfo( AJM.db.CcurrTypeOne ) )
+	AJM.currentCurrencyValues.currMaxTypeTwo = select( 6, GetCurrencyInfo( AJM.db.CcurrTypeTwo ) )
+	AJM.currentCurrencyValues.currMaxTypeThree = select( 6, GetCurrencyInfo( AJM.db.CcurrTypeThree ) )	
+	AJM.currentCurrencyValues.currMaxTypeFour	= select( 6, GetCurrencyInfo( AJM.db.CcurrTypeFour ) )
+	AJM.currentCurrencyValues.currMaxTypeFive = select( 6, GetCurrencyInfo( AJM.db.CcurrTypeFive ) )
+	AJM.currentCurrencyValues.currMaxTypeSix = select( 6, GetCurrencyInfo( AJM.db.CcurrTypeSix ) )
 	AJM:JambaSendCommandToToon( characterName, AJM.COMMAND_HERE_IS_CURRENCY, AJM.currentCurrencyValues )
 	else
 		return
@@ -1484,7 +1491,7 @@ function AJM:DoSendCurrency( characterName, dummyValue )
 end
 
 function AJM:DoShowToonsCurrency( characterName, currencyValues )
-	--AJM.Print("DoShowCurrency", characterName, currencyValues.currTypeOne )
+	--AJM.Print("DoShowCurrency", characterName, currencyValues.currTypeOne, currencyValues.currMaxTypeOne )
 	local parentFrame = JambaToonCurrencyListFrame
 	-- Get (or create and get) the character information.
 	local currencyFrameCharacterInfo = AJM.currencyFrameCharacterInfo[characterName]
@@ -1498,15 +1505,47 @@ function AJM:DoShowToonsCurrency( characterName, currencyValues )
 	local g = 1.0
 	local b = 1.0
 	local a = 1.0
+	local v = 0
+	
 	currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
 	currencyFrameCharacterInfo.characterNameText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TypeOneText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TypeTwoText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TypeThreeText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TypeFourText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TypeFiveText:SetTextColor( r, g, b, a )
-	currencyFrameCharacterInfo.TypeSixText:SetTextColor( r, g, b, a )
-
+	currencyFrameCharacterInfo.GoldText:SetTextColor( r, g, b, a )
+	if currencyValues.currTypeOne == currencyValues.currMaxTypeOne and currencyValues.currTypeOne > 0 then 
+		--AJM:Print("SetRed")
+		currencyFrameCharacterInfo.TypeOneText:SetTextColor( r, v, v, a )
+	else
+		--AJM:Print("SetWhite")
+		currencyFrameCharacterInfo.TypeOneText:SetTextColor( r, g, b, a )
+	end	
+	
+	if currencyValues.currTypeTwo == currencyValues.currMaxTypeTwo and currencyValues.currTypeTwo > 0 then 
+		currencyFrameCharacterInfo.TypeTwoText:SetTextColor( r, v, v, a )
+	else
+		currencyFrameCharacterInfo.TypeTwoText:SetTextColor( r, g, b, a )
+	end
+	if currencyValues.currTypeThree == currencyValues.currMaxTypeThree and currencyValues.currTypeThree > 0 then 
+		currencyFrameCharacterInfo.TypeThreeText:SetTextColor( r, v, v, a )
+	else
+		currencyFrameCharacterInfo.TypeThreeText:SetTextColor( r, g, b, a )
+	end
+	
+	if currencyValues.currTypeFour == currencyValues.currMaxTypeFour and currencyValues.currTypeFour > 0 then 
+		currencyFrameCharacterInfo.TypeFourText:SetTextColor( r, v, v, a )
+	else
+		currencyFrameCharacterInfo.TypeFourText:SetTextColor( r, g, b, a )
+	end
+	
+	if currencyValues.currTypeFive == currencyValues.currMaxTypeFive and currencyValues.currTypeFive > 0 then 
+		currencyFrameCharacterInfo.TypeFiveText:SetTextColor( r, v, v, a )
+	else
+		currencyFrameCharacterInfo.TypeFiveText:SetTextColor( r, g, b, a )
+	end
+	
+	if currencyValues.currTypeSix == currencyValues.currMaxTypeSix and currencyValues.currTypeSix > 0 then 
+		currencyFrameCharacterInfo.TypeSixText:SetTextColor( r, v, v, a )
+	else
+		currencyFrameCharacterInfo.TypeSixText:SetTextColor( r, g, b, a )
+	end
 	currencyFrameCharacterInfo.GoldText:SetText( JambaUtilities:FormatMoneyString( currencyValues.currGold ) )
 	--currencyFrameCharacterInfo.GoldText:SetText( GetCoinTextureString( currencyValues.currGold ) )
 	currencyFrameCharacterInfo.TypeOneText:SetText( currencyValues.currTypeOne )
