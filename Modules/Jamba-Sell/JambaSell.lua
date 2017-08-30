@@ -1056,7 +1056,7 @@ function AJM:DoMerchantSellItems()
 			if link ~= nil then	
 			local canSell = false
 			local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, iconFileDataID, itemSellPrice = GetItemInfo( link )	
-			--AJM:Print("Test", itemLink, itemType )
+			--AJM:Print("Test", itemLink, itemRarity )
 				if AJM.db.autoSellPoor == true then
 					if itemRarity == AJM.ITEM_QUALITY_POOR then
 						canSell = true
@@ -1071,63 +1071,70 @@ function AJM:DoMerchantSellItems()
 				end	
 				-- Green
 				if AJM.db.autoSellUncommon == true then
-					if itemRarity == AJM.ITEM_QUALITY_UNCOMMON and itemType == WEAPON or itemType == ARMOR then
-						local num = tonumber( AJM.db.autoSellIlvlUncommon )
-						local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
-						--AJM:Print("test", iLvl, "vs", num )
-						if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
-							if iLvl >= num then
-								canSell = true
-							end
-						end	
-						if AJM.db.autoSellBoEUncommon == true then 
-							local isBop = JambaUtilities:ToolTipBagScaner( link,bag,slot )
-							--AJM:Print("IsBoP", isBop)									
-							if isBop ~= ITEM_SOULBOUND then
-								canSell = false
+					if itemRarity == AJM.ITEM_QUALITY_UNCOMMON then
+						if itemType == WEAPON or itemType == ARMOR then
+							--AJM:Print("testGreen", link, itemRarity, "a", AJM.ITEM_QUALITY_UNCOMMON )
+							local num = tonumber( AJM.db.autoSellIlvlUncommon )
+							local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
+							--AJM:Print("test", iLvl, "vs", num, "item", link )
+							if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
+								if iLvl >= num then
+									canSell = true
+								end
+							end	
+							if AJM.db.autoSellBoEUncommon == true then 
+								local isBop = JambaUtilities:ToolTipBagScaner( link,bag,slot )
+								--AJM:Print("IsBoP", isBop)									
+								if isBop ~= ITEM_SOULBOUND then
+									canSell = false
+								end
 							end
 						end
 					end
 				end	
 					--Blue
 					if AJM.db.autoSellRare == true then
-						if itemRarity == AJM.ITEM_QUALITY_RARE and itemType == WEAPON or itemType == ARMOR then
-							local num = tonumber( AJM.db.autoSellIlvlRare )
-							local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
-							--AJM:Print("test", iLvl, "vs", num )
-							if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
-								if iLvl >= num then
-									canSell = true
+						if itemRarity == AJM.ITEM_QUALITY_RARE then
+							if itemType == WEAPON or itemType == ARMOR then
+								local num = tonumber( AJM.db.autoSellIlvlRare )
+								local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
+								--AJM:Print("test", iLvl, "vs", num )
+								if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
+									if iLvl >= num then
+										canSell = true
+									end
+								end	
+								if AJM.db.autoSellBoERare == true then 
+									local isBop = JambaUtilities:ToolTipBagScaner( link,bag,slot )
+									--AJM:Print("IsBoP", isBop)
+									if isBop ~= ITEM_SOULBOUND then
+										canSell = false									
+									end
 								end
 							end	
-							if AJM.db.autoSellBoERare == true then 
-								local isBop = JambaUtilities:ToolTipBagScaner( link,bag,slot )
-								--AJM:Print("IsBoP", isBop)
-								if isBop ~= ITEM_SOULBOUND then
-									canSell = false									
-								end
-							end
 						end	
 					end		
 					-- Epic
 					if AJM.db.autoSellEpic == true then
-						if itemRarity == AJM.ITEM_QUALITY_EPIC and itemType == WEAPON or itemType == ARMOR then
-							local num = tonumber( AJM.db.autoSellIlvlEpic )
-							local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
-							--AJM:Print("test", iLvl, "vs", num )
-								if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
-								if iLvl >= num then
-									canSell = true
-								end
-							end	
-							if AJM.db.autoSellBoEEpic == true then 
-								local isBop = JambaUtilities:ToolTipBagScaner( link,bag,slot )
-								--AJM:Print("IsBoP", isBop)
-								if isBop ~= ITEM_SOULBOUND then
-									canSell = false
+						if itemRarity == AJM.ITEM_QUALITY_EPIC then
+							if itemType == WEAPON or itemType == ARMOR then
+								local num = tonumber( AJM.db.autoSellIlvlEpic )
+								local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
+								--AJM:Print("test", iLvl, "vs", num )
+									if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
+									if iLvl >= num then
+										canSell = true
+									end
+								end	
+								if AJM.db.autoSellBoEEpic == true then 
+									local isBop = JambaUtilities:ToolTipBagScaner( link,bag,slot )
+									--AJM:Print("IsBoP", isBop)
+									if isBop ~= ITEM_SOULBOUND then
+										canSell = false
+									end
 								end
 							end
-						end
+						end	
 					end
 					if canSell == true then 
 						if itemSellPrice ~= nil and itemSellPrice > 0 then
@@ -1281,7 +1288,7 @@ function AJM:DoMerchantSellOtherItems()
 							if MerchantFrame:IsVisible() == true then	
 								UseContainerItem( bag, slot ) 
 								-- Tell the boss.
-								AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
+								--AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
 							end
 						end
 					end

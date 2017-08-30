@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: JambaSell
 ## Notes: JambaSell
 ## Author: Ebony, Former Author: Jafula

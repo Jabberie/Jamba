@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: JambaFTL
 ## Notes: JambaFTL
 ## Author: olipcs (although most of the code is originaly from Jafula) (any changes added to support 4.0.5 from ebony!)

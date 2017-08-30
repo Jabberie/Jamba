@@ -9,7 +9,6 @@ move-folders:
     Jamba/Modules/Jamba-Follow: Jamba-Follow
     Jamba/Modules/Jamba-FTL: Jamba-FTL
     Jamba/Modules/Jamba-ItemUse: Jamba-ItemUse
-    Jamba/Modules/Jamba-Macro: Jamba-Macro
     Jamba/Modules/Jamba-Proc: Jamba-Proc
     Jamba/Modules/Jamba-Purchase: Jamba-Purchase
     Jamba/Modules/Jamba-Quest: Jamba-Quest
@@ -19,7 +18,6 @@ move-folders:
     Jamba/Modules/Jamba-Taxi: Jamba-Taxi
     Jamba/Modules/Jamba-Toon: Jamba-Toon
     Jamba/Modules/Jamba-Trade: Jamba-Trade
-    Jamba/Modules/Jamba-Target: Jamba-Target
     Jamba/Modules/Jamba-AdvancedLoot: Jamba-AdvancedLoot
 	Jamba/Modules/Jamba-Curr: Jamba-Curr
 	Jamba/Modules/Jamba-Mount: Jamba-Mount

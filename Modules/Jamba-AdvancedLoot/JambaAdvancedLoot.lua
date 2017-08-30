@@ -558,8 +558,9 @@ end
 -- Called when the addon is enabled.
 function AJM:OnEnable()
 	AJM:SetAutoLoot()
-	AJM:RegisterEvent( "LOOT_OPENED" )
+	--AJM:RegisterEvent( "LOOT_OPENED" )
 	AJM:RegisterEvent( "GROUP_ROSTER_UPDATE" )
+	AJM:RegisterEvent( "LOOT_READY" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
 end
 
@@ -646,6 +647,15 @@ end
 function AJM:GROUP_ROSTER_UPDATE( event, ... )
 	AJM:SetAutoLoot()
 end
+
+function AJM:LOOT_READY()
+	if AJM.db.advancedLoot == true then
+		if IsInGroup() then
+			AJM:DoAdvancedLoot()
+		end
+	end
+end
+
 
 function AJM:LOOT_OPENED()
 	if AJM.db.advancedLoot == true then

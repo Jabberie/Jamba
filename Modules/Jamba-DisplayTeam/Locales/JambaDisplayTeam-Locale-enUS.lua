@@ -84,6 +84,8 @@ L["Characters Per Bar"] = true
 L["Only Show in Party"] = true
 L["Only Show Display-Team\nIn Party or Raid"] = true
 L["Health & Power Out of Group"] = true
+L["Show Class Colors"] = true
+
 
 --Help System
 
@@ -107,7 +109,6 @@ L["Show Percentage"]  = true
 L["Faction Name"] = true 
 L["Show Jamba Team or Unit Frame List"] = true
 L["Show Character Name"] = true
-
 L["ShowHonorXP"] = true
 L["Show ToolTip Information"] = true
 L["Show the Follow Bar and Character Name\n\nHover Over for Character Infomation"] = true
@@ -121,4 +122,5 @@ L["Show the Team Honor XP Bar"] = true
 L["ShowReputation"] = true
 L["Show the Team Reputation Bar"] = true
 L["Update Health and Power out of Groups\nUse Guild Communications!"] = true
+L["Show class Coulor on Health Bar"] = true
 

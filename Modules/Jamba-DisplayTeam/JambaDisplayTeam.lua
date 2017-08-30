@@ -70,6 +70,7 @@ AJM.settings = {
 		experienceStatusShowValues = false,
 		experienceStatusShowPercentage = true,		
 		showHealthStatus = true,
+		showClassColors = false,
 		healthStatusWidth = 100,
 		healthStatusHeight = 30,
 		healthStatusShowValues = true,
@@ -649,6 +650,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	characterStatusBar["reputationBarText"] = reputationBarText
 	AJM:UpdateReputationStatus( characterName, nil, nil, nil )
 	-- Set the health bar.
+	
 	local healthName = AJM.globalFramePrefix.."HealthBar"
 	local healthBar = CreateFrame( "StatusBar", healthName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
 	healthBar.backgroundTexture = healthBar:CreateTexture( healthName.."BackgroundTexture", "ARTWORK" )
@@ -660,10 +662,27 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	healthBar:SetValue( 100 )
 	healthBar:SetFrameStrata( "LOW" )
 	healthBar:SetAlpha( 1 )
+
+	
+	local healthIncomingName = AJM.globalFramePrefix.."HealthIncomingBar"
+	local healthIncomingBar = CreateFrame( "StatusBar", healthIncomingName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
+	healthIncomingBar.backgroundTexture = healthIncomingBar:CreateTexture( healthIncomingName.."BackgroundTexture", "ARTWORK" )
+	healthIncomingBar.backgroundTexture:SetColorTexture( 0.58, 0.0, 0.55, 0.15 )
+	healthIncomingBar:SetStatusBarTexture( statusBarTexture )
+	healthIncomingBar:GetStatusBarTexture():SetHorizTile( false )
+	healthIncomingBar:GetStatusBarTexture():SetVertTile( false )
+	healthIncomingBar:SetMinMaxValues( 0, 100 )
+	healthIncomingBar:SetValue( 0 )
+	healthIncomingBar:SetFrameStrata( "BACKGROUND" )
+	healthIncomingBar:SetAlpha( 1 )
+	
+	-- Set the heal Incoming bar	
+
 	local healthBarClick = CreateFrame( "CheckButton", healthName.."Click"..characterName, parentFrame, "SecureActionButtonTemplate" )
 	healthBarClick:SetAttribute( "unit", Ambiguate( characterName, "all" ) )
 	healthBarClick:SetFrameStrata( "MEDIUM" )
 	characterStatusBar["healthBar"] = healthBar
+	characterStatusBar["healthIncomingBar"] = healthIncomingBar
 	characterStatusBar["healthBarClick"] = healthBarClick
 	local healthBarText = healthBar:CreateFontString( healthName.."Text", "OVERLAY", "GameFontNormal" )
 	healthBarText:SetTextColor( 1.00, 1.00, 1.00, 1.00 )
@@ -674,6 +693,8 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	healthBarText.inComingHeal = 0
 	characterStatusBar["healthBarText"] = healthBarText
 	AJM:UpdateHealthStatus( characterName, nil, nil )
+	
+	
 	-- Set the power bar.
 	local powerName = AJM.globalFramePrefix.."PowerBar"
 	local powerBar = CreateFrame( "StatusBar", powerName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
@@ -830,6 +851,7 @@ function AJM:HideJambaTeamStatusBar( characterName )
 	characterStatusBar["reputationBar"]:Hide()
 	characterStatusBar["reputationBarClick"]:Hide()	
 	characterStatusBar["healthBar"]:Hide()
+	characterStatusBar["healthIncomingBar"]:Hide()
 	characterStatusBar["healthBarClick"]:Hide()
 	characterStatusBar["powerBar"]:Hide()
 	characterStatusBar["powerBarClick"]:Hide()
@@ -1120,6 +1142,7 @@ function AJM:UpdateJambaTeamStatusBar( characterName, characterPosition )
 	end		
 	-- Display the health bar.
 	local healthBar	= characterStatusBar["healthBar"]
+	local healthIncomingBar = characterStatusBar["healthIncomingBar"]
 	local healthBarClick = characterStatusBar["healthBarClick"]
 	if AJM.db.showHealthStatus == true then
 		healthBar.backgroundTexture:SetAllPoints()
@@ -1139,7 +1162,18 @@ function AJM:UpdateJambaTeamStatusBar( characterName, characterPosition )
 	else
 		healthBar:Hide()
 		healthBarClick:Hide()
-	end		
+	end
+	-- Display the health Incoming bar.
+	if AJM.db.showHealthStatus == true then
+		healthIncomingBar.backgroundTexture:SetAllPoints()
+		healthIncomingBar:SetWidth( AJM.db.healthStatusWidth )
+		healthIncomingBar:SetHeight( AJM.db.healthStatusHeight )
+		healthIncomingBar:SetPoint( "TOPLEFT", healthBar, "TOPLEFT", 0, 0 )
+		healthIncomingBar:Show()
+	else
+		healthIncomingBar:Hide()
+		--healthBarClick:Hide()
+	end			
 	-- Display the power bar.
 	local powerBar = characterStatusBar["powerBar"]
 	local powerBarClick = characterStatusBar["powerBarClick"]
@@ -1604,7 +1638,17 @@ local function SettingsCreateDisplayOptions( top )
 		L["Percentage"],
 		AJM.SettingsToggleShowHealthStatusPercentage,
 		L["Show Percentage"]
-	)		
+	)
+	movingTop = movingTop - checkBoxHeight - verticalSpacing		
+	AJM.settingsControl.displayOptionsCheckBoxShowClassColors = JambaHelperSettings:CreateCheckBox( 
+		AJM.settingsControl, 
+		thirdWidth, 
+		left, 
+		movingTop, 
+		L["Show Class Colors"],
+		AJM.SettingsToggleShowClassColors,
+		L["Show class Coulor on Health Bar"]
+	)	
 	movingTop = movingTop - checkBoxHeight - verticalSpacing
 	AJM.settingsControl.displayOptionsHealthStatusWidthSlider = JambaHelperSettings:CreateSlider( 
 		AJM.settingsControl, 
@@ -1793,6 +1837,7 @@ function AJM:SettingsRefresh()
 	AJM.settingsControl.displayOptionsExperienceStatusWidthSlider:SetValue( AJM.db.experienceStatusWidth )
 	AJM.settingsControl.displayOptionsExperienceStatusHeightSlider:SetValue( AJM.db.experienceStatusHeight )
 	AJM.settingsControl.displayOptionsCheckBoxShowHealthStatus:SetValue( AJM.db.showHealthStatus )
+	AJM.settingsControl.displayOptionsCheckBoxShowClassColors:SetValue( AJM.db.showClassColors )
 	AJM.settingsControl.displayOptionsCheckBoxShowHealthStatusValues:SetValue( AJM.db.healthStatusShowValues )
 	AJM.settingsControl.displayOptionsCheckBoxShowHealthStatusPercentage:SetValue( AJM.db.healthStatusShowPercentage )	
 	AJM.settingsControl.displayOptionsHealthStatusWidthSlider:SetValue( AJM.db.healthStatusWidth )
@@ -1849,6 +1894,7 @@ function AJM:SettingsRefresh()
 		AJM.settingsControl.displayOptionsExperienceStatusWidthSlider:SetDisabled( not AJM.db.showTeamList or not AJM.db.showExperienceStatus)
 		AJM.settingsControl.displayOptionsExperienceStatusHeightSlider:SetDisabled( not AJM.db.showTeamList or not AJM.db.showExperienceStatus )
 		AJM.settingsControl.displayOptionsCheckBoxShowHealthStatus:SetDisabled( not AJM.db.showTeamList )
+		AJM.settingsControl.displayOptionsCheckBoxShowClassColors:SetDisabled( not AJM.db.showTeamList or not AJM.db.showHealthStatus )
 		AJM.settingsControl.displayOptionsCheckBoxShowHealthStatusValues:SetDisabled( not AJM.db.showTeamList or not AJM.db.showHealthStatus )
 		AJM.settingsControl.displayOptionsCheckBoxShowHealthStatusPercentage:SetDisabled( not AJM.db.showTeamList or not AJM.db.showHealthStatus )
 		AJM.settingsControl.displayOptionsHealthStatusWidthSlider:SetDisabled( not AJM.db.showTeamList or not AJM.db.showHealthStatus )
@@ -1922,6 +1968,7 @@ function AJM:JambaOnSettingsReceived( characterName, settings )
 		AJM.db.experienceStatusShowValues = settings.experienceStatusShowValues
 		AJM.db.experienceStatusShowPercentage = settings.experienceStatusShowPercentage
 		AJM.db.showHealthStatus = settings.showHealthStatus
+		AJM.db.showClassColors = settings.showClassColors
 		AJM.db.healthStatusWidth = settings.healthStatusWidth
 		AJM.db.healthStatusHeight = settings.healthStatusHeight
 		AJM.db.healthStatusShowValues = settings.healthStatusShowValues
@@ -2146,6 +2193,11 @@ end
 
 function AJM:SettingsToggleShowHealthStatus( event, checked )
 	AJM.db.showHealthStatus = checked
+	AJM:SettingsRefresh()
+end
+
+function AJM:SettingsToggleShowClassColors( event, checked )
+	AJM.db.showClassColors = checked
 	AJM:SettingsRefresh()
 end
 
@@ -3018,13 +3070,14 @@ function AJM:SendHealthStatusUpdateCommand(unit)
 				local playerHealth = UnitHealth( unit )
 				local playerMaxHealth = UnitHealthMax( unit )
 				local inComingHeal = UnitGetIncomingHeals( unit )
+				local _, class = UnitClass ("player")
 				
 				if AJM.db.showTeamListOnMasterOnly == true then
 					--AJM:Print( "SendHealthStatusUpdateCommand TO Master!" )
-					AJM:JambaSendCommandToMaster( AJM.COMMAND_HEALTH_STATUS_UPDATE, playerHealth, playerMaxHealth, inComingHeal )
+					AJM:JambaSendCommandToMaster( AJM.COMMAND_HEALTH_STATUS_UPDATE, playerHealth, playerMaxHealth, inComingHeal, class )
 				else
 					--AJM:Print( "SendHealthStatusUpdateCommand TO Team!" )
-					AJM:JambaSendCommandToTeam( AJM.COMMAND_HEALTH_STATUS_UPDATE, playerHealth, playerMaxHealth, inComingHeal )
+					AJM:JambaSendCommandToTeam( AJM.COMMAND_HEALTH_STATUS_UPDATE, playerHealth, playerMaxHealth, inComingHeal, class )
 				end	
 			end
 		else
@@ -3032,25 +3085,26 @@ function AJM:SendHealthStatusUpdateCommand(unit)
 			local playerMaxHealth = UnitHealthMax( unit )
 			local inComingHeal = UnitGetIncomingHeals( unit )
 			local characterName, characterRealm = UnitName( unit )
+			local _, class = UnitClass ( unit )
 			local character = JambaUtilities:AddRealmToNameIfNotNil( characterName, characterRealm )
 			--AJM:Print("HeathStats", character, playerHealth, playerMaxHealth)
-			AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth, inComingHeal)
+			AJM:UpdateHealthStatus( character, playerHealth, playerMaxHealth, inComingHeal, class)
 		end
 	end
 end
 
-function AJM:ProcessUpdateHealthStatusMessage( characterName, playerHealth, playerMaxHealth, inComingHeal )
-	AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, inComingHeal)
+function AJM:ProcessUpdateHealthStatusMessage( characterName, playerHealth, playerMaxHealth, inComingHeal, class )
+	AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, inComingHeal, class)
 end
 
 function AJM:SettingsUpdateHealthAll()
 	for characterName, characterStatusBar in pairs( AJM.characterStatusBar ) do			
-		AJM:UpdateHealthStatus( characterName, nil, nil, nil )
+		AJM:UpdateHealthStatus( characterName, nil, nil, nil, nil )
 	end
 end
 
-function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, inComingHeal )
-	--AJM:Print("testUpdate", characterName, playerHealth, playerMaxHealth, inComingHeal ) 
+function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, inComingHeal, class )
+	--AJM:Print("testUpdate", characterName, playerHealth, playerMaxHealth, inComingHeal, class ) 
 		if characterName == nil then
 		return
 	end
@@ -3067,6 +3121,7 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, i
 	end
 	local healthBarText = characterStatusBar["healthBarText"]	
 	local healthBar = characterStatusBar["healthBar"]
+	local healthIncomingBar = characterStatusBar["healthIncomingBar"]
 	
 	if playerMaxHealth == 0 then 
 		playerMaxHealth = healthBarText.playerMaxHealth
@@ -3097,10 +3152,13 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, i
 	-- Set statusBar
 	healthBar:SetMinMaxValues( 0, tonumber( playerMaxHealth ) )
 	healthBar:SetValue( tonumber( playerHealth ) )
+	healthIncomingBar:SetMinMaxValues( 0, tonumber( playerMaxHealth ) )
+	healthIncomingBar:SetValue( tonumber( playerHealth ) )	
 	
 	if inComingHeal > 0 then
 --	AJM:Print("incomingHeal", inComingHeal)
-		healthBar:SetValue( tonumber( playerHealth + inComingHeal ) )
+		healthIncomingBar:SetValue( tonumber( playerHealth + inComingHeal ) )
+		healthIncomingBar:SetStatusBarColor( 0, 1, 0, 1 )
 	end
 	local text = ""
 	if UnitIsDeadOrGhost(Ambiguate( characterName, "none" ) ) == true then
@@ -3119,11 +3177,21 @@ function AJM:UpdateHealthStatus( characterName, playerHealth, playerMaxHealth, i
 		end
 	end
 	healthBarText:SetText( text )		
-	AJM:SetStatusBarColourForHealth( healthBar, floor((playerHealth/playerMaxHealth)*100), characterName)
+	AJM:SetStatusBarColourForHealth( healthBar, floor((playerHealth/playerMaxHealth)*100), characterName, class)
 end
 
-function AJM:SetStatusBarColourForHealth( statusBar, statusValue, characterName )
-	local r, g, b = 0, 0, 0
+-- TODO Support for classColors
+function AJM:SetStatusBarColourForHealth( statusBar, statusValue, characterName, class )
+	--AJM:Print("colour class", statusValue, characterName)
+	local classColor = RAID_CLASS_COLORS[class]
+	if classColor ~= nil and AJM.db.showClassColors == true then
+		-- AJM:Print("test", characterName, class, classColor.r, classColor.g, classColor.b )
+		local r = classColor.r
+		local g = classColor.g
+		local b = classColor.b
+		statusBar:SetStatusBarColor( r, g, b, 1 )
+	else
+		local r, g, b = 0, 0, 0
 		statusValue = statusValue / 100
 		if( statusValue > 0.5 ) then
 			r = (1.0 - statusValue) * 2
@@ -3132,8 +3200,9 @@ function AJM:SetStatusBarColourForHealth( statusBar, statusValue, characterName 
 			r = 1.0
 			g = statusValue * 2
 		end
-		b = 0.0
+		b = b
 		statusBar:SetStatusBarColor( r, g, b )
+	end
 end	
 
 -------------------------------------------------------------------------------------------------------------
