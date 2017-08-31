@@ -608,28 +608,37 @@ function AJM:TradeBoEItems()
 	if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
 		return
 	end
-	for bag,slot,link in LibBagUtils:Iterate("BAGS") do
-		if bag ~= nil then
-			local _, _, locked, quality = GetContainerItemInfo(bag, slot)
-			-- quality is Uncommon (green) to  Epic (purple) 2 - 3 - 4
-			if quality ~= nil and locked == false then
-				if quality >= 2 and quality <= 4 then 
-					-- tooltips scan is the olny way to find if the item is BoE in bags!
-					local isBoe = JambaUtilities:ToolTipBagScaner(link, bag, slot)
-					-- if the item is boe then add it to the trade list!
-					if isBoe ~= ITEM_SOULBOUND then
-						--AJM:Print("test21", link, locked)
-						for iterateTradeSlots = 1, (MAX_TRADE_ITEMS - 1) do
-							if GetTradePlayerItemLink( iterateTradeSlots ) == nil then
-								PickupContainerItem( bag, slot )
-								ClickTradeButton( iterateTradeSlots )
+	for index, character in JambaApi.TeamListOrderedOnline() do
+		--AJM:Print("Team", character )
+		local teamCharacterName = ( Ambiguate( character, "short" ) )
+		local tradePlayersName = GetUnitName("NPC")
+		if tradePlayersName == teamCharacterName then
+			if JambaApi.IsCharacterTheMaster(character) == true and JambaUtilities:CheckIsFromMyRealm(character) == true then
+				for bag,slot,link in LibBagUtils:Iterate("BAGS") do
+					if bag ~= nil then			
+						local _, _, locked, quality = GetContainerItemInfo(bag, slot)
+						-- quality is Uncommon (green) to  Epic (purple) 2 - 3 - 4
+						if quality ~= nil and locked == false then
+							if quality >= 2 and quality <= 4 then 
+								-- tooltips scan is the olny way to find if the item is BoE in bags!
+								local isBoe = JambaUtilities:ToolTipBagScaner(link, bag, slot)
+								-- if the item is boe then add it to the trade list!
+								if isBoe ~= ITEM_SOULBOUND then
+									--AJM:Print("test21", link, locked)
+									for iterateTradeSlots = 1, (MAX_TRADE_ITEMS - 1) do
+										if GetTradePlayerItemLink( iterateTradeSlots ) == nil then
+											PickupContainerItem( bag, slot )
+											ClickTradeButton( iterateTradeSlots )
+										end	
+									end
+								end	
 							end	
-						end
+						end	
 					end	
-				end	
-			end	
-		end	
-	end	
+				end
+			end
+		end
+	end		
 end
 
 
@@ -637,27 +646,36 @@ function AJM:TradeCRItems()
 	if JambaApi.IsCharacterTheMaster( AJM.characterName ) == true then
 		return
 	end
-	for bag,slot,itemLink in LibBagUtils:Iterate("BAGS") do
-		if itemLink then
-			-- using legion CraftingReagent API, as tooltip massess up some "items"
-			local _,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,isCraftingReagent = GetItemInfo(itemLink)
-			if isCraftingReagent == true then
-				--AJM:Print("TradeCraftingGoods", isCraftingReagent, itemLink)
-				-- tooltips scan is the olny way to find if the item is BOP in bags!
-				local isBop = JambaUtilities:TooltipScaner(itemLink)
-				--AJM:Print("testBOP", itemLink, isBop)
-				if isBop ~= ITEM_BIND_ON_PICKUP then
-				--AJM:Print("AddToTrade", itemLink)
-					for iterateTradeSlots = 1, (MAX_TRADE_ITEMS - 1) do
-						if GetTradePlayerItemLink( iterateTradeSlots ) == nil then
-							PickupContainerItem( bag, slot )
-							ClickTradeButton( iterateTradeSlots )
+	for index, character in JambaApi.TeamListOrderedOnline() do
+		--AJM:Print("Team", character )
+		local teamCharacterName = ( Ambiguate( character, "short" ) )
+		local tradePlayersName = GetUnitName("NPC")
+		if tradePlayersName == teamCharacterName then
+			if JambaApi.IsCharacterTheMaster(character) == true and JambaUtilities:CheckIsFromMyRealm(character) == true then
+				for bag,slot,itemLink in LibBagUtils:Iterate("BAGS") do
+					if itemLink then
+						-- using legion CraftingReagent API, as tooltip massess up some "items"
+						local _,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,isCraftingReagent = GetItemInfo(itemLink)
+						if isCraftingReagent == true then
+							--AJM:Print("TradeCraftingGoods", isCraftingReagent, itemLink)
+							-- tooltips scan is the olny way to find if the item is BOP in bags!
+							local isBop = JambaUtilities:TooltipScaner(itemLink)
+							--AJM:Print("testBOP", itemLink, isBop)
+							if isBop ~= ITEM_BIND_ON_PICKUP then
+							--AJM:Print("AddToTrade", itemLink)
+								for iterateTradeSlots = 1, (MAX_TRADE_ITEMS - 1) do
+									if GetTradePlayerItemLink( iterateTradeSlots ) == nil then
+										PickupContainerItem( bag, slot )
+										ClickTradeButton( iterateTradeSlots )
+									end	
+								end	
+							end	
 						end	
 					end	
-				end	
-			end	
-		end	
-	end	
+				end
+			end
+		end
+	end		
 end
 
 

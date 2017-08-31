@@ -2,7 +2,7 @@
 ## Title: JambaTrade
 ## Notes: JambaTrade
 ## Author: Ebony, Former Author: Jafula
-## Version: 5.3.0
+## Version: 5.3.1
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

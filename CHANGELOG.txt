@@ -1,6 +1,18 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 5.3.1
+WoW Game Version: 7.3
+File Version: 7.3.0-5.3.0
+Release Date: 31/8/2017
+Modules Changed: Jamba-Trade
+
+*Jamba-Trade
+	- fixed a bug where BoE and Crafting Reagents was not get checking against the team list.
+
+
+
+---------------------------
 Jamba Version: 5.3.0
 WoW Game Version: 7.3
 File Version: 7.3.0-5.3.0
