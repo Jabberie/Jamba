@@ -1072,13 +1072,15 @@ function AJM:DoMerchantSellItems()
 				-- Green
 				if AJM.db.autoSellUncommon == true then
 					if itemRarity == AJM.ITEM_QUALITY_UNCOMMON then
-						if itemType == WEAPON or itemType == ARMOR then
+						if itemType == WEAPON or itemType == ARMOR or itemSubType == EJ_LOOT_SLOT_FILTER_ARTIFACT_RELIC then
 							--AJM:Print("testGreen", link, itemRarity, "a", AJM.ITEM_QUALITY_UNCOMMON )
 							local num = tonumber( AJM.db.autoSellIlvlUncommon )
 							local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
-							--AJM:Print("test", iLvl, "vs", num, "item", link )
-							if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
-								if iLvl >= num then
+							--AJM:Print("test", num , "vs", iLvl, "item", link )
+							if num ~= nil and iLvl ~= nil and ( itemLevel > AJM.MIN_ITEM_LEVEL ) then
+								--if iLvl >= num then
+								if num >= iLvl then	
+									--AJM:Print("ture", link )
 									canSell = true
 								end
 							end	
@@ -1095,12 +1097,12 @@ function AJM:DoMerchantSellItems()
 					--Blue
 					if AJM.db.autoSellRare == true then
 						if itemRarity == AJM.ITEM_QUALITY_RARE then
-							if itemType == WEAPON or itemType == ARMOR then
+							if itemType == WEAPON or itemType == ARMOR or itemSubType == EJ_LOOT_SLOT_FILTER_ARTIFACT_RELIC then
 								local num = tonumber( AJM.db.autoSellIlvlRare )
 								local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
 								--AJM:Print("test", iLvl, "vs", num )
 								if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
-									if iLvl >= num then
+									if num >= iLvl then
 										canSell = true
 									end
 								end	
@@ -1117,12 +1119,12 @@ function AJM:DoMerchantSellItems()
 					-- Epic
 					if AJM.db.autoSellEpic == true then
 						if itemRarity == AJM.ITEM_QUALITY_EPIC then
-							if itemType == WEAPON or itemType == ARMOR then
+							if itemType == WEAPON or itemType == ARMOR or itemSubType == EJ_LOOT_SLOT_FILTER_ARTIFACT_RELIC then
 								local num = tonumber( AJM.db.autoSellIlvlEpic )
 								local iLvl = ItemUpgradeInfo:GetUpgradedItemLevel(link)
 								--AJM:Print("test", iLvl, "vs", num )
-									if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
-									if iLvl >= num then
+								if num ~= nil and iLvl ~= nil and (itemLevel > AJM.MIN_ITEM_LEVEL ) then
+									if num >= iLvl then	
 										canSell = true
 									end
 								end	

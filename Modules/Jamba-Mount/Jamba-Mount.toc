@@ -2,7 +2,7 @@
 ## Title: Jamba-Mount
 ## Notes: Jamba-Mount
 ## Author: Ebony
-## Version: 5.3.1
+## Version: 5.3.2
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

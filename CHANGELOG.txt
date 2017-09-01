@@ -1,6 +1,19 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 5.3.2
+WoW Game Version: 7.3
+File Version: 7.3.0-5.3.0
+Release Date: 01/9/2017
+Modules Changed: Jamba-Sell
+
+
+*jamba-sell
+	- Should sell Ilvl items right.
+	- will now sell Artifact Relic.
+
+
+---------------------------
 Jamba Version: 5.3.1
 WoW Game Version: 7.3
 File Version: 7.3.0-5.3.0
