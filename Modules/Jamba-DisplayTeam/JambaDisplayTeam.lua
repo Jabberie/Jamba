@@ -3415,9 +3415,9 @@ function AJM:UpdateExperienceStatus( characterName, playerExperience, playerMaxE
 	local honorText = ""
 	if AJM.db.showExpInfo == true then
 		if prestigeLevel > 0 then
-			honorText = honorText..honorLevel..L[" "]
-		else
 			honorText = honorText..prestigeLevel.."-"..honorLevel..L[" "]
+		else
+			honorText = honorText..honorLevel..L[" "]
 		end	
 	end
 	if AJM.db.experienceStatusShowValues == true then
