@@ -60,6 +60,9 @@ end
 
 --AddRealmToNameIfMissing Blizzard Code does not like spaces in the realm name GetRealmName() pulls back the name with a Space Unwanted for most of the stuff we need to do.
 function JambaUtilities:AddRealmToNameIfMissing( name )
+	if name == nil then
+		return
+	end
 	Name = name:gsub("^%l", string.upper )
 	fullName = Name:gsub( "%s+", "")
 	local matchDash = fullName:find( "-" )
@@ -271,5 +274,24 @@ function JambaUtilities:ToolTipBagScaner(item, bag, slot)
 		end
 	    tooltipbagScanner:Hide()
 		return boe
+	end
+end
+
+-- GetPetOwner
+function JambaUtilities:getPetOwner( petName )
+	--print(petName)
+	if petName ~= nil then
+		local tooltipName = "AJMPetScanner"
+		local tooltipScanner = CreateFrame("GameTooltip", tooltipName, nil, "GameTooltipTemplate")
+		tooltipScanner:ClearLines()
+		tooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE")
+		tooltipScanner:SetUnit( petName )
+		local ownerName = _G[tooltipName.."TextLeft2"]:GetText() -- This is the line with <[Player]'s Pet>
+		if not petName then 
+			 return nil 
+		end
+		local owner, _ = string.split("'",ownerName)
+		return owner -- This is the pet's owner
+	--	print(owner)
 	end
 end

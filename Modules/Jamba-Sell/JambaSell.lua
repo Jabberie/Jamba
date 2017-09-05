@@ -1056,6 +1056,7 @@ function AJM:DoMerchantSellItems()
 			if link ~= nil then	
 			local canSell = false
 			local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, iconFileDataID, itemSellPrice = GetItemInfo( link )	
+			local _, itemCount = GetContainerItemInfo( bag, slot )
 			--AJM:Print("Test", itemLink, itemRarity )
 				if AJM.db.autoSellPoor == true then
 					if itemRarity == AJM.ITEM_QUALITY_POOR then
@@ -1141,8 +1142,13 @@ function AJM:DoMerchantSellItems()
 					if canSell == true then 
 						if itemSellPrice ~= nil and itemSellPrice > 0 then
 							if MerchantFrame:IsVisible() == true then
-								count = count + 1
-								gold = gold + itemSellPrice
+								if itemCount > 1 then
+									count = count + itemCount
+									gold = gold + itemSellPrice * itemCount
+								else	
+									count = count + 1
+									gold = gold + itemSellPrice
+								end
 								UseContainerItem( bag, slot )	
 							end
 						end	

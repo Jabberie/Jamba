@@ -685,6 +685,7 @@ end
 -- Guild bank stuff keep TEMP!
 
 function AJM:GUILDBANKFRAME_OPENED()
+	--AJM:Print("guildBankOpen")
 	if AJM.db.adjustMoneyWithGuildBank == false then
 		return
 	end
@@ -694,12 +695,25 @@ function AJM:GUILDBANKFRAME_OPENED()
 	local moneyToKeepOnToon = tonumber( AJM.db.goldAmountToKeepOnToon ) * 10000
 	local moneyOnToon = GetMoney()
 	local moneyToDepositOrWithdraw = moneyOnToon - moneyToKeepOnToon
+	--AJM:Print(" testa", moneyToDepositOrWithdraw )
 	if moneyToDepositOrWithdraw == 0 then
 		return
 	end
 	if moneyToDepositOrWithdraw > 0 then
-		DepositGuildBankMoney( moneyToDepositOrWithdraw )
+	--	AJM:Print(" test", moneyToDepositOrWithdraw )
+		--DepositGuildBankMoney( moneyToDepositOrWithdraw )
+		AJM:ScheduleTimer("SendMoneyToGuild", 0.5, moneyToDepositOrWithdraw)
 	else
-		WithdrawGuildBankMoney( -1 * moneyToDepositOrWithdraw )
+		local takeoutmoney = -1 * moneyToDepositOrWithdraw
+	--	AJM:Print("takeout", takeoutmoney)
+		AJM:ScheduleTimer("TakeMoneyOut", 0.5, takeoutmoney )
 	end
 end
+
+function AJM:SendMoneyToGuild( money )
+	DepositGuildBankMoney( money )
+end
+
+function AJM:TakeMoneyOut( money )
+	WithdrawGuildBankMoney( money )	
+end	

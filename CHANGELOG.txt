@@ -4,15 +4,27 @@ ChangeLogs:
 Jamba Version: 5.3.2
 WoW Game Version: 7.3
 File Version: 7.3.0-5.3.0
-Release Date: 01/9/2017
-Modules Changed: Jamba-Sell
+Release Date: 05/9/2017
+Modules Changed: Jamba-Sell, jamba-display_team, Jamba-trade
 
 
-*jamba-sell
+*Jamba-sell
 	- Should sell Ilvl items right.
-	- will now sell Artifact Relic.
+	- Should now sell Artifact Relics.
+	- fixed a bug where it was not counting gold and items sold in a stack.
 
+*Jamba-Display_Team
+	- Fixed a bug where the colour on the class power Bar.
+	- Added A new bar to Show the threat level of the minions.
+	- Added Pet Support.
+	- Hides ClassPower Bar if class does not have one.
+	- Added Extra infomation to the Artifact Bar  how many points ready to spend, and points spent.
+		--And to Show Honor Bar prestigeLevel and Honor levels.
+	
+*Jamba-trade
+	- money to and from the GuildBank should work ( 7.3 add somekinda delay ) 	
 
+	
 ---------------------------
 Jamba Version: 5.3.1
 WoW Game Version: 7.3
@@ -23,7 +35,8 @@ Modules Changed: Jamba-Trade
 *Jamba-Trade
 	- fixed a bug where BoE and Crafting Reagents was not get checking against the team list.
 
-
+	
+	
 
 ---------------------------
 Jamba Version: 5.3.0
@@ -66,7 +79,7 @@ Modules Removed: Macros, Target
 	- Updated Trade BoE to support the new tooltip Scanner
 	
 *jamba-Currency
-	- if the minion is Maxed on a currency type (EG can not have anymore of that currency ) then the text will show red.
+	- if the minion is Maxed on a currency type (EG can not have anymore of that currency ) then the Click will show red.
 	- Changed FrameStrata from "BACKGROUND" to "LOW" (ticket #182) ((PS: I guess a dropdown list would be better))
 	- Added 7.3 currencies:
 		- Writhing Essence
@@ -375,7 +388,7 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Purchase
 	- Updated Ace3 to the newest and lastest 
 
 *Jamba-Quest-Tracker
-	-No Longer Spams Quest objective Text.
+	-No Longer Spams Quest objective Click.
 	
 *Jamba-Display-Team
 	-Will Now Send Font Size with team settings.	
@@ -404,7 +417,7 @@ Initial Legion Release.
 
 *Jamba-Core 
     - Some Back-End Work for Legion/7.0.x
-    - New tooltips on the options config to help make it easier to understand what some buttons to do and to clean up some of the long line texts.
+    - New tooltips on the options config to help make it easier to understand what some buttons to do and to clean up some of the long line Clicks.
     - Changed Help to Commands - as it shows more of the command Line stuff.
     - If a Module is not loaded on all characters then it no longer Lua-Error and tells the client what Module will need to be loaded.
     - Updated LibActionButton
@@ -426,7 +439,7 @@ Initial Legion Release.
         - Shows Bouns Scenario Objective.
         - Fixed with Broken Shore QuestLines a % bar needed coding in.
         - Only Show stage if there is more the one stage (so does not show in dungeons.)
-        - Added support to change the font And text size
+        - Added support to change the font And Click size
 		- Now automatically sets the frame to the Right Hand Side of the UI.
 		
 * Jamba-Quest 
@@ -449,7 +462,7 @@ Initial Legion Release.
 *Jamba-Display-Team
     - Values are now Abbreviated to smaller Numbers.
     - No longer Shows max Value when showing Percentage
-    - Added support to change the font And text size
+    - Added support to change the font And Click size
     - Added a NewTooltip when you hover over Follow bar to show
         - Level of minion If not level capped.
         - ItemLevel of minion.
@@ -487,17 +500,17 @@ Initial Legion Release.
     **- You can now add Currency IDs with one line in the config file if you need to.
     - There is a now a DropDown Box to show the Currency's you like to show
     - You can Have a max of 6 Currencies.
-    - Now shows Currency Icon Then The Three Letters of text.
+    - Now shows Currency Icon Then The Three Letters of Click.
     - Now shows the Currency Gold Icons when showing gold/Sliver/Copper
     - No Longer Shows Currency for Offline minions.
     - Should Now Order minions That are Offline/Online correctly.
-    - Added support to change the font And text size.
+    - Added support to change the font And Click size.
         
 * Jamba-Taxi
     - Fixed a Frame Bug with The new flight maps in broken island (Legion Zones)        
     
 * Jamba-AdvancedLoot
-    - Fixed a text bug that was not working with trade goods. (cloth)
+    - Fixed a Click bug that was not working with trade goods. (cloth)
     - Personal-Loot OverRights The Advanced Loot list. 
 
 * Jamba-ItemUse
@@ -554,7 +567,7 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Pu
 *Jamba-Toon
  - new Currency's 
 	- Added Valor points back.
-	- Fixed timewalker Currency to show the right Text.
+	- Fixed timewalker Currency to show the right Click.
 
 *Jamba-team-display
 	- Now Displays the word "DEAD" when the character is DEAD! and not 0%
@@ -603,7 +616,7 @@ Modules: AdvancedLoot, Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Pu
 
 *Jamba-Display-Team
  - Player/Minions Level should once again update When the player levels.
- - Added a Option to stack the text on Jamba-Display Follow Text (Level & ilvl).
+ - Added a Option to stack the Click on Jamba-Display Follow Click (Level & ilvl).
  
 Jamba-Toon
  - Added 6.2.0 Currency's	
@@ -807,12 +820,12 @@ Jamba-Team:
 *Sometimes invite is from XREALM even though Your on the same realm and have already joined the party no longer will the StaticPopup stay.
 
 Jamba-Quest: 
-*Cleared up quest Text from clones when in fact they have not even picked up a quest they still said Accepted Quest:.
+*Cleared up quest Click from clones when in fact they have not even picked up a quest they still said Accepted Quest:.
 *Fixed AutoPickUpQuests (quests at starting zones) Should now work like normal quests! -- did not make it to live build.
 *Fixed a Lua error that sometimes was showing on clones screen when using the jamba-quest-bar.
 
 Jamba-Toon:
-* Added: Auto Accept Summon No Longer do you need to Click that summon box. With cool text that says the PlayerName and where the clone went.
+* Added: Auto Accept Summon No Longer do you need to Click that summon box. With cool Click that says the PlayerName and where the clone went.
 
 Jamba-Communications:
 *Added Party Communications again when your in a party if not in own party with member of the team should send that char a /w.
@@ -1478,7 +1491,7 @@ Modules: Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest,
 
 General
 
-	* Text boxes associated with sliders will now cause the slider to update its value when enter is pressed.
+	* Click boxes associated with sliders will now cause the slider to update its value when enter is pressed.
 	
 Jamba-Proc
 
@@ -1527,14 +1540,14 @@ Modules: Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest,
 
 Jamba-Proc
 
-    * Overhauled - can now move location of bars, set bar texture, font, size.
+    * Overhauled - can now move location of bars, set bar Clickure, font, size.
     * Procs are now based on spell ID rather than name.
     * Can specify proc colour / sound on a per tag basis.
     * Way better, check it out!
 
 Jamba General Bug Fix
 
-    * Fixed an issue with textures no longer stretching due to a change in the wow api for 3.3.3.
+    * Fixed an issue with Clickures no longer stretching due to a change in the wow api for 3.3.3.
 
 Jamba-Team
 
@@ -1550,7 +1563,7 @@ Modules: Core, Display-Team, Follow, FTL, ItemUse, Macro, Proc, Purchase, Quest,
 
 Jamba-Talk
 
-    * Chat snippets now need to be enabled, by checking the check box that says "Enable Chat Snippets".  Chat snippets can be whispered without need to reply to someone.  For example a chat snippet called "mb" with the text explaining about multiboxing can be whispered by typing: /w toon !mb
+    * Chat snippets now need to be enabled, by checking the check box that says "Enable Chat Snippets".  Chat snippets can be whispered without need to reply to someone.  For example a chat snippet called "mb" with the Click explaining about multiboxing can be whispered by typing: /w toon !mb
 
 Jamba-Quest
 
@@ -1959,7 +1972,7 @@ Target & Focus
 New: Jamba-Follow
 
     * Move follow breaking warning from Jamba-Warning to Jamba-Follow.
-    * Add an option to specify the text when follow breaks - default to "Follow Broken".
+    * Add an option to specify the Click when follow breaks - default to "Follow Broken".
     * Automatic /follow from the slaves to the master when exiting combat.
     * /jamba-follow master <tag>
     * /jamba-follow target <target> <tag>
@@ -1979,7 +1992,7 @@ Jamba-Group
 New: Jamba-Me
 
     * Moved health, mana, hit warnings configuration from Jamba-Warning.
-    * Add option to specific messages when hit,health, etc in text fields.
+    * Add option to specific messages when hit,health, etc in Click fields.
     * Automatically accept resurrection requests (from members).
 
 Jamba-Merchant

@@ -85,7 +85,11 @@ L["Only Show in Party"] = true
 L["Only Show Display-Team\nIn Party or Raid"] = true
 L["Health & Power Out of Group"] = true
 L["Show Class Colors"] = true
-
+L["Threat Status Bar"] = true
+L["Pet Status Bar"] = true
+L["Show Name"] = true
+L["Show Pet Power"] = true
+L["Extra Info"] = true
 
 --Help System
 
@@ -123,4 +127,8 @@ L["ShowReputation"] = true
 L["Show the Team Reputation Bar"] = true
 L["Update Health and Power out of Groups\nUse Guild Communications!"] = true
 L["Show class Coulor on Health Bar"] = true
-
+L["Show the Teams Threat Bar"] = true
+L["Show the Teams Pet Bars"] = true
+L["Show the Teams Pet Name"] = true
+L["Show the Teams Pet Power"] = true
+L["Show Extra Infomation on Bars"] = true
