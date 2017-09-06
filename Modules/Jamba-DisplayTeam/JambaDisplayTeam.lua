@@ -4255,6 +4255,9 @@ function AJM:SendPetStatusUpdateCommand( unit )
 			local petMaxPower = UnitPowerMax( unit )
 			-- Nameing Stuff
 			local petName = UnitName( unit )
+			if petName == nil then
+				return
+			end
 			local characterName = JambaUtilities:getPetOwner( petName )
 			local character = JambaUtilities:AddRealmToNameIfMissing( characterName )
 			--AJM:Print("HeathStats", character, petHealth, petMaxHealth, petPower, petMaxPower, inComingHeal, petName )

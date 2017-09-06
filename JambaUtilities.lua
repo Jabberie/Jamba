@@ -287,7 +287,7 @@ function JambaUtilities:getPetOwner( petName )
 		tooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE")
 		tooltipScanner:SetUnit( petName )
 		local ownerName = _G[tooltipName.."TextLeft2"]:GetText() -- This is the line with <[Player]'s Pet>
-		if not petName then 
+		if not ownerName then 
 			 return nil 
 		end
 		local owner, _ = string.split("'",ownerName)
