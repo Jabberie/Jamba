@@ -67,7 +67,6 @@ AJM.currTypes.LegionfallWarSupplies = 1342
 AJM.currTypes.CoinsOfAir = 1416
 --7.3
 AJM.currTypes.WrithingEssence = 1501
-AJM.currTypes.ArgusWaystone = 1506
 AJM.currTypes.VeiledArgunite = 1508
 
 -------------------------------------- End of edit --------------------------------------------------------------

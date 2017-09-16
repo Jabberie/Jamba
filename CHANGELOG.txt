@@ -4,7 +4,7 @@ ChangeLogs:
 Jamba Version: 5.3.2
 WoW Game Version: 7.3
 File Version: 7.3.0-5.3.0
-Release Date: 05/9/2017
+Release Date: 16/9/2017
 Modules Changed: Jamba-Sell, jamba-display_team, Jamba-trade
 
 
@@ -14,17 +14,19 @@ Modules Changed: Jamba-Sell, jamba-display_team, Jamba-trade
 	- fixed a bug where it was not counting gold and items sold in a stack.
 
 *Jamba-Display_Team
-	- Fixed a bug where the colour on the class power Bar.
-	- Added A new bar to Show the threat level of the minions.
-	- Added Pet Support.
-	- Hides ClassPower Bar if class does not have one.
-	- Added Extra infomation to the Artifact Bar  how many points ready to spend, and points spent.
+	- Fixed a bug where the colour on the class power Bar was not showen right.
+	- Added Extra infomation to the Artifact Bar  how many points ready to spend +Number , and points spent. ( no + )
 		--And to Show Honor Bar prestigeLevel and Honor levels.
 	
 *Jamba-trade
-	- money to and from the GuildBank should work ( 7.3 add somekinda delay ) 	
+	- money to and from the GuildBank should work again ( 7.3 add somekinda delay ) 	
 
-	
+
+*jamba-Currency
+	- Removed Argus Waystone was removed as a Currency.
+
+		
+
 ---------------------------
 Jamba Version: 5.3.1
 WoW Game Version: 7.3
