@@ -1,6 +1,21 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+ChangeLogs:
+---------------------------
+Jamba Version: 5.3.3
+WoW Game Version: 7.3
+File Version: 7.3.0-5.3.0
+Release Date: 16/9/2017
+Modules Changed: Jamba-Sell
+	
+	
+	
+Jamba-Sell
+	- If item does not have sell price on sell:Other then deletes the item from bag. (helpful for stuff that does not sell thats junk)
+
+
+---------------------------
 Jamba Version: 5.3.2
 WoW Game Version: 7.3
 File Version: 7.3.0-5.3.0
