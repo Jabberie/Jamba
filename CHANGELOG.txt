@@ -6,12 +6,13 @@ ChangeLogs:
 Jamba Version: 5.3.3
 WoW Game Version: 7.3
 File Version: 7.3.0-5.3.0
-Release Date: 16/9/2017
+Release Date: 6/10/2017
 Modules Changed: Jamba-Sell
 	
+*Jamba-Advanced_Loot
+	- removed event LOOT_READY was making some players DC when the loot window was getting opened.
 	
-	
-Jamba-Sell
+*Jamba-Sell
 	- If item does not have sell price on sell:Other then deletes the item from bag. (helpful for stuff that does not sell thats junk)
 
 
