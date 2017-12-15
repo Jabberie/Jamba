@@ -18,12 +18,16 @@ L["Are you sure you wish to remove the selected item from the auto sell other it
 L["I have sold: X"] = function( itemLink )
 	return string.format( "I have sold: %s", itemLink )
 end
+L["I have deleted: X"] = function( itemLink )
+	return string.format( "I have DELETED: %s", itemLink )
+end
 L["DID NOT SELL: X"] = function( itemLink )
 	return string.format( "DID NOT SELL: %s", itemLink )
 end
 L["I have sold: X Items And Made:"] = function( count )
 	return string.format( "I have sold: %s Items And Made: ", count )
 end
+
 L["Items"] = true
 L["Sell: Others"] = true
 --L["Sell Greys"] = true

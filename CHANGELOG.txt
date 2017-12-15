@@ -22,7 +22,8 @@ Modules Changed: TBA
 *Team-Display
 	- Vertical Character List Is Back! Some help from Jabberie.
 	
-	
+*Jamba-Sell
+	- Now Deletes item if does not have a Vender price if (part of Alt click sell item on all toons)
 
 
 ---------------------------

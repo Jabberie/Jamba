@@ -936,17 +936,26 @@ function AJM:DoSellItem( itemlink )
 		numSlots = GetContainerNumSlots( bag )
 		for slot = 1, numSlots do 
 			-- Get the item link for the item in this slot.
-			local bagItemLink = GetContainerItemLink( bag, slot )
+		--	local bagItemLink = GetContainerItemLink( bag, slot )
+			local _, _, locked, _, _, _, bagItemLink, _, hasNoValue = GetContainerItemInfo(bag, slot)
 			-- If there is an item...
 			if bagItemLink ~= nil then
 				-- Does it match the item to sell?					
 				if JambaUtilities:DoItemLinksContainTheSameItem( bagItemLink, itemlink ) then
 					-- Yes, sell this item.
-					if MerchantFrame:IsVisible() == true then
-						UseContainerItem( bag, slot ) 
-					end
-					-- Tell the boss.
-					AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
+					if 	hasNoValue == false then	
+						if MerchantFrame:IsVisible() == true then	
+							UseContainerItem( bag, slot ) 
+							-- Tell the boss.
+							AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have sold: X"]( bagItemLink ), false )
+						end
+					else
+						if 	locked == false then
+							PickupContainerItem(bag,slot)
+							DeleteCursorItem()
+							AJM:JambaSendMessageToTeam( AJM.db.messageArea, L["I have deleted: X"]( bagItemLink ), false )
+						end	
+					end							
 				end
 			end
 		end
