@@ -1,7 +1,30 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
-ChangeLogs:
+Jamba Version: 5.4.0
+WoW Game Version: 7.3.2
+File Version: 7.3.2-5.4.0
+Release Date: TBA
+Modules Changed: TBA
+
+*Core
+	-UpDated Ace3
+	-Updated LibActionButton (rev 72) 
+
+
+*Jamba-Item-Use 
+	-Fixed missing code form Satchel items not on ItemBar
+	-Updated LibActionButton 
+
+*Jamba-Mount
+	-Mount changes by: xxx
+
+*Team-Display
+	- Vertical Character List Is Back! Some help from Jabberie.
+	
+	
+
+
 ---------------------------
 Jamba Version: 5.3.3
 WoW Game Version: 7.3
@@ -143,8 +166,8 @@ Modules Changed: Core, Display-Team, Quest-Watcher, Jamba-Team, Jamba-Trade, Jam
 	- Fixed bug #117 
 
 *Jamba-ItemUse
-	- Fixed a buged where Emissary quest items Nolonger would show on bar.
-	- Nolonger adds LockBox to the Item-Bar
+	- Fixed a buged where Emissary quest items No longer would show on bar.
+	- No longer adds LockBox to the Item-Bar
 
 *Jamba-Team
 	- added Enhancement #179*
@@ -228,11 +251,11 @@ Modules Changed: Core, Toon, Trade, Team, Mount, Trade, Currency, Taxi, Quest, F
 *Jamba-Team
 	- Added a option to set all members to assistant when you join a raid group.
 	- Remove command "/jamba-team InviteTag".
-	- "/Jamba-Team Invite" now support's <Tag>
+	- "/Jamba-Team Invite" now supports <Tag>
 	- If Tag is Unknown it will tell you.	
 
 *Jamba-Taxi
-	- Changed default Taxi dely to 2 sec, added in 0.5sec max 5 sec now.
+	- Changed default Taxi delay to 2 sec, added in 0.5sec max 5 sec now.
 	- When Closing out the Taxi Frame the Team will close as well.
 	
 *Jamba-Mount
@@ -245,7 +268,7 @@ Modules Changed: Core, Toon, Trade, Team, Mount, Trade, Currency, Taxi, Quest, F
 	- Updated the speed the follow message gets sent by 0.5 secs.
 
 *Jamba-Team_Display
-	- Added a glow effect when follow brecks on the Display-team bar.
+	- Added a glow effect when follow breaks on the Display-team bar.
 	
 ---------------------------
 Jamba Version: 5.1.7

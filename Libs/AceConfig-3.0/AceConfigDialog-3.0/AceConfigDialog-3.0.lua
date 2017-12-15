@@ -1,13 +1,13 @@
 --- AceConfigDialog-3.0 generates AceGUI-3.0 based windows based on option tables.
 -- @class file
 -- @name AceConfigDialog-3.0
--- @release $Id: AceConfigDialog-3.0.lua 1163 2017-08-14 14:04:39Z nevcairiel $
+-- @release $Id: AceConfigDialog-3.0.lua 1168 2017-10-01 08:05:04Z nevcairiel $
 
 local LibStub = LibStub
 local gui = LibStub("AceGUI-3.0")
 local reg = LibStub("AceConfigRegistry-3.0")
 
-local MAJOR, MINOR = "AceConfigDialog-3.0", 64
+local MAJOR, MINOR = "AceConfigDialog-3.0", 65
 local AceConfigDialog, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceConfigDialog then return end
@@ -740,7 +740,7 @@ local function ActivateControl(widget, event, ...)
 		else
 			validationErrorPopup(validated)
 		end
-		PlaySound(PlaySoundKitID and "igPlayerInviteDecline" or 882) -- SOUNDKIT.IG_PLAYER_INVITE_DECLINE || XXX _DECLINE is actually missing from the table
+		PlaySound(882) -- SOUNDKIT.IG_PLAYER_INVITE_DECLINE || _DECLINE is actually missing from the table
 		del(info)
 		return true
 	else
@@ -1034,6 +1034,7 @@ local function BuildGroups(group, options, path, appName, recurse)
 				entry.value = k
 				entry.text = GetOptionsMemberValue("name", v, options, path, appName)
 				entry.icon = GetOptionsMemberValue("icon", v, options, path, appName)
+				entry.iconCoords = GetOptionsMemberValue("iconCoords", v, options, path, appName)
 				entry.disabled = CheckOptionDisabled(v, options, path, appName)
 				tinsert(tree,entry)
 				if recurse and (v.childGroups or "tree") == "tree" then

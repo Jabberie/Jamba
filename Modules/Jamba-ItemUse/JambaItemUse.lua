@@ -489,6 +489,7 @@ end
 function AJM:CheckForSatchelsItemAndAddToBar()
 	for bag = 0, NUM_BAG_SLOTS do
 		for slot = 1, GetContainerNumSlots(bag) do
+			local texture, count, locked, quality, readable, lootable, link, isFiltered, hasNoValue, itemID = GetContainerItemInfo(bag, slot)
 			if link and lootable then
 				--AJM:Print("test", link)	
 				tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")

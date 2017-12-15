@@ -367,28 +367,34 @@ function AJM:TeamMount(characterName, name, mountID)
 	--Do i have the same mount as master?
 	hasMount = false
 	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, hideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(mountID)
+	local x_creatureDisplayID, x_descriptionText, x_sourceText, x_isSelfMount, x_mountTypeID, x_uiModelSceneID = C_MountJournal.GetMountInfoExtraByID(mountID)
 	if isUsable == true then
 		--AJM:Print("i have this Mount", creatureName)
 		hasMount = true
 		mount = mountID
 	else
-		--AJM:Print("i Do not have Mount", creatureName)
+		--AJM:Print("i DO NOT have Mount", creatureName)
 		for i = 1, C_MountJournal.GetNumMounts() do
-		local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, hideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(i)
+			local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, hideOnChar, isCollected,   mountID = C_MountJournal.GetMountInfoByID(i)
 			--AJM:Print("looking for a mount i can use", i)
 			if isUsable == true then
-				mount = mountID
-				hasMount = true
-				break
+				local creatureDisplayID, descriptionText, sourceText, isSelfMount, mountTypeID, uiModelSceneID = C_MountJournal.GetMountInfoExtraByID(mountID)
+				-- AJM:Print("looking for a mount i can use of type", x_mountTypeID, mountTypeID, i, creatureName, spellID)
+				-- mount a similar type of mount, e.g. if mounting a flying mount, also mount a flying mount
+				if x_mountTypeID == mountTypeID then
+					mount = mountID
+					hasMount = true
+					break
+				end
 			end	
 		end
 	end		
 	
---AJM:Print("test1420", mount, name)
+	--AJM:Print("test1420", mount, name)
 	-- for unsupported mounts.	
 	if hasMount == true then
 		--AJM:Print("test14550", mount, name )
-		if name == "Random" then
+		if name == "Random" then  -- name doesn't seem to be set anywhere...
 			C_MountJournal.SummonByID(0)
 		else 
 			--AJM:Print("test1054" )
