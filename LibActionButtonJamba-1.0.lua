@@ -543,7 +543,7 @@ function Generic:OnEnter()
 end
 
 function Generic:OnLeave()
-	if GameTooltip:IsForbidden() then return end										 
+	if GameTooltip:IsForbidden() then return end
 	GameTooltip:Hide()
 end
 
@@ -671,7 +671,7 @@ function InitializeEventHandler()
 	lib.eventFrame:RegisterEvent("UPDATE_BINDINGS")
 	lib.eventFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 	lib.eventFrame:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	lib.eventFrame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")														 
+	lib.eventFrame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
 
 	lib.eventFrame:RegisterEvent("ACTIONBAR_UPDATE_STATE")
 	lib.eventFrame:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
@@ -695,7 +695,7 @@ function InitializeEventHandler()
 	lib.eventFrame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
 	lib.eventFrame:RegisterEvent("SPELL_UPDATE_CHARGES")
 	lib.eventFrame:RegisterEvent("UPDATE_SUMMONPETS_ACTION")
-	lib.eventFrame:RegisterEvent("SPELL_UPDATE_ICON")											  
+	lib.eventFrame:RegisterEvent("SPELL_UPDATE_ICON")
 
 	-- With those two, do we still need the ACTIONBAR equivalents of them?
 	lib.eventFrame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
@@ -749,6 +749,7 @@ function OnEvent(frame, event, arg1, ...)
 	elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
 		for button in next, ActiveButtons do
 			UpdateUsable(button)
+		end
 	elseif event == "ACTIONBAR_UPDATE_COOLDOWN" then
 		for button in next, ActionButtons do
 			UpdateCooldown(button)
@@ -851,7 +852,7 @@ function OnEvent(frame, event, arg1, ...)
 			end
 		end
 	elseif event == "SPELL_UPDATE_ICON" then
-		ForAllButtons(Update, true)				 
+		ForAllButtons(Update, true)
 	end
 end
 
