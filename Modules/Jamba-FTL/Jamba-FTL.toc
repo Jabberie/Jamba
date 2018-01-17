@@ -2,7 +2,7 @@
 ## Title: JambaFTL
 ## Notes: JambaFTL
 ## Author: olipcs (although most of the code is originaly from Jafula) (any changes added to support 4.0.5 from ebony!)
-## Version: 5.3.3
+## Version: 5.4.0
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

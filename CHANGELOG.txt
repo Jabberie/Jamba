@@ -2,30 +2,30 @@
 ChangeLogs:
 ---------------------------
 Jamba Version: 5.4.0
-WoW Game Version: 7.3.2
-File Version: 7.3.2-5.4.0
-Release Date: TBA
-Modules Changed: TBA
+WoW Game Version: 7.3.5
+File Version: 7.3.5-5.4.0
+Release Date: 17/1/2018
+Modules Changed: Core, Jamba-item-use, Jamba-Mount, Jamba-Sell 
 
 *Core
-	-UpDated Ace3
-	-Updated LibActionButton (rev 72) 
-
+	- Happy New year! Updated Copyright Dates!
+	- UpDated Ace3
+	- Updated LibActionButton (rev 72) 
+	- Lowered Default Warning Sound.
 
 *Jamba-Item-Use 
-	-Fixed missing code form Satchel items not on ItemBar
-	-Updated LibActionButton 
+	- Fixed missing code form Satchel items not on ItemBar
+	- Updated LibActionButton 
 
 *Jamba-Mount
-	-Mount changes by: xxx
+	- Mount changes should pick the mount better.
 
 *Team-Display
 	- Vertical Character List Is Back! Some help from Jabberie.
 	
 *Jamba-Sell
-	- Now Deletes item if does not have a Vender price if (part of Alt click sell item on all toons)
-
-
+	- Now Deletes item if does not have a vender price if (part of Alt click sell item on all toons)
+	
 ---------------------------
 Jamba Version: 5.3.3
 WoW Game Version: 7.3
