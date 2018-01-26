@@ -4,8 +4,8 @@ ChangeLogs:
 Jamba Version: 5.4.0
 WoW Game Version: 7.3.5
 File Version: 7.3.5-5.4.0
-Release Date: 17/1/2018
-Modules Changed: Core, Jamba-item-use, Jamba-Mount, Jamba-Sell 
+Release Date: 26/1/2018
+Modules Changed: Core, Jamba-item-use, Jamba-Mount, Jamba-Sell, jamba-Currency 
 
 *Core
 	- Happy New year! Updated Copyright Dates!
@@ -25,6 +25,10 @@ Modules Changed: Core, Jamba-item-use, Jamba-Mount, Jamba-Sell
 	
 *Jamba-Sell
 	- Now Deletes item if does not have a vender price if (part of Alt click sell item on all toons)
+	
+*Jamba-Currency	
+	- Removed Writhing Essence
+	- Added Wakening-Essence
 	
 ---------------------------
 Jamba Version: 5.3.3
