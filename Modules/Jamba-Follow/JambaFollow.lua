@@ -1090,6 +1090,10 @@ function AJM:FollowTarget( target )
 				-- Have eating buff, do not allow follow.
 				canFollowTarget = false
 			end
+			if JambaUtilities:DoesThisCharacterHaveBuff( L["Refreshment"] ) == true then
+				-- Eating Mage food Yum Yum Yum.
+				canFollowTarget = false
+			end
 		end
 	end
 	-- If follow strobing and strobing paused.

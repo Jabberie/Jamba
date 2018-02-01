@@ -21,8 +21,7 @@ local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
 local Media = LibStub("LibSharedMedia-3.0")
 
 -- Built in Sounds
---Media:Register("sound", "Jamba: RaidWarning", "Sound\\interface\\RaidWarning.ogg")
-Media:Register("sound", "Jamba: RaidWarning", "Interface\AddOns\Jamba\Media\\warning.ogg")
+Media:Register("sound", "Jamba: RaidWarning", "Sound\\interface\\RaidWarning.ogg")
 
  
 -- Constants and Locale for this module.
@@ -926,7 +925,7 @@ local function DisplayMessageMikSBT( sender, message, areaOnScreenName, suppress
 end
 
 local function PlayMessageSound( soundToPlay )	
-	PlaySoundFile( Media:Fetch( 'sound', soundToPlay ), "Master" )
+	PlaySoundFile( Media:Fetch( 'sound', soundToPlay ), "Ambience" )
 end
 
 local function ProcessReceivedMessage( sender, areaName, message, suppressSender, ... )

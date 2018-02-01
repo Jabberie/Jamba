@@ -55,6 +55,7 @@ L["on"] = true
 L["off"] = true
 L["Drink"] = true
 L["Food"] = true
+L["Refreshment"] = true
 L["In A Vehicle"] = true
 L["Train"] = true
 L["Build a train of followers behind the master."] = true
