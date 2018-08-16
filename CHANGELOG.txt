@@ -1,6 +1,22 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 5.5.0
+WoW Game Version: 8.0.1
+File Version: Release-8.0.1(5.5.0)
+Release Date: 16/8/2018
+
+* Jamba-core
+	- Updated borken Libs for 8.0.1.
+
+* Jamba-Mount
+	- NoLonger Supported In Jamba - CBA fix it
+
+* Display-Team
+	- Updated Support for New "Artifact" 
+	- Fixed code for 8.0.3
+
+---------------------------
 Jamba Version: 5.4.1
 WoW Game Version: 7.3.5
 File Version: 7.3.5-5.4.1

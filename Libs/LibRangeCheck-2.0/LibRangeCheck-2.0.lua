@@ -1,6 +1,6 @@
 --[[
 Name: LibRangeCheck-2.0
-Revision: $Revision: 134 $
+Revision: $Revision: 192 $
 Author(s): mitch0
 Website: http://www.wowace.com/projects/librangecheck-2-0/
 Description: A range checking library based on interact distances and spell ranges
@@ -10,7 +10,7 @@ License: Public Domain
 
 --- LibRangeCheck-2.0 provides an easy way to check for ranges and get suitable range checking functions for specific ranges.\\
 -- The checkers use spell and item range checks, or interact based checks for special units where those two cannot be used.\\
--- The lib handles the refreshing of checker lists in case talents / spells / glyphs change and in some special cases when equipment changes (for example some of the mage pvp gloves change the range of the Fire Blast spell), and also handles the caching of items used for item-based range checks.\\
+-- The lib handles the refreshing of checker lists in case talents / spells change and in some special cases when equipment changes (for example some of the mage pvp gloves change the range of the Fire Blast spell), and also handles the caching of items used for item-based range checks.\\
 -- A callback is provided for those interested in checker changes.
 -- @usage
 -- local rc = LibStub("LibRangeCheck-2.0")
@@ -41,7 +41,7 @@ License: Public Domain
 -- @class file
 -- @name LibRangeCheck-2.0
 local MAJOR_VERSION = "LibRangeCheck-2.0"
-local MINOR_VERSION = tonumber(("$Revision: 134 $"):match("%d+")) + 100000
+local MINOR_VERSION = tonumber(("$Revision: 192 $"):match("%d+")) + 100000
 
 local lib, oldminor = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
 if not lib then
@@ -56,7 +56,7 @@ local ItemRequestTimeout = 10.0
 -- interact distance based checks. ranges are based on my own measurements (thanks for all the folks who helped me with this)
 local DefaultInteractList = {
     [3] = 8,
-    [2] = 9,
+--    [2] = 9,
     [4] = 28,
 }
 
@@ -64,12 +64,12 @@ local DefaultInteractList = {
 local InteractLists = {
     ["Tauren"] = {
         [3] = 6,
-        [2] = 7,
+--        [2] = 7,
         [4] = 25,
     },
     ["Scourge"] = {
         [3] = 7,
-        [2] = 8,
+--        [2] = 8,
         [4] = 27,
     },
 }
@@ -81,125 +81,124 @@ local FriendSpells = {}
 -- list of harmful spells that have different ranges 
 local HarmSpells = {}
 
+FriendSpells["DEATHKNIGHT"] = {
+}
+HarmSpells["DEATHKNIGHT"] = {
+    49576, -- ["Death Grip"], -- 30
+}
+
+FriendSpells["DEMONHUNTER"] = {
+}
+HarmSpells["DEMONHUNTER"] = {
+    185123, -- ["Throw Glaive"], -- 30
+}
+
 FriendSpells["DRUID"] = {
-    5185, -- ["Healing Touch"], -- 40
-    467, -- ["Thorns"], -- 30
+    774, -- ["Rejuvenation"], -- 40
+    2782, -- ["Remove Corruption"], -- 40
 }
 HarmSpells["DRUID"] = {
     5176, -- ["Wrath"], -- 40
-    770, -- ["Faerie Fire"] -- 35 (Glyph of Faerie Fire: +10)
     339, -- ["Entangling Roots"], -- 35
     6795, -- ["Growl"], -- 30
-    16979, -- ["Feral Charge"], -- 8-25
-    33786, -- ["Cyclone"], -- 20 (Gale Winds: 22, 24)
-    80964, -- ["Skull Bash"] -- 13
-    5211, -- ["Bash"], -- 5
+    33786, -- ["Cyclone"], -- 20
+    22568, -- ["Ferocious Bite"], -- 5
 }
 
 FriendSpells["HUNTER"] = {}
 HarmSpells["HUNTER"] = {
-    1130, -- ["Hunter's Mark"] -- 100
-    53351, -- ["Kill Shot"] -- 45
     75, -- ["Auto Shot"], -- 40
-    19801, -- ["Tranquilizing Shot"] -- 35
-    34490, -- ["Silencing Shot"] -- 35
-    2764, -- ["Throw"], -- 30
-    19503, -- ["Scatter Shot"], -- 20 (Glyph of Scatter Shot: +3)
-    2973, -- ["Raptor Strike"] -- 5
 }
 
 FriendSpells["MAGE"] = {
-    475, -- ["Remove Curse"], -- 40
-    1459, -- ["Arcane Brilliance"], -- 30
 }
 HarmSpells["MAGE"] = {
-    133, -- ["Fireball"], -- 40
-    116, -- ["Frostbolt"], -- 35
-    30455, -- ["Ice Lance"], -- 35 (Ice Shards: +2, +5)
+    44614, --["Frostfire Bolt"], -- 40
     5019, -- ["Shoot"], -- 30
 }
 
+FriendSpells["MONK"] = {
+    115450, -- ["Detox"], -- 40
+    115546, -- ["Provoke"], -- 30
+}
+HarmSpells["MONK"] = {
+    115546, -- ["Provoke"], -- 30
+    115078, -- ["Paralysis"], -- 20
+    100780, -- ["Tiger Palm"], -- 5
+}
+
 FriendSpells["PALADIN"] = {
-    635, -- ["Holy Light"], -- 40
-    20217, -- ["Blessing of Kings"], -- 30
+    19750, -- ["Flash of Light"], -- 40
 }
 HarmSpells["PALADIN"] = {
-    62124, -- ["Hand of Reckoning"], -- 30
---    20473, -- ["Holy Shock"], -- 20
-    20271, -- ["Judgement"], -- 10 (Improved Judgement: +10, +20; Enlightened Judgements: +5, +10)
-    853, -- ["Hammer of Justice"], -- 10 (Glyph of Hammer of Justice: +5)
+    62124, -- ["Reckoning"], -- 30
+    20271, -- ["Judgement"], -- 30
+    853, -- ["Hammer of Justice"], -- 10
     35395, -- ["Crusader Strike"], -- 5
 } 
 
 FriendSpells["PRIEST"] = {
-    2061, -- ["Flash Heal"], -- 40
-    6346, -- ["Fear Ward"], -- 30
+    527, -- ["Purify"], -- 40
+    17, -- ["Power Word: Shield"], -- 40
 }
 HarmSpells["PRIEST"] = {
     589, -- ["Shadow Word: Pain"], -- 40
-    48045, -- ["Mind Sear"], -- 35
     5019, -- ["Shoot"], -- 30
 }
 
 FriendSpells["ROGUE"] = {}
 HarmSpells["ROGUE"] = {
-    2764, -- ["Throw"], -- 30 (Throwing Specialization: +5, +10)
-    3018, -- ["Shoot"], -- 30
+    2764, -- ["Throw"], -- 30
     2094, -- ["Blind"], -- 15
---    8676, -- ["Ambush"], -- 5 (Glyph of Ambush: +5)
---    921, -- ["Pick Pocket"], -- 5 (Glyph of Pick Pocket: + 5)
-    2098, -- ["Eviscerate"], -- 5
 }
 
 FriendSpells["SHAMAN"] = {
-    331, -- ["Healing Wave"], -- 40
+    8004, -- ["Healing Surge"], -- 40
     546, -- ["Water Walking"], -- 30
 }
 HarmSpells["SHAMAN"] = {
-    403, -- ["Lightning Bolt"], -- 30 (Elemental Reach: +5)
+    403, -- ["Lightning Bolt"], -- 40
     370, -- ["Purge"], -- 30
-    8042, -- ["Earth Shock"], -- 25 (Elemental Reach: +7; Gladiator Gloves: +5)
     73899, -- ["Primal Strike"],. -- 5
 }
 
 FriendSpells["WARRIOR"] = {}
 HarmSpells["WARRIOR"] = {
-    3018, -- ["Shoot"], -- 30
-    2764, -- ["Throw"], -- 30
     355, -- ["Taunt"], -- 30
-    100, -- ["Charge"], -- 8-25 (Glyph of Long Charge: +5)
-    20252, -- ["Intercept"], -- 8-25
+    100, -- ["Charge"], -- 8-25
     5246, -- ["Intimidating Shout"], -- 8
-    88161, -- ["Strike"], -- 5
 }
 
 FriendSpells["WARLOCK"] = {
     5697, -- ["Unending Breath"], -- 30
 }
 HarmSpells["WARLOCK"] = {
-    348, -- ["Immolate"], -- 40
-    27243, -- ["Seed of Corruption"], -- 35
+    686, -- ["Shadow Bolt"], -- 40
     5019, -- ["Shoot"], -- 30
-    18223, -- ["Curse of Exhaustion"], -- 30 (Glyph of Exhaustion: +5)
-}
-
-FriendSpells["DEATHKNIGHT"] = {
-    49016, -- ["Unholy Frenzy"], -- 30
-}
-HarmSpells["DEATHKNIGHT"] = {
-    77606, -- ["Dark Simulacrum"], -- 40
-    47541, -- ["Death Coil"], -- 30
-    49576, -- ["Death Grip"], -- 30 (Glyph of Death Grip: +5)
-    45477, -- ["Icy Touch"], -- 20 (Icy Reach: +5, +10)
-    50842, -- ["Pestilence"], -- 5
-    45902, -- ["Blood Strike"], -- 5, but requires weapon, use Pestilence if possible, so keep it after Pestilence in this list
 }
 
 -- Items [Special thanks to Maldivia for the nice list]
 
 local FriendItems  = {
-    [5] = {
+    [1] = {
+        90175, -- Gin-Ji Knife Set -- doesn't seem to work for pets (always returns nil)
+    },
+    [2] = {
         37727, -- Ruby Acorn
+    },
+    [3] = {
+        42732, -- Everfrost Razor
+    },
+    [4] = {
+        129055, -- Shoe Shine Kit
+    },
+    [5] = {
+        8149, -- Voodoo Charm
+        136605, -- Solendra's Compassion
+        63427, -- Worgsaw
+    },
+    [7] = {
+        61323, -- Ruby Seeds
     },
     [8] = {
         34368, -- Attuned Crystal Cores
@@ -244,24 +243,64 @@ local FriendItems  = {
     [35] = {
         18904, -- Zorbin's Ultra-Shrinker
     },
+    [38] = {
+        140786, -- Ley Spider Eggs
+    },
     [40] = {
         34471, -- Vial of the Sunwell
     },
     [45] = {
         32698, -- Wrangling Rope
     },
+    [50] = {
+        116139, -- Haunting Memento
+    },
+    [55] = {
+        74637, -- Kiryn's Poison Vial
+    },
     [60] = {
         32825, -- Soul Cannon
         37887, -- Seeds of Nature's Wrath
     },
+    [70] = {
+        41265, -- Eyesore Blaster
+    },
     [80] = {
         35278, -- Reinforced Net
+    },
+    [90] = {
+        133925, -- Fel Lash
+    },
+    [100] = {
+        41058, -- Hyldnir Harpoon
+    },
+    [150] = {
+        46954, -- Flaming Spears
+    },
+    [200] = {
+        75208, -- Rancher's Lariat
     },
 }
 
 local HarmItems = {
-    [5] = {
+    [1] = {
+    },
+    [2] = {
         37727, -- Ruby Acorn
+    },
+    [3] = {
+        42732, -- Everfrost Razor
+    },
+    [4] = {
+        129055, -- Shoe Shine Kit
+    },
+    [5] = {
+        8149, -- Voodoo Charm
+        136605, -- Solendra's Compassion
+        63427, -- Worgsaw
+    },
+    [7] = {
+        61323, -- Ruby Seeds
     },
     [8] = {
         34368, -- Attuned Crystal Cores
@@ -290,6 +329,9 @@ local HarmItems = {
         24269, -- Heavy Netherweave Net
         18904, -- Zorbin's Ultra-Shrinker
     },
+    [38] = {
+        140786, -- Ley Spider Eggs
+    },
     [40] = {
         28767, -- The Decapitator
     },
@@ -297,21 +339,39 @@ local HarmItems = {
 --        32698, -- Wrangling Rope
         23836, -- Goblin Rocket Launcher
     },
+    [50] = {
+        116139, -- Haunting Memento
+    },
+    [55] = {
+        74637, -- Kiryn's Poison Vial
+    },
     [60] = {
         32825, -- Soul Cannon
         37887, -- Seeds of Nature's Wrath
     },
+    [70] = {
+        41265, -- Eyesore Blaster
+    },
     [80] = {
         35278, -- Reinforced Net
+    },
+    [90] = {
+        133925, -- Fel Lash
+    },
+    [100] = {
+        33119, -- Malister's Frost Wand
+    },
+    [150] = {
+        46954, -- Flaming Spears
+    },
+    [200] = {
+        75208, -- Rancher's Lariat
     },
 }
 
 -- This could've been done by checking player race as well and creating tables for those, but it's easier like this
 for k, v in pairs(FriendSpells) do
     tinsert(v, 28880) -- ["Gift of the Naaru"]
-end
-for k, v in pairs(HarmSpells) do
-    tinsert(v, 28734) -- ["Mana Tap"]
 end
 
 -- >> END OF STATIC CONFIG
@@ -334,6 +394,7 @@ local GetSpellBookItemName = GetSpellBookItemName
 local GetNumSpellTabs = GetNumSpellTabs
 local GetSpellTabInfo = GetSpellTabInfo
 local GetItemInfo = GetItemInfo
+local UnitAura = UnitAura
 local UnitCanAttack = UnitCanAttack
 local UnitCanAssist = UnitCanAssist
 local UnitExists = UnitExists
@@ -344,8 +405,12 @@ local IsItemInRange = IsItemInRange
 local UnitClass = UnitClass
 local UnitRace = UnitRace
 local GetInventoryItemLink = GetInventoryItemLink
+local GetSpecialization = GetSpecialization
+local GetSpecializationInfo = GetSpecializationInfo
 local GetTime = GetTime
 local HandSlotId = GetInventorySlotInfo("HandsSlot")
+local math_floor = math.floor
+local UnitIsVisible = UnitIsVisible
 
 -- temporary stuff
 
@@ -386,9 +451,7 @@ local checkers_SpellWithMin = setmetatable({}, {
 local checkers_Item = setmetatable({}, {
     __index = function(t, item)
         local func = function(unit)
-            if IsItemInRange(item, unit) == 1 then
-                 return true
-            end
+            return IsItemInRange(item, unit)
         end
         t[item] = func
         return func
@@ -436,6 +499,9 @@ end
 
 -- return the spellIndex of the given spell by scanning the spellbook
 local function findSpellIdx(spellName)
+    if not spellName or spellName == "" then
+        return nil
+    end
     for i = 1, getNumSpells() do
         local spell, rank = GetSpellBookItemName(i, BOOKTYPE_SPELL)
         if spell == spellName then return i end
@@ -444,8 +510,8 @@ local function findSpellIdx(spellName)
 end
 
 -- minRange should be nil if there's no minRange, not 0
-local function addChecker(t, range, minRange, checker)
-    local rc = { ["range"] = range, ["minRange"] = minRange, ["checker"] = checker }
+local function addChecker(t, range, minRange, checker, info)
+    local rc = { ["range"] = range, ["minRange"] = minRange, ["checker"] = checker, ["info"] = info }
     for i = 1, #t do
         local v = t[i]
         if rc.range == v.range then return end
@@ -459,14 +525,26 @@ end
 
 local function createCheckerList(spellList, itemList, interactList)
     local res = {}
+    if itemList then
+        for range, items in pairs(itemList) do
+            for i = 1, #items do
+                local item = items[i]
+                if GetItemInfo(item) then
+                    addChecker(res, range, nil, checkers_Item[item], "item:" .. item)
+                    break
+                end
+            end
+        end
+    end
+    
     if spellList then
         for i = 1, #spellList do
             local sid = spellList[i]
-            local name, _, _, _, _, _, _, minRange, range = GetSpellInfo(sid)
+            local name, _, _, _, minRange, range = GetSpellInfo(sid)
             local spellIdx = findSpellIdx(name)
             if spellIdx and range then
-                minRange = math.floor(minRange + 0.5)
-                range = math.floor(range + 0.5)
+                minRange = math_floor(minRange + 0.5)
+                range = math_floor(range + 0.5)
                 -- print("### spell: " .. tostring(name) .. ", " .. tostring(minRange) .. " - " ..  tostring(range))
                 if minRange == 0 then -- getRange() expects minRange to be nil in this case
                     minRange = nil
@@ -475,21 +553,9 @@ local function createCheckerList(spellList, itemList, interactList)
                     range = MeleeRange
                 end
                 if minRange then
-                    addChecker(res, range, minRange, checkers_SpellWithMin[spellIdx])
+                    addChecker(res, range, minRange, checkers_SpellWithMin[spellIdx], "spell:" .. sid .. ":" .. tostring(name))
                 else
-                    addChecker(res, range, minRange, checkers_Spell[spellIdx])
-                end
-            end
-        end
-    end
-    
-    if itemList then
-        for range, items in pairs(itemList) do
-            for i = 1, #items do
-                local item = items[i]
-                if GetItemInfo(item) then
-                    addChecker(res, range, nil, checkers_Item[item])
-                    break
+                    addChecker(res, range, minRange, checkers_Spell[spellIdx], "spell:" .. sid .. ":" .. tostring(name))
                 end
             end
         end
@@ -497,7 +563,7 @@ local function createCheckerList(spellList, itemList, interactList)
     
     if interactList and not next(res) then
         for index, range in pairs(interactList) do
-            addChecker(res, range, nil,  checkers_Interact[index])
+            addChecker(res, range, nil,  checkers_Interact[index], "interact:" .. index)
         end
     end
 
@@ -506,31 +572,23 @@ end
 
 -- returns minRange, maxRange  or nil
 local function getRange(unit, checkerList)
-    local min, max = 0, nil
-    for i = 1, #checkerList do
-        local rc = checkerList[i]
-        if not max or max > rc.range then
-            if rc.minRange then
-                local inRange, inMinRange = rc.checker(unit)
-                if inMinRange then
-                    max = rc.minRange
-                elseif inRange then
-                    min, max = rc.minRange, rc.range
-                elseif min > rc.range then
-                    return min, max
-                else
-                    return rc.range, max
-                end
-            elseif rc.checker(unit) then
-                max = rc.range
-            elseif min > rc.range then
-                return min, max
-            else
-                return rc.range, max
-            end
+    local lo, hi = 1, #checkerList
+    while lo <= hi do
+        local mid = math_floor((lo + hi) / 2)
+        local rc = checkerList[mid]
+        if rc.checker(unit) then
+            lo = mid + 1
+        else
+            hi = mid - 1
         end
     end
-    return min, max
+    if lo > #checkerList then
+        return 0, checkerList[#checkerList].range
+    elseif lo <= 1 then
+        return checkerList[1].range, nil
+    else
+        return checkerList[lo].range, checkerList[lo - 1].range
+    end
 end
 
 local function updateCheckers(origList, newList)
@@ -614,7 +672,6 @@ local function createSmartChecker(friendChecker, harmChecker, miscChecker)
     end
 end
 
-
 -- OK, here comes the actual lib
 
 -- pre-initialize the checkerLists here so that we can return some meaningful result even if
@@ -631,7 +688,6 @@ lib.failedItemRequests = {}
 
 -- << Public API
 
- 
 
 --- The callback name that is fired when checkers are changed.
 -- @field
@@ -645,15 +701,14 @@ function lib:findSpellIndex(spell)
     if type(spell) == 'number' then
         spell = GetSpellInfo(spell)
     end
-    if not spell then return nil end
     return findSpellIdx(spell)
 end
 
 -- returns the range estimate as a string
 -- deprecated, use :getRange(unit) instead and build your own strings
--- (checkVisible is not used any more, kept for compatibility only)
+-- @param checkVisible if set to true, then a UnitIsVisible check is made, and **nil** is returned if the unit is not visible
 function lib:getRangeAsString(unit, checkVisible, showOutOfRange)
-    local minRange, maxRange = self:getRange(unit)
+    local minRange, maxRange = self:getRange(unit, checkVisible)
     if not minRange then return nil end
     if not maxRange then
         return showOutOfRange and minRange .. " +" or nil
@@ -663,7 +718,9 @@ end
 
 -- initialize RangeCheck if not yet initialized or if "forced"
 function lib:init(forced)
-    if self.initialized and (not forced) then return end
+    if self.initialized and (not forced) then
+        return
+    end
     self.initialized = true
     local _, playerClass = UnitClass("player")
     local _, playerRace = UnitRace("player")
@@ -676,7 +733,7 @@ function lib:init(forced)
             local item = items[i]
             if GetItemInfo(item) then
                 minRangeCheck = function(unit)
-                    return (IsItemInRange(item, unit) == 1)
+                    return IsItemInRange(item, unit)
                 end
                 break
             end
@@ -708,10 +765,10 @@ function lib:init(forced)
         -- fall back to interact distance checks
         if playerClass == "HUNTER" or playerRace == "Tauren" then
             -- for hunters, use interact4 as it's safer
-            -- for Taurens interact4 is actually closer than 25yd and interact2 is closer than 8yd, so we can't use that
+            -- for Taurens interact4 is actually closer than 25yd and interact3 is closer than 8yd, so we can't use that
             minRangeCheck = checkers_Interact[4]
         else
-            minRangeCheck = checkers_Interact[2]
+            minRangeCheck = checkers_Interact[3]
         end
     end
 
@@ -843,13 +900,18 @@ end
 
 --- Get a range estimate as **minRange**, **maxRange**.
 -- @param unit the target unit to check range to.
+-- @param checkVisible if set to true, then a UnitIsVisible check is made, and **nil** is returned if the unit is not visible
 -- @return **minRange**, **maxRange** pair if a range estimate could be determined, **nil** otherwise. **maxRange** is **nil** if **unit** is further away than the highest possible range we can check.
 -- Includes checks for unit validity and friendly/enemy status.
 -- @usage
 -- local rc = LibStub("LibRangeCheck-2.0")
 -- local minRange, maxRange = rc:GetRange('target')
-function lib:GetRange(unit)
+-- local minRangeIfVisible, maxRangeIfVisible = rc:GetRange('target', true)
+function lib:GetRange(unit, checkVisible)
     if not UnitExists(unit) then
+        return nil
+    end
+    if checkVisible and not UnitIsVisible(unit) then
         return nil
     end
     if UnitIsDeadOrGhost(unit) then
@@ -887,18 +949,6 @@ function lib:PLAYER_TALENT_UPDATE()
     self:scheduleInit()
 end
 
-function lib:GLYPH_ADDED()
-    self:scheduleInit()
-end
-
-function lib:GLYPH_REMOVED()
-    self:scheduleInit()
-end
-
-function lib:GLYPH_UPDATED()
-    self:scheduleInit()
-end
-
 function lib:SPELLS_CHANGED()
     self:scheduleInit()
 end
@@ -906,6 +956,12 @@ end
 function lib:UNIT_INVENTORY_CHANGED(event, unit)
     if self.initialized and unit == "player" and self.handSlotItem ~= GetInventoryItemLink("player", HandSlotId) then
         self:scheduleInit()
+    end
+end
+
+function lib:UNIT_AURA(event, unit)
+    if self.initialized and unit == "player" then
+        self:scheduleAuraCheck()
     end
 end
 
@@ -974,7 +1030,11 @@ function lib:scheduleInit()
     self.frame:Show()
 end
 
- 
+function lib:scheduleAuraCheck()
+    lastUpdate = UpdateDelay
+    self.frame:Show()
+end
+
 
 -- << load-time initialization 
 
@@ -985,14 +1045,11 @@ function lib:activate()
         frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
         frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
         frame:RegisterEvent("PLAYER_TALENT_UPDATE")
-        frame:RegisterEvent("GLYPH_ADDED")
-        frame:RegisterEvent("GLYPH_REMOVED")
-        frame:RegisterEvent("GLYPH_UPDATED")
         frame:RegisterEvent("SPELLS_CHANGED")
         local _, playerClass = UnitClass("player")
         if playerClass == "MAGE" or playerClass == "SHAMAN" then
             -- Mage and Shaman gladiator gloves modify spell ranges
-            frame:RegisterEvent("UNIT_INVENTORY_CHANGED")
+            frame:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
         end
     end
     initItemRequests()

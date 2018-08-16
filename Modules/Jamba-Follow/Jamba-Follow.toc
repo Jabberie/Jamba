@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: JambaFollow
 ## Notes: JambaFollow
 ## Author: Ebony, Former Author: Jafula

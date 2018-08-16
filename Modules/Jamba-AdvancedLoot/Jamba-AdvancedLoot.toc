@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: Jamba-AdvancedLoot
 ## Notes: Jamba-AdvancedLoot
 ## Author: Ebony, Former Author: Jafula & Max Schilling

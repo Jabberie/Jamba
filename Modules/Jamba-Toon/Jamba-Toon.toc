@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: JambaToon
 ## Notes: JambaToon
 ## Author: Ebony, Former Author: Jafula

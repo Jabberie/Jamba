@@ -84,6 +84,7 @@ AJM.MESSAGE_TAXI_TAKEN = "JambaTaxiTaxiTaken"
 function AJM:OnInitialize()
 	AJM.jambaTakesTaxi = false
 	AJM.jambaLeavsTaxi = false
+	AJM.TaxiFrameName = TaxiFrame
 	-- Create the settings control.
 	AJM:SettingsCreate()
 	-- Initialse the JambaModule part of this module.
@@ -99,6 +100,7 @@ function AJM:OnEnable()
 	AJM:SecureHook( "TaxiRequestEarlyLanding" )
 	-- WoW API Events.
 	AJM:RegisterEvent("TAXIMAP_CLOSED")
+	AJM:RegisterEvent( "TAXIMAP_OPENED" )
 	AJM:RegisterMessage( JambaApi.MESSAGE_MESSAGE_AREAS_CHANGED, "OnMessageAreasChanged" )
 end
 
@@ -249,6 +251,16 @@ end
 -- JambaTaxi functionality.
 -------------------------------------------------------------------------------------------------------------
 
+function AJM:TAXIMAP_OPENED(event, ...)
+	local uiMapSystem = ...
+	if (uiMapSystem == Enum.UIMapSystem.Taxi) then	
+		AJM.TaxiFrameName = TaxiFrame
+	else
+		AJM.TaxiFrameName = FlightMapFrame
+	end
+end	
+
+
 -- Take a taxi.
 local function TakeTaxi( sender, nodeName )
 	-- If the take masters taxi option is on.
@@ -326,10 +338,7 @@ function AJM.TaxiRequestEarlyLanding( sender )
 end
 
 function AJM:TAXIMAP_CLOSED( event, ... )
-	--AJM:Print("closeTaxiTwo", AJM.jambaTakesTaxi )
-	if TaxiFrame_ShouldShowOldStyle() or FlightMapFrame:IsVisible() then
-		AJM:JambaSendCommandToTeam ( AJM.COMMAND_CLOSE_TAXI )
-	end	
+	AJM:JambaSendCommandToTeam ( AJM.COMMAND_CLOSE_TAXI )
 end
 
 
@@ -347,16 +356,10 @@ function AJM:JambaOnCommandReceived( characterName, commandName, ... )
 			-- If not already on a taxi...
 			if not UnitOnTaxi( "player" ) then
 				-- And if the taxi frame is open...
-				-- 7.0.3 Added support for FlightMapFrame for legion flightMastrers. --ebony 
-				if TaxiFrame_ShouldShowOldStyle() == true then
-					if TaxiFrame:IsVisible() then
-						TakeTaxi( characterName, ... )
-					end
-				else
-					if FlightMapFrame:IsVisible() then
-						TakeTaxi( characterName, ... )
-					end	
-				end
+				local JambaTaxiFrame = AJM.TaxiFrameName
+				if JambaTaxiFrame:IsVisible() then
+					TakeTaxi( characterName, ... )
+				end	
 			end
 		end
 		if commandName == AJM.COMMAND_EXIT_TAXI then
