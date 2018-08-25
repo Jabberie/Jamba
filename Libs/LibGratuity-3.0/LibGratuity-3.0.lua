@@ -93,7 +93,7 @@ function lib:Find(txt, startln, endln, ignoreleft, ignoreright, exact)
 	end;
 	assert(type(txt) == "string" or type(txt) == "number")
 	local t1, t2 = type(startln or 1), type(self:NumLines(endln))
-	if (t1 ~= "number" or t2 ~= "number" ) then print(t1, t2, (startln or 1),self:NumLines(endln)) end
+	if (t1 ~= "number" or t2 ~= "number") then print(t1, t2, (startln or 1),self:NumLines(endln)) end
 	for i=(startln or 1),self:NumLines(endln) do
 		if not ignoreleft and self.vars.Llines[i] then
 			local txtl = self.vars.Llines[i]:GetText()
@@ -111,10 +111,10 @@ end
 --  Calls Find many times.
 --  Args are passed directly to Find, t1-t10 replace the txt arg
 --  Returns Find results for the first match found, if any
-function lib:MultiFind(startln, endln, ignoreleft, ignoreright, t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11)
+function lib:MultiFind(startln, endln, ignoreleft, ignoreright, t1,t2,t3,t4,t5,t6,t7,t8,t9,t10)
 	assert(type(t1) == "string" or type(t1) == "number")
 	if t1 and self:Find(t1, startln, endln, ignoreleft, ignoreright) then return self:Find(t1, startln, endln, ignoreleft, ignoreright)
-	elseif t2 then return self:MultiFind(startln, endln, ignoreleft, ignoreright, t2,t3,t4,t5,t6,t7,t8,t9,t10,t11) end
+	elseif t2 then return self:MultiFind(startln, endln, ignoreleft, ignoreright, t2,t3,t4,t5,t6,t7,t8,t9,t10) end
 end
 
 

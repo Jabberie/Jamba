@@ -1,8 +1,8 @@
 ## Interface: 80000
 ## Title: Jamba-AdvancedLoot
 ## Notes: Jamba-AdvancedLoot
-## Author: Ebony, Former Author: Jafula & Max Schilling
-## Version: Release-8.0.1(5.5.0)
+## Author: Jabberie Former Author: Ebony, Jafula, Max Schilling
+## Version: Release-8.0.1(6.0.1)
 ## X-Category: Interface Enhancements
 ## X-Child-Of: Jamba
 ## Dependencies: Jamba

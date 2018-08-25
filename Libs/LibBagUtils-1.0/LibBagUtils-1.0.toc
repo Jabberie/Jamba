@@ -1,0 +1,16 @@
+﻿## Title: Lib: BagUtils-1.0
+## Notes: Bag and item management utilities
+## Author: Mikk
+## Interface: 60000
+## Version: 1.0.35
+## LoadOnDemand: 1
+## X-Curse-Packaged-Version: r35
+## X-Curse-Project-Name: LibBagUtils-1.0
+## X-Curse-Project-ID: libbagutils-1-0
+## X-Curse-Repository-ID: wow/libbagutils-1-0/mainline
+
+## X-Website: http://www.wowace.com/addons/libbagutils-1-0/
+## X-Category: Library
+
+LibStub.lua
+LibBagUtils-1.0\LibBagUtils-1.0.xml

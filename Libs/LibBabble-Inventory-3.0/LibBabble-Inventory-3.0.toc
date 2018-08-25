@@ -1,13 +1,12 @@
-## Interface: 50400
+## Interface: 80000
 ## LoadOnDemand: 1
 ## Title: Lib: Babble-Inventory-3.0
 ## Notes: A library to help with localization of item types and subtypes.
 ## Notes-esES: Una libreria para ayudar con la traduccion de tipos y subtipos de objetos.
 ## Author: ckknight
-## X-Curse-Packaged-Version: Beta-4.3i-1-g3e0e1d6
-## X-Curse-Project-Name: Jamba
-## X-Curse-Project-ID: jamba
-## X-Curse-Repository-ID: wow/jamba/mainline
+## X-eMail: ckknight@gmail.com
+## X-Category: Library
+## X-License: MIT
 
 LibStub\LibStub.lua
 lib.xml

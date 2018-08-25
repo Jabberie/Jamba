@@ -1,6 +1,19 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 6.0.1
+WoW Game Version: 8.0.1
+File Version: Release-8.0.1(6.0.1)
+Release Date: 25/8/2018
+
+* Jamba-Quest
+	- New Button Layout to prevent covering default UI elements
+
+* Jamba-Toon
+	- Attempted workaround for the removal of UseSoulstone, HasSoulstone and CanUseSoulstone
+	- This should also fix issues with having no team ressurect options
+
+---------------------------
 Jamba Version: 5.5.0
 WoW Game Version: 8.0.1
 File Version: Release-8.0.1(5.5.0)

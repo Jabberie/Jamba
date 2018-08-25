@@ -1,4 +1,5 @@
 --[[
+test
 Jamba - Jafula's Awesome Multi-Boxer Assistant
 Copyright 2008 - 2018 Michael "Jafula" Miller
 License: The MIT License
@@ -921,6 +922,28 @@ function AJM:PLAYER_DEAD( event, ...)
 		StaticPopup_Show( "TEAMDEATH" )	
 	end
 end
+
+-- Jabberie
+-- Workaround for HasSoulstone, CanUseSoulstone and UseSoulstone removal
+function HasSoulstone()
+	local options = GetSortedSelfResurrectOptions();
+	return options and options[1] and options[1].name;
+end
+
+function CanUseSoulstone()
+	if ( IsEncounterLimitingResurrections() ) then
+		return false
+	else
+		return true
+	end
+end
+
+function UseSoulstone()
+	local options = GetSortedSelfResurrectOptions();
+	C_DeathInfo.UseSelfResurrectOption( options[1].optionType, options[1].id );
+	return
+end
+-- Jabberie
 
 -- Mosty taken from blizzard StaticPopup Code
 StaticPopupDialogs["TEAMDEATH"] = {
