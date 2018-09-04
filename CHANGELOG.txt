@@ -1,6 +1,15 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 6.0.2
+WoW Game Version: 8.0.1
+File Version: Release-8.0.1(6.0.2)
+Release Date: 25/8/2018
+
+* Jamba-DisplayTeam
+ - Fix Lua Errors
+
+---------------------------
 Jamba Version: 6.0.1
 WoW Game Version: 8.0.1
 File Version: Release-8.0.1(6.0.1)

@@ -502,7 +502,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	characterStatusBar["portraitButtonClick"] = portraitButtonClick
 	-- Set the follow bar.
 	local followName = AJM.globalFramePrefix.."FollowBar"
-	local followBar = CreateFrame( "StatusBar", followName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
+	local followBar = CreateFrame( "StatusBar", followName, parentFrame, "TextStatusBar","SecureActionButtonTemplate" )
 	followBar.backgroundTexture = followBar:CreateTexture( followName.."BackgroundTexture", "ARTWORK" )
 	followBar.backgroundTexture:SetColorTexture( 0.58, 0.0, 0.55, 0.15 )
 	followBar:SetStatusBarTexture( statusBarTexture )
@@ -539,7 +539,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 --	followBarClick:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 	-- Set the experience bar.
 	local experienceName = AJM.globalFramePrefix.."ExperienceBar"
-	local experienceBar = CreateFrame( "StatusBar", experienceName, parentFrame, "AnimatedStatusBarTemplate" ) --"TextStatusBar,SecureActionButtonTemplate" )
+	local experienceBar = CreateFrame( "StatusBar", experienceName, parentFrame, "AnimatedStatusBarTemplate" ) --"TextStatusBar","SecureActionButtonTemplate" )
 	experienceBar.backgroundTexture = experienceBar:CreateTexture( experienceName.."BackgroundTexture", "ARTWORK" )
 	experienceBar.backgroundTexture:SetColorTexture( 0.0, 0.39, 0.88, 0.15 )
 	experienceBar:SetStatusBarTexture( statusBarTexture )
@@ -565,7 +565,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	AJM:UpdateExperienceStatus( characterName, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil )	
 	-- Set the artifactXP bar.
 	local experienceArtName = AJM.globalFramePrefix.."ExperienceArtBar"
-	local experienceArtBar = CreateFrame( "StatusBar", experienceArtName, parentFrame, "AnimatedStatusBarTemplate" ) --"TextStatusBar,SecureActionButtonTemplate" )
+	local experienceArtBar = CreateFrame( "StatusBar", experienceArtName, parentFrame, "AnimatedStatusBarTemplate" ) --"TextStatusBar","SecureActionButtonTemplate" )
 	experienceArtBar.backgroundTexture = experienceArtBar:CreateTexture( experienceArtName.."BackgroundTexture", "ARTWORK" )
 	experienceArtBar.backgroundTexture:SetColorTexture( 1.0, 0.0, 0.0, 0.15 )
 	experienceArtBar:SetStatusBarTexture( statusBarTexture )
@@ -592,7 +592,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	AJM:UpdateExperienceStatus( characterName, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil )
 	-- Set the reputation bar.
 	local reputationName = AJM.globalFramePrefix.."ReputationBar"
-	local reputationBar = CreateFrame( "StatusBar", reputationName, parentFrame, "AnimatedStatusBarTemplate" ) --"TextStatusBar,SecureActionButtonTemplate" )
+	local reputationBar = CreateFrame( "StatusBar", reputationName, parentFrame, "AnimatedStatusBarTemplate" ) --"TextStatusBar","SecureActionButtonTemplate" )
 	reputationBar.backgroundTexture = reputationBar:CreateTexture( reputationName.."BackgroundTexture", "ARTWORK" )
 	reputationBar.backgroundTexture:SetColorTexture( 0.0, 0.39, 0.88, 0.15 )
 	reputationBar:SetStatusBarTexture( statusBarTexture )
@@ -620,7 +620,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	-- Set the health bar.
 	
 	local healthName = AJM.globalFramePrefix.."HealthBar"
-	local healthBar = CreateFrame( "StatusBar", healthName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
+	local healthBar = CreateFrame( "StatusBar", healthName, parentFrame, "TextStatusBar","SecureActionButtonTemplate" )
 	healthBar.backgroundTexture = healthBar:CreateTexture( healthName.."BackgroundTexture", "ARTWORK" )
 	healthBar.backgroundTexture:SetColorTexture( 0.58, 0.0, 0.55, 0.15 )
 	healthBar:SetStatusBarTexture( statusBarTexture )
@@ -633,7 +633,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 
 	
 	local healthIncomingName = AJM.globalFramePrefix.."HealthIncomingBar"
-	local healthIncomingBar = CreateFrame( "StatusBar", healthIncomingName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
+	local healthIncomingBar = CreateFrame( "StatusBar", healthIncomingName, parentFrame, "TextStatusBar","SecureActionButtonTemplate" )
 	healthIncomingBar.backgroundTexture = healthIncomingBar:CreateTexture( healthIncomingName.."BackgroundTexture", "ARTWORK" )
 	healthIncomingBar.backgroundTexture:SetColorTexture( 0.58, 0.0, 0.55, 0.15 )
 	healthIncomingBar:SetStatusBarTexture( statusBarTexture )
@@ -665,7 +665,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	
 	-- Set the power bar.
 	local powerName = AJM.globalFramePrefix.."PowerBar"
-	local powerBar = CreateFrame( "StatusBar", powerName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
+	local powerBar = CreateFrame( "StatusBar", powerName, parentFrame, "TextStatusBar","SecureActionButtonTemplate" )
 	powerBar.backgroundTexture = powerBar:CreateTexture( powerName.."BackgroundTexture", "ARTWORK" )
 	powerBar.backgroundTexture:SetColorTexture( 0.58, 0.0, 0.55, 0.15 )
 	powerBar:SetStatusBarTexture( statusBarTexture )
@@ -690,7 +690,7 @@ function AJM:CreateJambaTeamStatusBar( characterName, parentFrame )
 	AJM:UpdatePowerStatus( characterName, nil, nil, nil )
 	-- Set the Combo Points bar.
 	local comboName = AJM.globalFramePrefix.."ComboBar"
-	local comboBar = CreateFrame( "StatusBar", comboName, parentFrame, "TextStatusBar,SecureActionButtonTemplate" )
+	local comboBar = CreateFrame( "StatusBar", comboName, parentFrame, "TextStatusBar","SecureActionButtonTemplate" )
 	comboBar.backgroundTexture = comboBar:CreateTexture( comboName.."BackgroundTexture", "ARTWORK" )
 	comboBar.backgroundTexture:SetColorTexture( 0.58, 0.0, 0.55, 0.15 )
 	comboBar:SetStatusBarTexture( statusBarTexture )
