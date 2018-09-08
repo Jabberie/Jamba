@@ -1,10 +1,20 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 6.0.3
+WoW Game Version: 8.0.1
+File Version: Release-8.0.1(6.0.3)
+Release Date: 08/09/2018
+
+* Jamba-Curr
+ - Add new currencies
+ - Fix Lua Errors
+
+---------------------------
 Jamba Version: 6.0.2
 WoW Game Version: 8.0.1
 File Version: Release-8.0.1(6.0.2)
-Release Date: 25/8/2018
+Release Date: 04/09/2018
 
 * Jamba-DisplayTeam
  - Fix Lua Errors
