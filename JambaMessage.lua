@@ -21,7 +21,7 @@ local JambaHelperSettings = LibStub:GetLibrary( "JambaHelperSettings-1.0" )
 local Media = LibStub("LibSharedMedia-3.0")
 
 -- Built in Sounds
-Media:Register("sound", "Jamba: RaidWarning", "Sound\\interface\\RaidWarning.ogg")
+Media:Register("sound", "Jamba: RaidWarning", 567397)
 
  
 -- Constants and Locale for this module.
