@@ -1,6 +1,15 @@
 ﻿---------------------------
 ChangeLogs:
 ---------------------------
+Jamba Version: 6.0.4
+WoW Game Version: 8.2.0
+File Version: Release-8.2.0(6.0.4)
+Release Date: 01/07/2019
+
+* Jamba-Message
+ - fixed play sound file
+
+---------------------------
 Jamba Version: 6.0.3
 WoW Game Version: 8.0.1
 File Version: Release-8.0.1(6.0.3)
