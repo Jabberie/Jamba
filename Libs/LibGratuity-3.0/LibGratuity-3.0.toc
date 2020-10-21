@@ -1,4 +1,4 @@
-﻿## Interface: 30300
+## Interface: 30300
 ## X-Compatible-With: 40000
 ## LoadOnDemand: 1
 ## Title: Lib: Gratuity-3.0

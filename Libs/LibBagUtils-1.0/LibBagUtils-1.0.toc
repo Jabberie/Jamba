@@ -1,4 +1,4 @@
-﻿## Title: Lib: BagUtils-1.0
+## Title: Lib: BagUtils-1.0
 ## Notes: Bag and item management utilities
 ## Author: Mikk
 ## Interface: 60000

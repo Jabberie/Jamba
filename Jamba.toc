@@ -1,8 +1,8 @@
-## Interface: 80200
+## Interface: 90001
 ## Title: Jamba
 ## Notes: Jamba
 ## Author: Jabberie Former Author: Ebony,Jafula
-## Version: Release-8.2.0(6.0.4)
+## Version: Release-9.0.1
 ## SavedVariables: JambaCoreProfileDB, JambaCommunicationsProfileDB, JambaTeamProfileDB, JambaTagProfileDB, JambaMessageProfileDB
 JambaEmbeds.xml
 JambaUtilities.lua
@@ -14,5 +14,5 @@ JambaModule.lua
 JambaTeam.lua
 JambaTag.lua
 JambaMessage.lua
-JambaStartupMessage.xml
+## JambaStartupMessage.xml
 startupmessage.html

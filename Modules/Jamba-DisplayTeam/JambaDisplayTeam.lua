@@ -291,7 +291,7 @@ end
 
 local function CreateJambaTeamListFrame()
 	-- The frame.
-	local frame = CreateFrame( "Frame", "JambaDisplayTeamListWindowFrame", UIParent )
+	local frame = CreateFrame( "Frame", "JambaDisplayTeamListWindowFrame", UIParent , "BackdropTemplate")
 	frame.obj = AJM
 	frame:SetFrameStrata( "LOW" )
 	frame:SetToplevel( true )
@@ -2322,17 +2322,17 @@ function AJM:SendInfomationUpdateCommand()
 		--mailText = text
 		--local name, count, icon, currencyID
 		currText = "currNothing"
-		local name, count, icon, currencyID = GetBackpackCurrencyInfo(1)
+		local name, count, icon, currencyID = C_CurrencyInfo.GetBackpackCurrencyInfo(1)
 			if ( name ) then
 				--AJM:Print("test", name, count)
 				currText = name.." ".." |T"..icon..":16|t".." "..count
 			end
-		local name, count, icon, currencyID = GetBackpackCurrencyInfo(2)
+		local name, count, icon, currencyID = C_CurrencyInfo.GetBackpackCurrencyInfo(2)
 			if ( name ) then
 				--AJM:Print("test2", name, count)
 				currText = currText.."\n"..name.." ".." |T"..icon..":16|t".." "..count
 			end
-		local name, count, icon, currencyID = GetBackpackCurrencyInfo(3)
+		local name, count, icon, currencyID = C_CurrencyInfo.GetBackpackCurrencyInfo(3)
 			if ( name ) then
 				--AJM:Print("test3", name, count)
 				currText = currText.."\n"..name.." ".." |T"..icon..":16|t".." "..count

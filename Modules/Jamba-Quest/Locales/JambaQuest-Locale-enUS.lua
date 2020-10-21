@@ -166,7 +166,7 @@ L["Untrack All Quests on all Minions"] = true
 L["Track\nAll"] = true
 L["Track All Quests on all Minions"] = true
 L["Share\nAll"] = true 
-L["share All Quests to all Minions"] = true
+L["Share All Quests to all Minions"] = true
 
 
 

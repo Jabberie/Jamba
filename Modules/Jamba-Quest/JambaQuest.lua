@@ -242,9 +242,9 @@ function AJM:OnEnable()
 	AJM:RegisterEvent( "QUEST_GREETING" )
 	AJM:RegisterEvent( "QUEST_PROGRESS" )
    -- Quest post hooks.
-    AJM:SecureHook( "SelectGossipOption" )
-    AJM:SecureHook( "SelectGossipActiveQuest" )
-    AJM:SecureHook( "SelectGossipAvailableQuest" )
+    AJM:SecureHook( C_GossipInfo, "SelectOption", "SelectGossipOption")
+    AJM:SecureHook( C_GossipInfo, "SelectActiveQuest" )
+    AJM:SecureHook( C_GossipInfo, "SelectAvailableQuest" )
     AJM:SecureHook( "SelectActiveQuest" )
     AJM:SecureHook( "SelectAvailableQuest" )
     AJM:SecureHook( "AcceptQuest" )
@@ -1803,7 +1803,7 @@ end
 
 function AJM:CreateJambaMiniQuestLogFrame()
 
-    JambaMiniQuestLogFrame = CreateFrame( "Frame", "JambaMiniQuestLogFrame", QuestMapFrame )
+    JambaMiniQuestLogFrame = CreateFrame( "Frame", "JambaMiniQuestLogFrame", QuestMapFrame , "BackdropTemplate")
     local frame = JambaMiniQuestLogFrame
 	frame:SetWidth( 295 )
 	frame:SetHeight( 50 )
@@ -1919,7 +1919,7 @@ end
 
 function AJM.ShareNextQuest()
 	local title, isHeader, questID = AJM:GetRelevantQuestInfo(AJM.iterateQuests)
-	if GetQuestLogPushable() then
+	if C_QuestLog.IsPushableQuest( questID ) then	
 		if isHeader == false and questID ~= 0 then
 			QuestMapQuestOptions_ShareQuest(questID)
 		end
@@ -1972,13 +1972,13 @@ end
 
 function AJM:IterateQuests(methodToCall, timer)
 	AJM.iterateQuests = AJM.iterateQuests + 1
-		if AJM.iterateQuests <= GetNumQuestLogEntries() then
+		if AJM.iterateQuests <= C_QuestLog.GetNumQuestLogEntries() then
 			AJM:ScheduleTimer( methodToCall, timer )
 		end
 end
 
 function AJM:GetRelevantQuestInfo(questLogIndex)
-    local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle( questLogIndex )
+    local title, questLogIndex, questID, campaignID, level, difficultyLevel, suggestedGroup, frequency, isHeader, isCollapsed, startEvent, isTask, isBounty, isStory, isScaling, isOnMap, hasLocalPOI, isHidden, isAutoComplete, overridesSortOrder, readyForTranslation = C_QuestLog.GetInfo( questLogIndex )
 	return title, isHeader, questID
 end
 

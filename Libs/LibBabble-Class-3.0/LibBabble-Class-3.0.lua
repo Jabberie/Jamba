@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 Name: LibBabble-Class-3.0
 Revision: $Rev: 50 $
 Author(s): ckknight (ckknight@gmail.com)

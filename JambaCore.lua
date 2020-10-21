@@ -54,7 +54,7 @@ JambaPrivate.SettingsFrame.WidgetTree:SetLayout( "Fill" )
 
 function AJM:OnEnable()
 	if AJM.db.showStartupMessage4000 then
-		JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Full Change Log"] )
+		--JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Full Change Log"] )
 		--JambaStartupMessageFrame:Show()
 		AJM.db.showStartupMessage4000 = false
 	end
@@ -64,8 +64,8 @@ function AJM:OnDisable()
 end
 
 function AJM:ShowChangeLog()
-	JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Full Change Log"] )
-	JambaStartupMessageFrame:Show()
+	--JambaStartupMessageFrameTitle:SetText( L["Jamba"].." "..GetAddOnMetadata("Jamba", "version").." - "..L["Full Change Log"] )
+	--JambaStartupMessageFrame:Show()
 end	
 
 local function JambaSettingsTreeSort( a, b )
@@ -604,7 +604,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
-		L["Current Project Manager - Jennifer 'Ebony'"]
+		L["Current Project Manager - Jabberie"]
 	)	
 	movingTop = movingTop + movingTop * 2
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Release Notes / News: "]..GetAddOnMetadata("jamba", "version") , movingTop, false )
@@ -700,8 +700,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		L["Shows the Full changelog\nOpens a new Frame."]
 	)
 --]]
-	-- Special thanks Heading
-	
+	-- Special thanks Heading  
 	movingTop = movingTop - buttonHeight 
 	JambaHelperSettings:CreateHeading( AJM.settingsControl, L["Special thanks:"], movingTop, false )	
 	movingTop = movingTop - headingHeight
@@ -710,7 +709,16 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column1Left, 
 		movingTop,
+		L["To Ebony for years of development"]
+	)		
+	movingTop = movingTop - labelContinueHeight
+	AJM.settingsControl.labelInformation21 = JambaHelperSettings:CreateContinueLabel( 
+		AJM.settingsControl, 
+		headingWidth, 
+		column1Left, 
+		movingTop,
 		L["To Michael 'Jafula' Miller who made Jamba"]
+		
 	)	
 	movingTop = movingTop - labelContinueHeight
 	AJM.settingsControl.labelInformation21 = JambaHelperSettings:CreateContinueLabel( 
@@ -738,7 +746,7 @@ function AJM:CoreSettingsCreateInfo( top )
 		headingWidth, 
 		column2Left, 
 		movingTop,
-		L["www.twitter.com/jenn_ebony"]
+		L["www.twitter.com/jabberie"]
 		
 	)		
 	movingTop = movingTop - labelContinueHeight

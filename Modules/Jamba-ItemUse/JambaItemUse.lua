@@ -185,7 +185,9 @@ end
 
 local function CreateJambaItemUseFrame()
 	-- The frame.	
-	local frame = CreateFrame( "Frame", "JambaItemUseWindowFrame", UIParent, "SecureHandlerStateTemplate" )
+	--local frame = CreateFrame( "Frame", "JambaItemUseWindowFrame", UIParent, "BackdropTemplate" )
+	local frame = CreateFrame("Frame", "JambaItemUseWindowFrame", UIParent, "SecureHandlerStateTemplate")Mixin(frame, BackdropTemplateMixin or {})
+
 	RegisterStateDriver(JambaItemUseWindowFrame, "page", "[mod:alt]0;0")
 	JambaItemUseWindowFrame:SetAttribute("_onstate-page", [[
 		self:SetAttribute("state", newstate)

@@ -558,7 +558,8 @@ function JambaHelperSettings:CreateScrollList( list )
 	list.listFrame = CreateFrame( 
 		"Frame", 
 		list.listFrameName, 
-		list.parentFrame 
+		list.parentFrame,
+		"BackdropTemplate" 
 	)
 	list.listFrame:SetBackdrop( self:CreateBackdrop() )
 	list.listFrame:SetBackdropColor( 0.1, 0.1, 0.1, 0.5 )

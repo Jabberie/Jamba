@@ -78,9 +78,12 @@ AJM.currTypes.WarSupplies = 1587
 -------------------------------------- End of edit --------------------------------------------------------------
 
 function AJM:CurrencyIconAndName( id )
-	local fullName, amount, icon, earnedThisWeek, weeklyMax, totalMax, isDiscovered, quality = GetCurrencyInfo(id)
-	local currName = strconcat(" |T"..icon..":20|t", L[" "]..fullName)
-	return currName
+	local fullName, isHeader, isHeaderExpanded, isTypeUnused, isShowInBackpack, quantity, iconFileID, maxQuantity, canEarnPerWeek, quantityEarnedThisWeek, isTradeable, quality, maxWeeklyQuantity, discovered = C_CurrencyInfo.GetCurrencyInfo(id)
+
+	if 	iconFileID ~= nil then
+		local currName = strconcat(" |T"..info.iconFileID..":20|t", L[" "]..fullName)	
+		return currName
+	end	
 end	
 	
 	
